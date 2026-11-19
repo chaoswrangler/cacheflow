@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261119h">
+<link rel="stylesheet" href="assets/styles.css?v=20261119i">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -29,7 +29,8 @@
       <button data-view="matches"><span>02</span>Matches</button>
       <button data-view="sources"><span>03</span>Sources</button>
       <button data-view="discover"><span>04</span>Discover</button>
-      <button data-view="setup"><span>05</span>Setup</button>
+      <button data-view="about"><span>05</span>About</button>
+      <button data-view="setup"><span>06</span>Setup</button>
     </nav>
     <div class="status"><span><i class="dot" id="dataDot"></i><span id="dataAge">DATA: LOADING</span></span><span id="winLabel"></span><span>LOCAL <b id="clock">--:--</b></span></div>
   </div>
@@ -223,9 +224,29 @@
     <div class="panel"><h3>Employer-universe directories <small>expand the roster, not vacancies</small></h3><div class="tbl-wrap" style="max-height:none"><table id="uTable"></table></div></div>
   </section>
 
+
+  <!-- ===================== ABOUT ===================== -->
+  <section class="view" id="view-about">
+    <div class="about-card">
+      <div class="about-wolf" aria-hidden="true"><svg viewBox="0 0 500 520" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter" stroke-linecap="round"><path d="M250 150 L200 140 L118 18 L98 172 L38 160 L74 214 L12 242 L70 272 L24 326 L92 322 L64 392 L142 372 L150 436 L206 448 L250 505 L294 448 L350 436 L358 372 L436 392 L408 322 L476 326 L430 272 L488 242 L426 214 L462 160 L402 172 L382 18 L300 140 L250 150 Z"/><path d="M130 62 L172 150"/><path d="M370 62 L328 150"/><path d="M200 140 L214 248"/><path d="M300 140 L286 248"/><path d="M250 150 L250 226"/><path d="M250 150 L250 226"/><path d="M104 212 L214 248 L250 226"/><path d="M396 212 L286 248 L250 226"/><path d="M98 172 L140 238"/><path d="M402 172 L360 238"/><path d="M70 272 L168 272"/><path d="M430 272 L332 272"/><path d="M92 322 L220 334"/><path d="M408 322 L280 334"/><path d="M142 372 L222 402"/><path d="M358 372 L278 402"/><path d="M214 248 L222 402"/><path d="M286 248 L278 402"/><path d="M222 402 L206 448"/><path d="M278 402 L294 448"/><path d="M140 240 L214 262 L170 272 Z" fill="currentColor"/><path d="M360 240 L286 262 L330 272 Z" fill="currentColor"/><path d="M226 392 L274 392 L250 420 Z" fill="currentColor"/><path d="M214 418 L224 456 L232 424 Z" fill="currentColor"/><path d="M286 418 L276 456 L268 424 Z" fill="currentColor"/></svg></div>
+      <div class="about-txt">
+        <div class="sec-idx"><i>05</i>About the developer</div>
+        <h2 class="about-name">Raae Wolfram</h2>
+        <div class="about-say">Raae is pronounced “Ray”</div>
+        <p class="about-lead">Security strategy, go-to-market, and AI leader. I connect what technology can do with what a business needs.</p>
+        <p>I built Cache Flow because job searching should work like good threat intel: pull from the source, show your evidence, and don't confuse OTE with base pay. It reads employers' own job boards, scores each role against your resume, and tells you exactly where every date and salary came from.</p>
+        <div class="about-chips"><span>Security strategy</span><span>Go-to-market</span><span>AI agents</span><span>Product</span></div>
+        <div class="row" style="margin-top:26px">
+          <a class="btn pri" href="https://chaoswrangler.github.io/raaewolfram/" target="_blank" rel="noopener">View my portfolio ↗</a>
+          <a class="btn sec" href="https://www.linkedin.com/in/raaewolfram/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SETUP ===================== -->
   <section class="view" id="view-setup">
-    <div class="sec-head"><div class="sec-idx"><i>05</i>Setup</div><h2>Setup &amp; Method</h2><span class="rule"></span></div>
+    <div class="sec-head"><div class="sec-idx"><i>06</i>Setup</div><h2>Setup &amp; Method</h2><span class="rule"></span></div>
     <div class="grid g2">
       <div class="panel md" id="setupLeft"></div>
       <div class="panel md mag" id="setupRight"></div>
@@ -233,7 +254,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261119h" defer></script>
-<script type="module" src="assets/app.js?v=20261119h"></script>
+<script src="assets/fx.js?v=20261119i" defer></script>
+<script type="module" src="assets/app.js?v=20261119i"></script>
 </body>
 </html>
