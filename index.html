@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=20261119g">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -94,6 +94,23 @@
       </div>
 
       <div class="grid">
+        <div class="panel mag">
+          <h3>Extracted profile <small id="profSource">preset</small></h3>
+          <div class="grid g2">
+            <div><label class="f">Name</label><input type="text" id="pName"></div>
+            <div><label class="f">Home location</label><input type="text" id="pLoc"></div>
+          </div>
+          <label class="f">Headline</label><input type="text" id="pHead">
+          <label class="f">Credentials &amp; employers detected</label>
+          <div class="chips" id="pCreds"></div>
+          <details id="skillBox">
+            <summary id="skillSum">Skills used for match scoring</summary>
+            <p class="hint" style="margin:10px 0 4px">Highlighted skills add points to a job's match score when the posting mentions them (up to 25 of 100). They don't hide any jobs. Click to turn one on or off; add your own keywords below.</p>
+            <div id="pSkills"></div>
+            <div class="row" style="margin-top:8px"><input type="text" id="addSkill" placeholder="add keyword, press Enter" style="max-width:280px"></div>
+          </details>
+        </div>
+
         <div class="panel">
           <h3>Search criteria <small>auto-saved in this browser</small></h3>
           <div class="grid g2">
@@ -152,22 +169,6 @@
           <div class="row end" style="margin-top:18px"><button class="btn sec sm" id="btnReset">Reset criteria</button><button class="btn pri" id="btnGo">Run search →</button></div>
         </div>
 
-        <div class="panel mag">
-          <h3>Extracted profile <small id="profSource">preset</small></h3>
-          <div class="grid g2">
-            <div><label class="f">Name</label><input type="text" id="pName"></div>
-            <div><label class="f">Home location</label><input type="text" id="pLoc"></div>
-          </div>
-          <label class="f">Headline</label><input type="text" id="pHead">
-          <label class="f">Credentials &amp; employers detected</label>
-          <div class="chips" id="pCreds"></div>
-          <details id="skillBox">
-            <summary id="skillSum">Skills used for match scoring</summary>
-            <p class="hint" style="margin:10px 0 4px">Highlighted skills add points to a job's match score when the posting mentions them (up to 25 of 100). They don't hide any jobs. Click to turn one on or off; add your own keywords below.</p>
-            <div id="pSkills"></div>
-            <div class="row" style="margin-top:8px"><input type="text" id="addSkill" placeholder="add keyword, press Enter" style="max-width:280px"></div>
-          </details>
-        </div>
 
 
 
@@ -207,7 +208,7 @@
         <select id="sStatus" style="max-width:200px"></select>
         <select id="sSector" style="max-width:220px"></select>
         <span class="spacer"></span>
-        <button class="btn mag sm" id="btnLiveAll">Live-check browser-readable boards</button>
+        <button class="btn mag sm" id="btnLiveAll">Refresh boards now</button>
         <button class="btn sec sm" id="btnDirCsv">Export directory CSV</button>
       </div>
       <div class="term" id="liveLog" style="margin-top:10px;display:none"></div>
@@ -238,7 +239,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js" defer></script>
-<script type="module" src="assets/app.js"></script>
+<script src="assets/fx.js?v=20261119g" defer></script>
+<script type="module" src="assets/app.js?v=20261119g"></script>
 </body>
 </html>

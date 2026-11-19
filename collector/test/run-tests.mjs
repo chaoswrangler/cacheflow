@@ -80,7 +80,8 @@ Professional Experience
 Microsoft — Senior Security Strategy Operations Lead, GTM & Growth   Nov 2025 – Present
 • Positioned against CrowdStrike, Palo Alto Networks and SentinelOne in competitive deals.
 • Partnered with Google Cloud and AWS marketplaces on co-sell.
-Senior Security Product Manager | Microsoft | 2022 – 2025
+Senior Security Product Manager, Pre-
+Intent Strategy | Microsoft | 2022 – 2025
 Amazon Web Services (AWS)
 Program Manager , Custom Billing Solutions   2017 – 2019
 Memorial Sloan Kettering Cancer Center   2014 – 2016
@@ -92,7 +93,7 @@ ok('name = Jane Rivera (not Executive Summary): ' + p.name, p.name === 'Jane Riv
 ok('location not "MBA, MS": "' + p.location + '"', p.location === '');
 ok('headline: ' + p.headline, p.headline.startsWith('Cybersecurity Strategist'));
 ok('employers: ' + p.employers.join(', '), p.employers.includes('Microsoft') && p.employers.includes('Amazon Web Services') && p.employers.includes('Memorial Sloan Kettering') && !p.employers.includes('CrowdStrike') && !p.employers.includes('Google'));
-ok('titles: ' + JSON.stringify(p.titles), p.titles.every(t => !/summary|unified|differentiation/i.test(t) && t.length) && p.titles.some(t => /Program Manager/.test(t)));
+ok('titles: ' + JSON.stringify(p.titles), p.titles.every(t => !/summary|unified|differentiation/i.test(t) && t.length) && p.titles.some(t => /Program Manager/.test(t)) && p.titles.includes('Senior Security Product Manager, Pre-Intent Strategy') && p.titles.includes('Program Manager, Custom Billing Solutions'));
 ok('creds: ' + p.creds.join(','), ['MBA', 'MPH', 'MS / MSc', 'PMP'].every(c => p.creds.includes(c)));
 const li = extractResume(`Contact\nwww.linkedin.com/in/sam-lee\nTop Skills\nGo-to-Market Strategy\nSam Lee\nDirector, Product Marketing at Acme\nBrooklyn, New York, United States\nSummary\nI build things.`);
 ok('LinkedIn PDF name: ' + li.name, li.name === 'Sam Lee');

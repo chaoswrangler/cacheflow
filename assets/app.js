@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs';
-import { CROSS, UNIVERSE } from './discovery.mjs';
-import { extractResume } from './shared/resume.mjs';
+import * as C from './shared/core.mjs?v=20261119g';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119g';
+import { extractResume } from './shared/resume.mjs?v=20261119g';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -12,6 +12,9 @@ const store = {
   set(k, v) { try { localStorage.setItem('rr:' + k, JSON.stringify(v)); } catch { /* storage unavailable: keep in memory */ } },
 };
 const FN_KEYS = Object.keys(C.FUNCTIONS);
+const QS = new URLSearchParams(location.search);
+if (QS.has('owner')) store.set('owner', QS.get('owner') !== 'off');
+const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
   functions: [...FN_KEYS], engReview: true, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', sen: 2,
@@ -34,23 +37,29 @@ async function boot() {
   const [reg, jobs, status, site] = await Promise.all([loadJSON('data/sources.json', null), loadJSON('data/jobs.json', { jobs: [] }), loadJSON('data/status.json', { sources: [] }), loadJSON('data/site.json', {})]);
   S.site = site || {};
   if (!reg) {
-    document.querySelector('main').insertAdjacentHTML('afterbegin', `<div class="empty-state"><b>DATA FILES NOT REACHABLE</b>Open this app over http (GitHub Pages, or <code>python3 -m http.server</code> in the repo folder). Browsers block file:// data loads.</div>`);
+    document.querySelector('main').insertAdjacentHTML('afterbegin', OWNER
+      ? `<div class="empty-state"><b>DATA FILES NOT REACHABLE</b>Open this app over http (GitHub Pages, or <code>python3 -m http.server</code> in the repo folder). Browsers block file:// data loads.</div>`
+      : `<div class="empty-state"><b>COULDN'T LOAD LISTINGS</b>Please refresh the page in a moment.</div>`);
   }
   S.registry = reg || S.registry; S.jobs = jobs.jobs || []; S.jobsMeta = jobs; S.status = status;
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
-  wireNav(); wireProfile(); renderProfile(); renderCriteria(); renderHud();
+  applyOwnerMode(); wireNav(); wireProfile(); renderProfile(); renderCriteria(); renderHud();
   renderMatches(); renderSources(); renderDiscover(); renderSetup();
   show(location.hash.slice(1) || (S.profile.source === 'empty' ? 'profile' : 'matches'));
 }
 const empOf = j => S.empByName.get(j.employer) || S.empByName.get(String(j.employer).replace(/ \(AWS\)$/, '')) || null;
 
 /* ============================================================ nav / hud */
+function applyOwnerMode() {
+  document.body.classList.toggle('owner', OWNER);
+  if (!OWNER) { $('[data-view="setup"]')?.remove(); }
+}
 function wireNav() {
   $$('#nav button').forEach(b => b.onclick = () => show(b.dataset.view));
   addEventListener('hashchange', () => show(location.hash.slice(1)));
 }
 function show(v) {
-  if (!$('#view-' + v)) v = 'profile';
+  if (!$('#view-' + v) || (v === 'setup' && !OWNER)) v = 'profile';
   $$('.view').forEach(x => x.classList.toggle('active', x.id === 'view-' + v));
   $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   if (location.hash.slice(1) !== v) history.replaceState(null, '', '#' + v);
@@ -61,7 +70,7 @@ const fmtDay = ymd => { if (!ymd) return '—'; const [y, m, d] = ymd.split('-')
 function renderHud() {
   const g = S.jobsMeta?.generated_at;
   const dot = $('#dataDot');
-  if (!g) { $('#dataAge').textContent = 'NO COLLECTOR RUN YET'; dot.className = 'dot bad'; }
+  if (!g) { $('#dataAge').textContent = OWNER ? 'NO COLLECTOR RUN YET' : 'UPDATING'; dot.className = OWNER ? 'dot bad' : 'dot warn'; }
   else {
     const hrs = (Date.now() - new Date(g)) / 36e5;
     $('#dataAge').textContent = 'DATA ' + new Date(g).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
@@ -119,9 +128,9 @@ function applyProfile(p, how) {
     (p.location ? ` · home <span class="c">${esc(p.location)}</span>` : ' · <span class="y">no home location found; set it below</span>') +
     (p.suggestedFns.length ? `<br><span class="p">cacheflow&gt;</span> suggested functions: <span class="c">${p.suggestedFns.map(f => C.FUNCTIONS[f].label).join(', ')}</span> (marked ◆; all stay selectable)` : ''));
 }
-const SAMPLE = `Jordan Example
+const SAMPLE = `Definitely Ahuman
 Senior Product Marketing Manager | Security GTM
-Hoboken, NJ · jordan@example.com · linkedin.com/in/jordan-example
+Hoboken, NJ · definitely@example.com · linkedin.com/in/definitely-ahuman
 
 EXPERIENCE
 Senior Product Marketing Manager, Cloud Security — Example Corp (2021 – Present)
@@ -313,7 +322,7 @@ function renderMatches() {
   const w = currentWindow();
   const meta = S.jobsMeta || {};
   $('#windowBanner').innerHTML = `<b>POSTING WINDOW</b><span class="d">${w ? `${fmtDay(w.start)} → ${fmtDay(w.end)}` : 'Any date'}</span><span>${esc(LOCAL_TZ)} · ${esc(w ? w.label : '')}</span><span class="spacer"></span>` +
-    `<span>collector run: <span class="d">${meta.generated_at ? esc(new Date(meta.generated_at).toLocaleString()) : 'never'}</span>${meta.window ? ` · collector window ${esc(meta.window.start)} → ${esc(meta.window.end)} ET` : ''}</span>`;
+    `<span>last updated: <span class="d">${meta.generated_at ? esc(new Date(meta.generated_at).toLocaleString()) : 'pending'}</span>${OWNER && meta.window ? ` · collector window ${esc(meta.window.start)} → ${esc(meta.window.end)} ET` : ''}</span>`;
   let ms = computeMatches();
   const q = $('#q').value.trim().toLowerCase();
   if (q) ms = ms.filter(m => (m.j.title + ' ' + m.j.employer + ' ' + (m.j.excerpt || '') + ' ' + (m.j.kw || []).join(' ')).toLowerCase().includes(q));
@@ -331,7 +340,9 @@ function renderMatches() {
     ['', all.filter(m => m.loc === 'remote_yes').length, 'remote · home state OK'], ['', S.jobs.filter(j => j.status !== 'closed').length, 'open roles in dataset'],
   ].map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${n}</div><div class="l">${esc(l)}</div></div>`).join('');
   if (!S.jobs.length) {
-    $('#jobGroups').innerHTML = `<div class="empty-state"><b>NO JOB DATA YET</b>The collector hasn't run for this site yet. Go to <a href="#setup">Setup</a> and run the "Collect jobs" workflow,<br>or open <a href="#sources">Sources</a> and click <b>Live-check browser-readable boards</b> to pull Greenhouse, Lever and Ashby boards now.</div>`;
+    $('#jobGroups').innerHTML = OWNER
+      ? `<div class="empty-state"><b>NO JOB DATA YET</b>The collector hasn't saved a run yet. In GitHub, open <b>Actions → Collect jobs → Run workflow</b>, or click <b>Refresh boards now</b> on <a href="#sources">Sources</a> to pull Greenhouse, Lever and Ashby boards into this tab.</div>`
+      : `<div class="empty-state"><b>LISTINGS ARE ON THE WAY</b>Cache Flow is gathering this week's openings from employer job boards. Set up your profile and criteria now. Matches appear here automatically once the next update lands.</div>`;
     return;
   }
   const groups = [
@@ -439,7 +450,7 @@ function wireSources() {
   ['#sq', '#sAts', '#sStatus', '#sSector'].forEach(s => $(s).addEventListener(s === '#sq' ? 'input' : 'change', renderSources));
   $('#btnLiveAll').onclick = () => {
     const ids = sourceRows().filter(r => C.BROWSER_ATS.has(r.s.ats)).map(r => r.s.id);
-    if (!confirm(`Live-check ${ids.length} Greenhouse/Lever/Ashby boards from this browser? Requests are paced (one at a time per host), so this takes a few minutes.`)) return;
+    if (!confirm(`Pull the latest listings from ${ids.length} Greenhouse, Lever and Ashby boards into this tab? Requests are paced (one at a time per host), so this takes a few minutes.`)) return;
     liveCheck(ids);
   };
   $('#btnDirCsv').onclick = () => downloadCSV(sourceRows().map(r => ({ employer: r.e.employer, sector: r.e.sector, vertical: r.e.vertical, tier: r.e.tier, official_careers: r.e.careers_url || '', careers_url_verified: !!r.e.careers_url_verified,
@@ -550,5 +561,10 @@ function renderSetup() {
     <p class="hint">Repo: ${esc(repo)} · resume parsing runs locally in this browser · nothing about you leaves this page unless you use the optional Claude call</p>`;
 }
 
-wireMatches(); wireSources();
-boot();
+function fatal(e) {
+  console.error(e);
+  const m = document.querySelector('main');
+  if (m) m.insertAdjacentHTML('afterbegin', `<div class="empty-state" style="margin-bottom:20px"><b>CACHE FLOW HIT AN ERROR</b>${esc(e?.message || e)}<br>Try a hard refresh (Ctrl + Shift + R). If it persists, the browser console has details.</div>`);
+  $('#dataAge') && ($('#dataAge').textContent = 'ERROR');
+}
+try { wireMatches(); wireSources(); boot().catch(fatal); } catch (e) { fatal(e); }

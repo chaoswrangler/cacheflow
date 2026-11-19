@@ -1,5 +1,5 @@
 // Resume / LinkedIn-PDF text → profile. Pure function so it can be tested in Node.
-import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs';
+import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261119g';
 
 export const CRED_RES = [
   ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.D\.?(?=\s|,|$)/], ['MD', /\bM\.D\.\b/],
@@ -39,7 +39,8 @@ function onlyCredsOrName(line, name) {
 }
 
 export function extractResume(text = '', { knownEmployers = [] } = {}) {
-  const t = String(text).replace(/\r/g, '');
+  // rejoin words a PDF hyphenated across a line break ("Pre-\nIntent" → "Pre-Intent"); tidy " ," spacing
+  const t = String(text).replace(/\r/g, '').replace(/([A-Za-z])-[ \t]*\n[ \t]*([A-Za-z])/g, '$1-$2').replace(/\s+,/g, ',');
   const lines = t.split('\n').map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean);
   let nameIdx = -1;
   const p = { name: '', headline: '', location: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'resume' };
