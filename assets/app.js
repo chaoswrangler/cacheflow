@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119i';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119i';
-import { extractResume } from './shared/resume.mjs?v=20261119i';
+import * as C from './shared/core.mjs?v=20261119p';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119p';
+import { extractResume } from './shared/resume.mjs?v=20261119p';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -55,7 +55,12 @@ function applyOwnerMode() {
   if (!OWNER) { $('[data-view="setup"]')?.remove(); }
 }
 function wireNav() {
-  $$('#nav button').forEach(b => b.onclick = () => show(b.dataset.view));
+  const mb = $('#menuBtn'), nav = $('#nav');
+  const setMenu = open => { nav.classList.toggle('open', open); mb.setAttribute('aria-expanded', String(open)); mb.classList.toggle('x', open); };
+  mb.onclick = e => { e.stopPropagation(); setMenu(!nav.classList.contains('open')); };
+  document.addEventListener('click', e => { if (!e.target.closest('#nav')) setMenu(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  $$('#nav button').forEach(b => b.onclick = () => { show(b.dataset.view); setMenu(false); scrollTo({ top: 0 }); });
   addEventListener('hashchange', () => show(location.hash.slice(1)));
 }
 function show(v) {
@@ -248,48 +253,53 @@ const DATE_LABEL = { first_published: 'first published', published: 'published',
   relative_approx: 'approx. from "posted N days ago"', updated: 'UPDATED date — may be a refresh', first_observed: 'first observed by collector (no posting date)', aggregator_created: 'aggregator date', none: 'no date' };
 const LOC_LABEL = { metro: ['IN COMMUTE AREA', 'g'], remote_yes: ['REMOTE · HOME STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
 
-function jobCard(m) {
-  const { j, e } = m;
-  const s = j.salary;
-  let sal = `<span class="sal unknown">BASE NOT STATED</span>`;
-  if (s && s.kind === 'ote_only') sal = `<span class="sal ote_only">NO BASE STATED · <span class="tag r strike">${s.ote?.kind === 'total' ? 'TOTAL COMP' : 'OTE'} ${money(s.ote?.min)}–${money(s.ote?.max)} excluded</span></span>`;
-  else if (s && s.kind === 'predicted') sal = `<span class="sal predicted">PREDICTED ${money(s.min)}–${money(s.max)} · not employer-stated</span>`;
-  else if (s) sal = `<span class="sal ${m.tier}">${KIND_LABEL[s.kind] || 'RANGE'} ${money(s.min)}–${money(s.max)}${s.period === 'hour' ? ' (annualized from hourly)' : ''} · ${m.tier === 'starts' ? 'STARTS ≥ ' : m.tier === 'reaches' ? 'REACHES ≥ ' : 'BELOW '}${money(S.crit.minBase)}</span>` +
-    (s.multi ? ' <span class="tag f" title="Several ranges found; highest or NY/top zone chosen">multi-range</span>' : '') + (s.ote ? ` <span class="tag r strike">OTE ${money(s.ote.min)}–${money(s.ote.max)} ignored</span>` : '');
+const LOC_SHORT = { metro: ['Commute area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
+const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
+  relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
+function jobRow(m) {
+  const { j, e } = m, s = j.salary, open = S.open.has(j.uid), saved = S.saved.has(j.uid);
+  let base = '<span class="sal unknown">not stated</span>';
+  if (s && s.kind === 'ote_only') base = `<span class="sal ote_only">OTE only</span><div class="sub2">${money(s.ote?.min)}–${money(s.ote?.max)} excluded</div>`;
+  else if (s && s.kind === 'predicted') base = `<span class="sal predicted">${money(s.min)}–${money(s.max)}</span><div class="sub2">predicted, not base</div>`;
+  else if (s) base = `<span class="sal ${m.tier}">${money(s.min)}–${money(s.max)}</span><div class="sub2">${m.tier === 'starts' ? 'starts ≥ min' : m.tier === 'reaches' ? 'reaches min' : 'below min'}${s.kind === 'base' ? '' : s.kind === 'base_likely' ? ' · implied' : ' · type unstated'}</div>`;
+  const [ll, lc] = LOC_SHORT[m.loc];
   const dYmd = m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : null;
-  const [ll, lc] = LOC_LABEL[m.loc];
-  const saved = S.saved.has(j.uid), open = S.open.has(j.uid);
+  const flags = [j.reposted && '<span class="tag a">repost?</span>', j.stale && '<span class="tag r">stale</span>', j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
   const li = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(j.title + ' ' + (e?.employer || j.employer))}`;
-  return `<article class="job ${m.tier} ${saved ? 'saved' : ''} ${open ? 'open' : ''}" data-uid="${esc(j.uid)}">
-    <div><h4><a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title)}</a></h4>
-      <div class="emp">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div></div>
-    <div class="score"><div class="v">${m.score}<small>/100</small></div><div class="meter"><i style="width:${m.score}%"></i></div><div class="why">${m.why}</div></div>
-    <div class="meta">${sal}</div>
-    <div class="meta">
-      <span class="tag ${lc}">${ll}</span><span class="tag f">${esc(j.workplace)}</span>
-      ${j.source_class === 'aggregator' ? `<span class="tag a">AGGREGATOR · ${esc(j.via || j.ats)}</span>` : `<span class="tag">OFFICIAL · ${esc(j.ats)}</span>`}
-      ${j.live ? '<span class="tag m">LIVE CHECK</span>' : ''}
-      ${m.fnHit.map(f => `<span class="tag m">${esc(C.FUNCTIONS[f].label.split(/[,&]/)[0].trim())}</span>`).join('')}
-      ${j.eng_review ? '<span class="tag a">REVIEW: ENGINEER TITLE</span>' : ''}
-      ${j.reposted ? '<span class="tag a">DATE CHANGED · POSSIBLE REPOST</span>' : ''}
-      ${j.stale ? `<span class="tag r">NOT REFRESHED SINCE ${esc((j.stale_since || '').slice(0, 10))}</span>` : ''}
-      ${j.dup_count > 1 ? `<span class="tag f">${j.dup_count} COPIES ACROSS SOURCES</span>` : ''}
-    </div>
-    <div class="facts">
-      <div>DATE <b>${dYmd ? fmtDay(dYmd) : '—'}</b> · ${esc(DATE_LABEL[m.dt.kind] || m.dt.kind)}</div>
-      <div>LOCATION <b>${esc((j.locations || []).slice(0, 2).join(' · ') || '—')}</b></div>
-      <div>FIRST SEEN <b>${esc((j.first_observed || '').slice(0, 10) || '—')}</b> · LAST SEEN <b>${esc((j.last_seen || '').slice(0, 10) || '—')}</b></div>
-      <div>REQ <b>${esc(j.req_id || '—')}</b>${j.department ? ` · ${esc(j.department)}` : ''}</div>
-      ${m.skillHits.length || m.customHits.length ? `<div style="grid-column:1/-1">MATCHED <b>${esc([...m.skillHits, ...m.customHits].join(' · '))}</b></div>` : ''}
-    </div>
-    ${j.excerpt ? `<div class="ex">${esc(j.excerpt)}${j.excerpt.length >= 900 ? '…' : ''}</div>` : ''}
-    <div class="acts">
-      <a class="btn pri sm" href="${esc(j.url)}" target="_blank" rel="noopener">Open posting ↗</a>
-      ${j.excerpt ? `<button class="btn sec sm" data-act="open">${open ? 'Hide' : 'Show'} excerpt</button>` : ''}
-      <button class="btn ${saved ? 'mag' : 'sec'} sm" data-act="save">${saved ? '★ Saved' : '☆ Save'}</button>
-      <button class="btn sec sm" data-act="hide">${S.hidden.has(j.uid) ? 'Unhide' : 'Hide'}</button>
-      <a class="btn sec sm" href="${li}" target="_blank" rel="noopener">LinkedIn ↗</a>
-    </div></article>`;
+  const detail = open ? `<tr class="mt-detail" data-uid="${esc(j.uid)}"><td colspan="8"><div class="dgrid">
+      <div><b>Location</b>${esc((j.locations || []).join(' · ') || '—')} · ${esc(j.workplace)}${m.hf.eligibility !== 'n/a' ? ` · home-state eligibility: ${esc(m.hf.eligibility)}` : ''}</div>
+      <div><b>Dates</b>${dYmd ? esc(fmtDay(dYmd)) + ' (' + esc(DATE_LABEL[m.dt.kind] || m.dt.kind) + ')' : '—'} · first seen ${esc((j.first_observed || '').slice(0, 10))} · last seen ${esc((j.last_seen || '').slice(0, 10))}</div>
+      <div><b>Score</b>${m.why}</div>
+      <div><b>Source</b>${esc(j.source_class === 'aggregator' ? 'aggregator · ' + (j.via || j.ats) : 'official · ' + j.ats)} · req ${esc(j.req_id || '—')}${j.department ? ' · ' + esc(j.department) : ''}</div>
+      ${s?.snippet ? `<div class="wide"><b>Pay text</b>${esc(s.snippet)}</div>` : ''}
+      ${m.skillHits.length || m.customHits.length ? `<div class="wide"><b>Matched</b>${esc([...m.skillHits, ...m.customHits].join(' · '))}</div>` : ''}
+      ${j.excerpt ? `<div class="wide ex2">${esc(j.excerpt)}${j.excerpt.length >= 900 ? '…' : ''}</div>` : ''}
+      <div class="wide row"><a class="btn pri sm" href="${esc(j.url)}" target="_blank" rel="noopener">Open posting ↗</a><a class="btn sec sm" href="${li}" target="_blank" rel="noopener">LinkedIn ↗</a><button class="btn sec sm" data-act="hide">${S.hidden.has(j.uid) ? 'Unhide' : 'Hide'}</button></div>
+    </div></td></tr>` : '';
+  return `<tr class="mt-row ${m.tier} ${open ? 'open' : ''} ${saved ? 'saved' : ''}" data-uid="${esc(j.uid)}">
+    <td class="c-save"><button class="star ${saved ? 'on' : ''}" data-act="save" title="${saved ? 'Unsave' : 'Save'}">${saved ? '★' : '☆'}</button></td>
+    <td class="c-score"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
+    <td class="c-role">${S.groupEmp ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div></td>
+    <td class="c-base">${base}</td>
+    <td class="c-loc"><div class="one">${esc((j.locations || [])[0] || '—')}</div><span class="tag ${lc}">${ll}</span></td>
+    <td class="c-date">${dYmd ? esc(dYmd.slice(5)) : '—'}<div class="sub2">${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)}</div></td>
+    <td class="c-src">${j.source_class === 'aggregator' ? '<span class="tag a">agg</span>' : '<span class="tag">official</span>'}<div class="sub2">${esc(j.ats)}</div></td>
+    <td class="c-act"><button class="more" data-act="open" title="Details">${open ? '−' : '+'}</button></td></tr>${detail}`;
+}
+// group rows by employer, keeping the current sort: groups are ordered by their best-placed role
+function groupedRows(list) {
+  const groups = new Map();
+  for (const m of list) { const k = m.j.employer; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(m); }
+  S.collapsed ||= new Set();
+  return [...groups].map(([emp, ms]) => {
+    const closed = S.collapsed.has(emp), m0 = ms[0];
+    const bases = ms.map(m => m.j.salary).filter(x => x && x.min != null && !['ote_only', 'predicted'].includes(x.kind));
+    const top = bases.length ? Math.max(...bases.map(x => x.max)) : null;
+    const starts = ms.filter(m => m.tier === 'starts').length;
+    return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(emp)}"><td colspan="8"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(emp)}</b>
+      <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${top ? ` · up to ${money(top)}` : ''} · ${esc(m0.sector)}${m0.vertical && m0.sector === 'Cybersecurity' ? ' / ' + esc(m0.vertical) : ''}</span></td></tr>` +
+      (closed ? '' : ms.map(jobRow).join(''));
+  }).join('');
 }
 function renderMatches() {
   const w = currentWindow();
@@ -303,9 +313,6 @@ function renderMatches() {
   if (!$('#showHidden').checked) ms = ms.filter(m => !S.hidden.has(m.j.uid));
   if ($('#onlySaved').checked) ms = ms.filter(m => S.saved.has(m.j.uid));
   if (!$('#showDups').checked) ms = ms.filter(m => !m.j.dup_of);
-  const sort = $('#sort').value;
-  const cmp = { score: (a, b) => b.score - a.score, date: (a, b) => (b.dt.d || '').localeCompare(a.dt.d || ''), salary: (a, b) => (b.j.salary?.min || 0) - (a.j.salary?.min || 0), employer: (a, b) => a.j.employer.localeCompare(b.j.employer) }[sort];
-  ms.sort(cmp);
   const count = t => all.filter(m => m.tier === t).length;
   $('#matchTiles').innerHTML = [
     ['c', all.length, 'matches in window'], ['g', count('starts'), `base starts ≥ ${money(S.crit.minBase)}`], ['a', count('reaches'), `base reaches ≥ ${money(S.crit.minBase)}`],
@@ -318,23 +325,40 @@ function renderMatches() {
       : `<div class="empty-state"><b>LISTINGS ARE ON THE WAY</b>Cache Flow is gathering this week's openings from employer job boards. Set up your profile and criteria now. Matches appear here automatically once the next update lands.</div>`;
     return;
   }
-  const groups = [
-    ['starts', `Base starts at or above ${money(S.crit.minBase)}`, 'var(--green)'], ['reaches', `Base reaches ${money(S.crit.minBase)} (minimum is lower)`, 'var(--acid)'],
-    ['unknown', 'Base salary not stated', 'var(--muted)'], ['ote_only', 'Only OTE / total comp stated (not base)', 'var(--red)'], ['predicted', 'Aggregator-predicted salary only', 'var(--red)'], ['below', `Base below ${money(S.crit.minBase)}`, 'var(--faint)'],
-  ];
-  const html = groups.map(([t, label, color]) => {
-    const g = ms.filter(m => m.tier === t);
-    if (!g.length) return '';
-    return `<div class="group-h"><span style="color:${color}">■ ${esc(label)}</span><span class="bar"></span><span class="ct">${g.length}</span></div><div class="jobs">${g.slice(0, 300).map(jobCard).join('')}</div>` + (g.length > 300 ? `<p class="hint">Showing 300 of ${g.length}. Narrow the filters or export CSV for all.</p>` : '');
-  }).join('');
-  $('#jobGroups').innerHTML = html || `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.<br>A board with zero matches is not the same as a board that failed. Check Sources for access failures.</div>`;
+  // tier chips (keep "starts" and "reaches" visibly separate), then the sortable table
+  const tierSel = S.tierSel || 'all';
+  const tc = t => ms.filter(m => t === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === t).length;
+  $('#tierChips').innerHTML = [['all', 'All', ms.length], ['starts', `Base starts ≥ ${money(S.crit.minBase)}`, tc('starts')], ['reaches', `Base reaches ${money(S.crit.minBase)}`, tc('reaches')], ['none', 'No base stated', tc('none')], ['below', 'Below minimum', tc('below')]]
+    .filter(([k, , n]) => k === 'all' || n).map(([k, l, n]) => `<button class="chip ${tierSel === k ? 'on' : ''}" data-tier="${k}">${esc(l)} · ${n}</button>`).join('');
+  if (tierSel !== 'all') ms = ms.filter(m => tierSel === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === tierSel);
+  const { key, dir } = S.sort || { key: 'score', dir: -1 };
+  if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
+  const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, other: 1 };
+  const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0),
+    loc: m => LOCR[m.loc] || 0, posted: m => m.dt.d || '', source: m => (m.j.source_class === 'official' ? '0' : '1') + m.j.ats }[key];
+  ms.sort((x, y) => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; });
+  const limit = S.showN || 200;
+  const th = (k, l, cls = '') => `<th class="${cls} ${key === k ? 'sorted' : ''}" data-sort="${k}">${l}${key === k ? (dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
+  $('#jobGroups').innerHTML = ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
+      (S.groupEmp ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
+    : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`;
   S.lastMatches = ms;
 }
 function wireMatches() {
-  ['#q', '#sort', '#onlySaved', '#showHidden', '#showDups'].forEach(s => $(s).addEventListener(s === '#q' ? 'input' : 'change', renderMatches));
+  ['#q', '#onlySaved', '#showHidden', '#showDups'].forEach(s => $(s).addEventListener(s === '#q' ? 'input' : 'change', () => { S.showN = 200; renderMatches(); }));
+  $('#groupEmp').checked = !!store.get('groupEmp', false); S.groupEmp = $('#groupEmp').checked;
+  $('#groupEmp').addEventListener('change', e => { S.groupEmp = e.target.checked; store.set('groupEmp', S.groupEmp); renderMatches(); });
+  $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; renderMatches(); });
+  $('#tierChips').addEventListener('click', e => { const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
   $('#jobGroups').addEventListener('click', e => {
-    const b = e.target.closest('[data-act]'); if (!b) return;
-    const uid = b.closest('.job').dataset.uid;
+    const h = e.target.closest('th[data-sort]');
+    if (h) { const k = h.dataset.sort; const cur = S.sort || { key: 'score', dir: -1 }; S.sort = { key: k, dir: cur.key === k ? -cur.dir : (['role', 'employer', 'source'].includes(k) ? 1 : -1) }; renderMatches(); return; }
+    if (e.target.id === 'moreRows') { S.showN = (S.showN || 200) + 200; renderMatches(); return; }
+    const g = e.target.closest('tr.mt-group');
+    if (g) { S.collapsed ||= new Set(); const k = g.dataset.emp; S.collapsed.has(k) ? S.collapsed.delete(k) : S.collapsed.add(k); renderMatches(); return; }
+    let b = e.target.closest('[data-act]');
+    if (!b) { const row = e.target.closest('tr.mt-row'); if (!row || e.target.closest('a')) return; b = { dataset: { act: 'open' } }; b.closest = () => row; }
+    const uid = b.closest('[data-uid]').dataset.uid;
     if (b.dataset.act === 'save') S.saved.has(uid) ? S.saved.delete(uid) : S.saved.add(uid);
     if (b.dataset.act === 'hide') S.hidden.has(uid) ? S.hidden.delete(uid) : S.hidden.add(uid);
     if (b.dataset.act === 'open') S.open.has(uid) ? S.open.delete(uid) : S.open.add(uid);
@@ -391,15 +415,17 @@ function renderSources() {
   fill('#sSector', 'All sectors', [...new Set(rows.map(r => r.e.sector))].sort());
   const q = $('#sq').value.toLowerCase(), fa = $('#sAts').value, fs = $('#sStatus').value, fsec = $('#sSector').value;
   const vis = rows.filter(r => (!q || r.e.employer.toLowerCase().includes(q)) && (!fa || r.s.ats === fa) && (!fs || r.result === fs) && (!fsec || r.e.sector === fsec));
-  const fv = f => !f ? '—' : Object.entries(f).map(([k, v]) => `${k}: ${v}`).join('<br>');
-  $('#srcTable').innerHTML = `<thead><tr><th>Employer</th><th>Sector / vertical</th><th>Tier</th><th>ATS</th><th>Verification</th><th>Last result</th><th>Jobs</th><th>Date / pay / location visibility</th><th>Last checked</th><th>Links</th><th></th></tr></thead><tbody>` +
+  // compact visibility chips: green = the source exposes it, grey = it doesn't; hover for the detail
+  const FV = [['posted_date', 'Date'], ['salary', 'Pay'], ['location', 'Loc'], ['remote', 'Remote'], ['req_id', 'Req']];
+  const fv = f => !f ? '—' : FV.map(([k, l]) => { const v = String(f[k] ?? 'n/a'); const has = !/^(no|n\/a|not |text only)/i.test(v); return `<span class="tag ${has ? 'g' : 'f'}" title="${esc(l + ': ' + v)}">${l}</span>`; }).join('');
+  $('#srcTable').innerHTML = `<thead><tr><th>Employer</th><th>Sector / vertical</th><th>ATS</th><th>Verification</th><th>Last result</th><th>Jobs</th><th>Fields exposed</th><th>Last checked</th><th>Links</th><th></th></tr></thead><tbody>` +
     vis.map(r => {
       const s = r.s, e = r.e, run = r.run;
       const links = [e.careers_url && `<a href="${esc(e.careers_url)}" target="_blank" rel="noopener">careers${e.careers_url_verified ? '' : '*'}</a>`, s.board_url && `<a href="${esc(s.board_url)}" target="_blank" rel="noopener">board</a>`,
         s.feed_url && `<a href="${esc(s.feed_url)}" target="_blank" rel="noopener">feed</a>`, e.linkedin_jobs_url && `<a href="${esc(e.linkedin_jobs_url)}" target="_blank" rel="noopener">LinkedIn</a>`].filter(Boolean).join(' · ');
-      return `<tr><td class="emp">${esc(e.employer)}${(e.notes || []).length ? ` <span title="${esc(e.notes.join(' '))}" style="color:var(--acid);cursor:help">ⓘ</span>` : ''}</td><td>${esc(e.sector)}<br><span style="color:var(--faint)">${esc(e.vertical || '')}</span></td><td>${esc(e.tier)}</td><td>${esc(s.ats)}${s.slug ? `<br><span style="color:var(--faint)">${esc(s.slug)}</span>` : ''}</td>
+      return `<tr><td class="emp">${esc(e.employer)}${(e.notes || []).length ? ` <span title="${esc(e.notes.join(' '))}" style="color:var(--acid);cursor:help">ⓘ</span>` : ''}<div class="sub">${esc(e.tier)}</div></td><td>${esc(e.sector)}<br><span style="color:var(--faint)">${esc(e.vertical || '')}</span></td><td>${esc(s.ats)}${s.slug ? `<br><span style="color:var(--faint)">${esc(s.slug)}</span>` : ''}</td>
         <td title="${esc(s.verification?.method || '')}" style="cursor:help">${esc(s.verification?.status || '—')}</td>
-        <td><span class="st ${resultClass(r.result)}" title="${esc(RESULT_HELP[r.result] || r.result)}">${esc(r.result)}</span>${run?.http_status ? ` <span style="color:var(--faint)">${run.http_status}</span>` : ''}${r.live ? ' <span class="tag m">live</span>' : ''}${run?.message ? `<br><span style="color:var(--faint)">${esc(String(run.message).slice(0, 140))}</span>` : ''}</td>
+        <td><span class="st ${resultClass(r.result)}" title="${esc(RESULT_HELP[r.result] || r.result)}">${esc(r.result)}</span>${run?.http_status ? ` <span style="color:var(--faint)">${run.http_status}</span>` : ''}${r.live ? ' <span class="tag m">live</span>' : ''}${run?.message ? `<div class="msg" title="${esc(run.message)}">${esc(String(run.message))}</div>` : ''}</td>
         <td>${run ? `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}` : '—'}</td><td>${fv(run?.fields)}</td>
         <td>${run?.checked_at ? esc(run.checked_at.slice(0, 16).replace('T', ' ')) : '—'}${run?.last_success_at && run.last_success_at !== run.checked_at ? `<br><span style="color:var(--faint)">last ok ${esc(run.last_success_at.slice(0, 10))}</span>` : ''}</td>
         <td>${links}</td><td>${C.BROWSER_ATS.has(s.ats) ? `<button class="btn sec sm" data-live="${esc(s.id)}">Live</button>` : ''}</td></tr>`;
