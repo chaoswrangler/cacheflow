@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261119g">
+<link rel="stylesheet" href="assets/styles.css?v=20261119h">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -83,13 +83,7 @@
             <button class="btn mag" id="btnPreset">Load sample resume</button>
             <button class="btn sec sm" id="btnClear">Clear</button>
           </div>
-          <details>
-            <summary>Optional · enhance with Claude</summary>
-            <p class="hint" style="margin:8px 0">Uses your own Anthropic API key, called straight from this browser. The key stays in memory for this tab and is never saved or sent anywhere else.</p>
-            <input type="password" id="apiKey" placeholder="sk-ant-…">
-            <div class="row" style="margin-top:8px"><button class="btn sec sm" id="btnClaude">Enhance extraction</button><span class="hint" id="claudeMsg"></span></div>
-          </details>
-          <div class="term" id="ingestLog" style="margin-top:14px"><span class="p">cacheflow&gt;</span> awaiting input…</div>
+          <div class="term" id="ingestLog" style="margin-top:14px;display:none"></div>
         </div>
       </div>
 
@@ -239,7 +233,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261119g" defer></script>
-<script type="module" src="assets/app.js?v=20261119g"></script>
+<script src="assets/fx.js?v=20261119h" defer></script>
+<script type="module" src="assets/app.js?v=20261119h"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119g';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119g';
-import { extractResume } from './shared/resume.mjs?v=20261119g';
+import * as C from './shared/core.mjs?v=20261119h';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119h';
+import { extractResume } from './shared/resume.mjs?v=20261119h';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -88,7 +88,7 @@ function renderHud() {
 const currentWindow = () => S.crit.window === 'all' ? null : C.windowFor(S.crit.window, new Date(), LOCAL_TZ);
 
 /* ============================================================ resume ingest */
-function logIngest(html, reset = false) { const el = $('#ingestLog'); el.innerHTML = (reset ? '' : el.innerHTML + '<br>') + html; el.scrollTop = 1e6; }
+function logIngest(html, reset = false) { const el = $('#ingestLog'); el.style.display = 'block'; el.innerHTML = (reset ? '' : el.innerHTML + '<br>') + html; el.scrollTop = 1e6; }
 function loadScript(src) {
   return new Promise((res, rej) => { if ([...document.scripts].some(s => s.src === src)) return res(); const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('Could not load ' + src)); document.head.appendChild(s); });
 }
@@ -153,8 +153,7 @@ function wireProfile() {
   file.onchange = () => file.files[0] && ingestFile(file.files[0]);
   $('#btnExtract').onclick = () => { const v = $('#paste').value.trim(); if (!v) return toast('Paste text or drop a file first'); S.lastText = v; applyProfile(extractProfile(v), 'Pasted text'); };
   $('#btnPreset').onclick = () => { $('#paste').value = SAMPLE; S.lastText = SAMPLE; applyProfile(extractProfile(SAMPLE), 'Sample resume (fictional)'); };
-  $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); logIngest('<span class="p">cacheflow&gt;</span> cleared', true); };
-  $('#btnClaude').onclick = enhanceWithClaude;
+  $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); $('#ingestLog').style.display = 'none'; };
   $('#heroUpload').onclick = e => { e.preventDefault(); $('#drop').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => $('#file').click(), 450); };
   for (const [id, key] of [['#pName', 'name'], ['#pLoc', 'location'], ['#pHead', 'headline']]) $(id).onchange = e => {
     S.profile[key] = e.target.value.trim();
@@ -171,32 +170,6 @@ async function ingestFile(f) {
     S.lastText = text; $('#paste').value = text.slice(0, 20000);
     applyProfile(extractProfile(text), /linkedin/i.test(text) && /top skills/i.test(text) ? 'LinkedIn PDF export' : 'Resume file');
   } catch (e) { logIngest(`<span class="r">✗</span> ${esc(e.message)}. Paste the text instead.`); }
-}
-async function enhanceWithClaude() {
-  const key = $('#apiKey').value.trim(); const text = (S.lastText || $('#paste').value || '').trim();
-  if (!key || !text) return toast('Need an API key and resume text');
-  $('#claudeMsg').textContent = 'calling…';
-  const fnList = FN_KEYS.map(k => `${k} = ${C.FUNCTIONS[k].label}`).join('; ');
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 1500, system: 'You extract structured career data from resumes. Reply with one JSON object only, no prose. Use only facts stated in the text.',
-        messages: [{ role: 'user', content: `Return JSON with keys: name, headline, location ("City, ST" for US), credentials[], employers[], titles[], skills[] (short phrases), functions[] (choose any that fit from: ${fnList}), seniority (1-6 where 3=senior IC, 4=lead/principal, 5=director, 6=VP+).\n\nRESUME:\n${text.slice(0, 30000)}` }] }) });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data?.error?.message || r.status);
-    const raw = (data.content || []).map(c => c.text || '').join('');
-    const j = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
-    const p = { ...S.profile };
-    p.name = j.name || p.name; p.headline = j.headline || p.headline; p.location = j.location || p.location;
-    p.creds = [...new Set([...(p.creds || []), ...(j.credentials || [])])]; p.employers = [...new Set([...(p.employers || []), ...(j.employers || [])])];
-    p.titles = [...new Set([...(j.titles || []), ...(p.titles || [])])].slice(0, 12);
-    const fromSkills = C.extractSkills((j.skills || []).join('\n'));
-    p.skillsOn = [...new Set([...(p.skillsOn || []), ...fromSkills])];
-    p.custom = [...new Set([...(p.custom || []), ...(j.skills || []).filter(s => !C.extractSkills(s).length).slice(0, 15)])];
-    p.suggestedFns = (j.functions || []).filter(f => FN_KEYS.includes(f));
-    p.maxSen = (+j.seniority || 0) + 1; p.source = 'resume + Claude';
-    applyProfile(p, 'Claude-enhanced extraction');
-    $('#claudeMsg').textContent = 'done';
-  } catch (e) { $('#claudeMsg').textContent = ''; logIngest(`<span class="r">✗</span> Claude call failed: ${esc(e.message)}`); }
 }
 function renderProfile() {
   const p = S.profile;
@@ -558,7 +531,7 @@ function renderSetup() {
     <h4>Failures</h4><ul><li>A 403 means access failed, not that the employer has no jobs. A 404 usually means a wrong identifier. When a refresh fails, the previous roles are kept and flagged "not refreshed".</li>
     <li>LinkedIn profiles and LinkedIn job search can't be read automatically. Use the PDF export and the generated links.</li></ul>
     <h4>Coverage</h4><p>The roster has ${S.registry.employers.length} employers seeded from a feed scan plus big-tech systems. It is <b>not exhaustive</b>. The Sources tab lists every gap.</p>
-    <p class="hint">Repo: ${esc(repo)} · resume parsing runs locally in this browser · nothing about you leaves this page unless you use the optional Claude call</p>`;
+    <p class="hint">Repo: ${esc(repo)} · resume parsing runs locally in this browser · nothing about you leaves this page</p>`;
 }
 
 function fatal(e) {
