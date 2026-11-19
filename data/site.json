@@ -1,0 +1,6 @@
+{
+  "title": "Cache Flow",
+  "signup_endpoint": "",
+  "owner_contact": "",
+  "_help": "signup_endpoint: a Formspree (or similar) form URL that accepts JSON POSTs. owner_contact: email shown as a fallback. Leave both blank to hide signup."
+}
