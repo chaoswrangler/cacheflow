@@ -1,29 +1,28 @@
 {
  "schema": 1,
- "generated_at": "2026-11-19T21:51:17.703Z",
+ "generated_at": "2026-11-19T23:55:25.281Z",
  "run": {
-  "started_at": "2026-11-19T21:03:12.853Z",
-  "finished_at": "2026-11-19T21:51:17.703Z",
+  "started_at": "2026-11-19T23:10:03.044Z",
+  "finished_at": "2026-11-19T23:55:25.281Z",
   "sources_run": 346,
   "http": {
-   "requests": 1425,
-   "retries": 129,
+   "requests": 1663,
+   "retries": 203,
    "byStatus": {
-    "200": 1286,
+    "200": 1448,
     "404": 5,
-    "429": 134
+    "429": 210
    }
   },
   "partial": false
  },
  "summary": {
   "skipped_no_key": 2,
-  "ok": 206,
+  "ok": 208,
   "not_fetchable": 108,
   "http_404": 5,
   "empty": 7,
-  "link_only": 18,
-  "http_429": 2
+  "link_only": 18
  },
  "sources": [
   {
@@ -33,7 +32,7 @@
    "result": "skipped_no_key",
    "jobs_total": 0,
    "jobs_stored": 0,
-   "checked_at": "2026-11-19T21:51:17.574Z",
+   "checked_at": "2026-11-19T23:55:25.225Z",
    "message": ""
   },
   {
@@ -43,7 +42,7 @@
    "result": "skipped_no_key",
    "jobs_total": 0,
    "jobs_stored": 0,
-   "checked_at": "2026-11-19T21:51:17.575Z",
+   "checked_at": "2026-11-19T23:55:25.225Z",
    "message": ""
   },
   {
@@ -52,7 +51,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -65,7 +64,7 @@
    },
    "jobs_total": 81,
    "jobs_stored": 59,
-   "last_success_at": "2026-11-19T21:03:13.083Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -74,7 +73,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -87,7 +86,7 @@
    },
    "jobs_total": 34,
    "jobs_stored": 23,
-   "last_success_at": "2026-11-19T21:03:13.083Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -96,7 +95,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"abacum\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -109,7 +108,7 @@
    "ats": "greenhouse",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -122,7 +121,7 @@
    },
    "jobs_total": 85,
    "jobs_stored": 46,
-   "last_success_at": "2026-11-19T21:03:13.083Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -131,7 +130,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"abridge\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -144,7 +143,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -157,7 +156,7 @@
    },
    "jobs_total": 12,
    "jobs_stored": 12,
-   "last_success_at": "2026-11-19T21:03:13.083Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -166,7 +165,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"adaptive-security\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -179,7 +178,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.083Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -192,7 +191,7 @@
    },
    "jobs_total": 243,
    "jobs_stored": 117,
-   "last_success_at": "2026-11-19T21:03:13.083Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -201,7 +200,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"aembit\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -214,7 +213,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -227,7 +226,7 @@
    },
    "jobs_total": 227,
    "jobs_stored": 162,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -236,7 +235,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"aidoc\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -249,7 +248,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"aircall\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -262,7 +261,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -275,7 +274,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 7,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -284,7 +283,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -297,7 +296,7 @@
    },
    "jobs_total": 490,
    "jobs_stored": 133,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -306,7 +305,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"alation\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -319,7 +318,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -332,7 +331,7 @@
    },
    "jobs_total": 33,
    "jobs_stored": 30,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -341,7 +340,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"alma\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -354,7 +353,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -365,9 +364,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 170,
-   "jobs_stored": 78,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 171,
+   "jobs_stored": 79,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -376,10 +375,10 @@
    "ats": "amazon",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
-   "message": "1647 US postings via keyword searches",
+   "message": "1651 US postings via keyword searches",
    "fields": {
     "posted_date": "posted_date",
     "salary": "pay statement in qualification text (geo range)",
@@ -387,9 +386,9 @@
     "remote": "text only",
     "req_id": "id_icims"
    },
-   "jobs_total": 1647,
-   "jobs_stored": 1647,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 1651,
+   "jobs_stored": 1651,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -398,7 +397,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"ambiencehealthcare\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -411,7 +410,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"amplitude\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -424,7 +423,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"anecdotes\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -437,7 +436,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -448,9 +447,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 638,
-   "jobs_stored": 498,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 636,
+   "jobs_stored": 496,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -459,7 +458,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"anvilogic\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -472,7 +471,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -485,7 +484,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -494,7 +493,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -507,7 +506,7 @@
    },
    "jobs_total": 3,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -516,7 +515,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"armis\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -529,7 +528,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -540,9 +539,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 10,
-   "jobs_stored": 4,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 11,
+   "jobs_stored": 5,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -551,7 +550,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -564,7 +563,7 @@
    },
    "jobs_total": 25,
    "jobs_stored": 23,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -573,7 +572,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -586,7 +585,7 @@
    },
    "jobs_total": 113,
    "jobs_stored": 50,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -595,7 +594,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"assetnote\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -608,7 +607,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "http_404",
    "http_status": 404,
    "message": "Not Found",
@@ -616,7 +615,7 @@
    "jobs_total": 0,
    "jobs_stored": 0,
    "last_success_at": null,
-   "consecutive_failures": 3
+   "consecutive_failures": 4
   },
   {
    "id": "gh404:attackiq",
@@ -624,7 +623,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"attackiq\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -637,7 +636,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -650,7 +649,7 @@
    },
    "jobs_total": 30,
    "jobs_stored": 28,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -659,7 +658,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -672,7 +671,7 @@
    },
    "jobs_total": 20,
    "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -681,7 +680,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -694,7 +693,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -703,7 +702,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -716,7 +715,7 @@
    },
    "jobs_total": 41,
    "jobs_stored": 29,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -725,7 +724,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -738,7 +737,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 8,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -747,7 +746,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -758,9 +757,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 12,
+   "jobs_total": 11,
    "jobs_stored": 11,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -769,7 +768,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"bitdefender\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -782,7 +781,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -795,7 +794,7 @@
    },
    "jobs_total": 40,
    "jobs_stored": 15,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -804,7 +803,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -815,9 +814,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 37,
-   "jobs_stored": 9,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 38,
+   "jobs_stored": 10,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -826,7 +825,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"blockaid\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -839,7 +838,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"bluevoyant\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -852,7 +851,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -863,9 +862,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 330,
-   "jobs_stored": 266,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 332,
+   "jobs_stored": 268,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -874,10 +873,10 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.185Z",
    "result": "ok",
    "http_status": 200,
-   "message": "pay_transparency checked for 3 relevant jobs",
+   "message": "pay_transparency checked for 2 relevant jobs",
    "fields": {
     "posted_date": "first_published",
     "salary": "description text (+ optional pay_transparency detail)",
@@ -885,9 +884,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 258,
-   "jobs_stored": 249,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 250,
+   "jobs_stored": 243,
+   "last_success_at": "2026-11-19T23:10:03.185Z",
    "consecutive_failures": 0
   },
   {
@@ -896,7 +895,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -909,7 +908,7 @@
    },
    "jobs_total": 1,
    "jobs_stored": 1,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -918,7 +917,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -929,9 +928,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 13,
-   "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 11,
+   "jobs_stored": 9,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -940,7 +939,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -953,7 +952,7 @@
    },
    "jobs_total": 1,
    "jobs_stored": 1,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -962,7 +961,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -975,7 +974,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"certik\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -988,7 +987,7 @@
    "ats": "greenhouse",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1001,7 +1000,7 @@
    },
    "jobs_total": 111,
    "jobs_stored": 82,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1010,7 +1009,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -1023,7 +1022,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -1036,7 +1035,7 @@
    },
    "jobs_total": 38,
    "jobs_stored": 38,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1045,7 +1044,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1056,9 +1055,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 77,
-   "jobs_stored": 77,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 78,
+   "jobs_stored": 78,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1067,10 +1066,10 @@
    "ats": "cisco_rss",
    "tier": "heavy",
    "verification": "experimental",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
-   "message": "31 postings via Phenom search; 13 detail pages",
+   "message": "31 postings via Phenom search; 19 detail pages",
    "fields": {
     "posted_date": "postedDate",
     "salary": "detail description",
@@ -1080,7 +1079,7 @@
    },
    "jobs_total": 31,
    "jobs_stored": 31,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1089,7 +1088,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"clerk\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1102,7 +1101,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1115,7 +1114,7 @@
    },
    "jobs_total": 9,
    "jobs_stored": 9,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1124,7 +1123,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1137,7 +1136,7 @@
    },
    "jobs_total": 498,
    "jobs_stored": 284,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1146,7 +1145,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "http_404",
    "http_status": 404,
    "message": "Not Found",
@@ -1154,7 +1153,7 @@
    "jobs_total": 0,
    "jobs_stored": 0,
    "last_success_at": null,
-   "consecutive_failures": 3
+   "consecutive_failures": 4
   },
   {
    "id": "gh:cobaltio",
@@ -1162,7 +1161,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -1175,7 +1174,7 @@
    },
    "jobs_total": 8,
    "jobs_stored": 8,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1184,7 +1183,7 @@
    "ats": "unresolved",
    "tier": "named",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"cohesity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1197,7 +1196,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -1210,7 +1209,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1221,9 +1220,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 254,
-   "jobs_stored": 194,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "jobs_total": 253,
+   "jobs_stored": 193,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1232,7 +1231,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1245,7 +1244,7 @@
    },
    "jobs_total": 3,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1254,7 +1253,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -1267,7 +1266,7 @@
    },
    "jobs_total": 22,
    "jobs_stored": 18,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1276,7 +1275,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -1289,7 +1288,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 11,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1298,7 +1297,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.084Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1311,7 +1310,7 @@
    },
    "jobs_total": 58,
    "jobs_stored": 25,
-   "last_success_at": "2026-11-19T21:03:13.084Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1320,7 +1319,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"compa\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1333,7 +1332,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1346,7 +1345,7 @@
    },
    "jobs_total": 50,
    "jobs_stored": 30,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1355,7 +1354,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"contentsquare\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1368,7 +1367,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1381,7 +1380,7 @@
    },
    "jobs_total": 3,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1390,7 +1389,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -1403,7 +1402,7 @@
    },
    "jobs_total": 14,
    "jobs_stored": 12,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1412,7 +1411,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1423,9 +1422,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 82,
-   "jobs_stored": 58,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 81,
+   "jobs_stored": 57,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1434,10 +1433,10 @@
    "ats": "workday",
    "tier": "heavy",
    "verification": "exists_rate_limited",
-   "checked_at": "2026-11-19T21:03:13.085Z",
-   "result": "http_429",
-   "http_status": 429,
-   "message": "Workday crowdstrike.wd5.myworkdayjobs.com/crowdstrikecareers: 429. A 404/422 usually means the tenant/site name is wrong; copy it from an Apply URL.",
+   "checked_at": "2026-11-19T23:10:03.186Z",
+   "result": "ok",
+   "http_status": 200,
+   "message": "218 postings across 14 keyword searches; 40 detail pages",
    "fields": {
     "posted_date": "list: relative (\"Posted 3 Days Ago\"); detail: startDate",
     "salary": "detail description text",
@@ -1445,10 +1444,10 @@
     "remote": "detail remoteType (if tenant sets it)",
     "req_id": "yes"
    },
-   "jobs_total": 0,
-   "jobs_stored": 0,
-   "last_success_at": "2026-11-19T19:43:52.892Z",
-   "consecutive_failures": 1
+   "jobs_total": 218,
+   "jobs_stored": 131,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
+   "consecutive_failures": 0
   },
   {
    "id": "ashby:cursor",
@@ -1456,7 +1455,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1467,9 +1466,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 90,
-   "jobs_stored": 60,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 88,
+   "jobs_stored": 58,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1478,7 +1477,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -1491,7 +1490,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"cyberhaven\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1504,7 +1503,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"cycode\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1517,10 +1516,10 @@
    "ats": "comeet",
    "tier": "named",
    "verification": "verified_from_apply_url",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
-   "message": "235 published positions from the hosted board",
+   "message": "238 published positions from the hosted board",
    "fields": {
     "posted_date": "time_updated only (first-observed date used)",
     "salary": "description text",
@@ -1528,9 +1527,9 @@
     "remote": "workplace_type / is_remote",
     "req_id": "internal_use_custom_id"
    },
-   "jobs_total": 235,
-   "jobs_stored": 135,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 238,
+   "jobs_stored": 136,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1539,7 +1538,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1552,7 +1551,7 @@
    },
    "jobs_total": 10,
    "jobs_stored": 2,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1561,7 +1560,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1572,9 +1571,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 901,
+   "jobs_total": 900,
    "jobs_stored": 491,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1583,7 +1582,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1594,9 +1593,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 378,
+   "jobs_total": 379,
    "jobs_stored": 208,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1605,7 +1604,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"datavant\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1618,7 +1617,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1629,9 +1628,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 110,
-   "jobs_stored": 87,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 111,
+   "jobs_stored": 88,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1640,7 +1639,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1653,7 +1652,7 @@
    },
    "jobs_total": 54,
    "jobs_stored": 41,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1662,7 +1661,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"deepwatch\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1675,7 +1674,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -1688,7 +1687,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1697,7 +1696,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1710,7 +1709,7 @@
    },
    "jobs_total": 16,
    "jobs_stored": 11,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1719,7 +1718,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1732,7 +1731,7 @@
    },
    "jobs_total": 6,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1741,7 +1740,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1754,7 +1753,7 @@
    },
    "jobs_total": 35,
    "jobs_stored": 27,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1763,7 +1762,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"docusign\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1776,7 +1775,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1787,9 +1786,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 53,
-   "jobs_stored": 36,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 56,
+   "jobs_stored": 39,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1798,7 +1797,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1811,7 +1810,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 19,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1820,10 +1819,10 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
-   "message": "pay_transparency checked for 2 relevant jobs",
+   "message": "pay_transparency checked for 3 relevant jobs",
    "fields": {
     "posted_date": "first_published",
     "salary": "description text (+ optional pay_transparency detail)",
@@ -1831,9 +1830,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 46,
+   "jobs_total": 47,
    "jobs_stored": 32,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1842,7 +1841,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "http_404",
    "http_status": 404,
    "message": "Not Found",
@@ -1850,7 +1849,7 @@
    "jobs_total": 0,
    "jobs_stored": 0,
    "last_success_at": null,
-   "consecutive_failures": 3
+   "consecutive_failures": 4
   },
   {
    "id": "gh:duolingo",
@@ -1858,7 +1857,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1871,7 +1870,7 @@
    },
    "jobs_total": 55,
    "jobs_stored": 45,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1880,7 +1879,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1893,7 +1892,7 @@
    },
    "jobs_total": 34,
    "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1902,7 +1901,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1913,9 +1912,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 373,
-   "jobs_stored": 155,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 372,
+   "jobs_stored": 154,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1924,7 +1923,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -1935,9 +1934,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 128,
+   "jobs_total": 129,
    "jobs_stored": 57,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1946,7 +1945,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -1959,7 +1958,7 @@
    },
    "jobs_total": 43,
    "jobs_stored": 29,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -1968,7 +1967,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"esentire\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1981,7 +1980,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"eset\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -1994,7 +1993,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2007,7 +2006,7 @@
    },
    "jobs_total": 34,
    "jobs_stored": 34,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2016,7 +2015,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -2029,7 +2028,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2038,7 +2037,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "http_404",
    "http_status": 404,
    "message": "Not Found",
@@ -2046,7 +2045,7 @@
    "jobs_total": 0,
    "jobs_stored": 0,
    "last_success_at": null,
-   "consecutive_failures": 3
+   "consecutive_failures": 4
   },
   {
    "id": "gh404:exaforce",
@@ -2054,7 +2053,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"exaforce\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2067,7 +2066,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2080,7 +2079,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 4,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2089,7 +2088,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2102,7 +2101,7 @@
    },
    "jobs_total": 50,
    "jobs_stored": 37,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2111,7 +2110,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "http_404",
    "http_status": 404,
    "message": "Not Found",
@@ -2119,7 +2118,7 @@
    "jobs_total": 0,
    "jobs_stored": 0,
    "last_success_at": null,
-   "consecutive_failures": 3
+   "consecutive_failures": 4
   },
   {
    "id": "gh:feedzai",
@@ -2127,7 +2126,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -2140,7 +2139,7 @@
    },
    "jobs_total": 9,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2149,7 +2148,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2160,9 +2159,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 37,
-   "jobs_stored": 34,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 36,
+   "jobs_stored": 33,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2171,7 +2170,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2184,7 +2183,7 @@
    },
    "jobs_total": 145,
    "jobs_stored": 102,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2193,7 +2192,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2204,9 +2203,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 104,
-   "jobs_stored": 88,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 105,
+   "jobs_stored": 89,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2215,7 +2214,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2228,7 +2227,7 @@
    },
    "jobs_total": 187,
    "jobs_stored": 132,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2237,7 +2236,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"flashpoint\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2250,7 +2249,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2263,7 +2262,7 @@
    },
    "jobs_total": 21,
    "jobs_stored": 13,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2272,7 +2271,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2283,9 +2282,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 33,
-   "jobs_stored": 33,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 34,
+   "jobs_stored": 34,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2294,7 +2293,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -2307,7 +2306,7 @@
    },
    "jobs_total": 41,
    "jobs_stored": 16,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2316,7 +2315,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2329,7 +2328,7 @@
    },
    "jobs_total": 20,
    "jobs_stored": 7,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2338,7 +2337,7 @@
    "ats": "unresolved",
    "tier": "named",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"fortinet\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2351,7 +2350,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -2364,7 +2363,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -2377,7 +2376,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 24,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2386,7 +2385,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"fullstory\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2399,7 +2398,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2412,7 +2411,7 @@
    },
    "jobs_total": 60,
    "jobs_stored": 60,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2421,7 +2420,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2432,9 +2431,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 248,
-   "jobs_stored": 129,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 246,
+   "jobs_stored": 127,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2443,7 +2442,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2454,9 +2453,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 86,
-   "jobs_stored": 48,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 84,
+   "jobs_stored": 46,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2465,7 +2464,7 @@
    "ats": "link_only",
    "tier": "heavy",
    "verification": "link_only",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "No public JSON feed. Postings list base salary separately (e.g. \"US: $192000-$278000 + bonus + equity\"), so base is readable on each page.",
    "jobs_total": 0,
@@ -2478,7 +2477,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2491,7 +2490,7 @@
    },
    "jobs_total": 137,
    "jobs_stored": 81,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2500,7 +2499,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"grammarly\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2513,7 +2512,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"growtherapy\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2526,7 +2525,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2537,9 +2536,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 81,
-   "jobs_stored": 81,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 82,
+   "jobs_stored": 82,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2548,7 +2547,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -2559,9 +2558,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 82,
-   "jobs_stored": 82,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 83,
+   "jobs_stored": 83,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2570,7 +2569,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"halborn\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2583,7 +2582,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -2596,7 +2595,7 @@
    },
    "jobs_total": 10,
    "jobs_stored": 9,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2605,7 +2604,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2618,7 +2617,7 @@
    },
    "jobs_total": 65,
    "jobs_stored": 42,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2627,7 +2626,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2640,7 +2639,7 @@
    },
    "jobs_total": 390,
    "jobs_stored": 262,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2649,7 +2648,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"headspace\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2662,7 +2661,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2675,7 +2674,7 @@
    },
    "jobs_total": 93,
    "jobs_stored": 93,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2684,7 +2683,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"headway\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2697,7 +2696,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2710,7 +2709,7 @@
    },
    "jobs_total": 15,
    "jobs_stored": 15,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2719,7 +2718,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2732,7 +2731,7 @@
    },
    "jobs_total": 18,
    "jobs_stored": 18,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2741,7 +2740,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"himsandhershealth\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2754,7 +2753,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -2765,9 +2764,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 203,
-   "jobs_stored": 165,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 202,
+   "jobs_stored": 164,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2776,7 +2775,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"hornetsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2789,7 +2788,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"hoxhunt\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2802,7 +2801,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2815,7 +2814,7 @@
    },
    "jobs_total": 50,
    "jobs_stored": 34,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2824,7 +2823,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"hypernative\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2837,7 +2836,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -2850,7 +2849,7 @@
    },
    "jobs_total": 5,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2859,7 +2858,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -2872,7 +2871,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -2885,7 +2884,7 @@
    },
    "jobs_total": 233,
    "jobs_stored": 216,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2894,7 +2893,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"immuta\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2907,7 +2906,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2920,7 +2919,7 @@
    },
    "jobs_total": 74,
    "jobs_stored": 36,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2929,7 +2928,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2942,7 +2941,7 @@
    },
    "jobs_total": 85,
    "jobs_stored": 83,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2951,7 +2950,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2964,7 +2963,7 @@
    },
    "jobs_total": 122,
    "jobs_stored": 46,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -2973,7 +2972,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"ironclad\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -2986,7 +2985,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -2999,7 +2998,7 @@
    },
    "jobs_total": 19,
    "jobs_stored": 17,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3008,7 +3007,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"iterable\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3021,7 +3020,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3034,7 +3033,7 @@
    },
    "jobs_total": 215,
    "jobs_stored": 86,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3043,7 +3042,7 @@
    "ats": "oracle_hcm",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3054,9 +3053,9 @@
     "remote": "WorkplaceType",
     "req_id": "Id"
    },
-   "jobs_total": 184,
-   "jobs_stored": 128,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 187,
+   "jobs_stored": 139,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3065,7 +3064,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -3078,7 +3077,7 @@
    },
    "jobs_total": 86,
    "jobs_stored": 31,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3087,7 +3086,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -3100,7 +3099,7 @@
    },
    "jobs_total": 107,
    "jobs_stored": 102,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3109,7 +3108,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3120,9 +3119,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 96,
-   "jobs_stored": 71,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 97,
+   "jobs_stored": 72,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3131,7 +3130,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3142,9 +3141,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 11,
-   "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 10,
+   "jobs_stored": 9,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3153,7 +3152,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"keyfactor\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3166,7 +3165,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3179,7 +3178,7 @@
    },
    "jobs_total": 126,
    "jobs_stored": 104,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3188,7 +3187,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3201,7 +3200,7 @@
    },
    "jobs_total": 54,
    "jobs_stored": 26,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3210,7 +3209,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -3223,7 +3222,7 @@
    },
    "jobs_total": 19,
    "jobs_stored": 15,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3232,7 +3231,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3245,7 +3244,7 @@
    },
    "jobs_total": 96,
    "jobs_stored": 94,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3254,7 +3253,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3267,7 +3266,7 @@
    },
    "jobs_total": 6,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3276,7 +3275,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3289,7 +3288,7 @@
    },
    "jobs_total": 33,
    "jobs_stored": 18,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3298,7 +3297,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"legitsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3311,7 +3310,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"lexisnexis\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3324,7 +3323,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3337,7 +3336,7 @@
    },
    "jobs_total": 12,
    "jobs_stored": 12,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3346,7 +3345,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"lumos\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3359,7 +3358,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3370,9 +3369,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 145,
-   "jobs_stored": 73,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 146,
+   "jobs_stored": 74,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3381,7 +3380,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"lyrahealth\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3394,7 +3393,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"materialsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3407,7 +3406,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -3418,9 +3417,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 33,
-   "jobs_stored": 33,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 34,
+   "jobs_stored": 34,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3429,7 +3428,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"medallia\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3442,7 +3441,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -3455,7 +3454,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3464,7 +3463,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3475,9 +3474,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 106,
-   "jobs_stored": 104,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 105,
+   "jobs_stored": 103,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3486,10 +3485,10 @@
    "ats": "eightfold",
    "tier": "heavy",
    "verification": "search_verified; details_verified; pagination_rate_limited",
-   "checked_at": "2026-11-19T21:03:13.085Z",
+   "checked_at": "2026-11-19T23:10:03.186Z",
    "result": "ok",
    "http_status": 200,
-   "message": "318 positions from 14 searches; 60 detail pages; INCOMPLETE (1 requests cut short, e.g. partner@10: 429)",
+   "message": "323 positions from 14 searches; 60 detail pages; INCOMPLETE (1 requests cut short, e.g. go-to-market@20: 429)",
    "fields": {
     "posted_date": "postedTs (creationTs kept separately)",
     "salary": "position_details jobDescription",
@@ -3497,9 +3496,9 @@
     "remote": "workLocationOption + efcustomTextWorkSite",
     "req_id": "displayJobId"
    },
-   "jobs_total": 318,
-   "jobs_stored": 280,
-   "last_success_at": "2026-11-19T21:03:13.085Z",
+   "jobs_total": 323,
+   "jobs_stored": 284,
+   "last_success_at": "2026-11-19T23:10:03.186Z",
    "consecutive_failures": 0
   },
   {
@@ -3508,7 +3507,7 @@
    "ats": "unresolved",
    "tier": "named",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"mimecast\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3521,7 +3520,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -3534,7 +3533,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3547,7 +3546,7 @@
    },
    "jobs_total": 39,
    "jobs_stored": 23,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3556,7 +3555,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3569,7 +3568,7 @@
    },
    "jobs_total": 51,
    "jobs_stored": 42,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3578,7 +3577,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3591,7 +3590,7 @@
    },
    "jobs_total": 3,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3600,7 +3599,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3611,9 +3610,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 411,
-   "jobs_stored": 161,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 415,
+   "jobs_stored": 163,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3622,7 +3621,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 2 relevant jobs",
@@ -3635,7 +3634,7 @@
    },
    "jobs_total": 84,
    "jobs_stored": 71,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3644,7 +3643,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3655,9 +3654,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 185,
-   "jobs_stored": 145,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 186,
+   "jobs_stored": 146,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3666,7 +3665,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3679,7 +3678,7 @@
    },
    "jobs_total": 137,
    "jobs_stored": 30,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3688,7 +3687,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"n8n\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3701,10 +3700,10 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
-   "message": "pay_transparency checked for 3 relevant jobs",
+   "message": "pay_transparency checked for 4 relevant jobs",
    "fields": {
     "posted_date": "first_published",
     "salary": "description text (+ optional pay_transparency detail)",
@@ -3712,9 +3711,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 202,
-   "jobs_stored": 202,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 204,
+   "jobs_stored": 204,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3723,7 +3722,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"nccgroup\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3736,7 +3735,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3749,7 +3748,7 @@
    },
    "jobs_total": 10,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3758,7 +3757,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3769,9 +3768,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 5,
-   "jobs_stored": 5,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 6,
+   "jobs_stored": 6,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3780,7 +3779,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3791,9 +3790,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 128,
-   "jobs_stored": 51,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 127,
+   "jobs_stored": 50,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3802,7 +3801,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"netspi\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3815,7 +3814,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3826,9 +3825,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 41,
-   "jobs_stored": 16,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 42,
+   "jobs_stored": 17,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3837,7 +3836,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3850,7 +3849,7 @@
    },
    "jobs_total": 119,
    "jobs_stored": 47,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3859,7 +3858,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"noom\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3872,7 +3871,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3883,9 +3882,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 169,
-   "jobs_stored": 83,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 167,
+   "jobs_stored": 82,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3894,7 +3893,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3907,7 +3906,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 12,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3916,7 +3915,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"oasis-security\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -3929,7 +3928,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -3942,7 +3941,7 @@
    },
    "jobs_total": 15,
    "jobs_stored": 8,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3951,7 +3950,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -3962,9 +3961,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 363,
+   "jobs_total": 365,
    "jobs_stored": 151,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3973,7 +3972,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -3984,9 +3983,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 24,
-   "jobs_stored": 24,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 25,
+   "jobs_stored": 25,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -3995,7 +3994,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4008,7 +4007,7 @@
    },
    "jobs_total": 87,
    "jobs_stored": 47,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4017,7 +4016,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"opal\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4030,7 +4029,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4041,9 +4040,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 840,
-   "jobs_stored": 651,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 849,
+   "jobs_stored": 660,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4052,7 +4051,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -4065,7 +4064,7 @@
    },
    "jobs_total": 6,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4074,7 +4073,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"optiv\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4087,7 +4086,7 @@
    "ats": "oracle_hcm",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4098,9 +4097,9 @@
     "remote": "WorkplaceType",
     "req_id": "Id"
    },
-   "jobs_total": 285,
-   "jobs_stored": 206,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 283,
+   "jobs_stored": 208,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4109,7 +4108,7 @@
    "ats": "greenhouse",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -4122,7 +4121,7 @@
    },
    "jobs_total": 13,
    "jobs_stored": 4,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4131,7 +4130,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4144,7 +4143,7 @@
    },
    "jobs_total": 13,
    "jobs_stored": 13,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4153,7 +4152,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"oxsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4166,7 +4165,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4179,7 +4178,7 @@
    },
    "jobs_total": 47,
    "jobs_stored": 40,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4188,7 +4187,7 @@
    "ats": "link_only",
    "tier": "heavy",
    "verification": "link_only",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Radancy/TalentBrew front end with Workday requisitions (JR- IDs). No public JSON feed.",
    "jobs_total": 0,
@@ -4201,7 +4200,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4214,7 +4213,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4223,7 +4222,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"parloa\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4236,7 +4235,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4249,7 +4248,7 @@
    },
    "jobs_total": 20,
    "jobs_stored": 14,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4258,7 +4257,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"pentera\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4271,7 +4270,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4284,7 +4283,7 @@
    },
    "jobs_total": 25,
    "jobs_stored": 24,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4293,7 +4292,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4306,7 +4305,7 @@
    },
    "jobs_total": 148,
    "jobs_stored": 126,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4315,7 +4314,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"persona\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4328,7 +4327,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"picus\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4341,7 +4340,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"pindrop\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4354,7 +4353,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4365,9 +4364,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 174,
-   "jobs_stored": 142,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 175,
+   "jobs_stored": 143,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4376,7 +4375,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4389,7 +4388,7 @@
    },
    "jobs_total": 202,
    "jobs_stored": 105,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4398,7 +4397,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"postman\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4411,7 +4410,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"privacera\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4424,7 +4423,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"projectdiscovery\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4437,10 +4436,10 @@
    "ats": "workday",
    "tier": "heavy",
    "verification": "exists_rate_limited",
-   "checked_at": "2026-11-19T21:03:13.086Z",
-   "result": "http_429",
-   "http_status": 429,
-   "message": "Workday proofpoint.wd5.myworkdayjobs.com/ProofpointCareers: 429. A 404/422 usually means the tenant/site name is wrong; copy it from an Apply URL.",
+   "checked_at": "2026-11-19T23:10:03.187Z",
+   "result": "ok",
+   "http_status": 200,
+   "message": "115 postings across 14 keyword searches; 40 detail pages",
    "fields": {
     "posted_date": "list: relative (\"Posted 3 Days Ago\"); detail: startDate",
     "salary": "detail description text",
@@ -4448,10 +4447,10 @@
     "remote": "detail remoteType (if tenant sets it)",
     "req_id": "yes"
    },
-   "jobs_total": 0,
-   "jobs_stored": 0,
-   "last_success_at": "2026-11-19T19:43:52.893Z",
-   "consecutive_failures": 1
+   "jobs_total": 115,
+   "jobs_stored": 66,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
+   "consecutive_failures": 0
   },
   {
    "id": "gh404:pushsecurity",
@@ -4459,7 +4458,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"pushsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4472,7 +4471,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"qlik\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4485,7 +4484,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4498,7 +4497,7 @@
    },
    "jobs_total": 156,
    "jobs_stored": 125,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4507,7 +4506,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -4520,7 +4519,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"queryai\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4533,7 +4532,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"radiantsecurity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4546,7 +4545,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4557,9 +4556,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 185,
-   "jobs_stored": 171,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 184,
+   "jobs_stored": 170,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4568,7 +4567,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -4581,7 +4580,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4594,7 +4593,7 @@
    },
    "jobs_total": 58,
    "jobs_stored": 32,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4603,7 +4602,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4614,9 +4613,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 146,
-   "jobs_stored": 128,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 144,
+   "jobs_stored": 126,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4625,7 +4624,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4636,9 +4635,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 405,
-   "jobs_stored": 405,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 404,
+   "jobs_stored": 404,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4647,7 +4646,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"relyanceai\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4660,7 +4659,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"resourcely\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4673,7 +4672,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"revenuecat\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4686,7 +4685,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -4699,7 +4698,7 @@
    },
    "jobs_total": 6,
    "jobs_stored": 5,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4708,7 +4707,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"ro\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4721,7 +4720,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4734,7 +4733,7 @@
    },
    "jobs_total": 167,
    "jobs_stored": 155,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4743,7 +4742,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4756,7 +4755,7 @@
    },
    "jobs_total": 101,
    "jobs_stored": 62,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4765,7 +4764,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4778,7 +4777,7 @@
    },
    "jobs_total": 202,
    "jobs_stored": 94,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4787,7 +4786,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4800,7 +4799,7 @@
    },
    "jobs_total": 28,
    "jobs_stored": 28,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4809,7 +4808,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -4822,7 +4821,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4831,7 +4830,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -4844,7 +4843,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 2,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4853,7 +4852,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -4866,10 +4865,10 @@
    "ats": "workday",
    "tier": "heavy",
    "verification": "exists_rate_limited",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
-   "message": "343 postings across 14 keyword searches; 40 detail pages",
+   "message": "373 postings across 14 keyword searches; 40 detail pages",
    "fields": {
     "posted_date": "list: relative (\"Posted 3 Days Ago\"); detail: startDate",
     "salary": "detail description text",
@@ -4877,9 +4876,9 @@
     "remote": "detail remoteType (if tenant sets it)",
     "req_id": "yes"
    },
-   "jobs_total": 343,
-   "jobs_stored": 174,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 373,
+   "jobs_stored": 185,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4888,7 +4887,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -4901,7 +4900,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 14,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4910,7 +4909,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4923,7 +4922,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4932,7 +4931,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4945,7 +4944,7 @@
    },
    "jobs_total": 305,
    "jobs_stored": 226,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -4954,7 +4953,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -4967,7 +4966,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"sardine\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -4980,7 +4979,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -4993,7 +4992,7 @@
    },
    "jobs_total": 168,
    "jobs_stored": 134,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5002,7 +5001,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"scrut\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5015,7 +5014,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"secondfrontsystems\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5028,7 +5027,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"securiti\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5041,7 +5040,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5054,7 +5053,7 @@
    },
    "jobs_total": 9,
    "jobs_stored": 8,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5063,7 +5062,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"securonix\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5076,7 +5075,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5089,7 +5088,7 @@
    },
    "jobs_total": 16,
    "jobs_stored": 16,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5098,7 +5097,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5111,7 +5110,7 @@
    },
    "jobs_total": 43,
    "jobs_stored": 43,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5120,7 +5119,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5131,9 +5130,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 269,
-   "jobs_stored": 99,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 270,
+   "jobs_stored": 100,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5142,7 +5141,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"seon\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5155,7 +5154,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5168,7 +5167,7 @@
    },
    "jobs_total": 68,
    "jobs_stored": 64,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5177,10 +5176,10 @@
    "ats": "smartrecruiters",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
-   "message": "439 postings via 14 queries; 60 detail pages",
+   "message": "440 postings via 14 queries; 60 detail pages",
    "fields": {
     "posted_date": "releasedDate",
     "salary": "detail text only",
@@ -5188,9 +5187,9 @@
     "remote": "location.remote",
     "req_id": "refNumber"
    },
-   "jobs_total": 439,
-   "jobs_stored": 439,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 440,
+   "jobs_stored": 440,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5199,7 +5198,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5212,7 +5211,7 @@
    },
    "jobs_total": 195,
    "jobs_stored": 118,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5221,7 +5220,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"silverfort\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5234,7 +5233,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"simspace\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5247,7 +5246,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5260,7 +5259,7 @@
    },
    "jobs_total": 16,
    "jobs_stored": 16,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5269,7 +5268,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5282,7 +5281,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 4,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5291,7 +5290,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5304,7 +5303,7 @@
    },
    "jobs_total": 3,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5313,7 +5312,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5326,7 +5325,7 @@
    },
    "jobs_total": 74,
    "jobs_stored": 43,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5335,7 +5334,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -5348,7 +5347,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5361,7 +5360,7 @@
    },
    "jobs_total": 39,
    "jobs_stored": 20,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5370,7 +5369,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5383,7 +5382,7 @@
    },
    "jobs_total": 24,
    "jobs_stored": 19,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5392,7 +5391,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5405,7 +5404,7 @@
    },
    "jobs_total": 86,
    "jobs_stored": 78,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5414,7 +5413,7 @@
    "ats": "lever",
    "tier": "named",
    "verification": "verified_from_posting_url",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -5427,7 +5426,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5436,10 +5435,10 @@
    "ats": "phenom",
    "tier": "named",
    "verification": "verified_parent_board",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
-   "message": "31 postings via Phenom search; 13 detail pages",
+   "message": "31 postings via Phenom search; 19 detail pages",
    "fields": {
     "posted_date": "postedDate",
     "salary": "detail description",
@@ -5449,7 +5448,7 @@
    },
    "jobs_total": 31,
    "jobs_stored": 31,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5458,7 +5457,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"springhealth\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5471,7 +5470,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"sprinto\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5484,7 +5483,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5497,7 +5496,7 @@
    },
    "jobs_total": 20,
    "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5506,7 +5505,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5519,7 +5518,7 @@
    },
    "jobs_total": 7,
    "jobs_stored": 7,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5528,7 +5527,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"stellarcyber\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5541,7 +5540,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5552,9 +5551,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 771,
-   "jobs_stored": 385,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 770,
+   "jobs_stored": 384,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5563,7 +5562,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"strongdm\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5576,7 +5575,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"stytch\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5589,7 +5588,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -5602,7 +5601,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5611,7 +5610,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5624,7 +5623,7 @@
    },
    "jobs_total": 26,
    "jobs_stored": 9,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5633,7 +5632,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"superhuman\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5646,7 +5645,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"swimlane\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5659,7 +5658,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5672,7 +5671,7 @@
    },
    "jobs_total": 9,
    "jobs_stored": 7,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5681,7 +5680,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5694,7 +5693,7 @@
    },
    "jobs_total": 81,
    "jobs_stored": 71,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5703,7 +5702,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"talkiatry\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5716,7 +5715,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -5729,7 +5728,7 @@
    },
    "jobs_total": 18,
    "jobs_stored": 18,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5738,7 +5737,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"tekion\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5751,7 +5750,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -5764,7 +5763,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"terratrue\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5777,7 +5776,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"thoughtspot\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5790,7 +5789,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"threatlocker\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5803,7 +5802,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -5816,7 +5815,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"token-security\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5829,7 +5828,7 @@
    "ats": "greenhouse",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5842,7 +5841,7 @@
    },
    "jobs_total": 30,
    "jobs_stored": 21,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5851,7 +5850,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 3 relevant jobs",
@@ -5864,7 +5863,7 @@
    },
    "jobs_total": 91,
    "jobs_stored": 33,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5873,7 +5872,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -5886,7 +5885,7 @@
    },
    "jobs_total": 100,
    "jobs_stored": 100,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5895,7 +5894,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"trailofbits\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5908,7 +5907,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"transcarent\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5921,7 +5920,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -5934,7 +5933,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 1,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5943,7 +5942,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -5956,7 +5955,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"trustarc\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -5969,7 +5968,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 1 relevant jobs",
@@ -5982,7 +5981,7 @@
    },
    "jobs_total": 36,
    "jobs_stored": 16,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -5991,7 +5990,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6002,9 +6001,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 106,
+   "jobs_total": 107,
    "jobs_stored": 36,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6013,7 +6012,7 @@
    "ats": "ashby",
    "tier": "named",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6024,9 +6023,9 @@
     "remote": "isRemote/workplaceType",
     "req_id": "no"
    },
-   "jobs_total": 71,
-   "jobs_stored": 39,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 69,
+   "jobs_stored": 37,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6035,7 +6034,7 @@
    "ats": "ashby",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6048,7 +6047,7 @@
    },
    "jobs_total": 34,
    "jobs_stored": 28,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6057,7 +6056,7 @@
    "ats": "link_only",
    "tier": "named",
    "verification": "needs_ats_discovery",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "link_only",
    "message": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
    "jobs_total": 0,
@@ -6070,7 +6069,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 4 relevant jobs",
@@ -6083,7 +6082,7 @@
    },
    "jobs_total": 11,
    "jobs_stored": 10,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6092,7 +6091,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6105,7 +6104,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 4,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6114,7 +6113,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6125,9 +6124,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 87,
+   "jobs_total": 86,
    "jobs_stored": 72,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6136,7 +6135,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6149,7 +6148,7 @@
    },
    "jobs_total": 347,
    "jobs_stored": 272,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6158,7 +6157,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6171,7 +6170,7 @@
    },
    "jobs_total": 44,
    "jobs_stored": 18,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6180,7 +6179,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"vizai\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6193,7 +6192,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"watchguard\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6206,7 +6205,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6219,7 +6218,7 @@
    },
    "jobs_total": 19,
    "jobs_stored": 19,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6228,7 +6227,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "empty",
    "http_status": 200,
    "message": "",
@@ -6241,7 +6240,7 @@
    },
    "jobs_total": 0,
    "jobs_stored": 0,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6250,7 +6249,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6263,7 +6262,7 @@
    },
    "jobs_total": 41,
    "jobs_stored": 41,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6272,7 +6271,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6285,7 +6284,7 @@
    },
    "jobs_total": 107,
    "jobs_stored": 29,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6294,7 +6293,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"workos\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6307,7 +6306,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6320,7 +6319,7 @@
    },
    "jobs_total": 29,
    "jobs_stored": 20,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6329,7 +6328,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "",
@@ -6342,7 +6341,7 @@
    },
    "jobs_total": 4,
    "jobs_stored": 3,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6351,7 +6350,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6364,7 +6363,7 @@
    },
    "jobs_total": 18,
    "jobs_stored": 6,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6373,7 +6372,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6386,7 +6385,7 @@
    },
    "jobs_total": 21,
    "jobs_stored": 7,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6395,7 +6394,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"zapier\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6408,7 +6407,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"zenity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6421,7 +6420,7 @@
    "ats": "unresolved",
    "tier": "core",
    "verification": "unresolved_404",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "not_fetchable",
    "message": "Greenhouse identifier \"zimperium\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
    "jobs_total": 0,
@@ -6434,7 +6433,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6445,9 +6444,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 90,
+   "jobs_total": 91,
    "jobs_stored": 64,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6456,7 +6455,7 @@
    "ats": "greenhouse",
    "tier": "heavy",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6467,9 +6466,9 @@
     "remote": "from location text",
     "req_id": "yes"
    },
-   "jobs_total": 377,
-   "jobs_stored": 181,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "jobs_total": 379,
+   "jobs_stored": 183,
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   },
   {
@@ -6478,7 +6477,7 @@
    "ats": "greenhouse",
    "tier": "core",
    "verification": "verified_feed",
-   "checked_at": "2026-11-19T21:03:13.086Z",
+   "checked_at": "2026-11-19T23:10:03.187Z",
    "result": "ok",
    "http_status": 200,
    "message": "pay_transparency checked for 5 relevant jobs",
@@ -6491,7 +6490,7 @@
    },
    "jobs_total": 43,
    "jobs_stored": 31,
-   "last_success_at": "2026-11-19T21:03:13.086Z",
+   "last_success_at": "2026-11-19T23:10:03.187Z",
    "consecutive_failures": 0
   }
  ]
