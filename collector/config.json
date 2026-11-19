@@ -33,11 +33,11 @@
   "host_rules": [
     {
       "suffix": "myworkdayjobs.com",
-      "minDelayMs": 2500,
-      "maxDelayMs": 5000,
+      "minDelayMs": 8000,
+      "maxDelayMs": 12000,
       "retries": 5,
-      "backoffMs": 8000,
-      "_note": "Workday rate-limits (HTTP 429); go slower and wait longer between retries"
+      "backoffMs": 10000,
+      "_note": "Workday answered 429 to most requests at 2.5-5s spacing from GitHub runners; 8-12s spacing"
     },
     {
       "suffix": "boards-api.greenhouse.io",
@@ -46,8 +46,8 @@
     },
     {
       "suffix": "apply.careers.microsoft.com",
-      "minDelayMs": 5000,
-      "maxDelayMs": 10000,
+      "minDelayMs": 7000,
+      "maxDelayMs": 12000,
       "retries": 5,
       "backoffMs": 10000,
       "_note": "Eightfold PCSX pagination returned 429 in testing; start with 5-10s gaps"
@@ -62,5 +62,6 @@
   ],
   "workday_max_per_query": 60,
   "eightfold_max_per_query": 30,
-  "phenom_max_per_query": 30
+  "phenom_max_per_query": 30,
+  "workday_detail_cap": 40
 }

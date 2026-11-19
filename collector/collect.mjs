@@ -27,7 +27,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const prevStatus = await readJSON(join(dataDir, 'status.json'), { sources: [] });
   const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log, hostRules: cfg.host_rules || [] });
   const startedAt = now.toISOString();
-  const opt = { eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
+  const opt = { workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
 
   if (argv.probe) return probe(registry, http, dataDir);
 
@@ -124,7 +124,8 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const win = weekWindow(now);
   const allStatus = [...statuses, ...aggStatus];
   // keep status rows for sources not run this time
-  for (const s of prevStatus.sources) if (!allStatus.find(x => x.id === s.id)) allStatus.push(s);
+  const known = new Set(registry.employers.flatMap(e => e.sources.map(x => x.id)));
+  for (const s of prevStatus.sources) if (!allStatus.find(x => x.id === s.id) && (known.has(s.id) || s.id.startsWith('agg:'))) allStatus.push(s); // drop rows for sources removed from the registry
   allStatus.sort((a, b) => a.employer.localeCompare(b.employer) || a.id.localeCompare(b.id));
 
   const summary = allStatus.reduce((acc, s) => { acc[s.result] = (acc[s.result] || 0) + 1; return acc; }, {});
@@ -140,7 +141,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
 
 // ----- discovery probe: suggests boards, a human approves them into sources.json
 async function probe(registry, http, dataDir) {
-  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
+  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
   const results = [];
   for (const e of targets) {
     const base = e.employer.toLowerCase().replace(/\.ai$/, 'ai').replace(/&/g, 'and');

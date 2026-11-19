@@ -142,6 +142,9 @@ const mockFetch = async (url, opts = {}) => {
 <tr><td><a href="https://jobs.cisco.com/jobs/ProjectDetail/Director-Product-Marketing-Security/1450001">Director, Product Marketing - Security</a></td><td>Marketing</td><td>Professional</td><td>New York, New York, US</td><td>Remote, US</td></tr>
 <tr><td><a href="/jobs/ProjectDetail/Engineer/1450002">Software Engineer</a></td><td>Engineer - Software</td><td>Professional</td><td>Bangalore, India</td><td></td></tr></table></body></html>`, { status: 200 });
   if (url.includes('jobs.cisco.com/jobs/ProjectDetail/Director')) return new Response('<html><body><h1>Director</h1><p>The US base salary range for this position is $210,000 - $290,000.</p></body></html>', { status: 200 });
+  if (url.includes('www.comeet.com/jobs/epsilon/11.001')) return new Response(`<html><script>var COMPANY_DATA = {"name":"Epsilon"};
+var COMPANY_POSITIONS_DATA = [{"uid":"A1.001","name":"Director, Product Marketing [Data] \\"DSPM\\"","department":"Marketing","location":{"name":"New York, NY","city":"New York","state":"NY","country":"US","is_remote":false},"workplace_type":"Hybrid","time_updated":"2026-11-18T14:00:00Z","url_active_page":"https://www.comeet.com/jobs/epsilon/11.001/director-product-marketing/A1.001","custom_fields":{"details":[{"name":"Description","value":"<p>Own launches.</p>","order":1},{"name":"Compensation","value":"<p>The base salary range for this role is $210,000 - $250,000.</p>","order":2}]}},{"uid":"A1.002","name":"Talent Pool","is_talent_pool":true,"location":{}}];
+var OTHER = 1;</script></html>`, { status: 200 });
   if (url.includes('flaky.example')) { flaky++; return flaky < 2 ? new Response('slow down', { status: 429, headers: { 'retry-after': '0' } }) : J({ jobs: [] }); }
   return new Response('not mocked', { status: 404 });
 };
@@ -156,6 +159,7 @@ const reg = { employers: [
   { employer: 'Amazon / AWS', tier: 'heavy', sources: [{ id: 'amazon:jobs', ats: 'amazon', queries: ['product marketing'] }] },
   { employer: 'Cisco', tier: 'heavy', sources: [{ id: 'cisco:rss', ats: 'cisco_rss', queries: ['marketing'], phenom_base: 'https://careers.cisco.com/global/en', feed_url_template: 'https://jobs.cisco.com/jobs/SearchJobs/{q}/feed' }] },
   { employer: 'Microsoft', tier: 'heavy', sources: [{ id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: ['product manager'] }] },
+  { employer: 'Epsilon', tier: 'core', sources: [{ id: 'comeet:epsilon', ats: 'comeet', slug: 'epsilon', company_uid: '11.001' }] },
   { employer: 'Google', tier: 'heavy', sources: [{ id: 'google:link', ats: 'link_only', verification: { status: 'link_only', method: 'No feed' } }] },
 ] };
 await writeFile(join(dir, 'sources.json'), JSON.stringify(reg));
@@ -180,6 +184,7 @@ try {
   t('cisco phenom JSON parsed', () => { const c = J['cisco:rss:CISCUS1450009EXTERNALENUS']; assert.ok(c, 'cisco job missing'); assert.equal(c.salary.min, 230000); assert.equal(c.posted_kind, 'posted_date'); });
   t('microsoft eightfold: pages by returned count, details give base pay + work site', () => { const m = J['ms:eightfold:1970393557041105']; assert.ok(m); assert.equal(m.salary.min, 163600); assert.equal(m.salary.kind, 'base'); assert.equal(m.workplace, 'hybrid'); assert.equal(m.posted_kind, 'posted_ts'); assert.ok(J['ms:eightfold:1970393557041106']); assert.equal(S['ms:eightfold'].result, 'ok'); });
   t('microsoft request mirrors the tested one (empty location)', () => assert.ok(calls.some(c => c.includes('/api/pcsx/search?domain=microsoft.com&query=product%20manager&location=&start=1'))));
+  t('comeet embedded positions parsed (talent pool skipped, base from text, hybrid)', () => { const c = J['comeet:epsilon:A1.001']; assert.ok(c, 'comeet job missing'); assert.equal(c.salary.min, 210000); assert.equal(c.workplace, 'hybrid'); assert.equal(c.posted_kind, 'updated_only'); assert.equal(J['comeet:epsilon:A1.002'], undefined); assert.equal(S['comeet:epsilon'].result, 'ok'); });
   t('amazon AWS tagged + salary', () => { const a = J['amazon:jobs:3100001']; assert.equal(a.employer, 'Amazon / AWS (AWS)'); assert.equal(a.salary.max, 250000); });
 
   // second run: Acme fails → its jobs are preserved and flagged stale, not deleted

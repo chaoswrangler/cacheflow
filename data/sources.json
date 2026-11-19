@@ -1210,7 +1210,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -1280,7 +1280,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -1346,8 +1346,8 @@
    "careers_url": "https://careers.cisco.com/",
    "careers_url_verified": true,
    "notes": [
-    "Splunk is part of Cisco. Check whether Splunk roles post only on Cisco careers.",
-    "Cisco applications run on cisco.wd5.myworkday.com (per Cisco scam notice)."
+    "Cisco applications run on cisco.wd5.myworkday.com (per Cisco scam notice).",
+    "Splunk roles are collected under the Splunk employer via cisco:splunk."
    ],
    "sources": [
     {
@@ -1528,7 +1528,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -1887,7 +1887,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -1946,30 +1946,23 @@
    "sector": "Cybersecurity",
    "vertical": "Data security & privacy",
    "tier": "named",
-   "careers_url": null,
-   "careers_url_verified": false,
-   "notes": [],
+   "careers_url": "https://www.cyera.com/careers",
+   "careers_url_verified": true,
+   "notes": [
+    "cyera.io/careers redirects to www.cyera.com/careers. Jobs are hosted on Comeet (Spark Hire Recruit), company UID 17.008, confirmed from a live posting URL supplied by the user on 2026-11-19 (Sales Engineer - NY Metro (Enterprise))."
+   ],
    "sources": [
     {
-     "id": "ashby:cyera",
-     "ats": "ashby",
+     "id": "comeet:cyera",
+     "ats": "comeet",
      "slug": "cyera",
-     "board_url": "https://jobs.ashbyhq.com/cyera",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/cyera?includeCompensation=true",
+     "company_uid": "17.008",
+     "board_url": "https://www.comeet.com/jobs/cyera/17.008",
+     "example_posting": "https://www.comeet.com/jobs/cyera/17.008/careers/D7.932",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
-     }
-    },
-    {
-     "id": "gh404:cyera",
-     "ats": "unresolved",
-     "slug": "cyera",
-     "verification": {
-      "status": "unresolved_404",
-      "method": "Greenhouse identifier \"cyera\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
-      "date": "prior scan"
+      "status": "verified_from_apply_url",
+      "method": "Host and company UID read from a live Cyera posting on comeet.com; board embeds COMPANY_POSITIONS_DATA. Pending first collector run.",
+      "date": "2026-11-19"
      }
     }
    ],
@@ -2973,7 +2966,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -3637,7 +3630,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -4499,7 +4492,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -5818,7 +5811,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -5911,7 +5904,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -6275,7 +6268,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -6413,7 +6406,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -6938,7 +6931,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -7027,15 +7020,20 @@
    "vertical": "Endpoint & XDR",
    "tier": "named",
    "careers_url": "https://www.sophos.com/en-us/careers",
-   "careers_url_verified": false,
-   "notes": [],
+   "careers_url_verified": true,
+   "notes": [
+    "Jobs are on Lever: live posting jobs.lever.co/sophos/286924f3-11cc-4de0-934e-4094ef99081f (Global Solutions Engineer) found 2026-11-19."
+   ],
    "sources": [
     {
-     "id": "link:sophos",
-     "ats": "link_only",
+     "id": "lever:sophos",
+     "ats": "lever",
+     "slug": "sophos",
+     "board_url": "https://jobs.lever.co/sophos",
+     "feed_url": "https://api.lever.co/v0/postings/sophos?mode=json",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "status": "verified_from_posting_url",
+      "method": "Slug read from a live jobs.lever.co/sophos posting URL, not guessed. Pending first collector run.",
       "date": "2026-11-19"
      }
     }
@@ -7049,15 +7047,28 @@
    "vertical": "SecOps, SIEM & AI SOC",
    "tier": "named",
    "careers_url": "https://www.splunk.com/en_us/careers.html",
-   "careers_url_verified": false,
-   "notes": [],
+   "careers_url_verified": true,
+   "notes": [
+    "Splunk is a Cisco business unit (acquisition closed March 2024). Splunk roles post on Cisco careers; splunk.com/careers redirects there. Collected from careers.cisco.com searches containing 'Splunk'; the same role may also appear under Cisco (shown as a duplicate)."
+   ],
    "sources": [
     {
-     "id": "link:splunk",
-     "ats": "link_only",
+     "id": "cisco:splunk",
+     "ats": "phenom",
+     "base": "https://careers.cisco.com/global/en",
+     "queries": [
+      "splunk product manager",
+      "splunk product marketing",
+      "splunk partner",
+      "splunk strategy",
+      "splunk program manager",
+      "splunk sales",
+      "splunk solutions",
+      "splunk security"
+     ],
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "status": "verified_parent_board",
+      "method": "Splunk hiring runs through Cisco careers (Phenom). Same endpoint as cisco:rss, filtered by 'splunk' keyword searches.",
       "date": "2026-11-19"
      }
     }
@@ -7486,7 +7497,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -7577,7 +7588,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -7768,7 +7779,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }
@@ -7913,7 +7924,7 @@
      "ats": "link_only",
      "verification": {
       "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
+      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters…). Add that to sources.json, or run --probe.",
       "date": "2026-11-19"
      }
     }

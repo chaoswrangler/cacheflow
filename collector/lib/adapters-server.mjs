@@ -1,10 +1,26 @@
 // Adapters that only work server-side (no CORS) or need many paced requests.
-import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, parseSalaries } from '../../assets/shared/core.mjs';
+import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, parseSalaries, classifyWorkplace } from '../../assets/shared/core.mjs';
 
 const iso = v => { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
 const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.detail || r.statusText || r.error || '', ...extra });
-const relevantTitle = t => { const c = classifyFunctions(t); return c.functions.length || c.eng_review; };
-const usText = s => /united states|\bUSA?\b|, [A-Z]{2}\b|remote|virtual|north america/i.test(s || '');
+// Pull `NAME = [ ... ]` out of an inline script, matching brackets while skipping string contents.
+export function embeddedArray(html, name) {
+  const at = String(html || '').search(new RegExp(name + '\\s*=\\s*\\['));
+  if (at < 0) return null;
+  const start = html.indexOf('[', at);
+  let depth = 0, inStr = false, esc = false;
+  for (let i = start; i < html.length; i++) {
+    const c = html[i];
+    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === '"') inStr = false; continue; }
+    if (c === '"') inStr = true;
+    else if (c === '[' || c === '{') depth++;
+    else if ((c === ']' || c === '}') && --depth === 0) { try { return JSON.parse(html.slice(start, i + 1)); } catch { return null; } }
+  }
+  return null;
+}
+const relevantTitle =t => { const c = classifyFunctions(t); return c.functions.length || c.eng_review; };
+// US or unclear location: worth a detail request. Explicitly foreign ("Brazil - Remote", "Japan - Tokyo") is not.
+const usText = s => classifyWorkplace({ locations: [String(s || '').replace(/---?/g, ', ')] }).us !== false;
 
 export const ADAPTERS = {
   ...BASE,
@@ -75,6 +91,34 @@ export const ADAPTERS = {
     return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs, fields: { posted_date: 'published_on', salary: 'text', location: 'yes', remote: 'telecommuting', req_id: 'no' } };
   },
 
+  // Comeet (Spark Hire Recruit): the public hosted board www.comeet.com/jobs/{slug}/{uid} embeds every
+  // published position as COMPANY_POSITIONS_DATA. One page request per run; no token, no detail calls.
+  // Comeet exposes only time_updated (no publish date), so posted_at stays empty and first-observed applies.
+  async comeet(src, emp, http) {
+    const board = src.board_url || `https://www.comeet.com/jobs/${src.slug}/${src.company_uid}`;
+    const r = await http.text(board);
+    if (!r.ok) return fail(r);
+    const list = embeddedArray(r.data, 'COMPANY_POSITIONS_DATA');
+    if (!Array.isArray(list)) return fail({ error: 'parse_error', detail: 'Comeet page without COMPANY_POSITIONS_DATA' });
+    const jobs = list.filter(p => p && p.name && !p.is_talent_pool).map(p => {
+      const L = p.location || {};
+      const loc = L.name || [L.city, L.state, L.country].filter(Boolean).join(', ');
+      const wt = String(p.workplace_type || '').toLowerCase();
+      const details = (p.custom_fields?.details || p.details || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+      const desc = htmlToText(details.map(d => `${d.name || ''}\n${d.value || ''}`).join('\n'));
+      const j = { source_id: src.id, ats: 'comeet', employer: emp.employer, ext_id: p.uid, req_id: p.internal_use_custom_id || null,
+        title: p.name, url: p.url_active_page || p.url_comeet_hosted_page || p.url_detected_page || `${board}/${encodeURIComponent((p.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'))}/${p.uid}`,
+        locations: loc ? [loc] : [], country: L.country || null,
+        remote_hint: L.is_remote === true || wt === 'remote', workplace_hint: wt.includes('remote') ? 'remote' : wt.includes('hybrid') ? 'hybrid' : (wt.includes('site') || wt.includes('office')) ? 'onsite' : (L.is_remote ? 'remote' : null),
+        department: p.department || null, posted_at: null, posted_kind: 'updated_only', updated_at: iso(p.time_updated), desc_text: desc };
+      const sr = p.salary_range || p.salary;
+      if (sr && Number(sr.min) > 0) j.salary_struct = { min: Number(sr.min), max: Number(sr.max) || Number(sr.min), period: 'year', kind: 'base_likely', src: 'structured', snippet: 'Comeet salary range' };
+      return j;
+    });
+    return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs, note: `${jobs.length} published positions from the hosted board`,
+             fields: { posted_date: 'time_updated only (first-observed date used)', salary: 'description text', location: 'location object', remote: 'workplace_type / is_remote', req_id: 'internal_use_custom_id' } };
+  },
+
   // Workday CXS: the same JSON the public careers page calls. Search by function keywords, then
   // fetch details (exact startDate + description) only for relevant US roles.
   async workday(src, emp, http, opt) {
@@ -98,7 +142,7 @@ export const ADAPTERS = {
       const j = { source_id: src.id, ats: 'workday', employer: emp.employer, ext_id: p.externalPath.split('_').pop(), req_id: (p.bulletFields || [])[0] || null,
         title: p.title, url: `https://${src.host}/${src.site}${p.externalPath}`, locations: [p.locationsText].filter(Boolean),
         posted_at: approx ? approx + 'T12:00:00.000Z' : null, posted_kind: approx ? 'relative_approx' : 'unknown', posted_text: p.postedOn || null, desc_text: '' };
-      const wantDetail = relevantTitle(p.title) && (usText(p.locationsText) || /locations/i.test(p.locationsText || '')) && details < opt.detailCap;
+      const wantDetail = relevantTitle(p.title) && (usText(p.locationsText) || /locations/i.test(p.locationsText || '')) && details < (opt.workdayDetailCap || opt.detailCap);
       if (wantDetail) {
         details++;
         const d = await http.json(`${base}${p.externalPath}`);
