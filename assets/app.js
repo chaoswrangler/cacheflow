@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119h';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119h';
-import { extractResume } from './shared/resume.mjs?v=20261119h';
+import * as C from './shared/core.mjs?v=20261119i';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119i';
+import { extractResume } from './shared/resume.mjs?v=20261119i';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;

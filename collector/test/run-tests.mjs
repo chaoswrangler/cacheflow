@@ -128,6 +128,20 @@ const mockFetch = async (url, opts = {}) => {
   if (url.includes('delta.wd5.myworkdayjobs.com/wday/cxs/delta/Ext/job/')) return J(wdDetail);
   if (url.includes('wrong.wd1.myworkdayjobs.com')) return new Response('nope', { status: 404 });
   if (url.includes('amazon.jobs/en/search.json')) return J(amazon);
+  if (url.includes('apply.careers.microsoft.com/api/pcsx/search')) {
+    const start = +new URL(url).searchParams.get('start');
+    if (new URL(url).searchParams.get('location') !== '') return new Response('Forbidden', { status: 403 });
+    const all = [{ id: 1970393557041105, displayJobId: '200001', name: 'Principal Product Manager, Security Copilot', standardizedLocations: ['New York, NY, US'], postedTs: Date.parse('2026-11-17T12:00:00Z') / 1000, creationTs: Date.parse('2026-11-10T12:00:00Z') / 1000, workLocationOption: 'onsite', positionUrl: '/careers/job/1970393557041105' },
+                 { id: 1970393557041106, displayJobId: '200002', name: 'Software Engineer II', standardizedLocations: ['Redmond, WA, US'], postedTs: Date.parse('2026-11-18T12:00:00Z') / 1000 }];
+    return new Response(JSON.stringify({ data: { count: 2, positions: all.slice(start, start + 1) } }), { status: 200 });
+  }
+  if (url.includes('apply.careers.microsoft.com/api/pcsx/position_details')) return new Response(JSON.stringify({ data: { jobDescription: '<p>The typical base pay range for this role across the U.S. is USD $163,600 - $303,600 per year.</p>', efcustomTextWorkSite: 'Up to 50% work from home' } }), { status: 200 });
+  if (url.includes('careers.cisco.com/global/en/search-results')) return new Response(`<html data-ph-id="x"><script>phApp.ddo = {"eagerLoadRefineSearch":{"totalHits":1,"data":{"jobs":[{"jobId":"1450009","jobSeqNo":"CISCUS1450009EXTERNALENUS","title":"Head of Partner Marketing, Security","location":"New York, New York, US","multi_location":["New York, New York, US"],"postedDate":"2026-11-18T05:00:00.000+0000","category":"Marketing"}]}}}; phApp.sessionParams = {};</script></html>`, { status: 200 });
+  if (url.includes('careers.cisco.com/global/en/job/1450009')) return new Response(`<script>phApp.ddo = {"jobDetail":{"data":{"job":{"description":"<p>US base salary range: $230,000 - $330,000</p>"}}}}; phApp.x = 1;</script>`, { status: 200 });
+  if (url.includes('jobs.cisco.com/jobs/SearchJobs/')) return new Response(`<html><body><table><tr><th>Job Title</th><th>Area of Interest</th><th>Job Type</th><th>Location</th><th>Alternate Location</th></tr>
+<tr><td><a href="https://jobs.cisco.com/jobs/ProjectDetail/Director-Product-Marketing-Security/1450001">Director, Product Marketing - Security</a></td><td>Marketing</td><td>Professional</td><td>New York, New York, US</td><td>Remote, US</td></tr>
+<tr><td><a href="/jobs/ProjectDetail/Engineer/1450002">Software Engineer</a></td><td>Engineer - Software</td><td>Professional</td><td>Bangalore, India</td><td></td></tr></table></body></html>`, { status: 200 });
+  if (url.includes('jobs.cisco.com/jobs/ProjectDetail/Director')) return new Response('<html><body><h1>Director</h1><p>The US base salary range for this position is $210,000 - $290,000.</p></body></html>', { status: 200 });
   if (url.includes('flaky.example')) { flaky++; return flaky < 2 ? new Response('slow down', { status: 429, headers: { 'retry-after': '0' } }) : J({ jobs: [] }); }
   return new Response('not mocked', { status: 404 });
 };
@@ -140,10 +154,12 @@ const reg = { employers: [
   { employer: 'Gamma', tier: 'core', sources: [{ id: 'ashby:gamma', ats: 'ashby', slug: 'gamma' }, { id: 'ashby:blocked', ats: 'ashby', slug: 'blocked' }] },
   { employer: 'Delta', tier: 'heavy', sources: [{ id: 'wd:delta', ats: 'workday', host: 'delta.wd5.myworkdayjobs.com', tenant: 'delta', site: 'Ext', queries: ['product manager'] }, { id: 'wd:wrong', ats: 'workday', host: 'wrong.wd1.myworkdayjobs.com', tenant: 'wrong', site: 'X', queries: ['a', 'b'] }] },
   { employer: 'Amazon / AWS', tier: 'heavy', sources: [{ id: 'amazon:jobs', ats: 'amazon', queries: ['product marketing'] }] },
+  { employer: 'Cisco', tier: 'heavy', sources: [{ id: 'cisco:rss', ats: 'cisco_rss', queries: ['marketing'], phenom_base: 'https://careers.cisco.com/global/en', feed_url_template: 'https://jobs.cisco.com/jobs/SearchJobs/{q}/feed' }] },
+  { employer: 'Microsoft', tier: 'heavy', sources: [{ id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: ['product manager'] }] },
   { employer: 'Google', tier: 'heavy', sources: [{ id: 'google:link', ats: 'link_only', verification: { status: 'link_only', method: 'No feed' } }] },
 ] };
 await writeFile(join(dir, 'sources.json'), JSON.stringify(reg));
-const FAST = { http: { minDelayMs: 1, maxDelayMs: 2, concurrency: 4, timeoutMs: 2000, retries: 2 } };
+const FAST = { http: { minDelayMs: 1, maxDelayMs: 2, concurrency: 4, timeoutMs: 2000, retries: 2 }, host_rules: [] };
 try {
   const r1 = await run({ fetchImpl: mockFetch, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
   const S = Object.fromEntries(r1.statusOut.sources.map(s => [s.id, s]));
@@ -161,6 +177,9 @@ try {
   t('ashby structured base', () => { assert.equal(J['ashby:gamma:as1'].salary.kind, 'base'); assert.equal(J['ashby:gamma:as1'].workplace, 'hybrid'); });
   t('workday detail gives exact start date', () => assert.equal(J['wd:delta:R100'].posted_kind, 'start_date'));
   t('workday irrelevant job not detailed', () => assert.equal(calls.filter(c => c.includes('/job/Ohio')).length, 0));
+  t('cisco phenom JSON parsed', () => { const c = J['cisco:rss:CISCUS1450009EXTERNALENUS']; assert.ok(c, 'cisco job missing'); assert.equal(c.salary.min, 230000); assert.equal(c.posted_kind, 'posted_date'); });
+  t('microsoft eightfold: pages by returned count, details give base pay + work site', () => { const m = J['ms:eightfold:1970393557041105']; assert.ok(m); assert.equal(m.salary.min, 163600); assert.equal(m.salary.kind, 'base'); assert.equal(m.workplace, 'hybrid'); assert.equal(m.posted_kind, 'posted_ts'); assert.ok(J['ms:eightfold:1970393557041106']); assert.equal(S['ms:eightfold'].result, 'ok'); });
+  t('microsoft request mirrors the tested one (empty location)', () => assert.ok(calls.some(c => c.includes('/api/pcsx/search?domain=microsoft.com&query=product%20manager&location=&start=1'))));
   t('amazon AWS tagged + salary', () => { const a = J['amazon:jobs:3100001']; assert.equal(a.employer, 'Amazon / AWS (AWS)'); assert.equal(a.salary.max, 250000); });
 
   // second run: Acme fails → its jobs are preserved and flagged stale, not deleted

@@ -81,7 +81,7 @@ export const ADAPTERS = {
     const base = `https://${src.host}/wday/cxs/${src.tenant}/${src.site}`;
     const seen = new Map(); let anyOk = false, lastFail = null;
     for (const q of src.queries || ['']) {
-      for (let offset = 0; offset < opt.maxPerQuery; offset += 20) {
+      for (let offset = 0; offset < (opt.workdayMaxPerQuery || opt.maxPerQuery); offset += 20) {
         const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: q }) });
         if (!r.ok) { lastFail = r; break; }
         anyOk = true;
@@ -144,52 +144,129 @@ export const ADAPTERS = {
              fields: { posted_date: 'posted_date', salary: 'pay statement in qualification text (geo range)', location: 'yes', remote: 'text only', req_id: 'id_icims' } };
   },
 
+  // Cisco careers runs on Phenom: search pages embed the results as JSON (phApp.ddo → eagerLoadRefineSearch.data.jobs).
+  // Falls back to the older jobs.cisco.com results table if that's what comes back.
   async cisco_rss(src, emp, http, opt) {
-    const seen = new Map(); let anyOk = false, lastFail = null;
+    const phenom = await ADAPTERS.phenom({ ...src, base: src.phenom_base || 'https://careers.cisco.com/global/en' }, emp, http, opt);
+    if (phenom.result === 'ok' || phenom.result === 'empty') return phenom;
+    const seen = new Map(); let anyOk = false, lastFail = null, shapeMiss = 0;
+    void phenom;
+    const cell = h => htmlToText(h).replace(/\s+/g, ' ').trim();
     for (const q of src.queries || []) {
       const r = await http.text(src.feed_url_template.replace('{q}', encodeURIComponent(q)));
-      if (!r.ok) { lastFail = r; continue; }
-      const items = [...r.data.matchAll(/<item>([\s\S]*?)<\/item>/g)].map(m => m[1]);
-      if (!items.length) { lastFail = { error: 'parse_error', detail: 'Feed returned no <item> elements: ' + r.data.slice(0, 120) }; continue; }
-      anyOk = true;
-      const tag = (s, t) => { const m = s.match(new RegExp(`<${t}[^>]*>([\\s\\S]*?)</${t}>`)); return m ? htmlToText(m[1].replace(/<!\[CDATA\[|\]\]>/g, '')) : ''; };
-      for (const it of items) {
-        const link = tag(it, 'link'); const desc = tag(it, 'description');
-        const cols = desc.split('|').map(s => s.trim());
-        seen.set(link, { title: tag(it, 'title'), link, pub: tag(it, 'pubDate'), location: cols[3] || cols.find(c => /,/.test(c)) || '', desc });
+      if (!r.ok) { lastFail = r; if (!anyOk && r.status === 404) break; continue; }
+      const rows = [...r.data.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].map(m => m[1]);
+      let got = 0;
+      for (const row of rows) {
+        const tds = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map(m => m[1]);
+        const a = row.match(/<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i);
+        if (tds.length < 4 || !a) continue;
+        const href = a[1].replace(/&amp;/g, '&');
+        const url = href.startsWith('http') ? href : 'https://jobs.cisco.com' + (href.startsWith('/') ? '' : '/') + href;
+        const id = (url.match(/(\d{5,})(?!.*\d{5,})/) || [url])[1] || url;
+        const loc = cell(tds[3]), alt = tds[4] ? cell(tds[4]) : '';
+        seen.set(id, { id, title: cell(a[2]) || cell(tds[0]), url, area: cell(tds[1]), locs: [loc, ...alt.split(/[;|]/).map(x => x.trim())].filter(Boolean) });
+        got++;
       }
+      if (got) anyOk = true; else { shapeMiss++; lastFail = { error: 'parse_error', detail: 'No job rows found in the results table: ' + htmlToText(r.data).slice(0, 120) }; }
     }
     if (!anyOk) return fail(lastFail || {});
-    const jobs = [...seen.values()].map(p => ({ source_id: src.id, ats: 'cisco_rss', employer: emp.employer, ext_id: (p.link.match(/(\d{5,})/) || [p.link])[1] || p.link,
-      title: p.title, url: p.link, locations: [p.location].filter(Boolean), posted_at: iso(p.pub), posted_kind: p.pub ? 'feed_pubdate' : 'unknown', desc_text: p.desc }));
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, fields: { posted_date: 'RSS pubDate (if present)', salary: 'not in feed', location: 'feed column', remote: 'no', req_id: 'URL id' } };
+    const jobs = []; let details = 0;
+    for (const p of seen.values()) {
+      const j = { source_id: src.id, ats: 'cisco', employer: emp.employer, ext_id: p.id, req_id: p.id, title: p.title, url: p.url,
+        locations: p.locs, department: p.area || null, posted_at: null, posted_kind: 'unknown', desc_text: '' };
+      if (relevantTitle(p.title) && (usText(p.locs.join(' ')) || !p.locs.length) && details < opt.detailCap) {
+        details++;
+        const d = await http.text(p.url);
+        if (d.ok) j.desc_text = htmlToText(d.data).slice(0, 12000);
+      }
+      jobs.push(j);
+    }
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings from ${(src.queries || []).length} searches (first 25 results each); ${details} detail pages${shapeMiss ? `; ${shapeMiss} searches returned no rows` : ''}`,
+             fields: { posted_date: 'not shown (first-observed date used)', salary: 'detail page text', location: 'table column', remote: 'location text', req_id: 'URL id' } };
   },
 
-  // Experimental: Eightfold PCS search endpoints are undocumented. Try known paths, record which worked.
-  async eightfold(src, emp, http, opt) {
-    const paths = [
-      (q, s) => `https://${src.host}/api/pcsx/search?domain=${src.domain}&query=${encodeURIComponent(q)}&location=United%20States&start=${s}&sort_by=timestamp`,
-      (q, s) => `https://${src.host}/api/apply/v2/jobs?domain=${src.domain}&query=${encodeURIComponent(q)}&location=United%20States&start=${s}&num=50&sort_by=timestamp`,
-    ];
-    let pick = null, lastFail = null; const seen = new Map();
+  async phenom(src, emp, http, opt) {
+    const seen = new Map(); let anyOk = false, lastFail = null;
+    const grab = html => { const m = html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*phApp\./) || html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*<\/script>/); if (!m) return null; try { return JSON.parse(m[1]); } catch { return null; } };
     for (const q of src.queries || ['']) {
-      for (const [i, mk] of paths.entries()) {
-        if (pick !== null && pick !== i) continue;
-        const r = await http.json(mk(q, 0));
-        const list = r.ok ? (r.data?.data?.positions || r.data?.positions) : null;
-        if (!Array.isArray(list)) { lastFail = r.ok ? { error: 'parse_error', detail: 'No positions array' } : r; continue; }
-        pick = i; for (const p of list) seen.set(String(p.id), p); break;
+      for (let from = 0; from < (opt.phenomMaxPerQuery || 30); from += 10) {
+        const r = await http.text(`${src.base}/search-results?keywords=${encodeURIComponent(q)}&from=${from}&s=1`);
+        if (!r.ok) { lastFail = r; break; }
+        const ddo = grab(r.data); const block = ddo?.eagerLoadRefineSearch; const list = block?.data?.jobs;
+        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'Phenom page without eagerLoadRefineSearch.data.jobs' }; break; }
+        anyOk = true; for (const j of list) seen.set(String(j.jobSeqNo || j.jobId || j.reqId), j);
+        if (list.length < 10 || from + 10 >= (block.totalHits || 0)) break;
       }
-      if (pick === null && lastFail) break;
+      if (!anyOk && lastFail) break;
     }
-    if (pick === null) return fail(lastFail || {}, { result: 'experimental_failed' });
-    const jobs = [...seen.values()].map(p => ({ source_id: src.id, ats: 'eightfold', employer: emp.employer, ext_id: String(p.id), req_id: p.displayJobId || p.ats_job_id || null,
-      title: p.name || p.title, url: p.positionUrl ? `https://${src.host}${p.positionUrl}` : (p.canonicalPositionUrl || `https://${src.host}/careers/job/${p.id}`),
-      locations: p.locations || p.standardizedLocations || [p.location].filter(Boolean),
-      workplace_hint: /remote/i.test(p.workLocationOption || p.work_location_option || '') ? 'remote' : /hybrid/i.test(p.workLocationOption || p.work_location_option || '') ? 'hybrid' : null,
-      posted_at: p.postedTs ? new Date(p.postedTs * 1000).toISOString() : (p.t_create ? new Date(p.t_create * 1000).toISOString() : null),
-      posted_kind: p.postedTs || p.t_create ? 'created' : 'unknown', desc_text: htmlToText(p.job_description || p.description || '') }));
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `Eightfold path #${pick + 1} responded`, fields: { posted_date: 'timestamp', salary: 'description (detail)', location: 'yes', remote: 'work location option', req_id: 'display id' } };
+    if (!anyOk) return fail(lastFail || {});
+    const jobs = []; let details = 0;
+    for (const p of seen.values()) {
+      const locs = (p.multi_location?.length ? p.multi_location : [p.location || p.cityStateCountry]).filter(Boolean);
+      const url = p.applyUrl && !/apply/i.test(p.applyUrl.split('?')[0].split('/').pop() || '') ? p.applyUrl : `${src.base}/job/${p.jobId || p.jobSeqNo}`;
+      const j = { source_id: src.id, ats: 'phenom', employer: emp.employer, ext_id: String(p.jobSeqNo || p.jobId || p.reqId), req_id: p.reqId || p.jobId || null, title: p.title,
+        url, locations: locs, department: p.category || null, workplace_hint: /remote/i.test(p.workSiteFlexibility || p.type || '') ? 'remote' : null,
+        posted_at: p.postedDate ? new Date(p.postedDate).toISOString() : null, posted_kind: p.postedDate ? 'posted_date' : 'unknown', desc_text: htmlToText(p.descriptionTeaser || '') };
+      if (relevantTitle(p.title) && (usText(locs.join(' ')) || !locs.length) && details < opt.detailCap) {
+        details++;
+        const d = await http.text(`${src.base}/job/${p.jobId || p.jobSeqNo}`);
+        const dd = d.ok ? grab(d.data)?.jobDetail?.data?.job : null;
+        if (dd?.description) j.desc_text = htmlToText(dd.description);
+      }
+      jobs.push(j);
+    }
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings via Phenom search; ${details} detail pages`,
+      fields: { posted_date: 'postedDate', salary: 'detail description', location: 'location / multi_location', remote: 'work-site flags', req_id: 'reqId' } };
+  },
+
+  // Eightfold PCSX (Microsoft). Verified by request: /api/pcsx/search and /api/pcsx/position_details.
+  // Pages hold ~10 positions; advance by the number actually returned; stop at data.count, an empty page or a repeat.
+  async eightfold(src, emp, http, opt) {
+    const host = `https://${src.host}`, D = encodeURIComponent(src.domain);
+    const seen = new Map(); let anyOk = false, lastFail = null, incomplete = [];
+    for (const q of src.queries || ['']) {
+      let start = 0, prevFirst = null, count = Infinity, pages = 0;
+      while (start < count && start < (opt.eightfoldMaxPerQuery || 30)) {
+        const r = await http.json(`${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=&start=${start}`);
+        if (!r.ok) { lastFail = r; if (anyOk || pages) incomplete.push(`${q}@${start}: ${r.status || r.error}`); break; }
+        const data = r.data?.data || {}; const list = data.positions;
+        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'No data.positions in response' }; break; }
+        anyOk = true; pages++; count = Number(data.count ?? count);
+        if (!list.length || String(list[0]?.id) === prevFirst) break;
+        prevFirst = String(list[0]?.id);
+        for (const p of list) seen.set(String(p.id), p);
+        start += list.length;
+      }
+      if (!anyOk && lastFail) break; // first request refused: don't keep knocking
+    }
+    if (!anyOk) return fail(lastFail || {});
+    const ts = v => v ? new Date((v > 1e12 ? v : v * 1000)).toISOString() : null;
+    const jobs = []; let details = 0;
+    for (const p of seen.values()) {
+      const locs = (p.standardizedLocations?.length ? p.standardizedLocations : p.locations) || [];
+      const wlo = String(p.workLocationOption || '');
+      const j = { source_id: src.id, ats: 'eightfold', employer: emp.employer, ext_id: String(p.id), req_id: p.displayJobId || null, title: p.name,
+        url: p.positionUrl ? (p.positionUrl.startsWith('http') ? p.positionUrl : host + p.positionUrl) : `${host}/careers/job/${p.id}`,
+        locations: locs.map(l => typeof l === 'string' ? l : (l.name || l.location || '')).filter(Boolean), department: p.department || null,
+        workplace_hint: /remote/i.test(wlo) ? 'remote' : /hybrid|flex/i.test(wlo) ? 'hybrid' : /onsite|on-site|office/i.test(wlo) ? 'onsite' : null,
+        posted_at: ts(p.postedTs), posted_kind: p.postedTs ? 'posted_ts' : 'unknown', created_at: ts(p.creationTs), desc_text: '' };
+      if (!j.posted_at && j.created_at) { j.posted_at = j.created_at; j.posted_kind = 'creation_ts (may predate public posting)'; }
+      if (relevantTitle(p.name) && (usText(j.locations.join(' ')) || !j.locations.length) && details < opt.detailCap) {
+        details++;
+        const d = await http.json(`${host}/api/pcsx/position_details?domain=${D}&position_id=${encodeURIComponent(p.id)}&hl=en`);
+        const dd = d.ok ? d.data?.data : null;
+        if (dd) {
+          const site = dd.efcustomTextWorkSite || '';
+          j.desc_text = htmlToText(dd.jobDescription || '') + (site ? `\nWork site: ${site}` : '');
+          if (site) j.workplace_hint = /100%|fully remote|remote/i.test(site) ? 'remote' : /up to \d+%|hybrid|flex/i.test(site) ? 'hybrid' : /on-?site/i.test(site) ? 'onsite' : j.workplace_hint;
+        } else if (!d.ok) incomplete.push(`details ${p.id}: ${d.status || d.error}`);
+      }
+      jobs.push(j);
+    }
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs,
+      note: `${seen.size} positions from ${(src.queries || []).length} searches; ${details} detail pages` + (incomplete.length ? `; INCOMPLETE (${incomplete.length} requests cut short, e.g. ${incomplete[0]})` : ''),
+      fields: { posted_date: 'postedTs (creationTs kept separately)', salary: 'position_details jobDescription', location: 'standardizedLocations', remote: 'workLocationOption + efcustomTextWorkSite', req_id: 'displayJobId' } };
   },
 
   async oracle_hcm(src, emp, http, opt) {

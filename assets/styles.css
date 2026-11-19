@@ -350,3 +350,18 @@ td.emp{color:var(--ice);font-family:var(--sans);font-size:14px;font-weight:600}
 }
 .grid>*,.g2>*,.g-side>*{min-width:0}
 @media (max-width:720px){ html,body{overflow-x:hidden} .cbox{overflow:hidden!important} #fieldVis{overflow-x:auto} }
+
+/* ---------- about the developer ---------- */
+.about-card{position:relative;overflow:hidden;display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:center;padding:56px 60px;border-radius:28px;border:1px solid var(--line2);
+  background:radial-gradient(600px 300px at 0% 0%,rgba(95,208,255,.18),transparent 60%),radial-gradient(700px 400px at 100% 100%,rgba(31,95,209,.35),transparent 60%),linear-gradient(160deg,rgba(14,34,74,.92),rgba(5,12,28,.96))}
+.about-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+.about-card>*{position:relative}
+.about-wolf{color:rgba(150,200,255,.7);filter:drop-shadow(0 0 22px rgba(95,208,255,.4))}
+.about-wolf svg{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.about-name{font-family:var(--disp);font-weight:800;font-size:clamp(40px,5.4vw,72px);line-height:.95;letter-spacing:-.05em;margin-top:16px}
+.about-say{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--cy);margin-top:10px}
+.about-lead{font-family:var(--disp);font-weight:700;font-size:clamp(20px,2.2vw,28px);line-height:1.2;letter-spacing:-.02em;margin-top:20px;background:linear-gradient(90deg,var(--b3),var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.about-txt>p{font-size:17px;color:var(--t2);margin-top:14px;max-width:58ch}
+.about-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.about-chips span{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cy);padding:7px 11px;border:1px solid rgba(95,208,255,.4);border-radius:999px;background:rgba(95,208,255,.06)}
+@media (max-width:860px){.about-card{grid-template-columns:1fr;gap:20px;padding:30px 20px;border-radius:22px}.about-wolf svg{max-width:220px}.about-txt>p{font-size:15.5px}}

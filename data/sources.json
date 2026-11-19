@@ -19,9 +19,9 @@
      "board_url": "https://jobs.ashbyhq.com/1password",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/1password?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 76 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -45,8 +45,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/6sense/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 35 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -93,8 +93,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/abnormalsecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 85 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -140,9 +140,9 @@
      "board_url": "https://jobs.ashbyhq.com/adaptivesecurity",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/adaptivesecurity?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 12 jobs).",
+      "date": "2026-11-19 collector run"
      }
     },
     {
@@ -176,8 +176,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/adyen/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 244 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -224,8 +224,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/affirm/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 225 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -295,8 +295,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/airtable/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -319,9 +319,9 @@
      "board_url": "https://jobs.ashbyhq.com/airwallex",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/airwallex?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 490 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -368,8 +368,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/alloy/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 33 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -416,8 +416,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/alphasense/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 171 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -457,9 +457,9 @@
      "country": "USA",
      "feed_url": "https://www.amazon.jobs/en/search.json",
      "verification": {
-      "status": "documented_public_json",
-      "method": "amazon.jobs serves its search results from a public search.json endpoint (described by third-party scraper docs). The collector confirms it at runtime.",
-      "date": "2026-11-19"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 1656 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -552,8 +552,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/anthropic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 639 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -600,8 +600,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/apiiro/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -625,8 +625,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/appomni/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 3 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -673,8 +673,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/armorcode/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 10 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -697,9 +697,9 @@
      "board_url": "https://jobs.ashbyhq.com/artemis",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/artemis?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 25 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -723,8 +723,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/asana/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 114 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -770,9 +770,9 @@
      "board_url": "https://jobs.ashbyhq.com/atbay",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/atbay?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -819,8 +819,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/attentive/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 30 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -844,8 +844,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/axonius/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 20 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -869,8 +869,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/beyondidentity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -894,8 +894,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/beyondtrust/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 41 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -919,20 +919,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/bigid/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "ashby:bigid",
-     "ats": "ashby",
-     "slug": "bigid",
-     "board_url": "https://jobs.ashbyhq.com/bigid",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/bigid?includeCompensation=true",
-     "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -956,8 +944,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/bishopfox/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 12 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1004,8 +992,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/bitwarden/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 38 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1029,8 +1017,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/blackduck/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 36 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1100,8 +1088,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/braze/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 330 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1125,8 +1113,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/brex/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 261 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1150,8 +1138,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/brinqa/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 1 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1175,8 +1163,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/bugcrowd/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 13 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1200,8 +1188,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/calm/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 1 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1270,8 +1258,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/chainguard/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 110 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1317,8 +1305,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/checkr/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 38 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1342,8 +1330,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/chime/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 78 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1383,10 +1371,11 @@
      ],
      "feed_url_template": "https://jobs.cisco.com/jobs/SearchJobs/{q}/feed",
      "verification": {
-      "status": "verified_pattern",
-      "method": "Search-indexed keyword feeds exist at jobs.cisco.com/jobs/SearchJobs/<keyword>/feed. The collector parses them.",
+      "status": "experimental",
+      "method": "jobs.cisco.com now serves a Phenom page (data-ph-id). Collector reads Phenom embedded JSON (phApp.ddo.eagerLoadRefineSearch) from careers.cisco.com search, falling back to the old results table.",
       "date": "2026-11-19"
-     }
+     },
+     "phenom_base": "https://careers.cisco.com/global/en"
     }
    ],
    "id": "cisco",
@@ -1431,9 +1420,9 @@
      "board_url": "https://jobs.ashbyhq.com/cloaked",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/cloaked?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 9 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1457,8 +1446,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/cloudflare/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 497 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1481,9 +1470,9 @@
      "board_url": "https://jobs.ashbyhq.com/coalition",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/coalition?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1507,8 +1496,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/cobaltio/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 8 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1564,8 +1553,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/coinbase/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 255 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1589,8 +1578,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/collectivehealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 3 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1614,8 +1603,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/collibra/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 22 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1639,8 +1628,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/commercetools/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1664,8 +1653,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/commvault/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 57 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1712,8 +1701,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/contentful/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 50 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1760,8 +1749,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/controlplane/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 3 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1785,8 +1774,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/corelight/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 14 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1810,8 +1799,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/cribl/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 83 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1850,9 +1839,9 @@
       "customer success"
      ],
      "verification": {
-      "status": "unverified_config",
-      "method": "CrowdStrike uses Workday (its HRIT postings confirm it). Tenant/site not yet confirmed; the collector validates it.",
-      "date": "2026-11-19"
+      "status": "exists_rate_limited",
+      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1875,9 +1864,9 @@
      "board_url": "https://jobs.ashbyhq.com/cursor",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/cursor?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 90 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -1968,9 +1957,9 @@
      "board_url": "https://jobs.ashbyhq.com/cyera",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/cyera?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     },
     {
@@ -2004,8 +1993,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/cymulate/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 10 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2029,8 +2018,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/databricks/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 903 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2054,8 +2043,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/datadog/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 379 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2101,9 +2090,9 @@
      "board_url": "https://jobs.ashbyhq.com/decagon",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/decagon?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 111 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2126,9 +2115,9 @@
      "board_url": "https://jobs.ashbyhq.com/deepgram",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/deepgram?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 54 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2175,8 +2164,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/descope/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2200,8 +2189,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/dialpad/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 16 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2225,8 +2214,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/diligent/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 6 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2250,8 +2239,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/disco/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 35 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2298,8 +2287,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/dragos/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 50 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2322,9 +2311,9 @@
      "board_url": "https://jobs.ashbyhq.com/drata",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/drata?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2348,8 +2337,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/dropbox/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 46 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2372,9 +2361,9 @@
      "board_url": "https://jobs.ashbyhq.com/dropzoneai",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/dropzoneai?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2398,8 +2387,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/duolingo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 55 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2422,9 +2411,9 @@
      "board_url": "https://jobs.ashbyhq.com/dust",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/dust?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 34 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2448,8 +2437,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/elastic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 372 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2472,9 +2461,9 @@
      "board_url": "https://jobs.ashbyhq.com/elevenlabs",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/elevenlabs?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 128 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2498,8 +2487,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/endorlabs/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 43 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2569,8 +2558,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/everlaw/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 34 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2594,8 +2583,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/exabeam/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2618,9 +2607,9 @@
      "board_url": "https://jobs.ashbyhq.com/exaforce",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/exaforce?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     },
     {
@@ -2654,8 +2643,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/expel/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2679,8 +2668,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/fastly/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 50 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2703,9 +2692,9 @@
      "board_url": "https://jobs.ashbyhq.com/federato",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/federato?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "unresolved_404",
+      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2729,8 +2718,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/feedzai/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 9 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2753,9 +2742,9 @@
      "board_url": "https://jobs.ashbyhq.com/fieldguide",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/fieldguide?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 36 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2779,8 +2768,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/figma/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 144 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2803,9 +2792,9 @@
      "board_url": "https://jobs.ashbyhq.com/fireworks",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/fireworks?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 104 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2829,8 +2818,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/fivetran/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 186 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2877,8 +2866,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/flatironhealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 21 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2902,8 +2891,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/flex/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 33 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2927,8 +2916,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/flowtraders/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 41 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -2952,8 +2941,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/forter/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 20 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3009,8 +2998,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/freenome/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3057,8 +3046,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/garnerhealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 60 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3082,8 +3071,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/gitlab/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 248 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3107,8 +3096,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/gongio/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 87 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3157,8 +3146,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/grafanalabs/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 137 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3228,8 +3217,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/guidepointsecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 80 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3253,8 +3242,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/gusto/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 82 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3301,8 +3290,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/halcyon/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 10 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3326,8 +3315,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/harnessinc/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 65 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3350,9 +3339,9 @@
      "board_url": "https://jobs.ashbyhq.com/harvey",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/harvey?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 393 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3398,9 +3387,9 @@
      "board_url": "https://jobs.ashbyhq.com/headway",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/headway?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 93 jobs).",
+      "date": "2026-11-19 collector run"
      }
     },
     {
@@ -3434,20 +3423,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/healthie/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "ashby:healthie",
-     "ats": "ashby",
-     "slug": "healthie",
-     "board_url": "https://jobs.ashbyhq.com/healthie",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/healthie?includeCompensation=true",
-     "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 16 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3471,8 +3448,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/healthverity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 18 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3518,9 +3495,9 @@
      "board_url": "https://jobs.ashbyhq.com/horizon3ai",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/horizon3ai?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 203 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3590,8 +3567,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/huntress/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 50 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3638,8 +3615,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/hyperproof/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 5 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3685,8 +3662,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/icapitalnetwork/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 232 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3733,8 +3710,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/impact/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 74 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3758,8 +3735,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/instacart/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 85 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3783,8 +3760,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/intercom/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 118 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3831,8 +3808,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/island/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 19 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3879,8 +3856,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/janestreet/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 215 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3911,9 +3888,9 @@
       "partnerships"
      ],
      "verification": {
-      "status": "verified_pattern",
-      "method": "Public JPMC posting links use jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001.",
-      "date": "2026-11-19"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 187 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3937,8 +3914,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/jumptrading/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 86 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3962,8 +3939,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/justworks/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 107 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -3987,8 +3964,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/keepersecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 98 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4012,8 +3989,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/ketch/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4060,8 +4037,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/klaviyo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 126 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4085,8 +4062,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/knowbe4/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 54 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4110,8 +4087,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/komodohealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 18 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4134,9 +4111,9 @@
      "board_url": "https://jobs.ashbyhq.com/lambda",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/lambda?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 96 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4160,8 +4137,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/lattice/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 6 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4185,8 +4162,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/launchdarkly/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 33 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4256,8 +4233,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/lithic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 12 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4304,8 +4281,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/lyft/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 146 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4375,8 +4352,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/mavenclinic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 33 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4422,9 +4399,9 @@
      "board_url": "https://jobs.ashbyhq.com/medallion",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/medallion?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4447,9 +4424,9 @@
      "board_url": "https://jobs.ashbyhq.com/mercor",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/mercor?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 106 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4489,8 +4466,8 @@
       "customer success"
      ],
      "verification": {
-      "status": "experimental",
-      "method": "Microsoft careers runs on Eightfold (apply.careers.microsoft.com). The JSON path is not publicly documented. The collector tries known Eightfold search paths and records which, if any, responds.",
+      "status": "search_verified; details_verified; pagination_rate_limited",
+      "method": "Manual test: /api/pcsx/search?domain=microsoft.com&query=&location=&start=0 and /api/pcsx/position_details?domain=microsoft.com&position_id=<id>&hl=en returned 200; next-page request returned 429. First GitHub run got 403 using location=United States & sort_by; adapter now mirrors the tested request and paces 5-10s.",
       "date": "2026-11-19"
      }
     }
@@ -4547,8 +4524,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/mixpanel/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 39 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4571,9 +4548,9 @@
      "board_url": "https://jobs.ashbyhq.com/modal",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/modal?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 51 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4597,8 +4574,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/modernhealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 3 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4622,8 +4599,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/mongodb/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 409 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4647,8 +4624,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/motional/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 84 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4672,8 +4649,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/gomotive/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 184 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4697,8 +4674,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/mozilla/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 135 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4745,8 +4722,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/natera/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 204 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4793,8 +4770,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/netcraft/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 10 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4818,8 +4795,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/netlify/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 5 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4843,8 +4820,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/netskope/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 128 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4891,8 +4868,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/newrelic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 41 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4916,8 +4893,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/nice/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 119 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4963,9 +4940,9 @@
      "board_url": "https://jobs.ashbyhq.com/notion",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/notion?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 169 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -4989,8 +4966,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/nozominetworks/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5037,8 +5014,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/obsidiansecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 15 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5062,8 +5039,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/okta/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 365 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5087,8 +5064,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/omadahealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 25 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5112,20 +5089,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/onetrust/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "ashby:onetrust",
-     "ats": "ashby",
-     "slug": "onetrust",
-     "board_url": "https://jobs.ashbyhq.com/onetrust",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/onetrust?includeCompensation=true",
-     "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 87 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5171,9 +5136,9 @@
      "board_url": "https://jobs.ashbyhq.com/openai",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/openai?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 840 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5197,8 +5162,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/openzeppelin/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 6 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5259,9 +5224,9 @@
       "customer success"
      ],
      "verification": {
-      "status": "experimental",
-      "method": "Oracle Recruiting Cloud host/site from common knowledge; unconfirmed. The collector validates it.",
-      "date": "2026-11-19"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 281 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5285,8 +5250,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/orcasecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 13 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5310,8 +5275,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/osano/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 13 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5358,8 +5323,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/pagerduty/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 47 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5408,8 +5373,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/pandadoc/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5456,8 +5421,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/pendo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 20 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5503,9 +5468,9 @@
      "board_url": "https://jobs.ashbyhq.com/permitflow",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/permitflow?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 25 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5528,9 +5493,9 @@
      "board_url": "https://jobs.ashbyhq.com/perplexity",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/perplexity?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 147 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5623,8 +5588,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/pinterest/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 173 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5648,8 +5613,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/point72/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 202 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5759,9 +5724,9 @@
       "customer success"
      ],
      "verification": {
-      "status": "verified_pattern",
-      "method": "A search-indexed Workday CXS job URL at proofpoint.wd5.myworkdayjobs.com/wday/cxs/proofpoint/ProofpointCareers confirms tenant and site.",
-      "date": "2026-11-19"
+      "status": "exists_rate_limited",
+      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5831,8 +5796,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/qualtrics/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 155 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5923,9 +5888,9 @@
      "board_url": "https://jobs.ashbyhq.com/ramp",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/ramp?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 182 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5971,8 +5936,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/recordedfuture/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 58 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -5996,8 +5961,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/reddit/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 145 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6021,8 +5986,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/relativity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 408 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6115,8 +6080,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/rhymetec/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 6 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6163,8 +6128,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/robinhood/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 165 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6187,9 +6152,9 @@
      "board_url": "https://jobs.ashbyhq.com/rogo",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/rogo?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 101 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6213,8 +6178,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/rubrik/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 202 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6237,9 +6202,9 @@
      "board_url": "https://jobs.ashbyhq.com/rula",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/rula?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 29 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6263,8 +6228,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/runzero/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6287,9 +6252,9 @@
      "board_url": "https://jobs.ashbyhq.com/safe",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/safe?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6350,9 +6315,9 @@
       "customer success"
      ],
      "verification": {
-      "status": "unverified_config",
-      "method": "Workday tenant/site taken from common knowledge, not yet confirmed. The first successful collector run marks it verified; a 404 means fix the site name from an Apply URL.",
-      "date": "2026-11-19"
+      "status": "exists_rate_limited",
+      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6376,8 +6341,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/salesloft/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6401,8 +6366,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/saltsecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6426,8 +6391,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/samsara/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 308 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6496,8 +6461,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/scaleai/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 168 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6590,8 +6555,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/securityscorecard/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 9 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6637,9 +6602,9 @@
      "board_url": "https://jobs.ashbyhq.com/semgrep",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/semgrep?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 16 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6664,9 +6629,9 @@
      "board_url": "https://jobs.ashbyhq.com/sentilink",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/sentilink?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 43 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6690,8 +6655,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/sentinellabs/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 269 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6737,9 +6702,9 @@
      "board_url": "https://jobs.ashbyhq.com/serval",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/serval?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 68 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6779,9 +6744,9 @@
      ],
      "country": "us",
      "verification": {
-      "status": "unverified_config",
-      "method": "Third-party guides and SmartRecruiters-style job IDs indicate SmartRecruiters (careers.smartrecruiters.com/servicenow). The collector validates the company identifier.",
-      "date": "2026-11-19"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 438 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6804,9 +6769,9 @@
      "board_url": "https://jobs.ashbyhq.com/sierra",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/sierra?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 195 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6875,9 +6840,9 @@
      "board_url": "https://jobs.ashbyhq.com/siro",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/siro?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 16 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6901,8 +6866,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/sixfold/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6926,20 +6891,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/smarterdx/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "ashby:smarterdx",
-     "ats": "ashby",
-     "slug": "smarterdx",
-     "board_url": "https://jobs.ashbyhq.com/smarterdx",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/smarterdx?includeCompensation=true",
-     "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 3 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -6963,8 +6916,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/smartsheet/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 74 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7009,9 +6962,9 @@
      "board_url": "https://jobs.ashbyhq.com/snyk",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/snyk?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 39 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7034,9 +6987,9 @@
      "board_url": "https://jobs.ashbyhq.com/socket",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/socket?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 24 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7059,9 +7012,9 @@
      "board_url": "https://jobs.ashbyhq.com/socure",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/socure?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 86 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7175,8 +7128,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/sproutsocial/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 20 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7200,8 +7153,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/spycloud/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 9 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7248,8 +7201,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 776 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7318,9 +7271,9 @@
      "board_url": "https://jobs.ashbyhq.com/sublime-security",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/sublime-security?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7344,8 +7297,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/sumologic/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 26 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7415,8 +7368,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/synack/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 9 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7440,8 +7393,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/tailscale/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 81 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7488,8 +7441,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/talkspace/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 18 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7672,8 +7625,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/torq/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 30 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7697,8 +7650,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/towerresearchcapital/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 91 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7722,8 +7675,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/trace3/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 100 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7793,8 +7746,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/transmitsecurity/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7863,8 +7816,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/truveta/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 36 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7888,8 +7841,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/twilio/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 105 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7912,9 +7865,9 @@
      "board_url": "https://jobs.ashbyhq.com/vanta",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/vanta?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 73 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7937,9 +7890,9 @@
      "board_url": "https://jobs.ashbyhq.com/vclusterlabs",
      "feed_url": "https://api.ashbyhq.com/posting-api/job-board/vclusterlabs?includeCompensation=true",
      "verification": {
-      "status": "unresolved_403",
-      "method": "Uploaded scan: HTTP 403 from the scanning environment. That is an access failure, not proof the board is wrong or empty. The collector retries from GitHub runners.",
-      "date": "prior scan"
+      "status": "verified_feed",
+      "method": "Returned job data in the first GitHub Actions collection (ok, 34 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -7985,8 +7938,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/veracode/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 11 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8010,8 +7963,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/veranahealth/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8035,8 +7988,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/vercel/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 87 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8060,8 +8013,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/verkada/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 348 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8085,8 +8038,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/virtu/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 44 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8156,8 +8109,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/waymark/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 19 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8181,8 +8134,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/webflow/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (empty, 0 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8206,8 +8159,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/wing/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 42 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8231,8 +8184,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/wizinc/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 107 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8279,8 +8232,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/yext/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 30 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8304,8 +8257,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/yieldmo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 4 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8329,8 +8282,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/yotpo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 18 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8354,8 +8307,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/yubico/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 21 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8448,8 +8401,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/zoominfo/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 90 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8473,8 +8426,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/zscaler/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 378 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],
@@ -8498,8 +8451,8 @@
      "feed_url": "https://boards-api.greenhouse.io/v1/boards/zuora/jobs?content=true",
      "verification": {
       "status": "verified_feed",
-      "method": "Uploaded scan: endpoint returned job-feed JSON",
-      "date": "prior scan"
+      "method": "Returned job data in the first GitHub Actions collection (ok, 43 jobs).",
+      "date": "2026-11-19 collector run"
      }
     }
    ],

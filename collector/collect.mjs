@@ -25,9 +25,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const registry = await readJSON(join(dataDir, 'sources.json'), { employers: [] });
   const prevJobs = await readJSON(join(dataDir, 'jobs.json'), { jobs: [] });
   const prevStatus = await readJSON(join(dataDir, 'status.json'), { sources: [] });
-  const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log });
+  const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log, hostRules: cfg.host_rules || [] });
   const startedAt = now.toISOString();
-  const opt = { maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
+  const opt = { eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
 
   if (argv.probe) return probe(registry, http, dataDir);
 

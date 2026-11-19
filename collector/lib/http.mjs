@@ -3,8 +3,8 @@
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 export class Http {
-  constructor({ minDelay = 700, maxDelay = 1800, concurrency = 6, timeoutMs = 25000, retries = 3, userAgent, fetchImpl, log = () => {} } = {}) {
-    Object.assign(this, { minDelay, maxDelay, concurrency, timeoutMs, retries, userAgent, log });
+  constructor({ minDelay = 700, maxDelay = 1800, concurrency = 6, timeoutMs = 25000, retries = 3, userAgent, fetchImpl, log = () => {}, hostRules = [] } = {}) {
+    Object.assign(this, { minDelay, maxDelay, concurrency, timeoutMs, retries, userAgent, log, hostRules });
     this.fetch = fetchImpl || globalThis.fetch;
     this.hostChains = new Map();
     this.active = 0; this.waiters = [];
@@ -15,11 +15,17 @@ export class Http {
     await new Promise(r => this.waiters.push(r)); this.active++;
   }
   release() { this.active--; const w = this.waiters.shift(); if (w) w(); }
+  rule(host) {
+    // per-host overrides, e.g. Workday tenants rate-limit hard, so they get slower pacing and more patient retries
+    const r = this.hostRules.find(x => host.endsWith(x.suffix));
+    return { minDelay: r?.minDelayMs ?? this.minDelay, maxDelay: r?.maxDelayMs ?? this.maxDelay, retries: r?.retries ?? this.retries, backoffMs: r?.backoffMs ?? 2000 };
+  }
   perHost(host, fn) {
+    const R = this.rule(host);
     const prev = this.hostChains.get(host) || Promise.resolve();
     const next = prev.then(async () => {
       const out = await fn();
-      await sleep(this.minDelay + Math.random() * (this.maxDelay - this.minDelay));
+      await sleep(R.minDelay + Math.random() * (R.maxDelay - R.minDelay));
       return out;
     }, async () => fn());
     this.hostChains.set(host, next.catch(() => {}));
@@ -27,6 +33,7 @@ export class Http {
   }
   async request(url, { method = 'GET', headers = {}, body, as = 'json' } = {}) {
     const host = new URL(url).host;
+    const R = this.rule(host);
     return this.perHost(host, async () => {
       await this.slot();
       try {
@@ -43,8 +50,8 @@ export class Http {
           const status = res?.status;
           if (status) this.stats.byStatus[status] = (this.stats.byStatus[status] || 0) + 1;
           const retryable = err || status === 429 || (status >= 500 && status <= 599);
-          if (retryable && attempt < this.retries) {
-            let wait = Math.min(60000, 2000 * 2 ** attempt + Math.random() * 1000);
+          if (retryable && attempt < R.retries) {
+            let wait = Math.min(60000, R.backoffMs * 2 ** attempt + Math.random() * 1000);
             const ra = res?.headers?.get?.('retry-after');
             if (ra) { const s = Number(ra); wait = Math.min(60000, isFinite(s) ? s * 1000 : Math.max(0, new Date(ra) - Date.now())); }
             this.stats.retries++; this.log(`retry ${attempt + 1} ${url} (${err || status}) in ${Math.round(wait)}ms`);

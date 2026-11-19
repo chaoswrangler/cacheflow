@@ -1,20 +1,66 @@
 {
   "user_agent": "cache-flow-collector/1.0 (personal job search; GitHub Actions; low request rate)",
-  "http": { "minDelayMs": 700, "maxDelayMs": 1800, "concurrency": 6, "timeoutMs": 25000, "retries": 3 },
+  "http": {
+    "minDelayMs": 700,
+    "maxDelayMs": 1800,
+    "concurrency": 6,
+    "timeoutMs": 25000,
+    "retries": 3
+  },
   "store_non_us": false,
   "history_days": 21,
   "greenhouse_pay_transparency": true,
-  "greenhouse_pay_cap_per_board": 15,
+  "greenhouse_pay_cap_per_board": 5,
   "max_per_query": 200,
-  "detail_cap_per_source": 80,
+  "detail_cap_per_source": 60,
   "aggregators": {
     "queries": [
-      "product marketing security", "product manager security", "go-to-market strategy", "partnerships alliances",
-      "chief of staff technology", "competitive intelligence", "sales enablement director", "strategic initiatives technology",
-      "security sales strategy", "business operations director"
+      "product marketing security",
+      "product manager security",
+      "go-to-market strategy",
+      "partnerships alliances",
+      "chief of staff technology",
+      "competitive intelligence",
+      "sales enablement director",
+      "strategic initiatives technology",
+      "security sales strategy",
+      "business operations director"
     ],
     "where": "New York, NY",
     "maxDays": 7,
     "serpMaxQueries": 6
-  }
+  },
+  "host_rules": [
+    {
+      "suffix": "myworkdayjobs.com",
+      "minDelayMs": 2500,
+      "maxDelayMs": 5000,
+      "retries": 5,
+      "backoffMs": 8000,
+      "_note": "Workday rate-limits (HTTP 429); go slower and wait longer between retries"
+    },
+    {
+      "suffix": "boards-api.greenhouse.io",
+      "minDelayMs": 500,
+      "maxDelayMs": 1100
+    },
+    {
+      "suffix": "apply.careers.microsoft.com",
+      "minDelayMs": 5000,
+      "maxDelayMs": 10000,
+      "retries": 5,
+      "backoffMs": 10000,
+      "_note": "Eightfold PCSX pagination returned 429 in testing; start with 5-10s gaps"
+    },
+    {
+      "suffix": "careers.cisco.com",
+      "minDelayMs": 1500,
+      "maxDelayMs": 3000,
+      "retries": 4,
+      "backoffMs": 5000
+    }
+  ],
+  "workday_max_per_query": 60,
+  "eightfold_max_per_query": 30,
+  "phenom_max_per_query": 30
 }
