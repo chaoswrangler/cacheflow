@@ -1,5 +1,6 @@
 import * as C from './shared/core.mjs';
 import { CROSS, UNIVERSE } from './discovery.mjs';
+import { extractResume } from './shared/resume.mjs';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -16,7 +17,7 @@ const DEFAULT_CRIT = () => ({
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', sen: 2,
   include: '', exclude: 'intern, new grad, apprentice', tiers: { heavy: true, named: true, core: true, aggregator: true }, sectors: [], verticals: [],
 });
-const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', linkedin: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'empty' });
+const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'empty' });
 const S = {
   registry: { employers: [], unresolved_identifiers: [] }, jobs: [], jobsMeta: null, status: { sources: [] },
   crit: { ...DEFAULT_CRIT(), ...store.get('crit', {}) }, profile: { ...DEFAULT_PROFILE(), ...store.get('profile', {}) },
@@ -71,6 +72,7 @@ function renderHud() {
   $('#who').textContent = S.profile.name ? (S.profile.name + (S.profile.location ? ' · ' + S.profile.location : '')) : 'Job search · HUD';
   const open = S.jobs.filter(j => j.status !== 'closed').length;
   $('#heroEmp').textContent = `${S.registry.employers.length} employers`;
+  $('#heroCount').textContent = S.registry.employers.length;
   $('#heroRoles').textContent = S.jobsMeta?.generated_at ? `${open.toLocaleString()} open roles` : 'awaiting first collection';
   $('#heroLive').textContent = S.jobsMeta?.generated_at ? 'Feeds live' : 'Feeds idle';
 }
@@ -101,49 +103,11 @@ async function fileToText(file) {
   }
   return await file.text();
 }
-const CRED_RES = [
-  ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.?D\.?\b(?! Power)/], ['MD', /\bM\.D\.\b/],
-  ['BA / BS', /\b(B\.?A\.?|B\.?S\.?c?|Bachelor)/], ['PMP', /\bPMP\b/], ['CISSP', /\bCISSP\b/], ['CISM', /\bCISM\b/], ['CISA', /\bCISA\b/], ['CCSP', /\bCCSP\b/], ['CEH', /\bCEH\b/], ['OSCP', /\bOSCP\b/],
-  ['Security+', /Security\+/], ['GIAC', /\bGIAC\b|\bG(CIH|SEC|CIA|PEN)\b/], ['AWS Certified', /AWS Certified/i], ['Microsoft cert (SC/AZ/MS)', /\b(SC|AZ|MS|AI)-\d{3}\b/], ['CPA', /\bCPA\b/], ['CFA', /\bCFA\b/], ['Scrum (CSM/PSM)', /\b(CSM|PSM|Scrum Master)\b/], ['ITIL', /\bITIL\b/], ['Six Sigma', /six sigma/i],
-];
-const BIG_EMPLOYERS = ['Microsoft', 'Amazon', 'AWS', 'Google', 'Apple', 'Meta', 'Facebook', 'IBM', 'Oracle', 'SAP', 'Cisco', 'Salesforce', 'Adobe', 'Intel', 'NVIDIA', 'Dell', 'HP', 'VMware', 'Broadcom',
-  'Deloitte', 'Accenture', 'PwC', 'EY', 'KPMG', 'McKinsey', 'BCG', 'Bain', 'Booz Allen', 'Gartner', 'Forrester', 'JPMorgan', 'Goldman Sachs', 'Morgan Stanley', 'Citi', 'Bank of America', 'Capital One',
-  'Mandiant', 'FireEye', 'Symantec', 'McAfee', 'Splunk', 'Palo Alto Networks', 'CrowdStrike', 'Verizon', 'AT&T', 'Comcast', 'Pfizer', 'Johnson & Johnson', 'UnitedHealth', 'Kaiser'];
-const AMBIG = new Set(['Flex', 'Wing', 'Ro', 'Alma', 'Opal', 'Island', 'Lambda', 'Modal', 'Socket', 'Dust', 'Clerk', 'Harvey', 'Sierra', 'Cursor', 'Notion', 'SAFE', 'Calm', 'Siro', 'Serval', 'Compa', 'Lumos', 'Persona', 'Rula', 'Ketch', 'Alloy', 'Cobalt', 'Expel', 'Torq', 'Brex', 'Ramp', 'Forter', 'Flatiron Health', 'Medallion', 'Waymark', 'Sixfold', 'Lattice', 'Pendo', 'Island', 'Gong', 'Dialpad', 'Intercom', 'Commvault', 'Okta']);
 function extractProfile(text) {
-  const t = text.replace(/\r/g, '');
-  const lines = t.split('\n').map(l => l.trim()).filter(Boolean);
-  const p = DEFAULT_PROFILE();
-  p.source = 'resume';
-  const contact = l => /@|https?:|linkedin|\d{3}[).\s-]\d{3}|www\./i.test(l);
-  p.name = lines.slice(0, 6).find(l => /^[A-Z][A-Za-z'’.-]+(\s+[A-Z][A-Za-z'’.()-]+){1,3}$/.test(l) && !contact(l)) || '';
-  const ni = lines.indexOf(p.name);
-  p.headline = (ni >= 0 ? lines.slice(ni + 1, ni + 4) : lines.slice(0, 3)).find(l => !contact(l) && l.length > 12 && l.length < 160 && !/,\s*[A-Z]{2}\b$/.test(l)) || '';
-  const li = t.match(/linkedin\.com\/in\/[A-Za-z0-9_-]+/i); if (li) p.linkedin = 'https://www.' + li[0].replace(/^www\./, '');
-  const abbrs = Object.keys(C.STATES).join('|');
-  const loc = t.match(new RegExp(String.raw`\b([A-Z][A-Za-z .'-]{2,30}),\s*(${abbrs})\b`)) || t.match(new RegExp(String.raw`\b([A-Z][A-Za-z .'-]{2,30}),\s*(${Object.values(C.STATES).join('|')})\b`));
-  if (loc) { const st = Object.entries(C.STATES).find(([a, n]) => a === loc[2] || n === loc[2]); p.location = `${loc[1].trim()}, ${st ? st[0] : loc[2]}`; }
-  p.creds = CRED_RES.filter(([, re]) => re.test(t)).map(([n]) => n);
-  const names = new Set([...BIG_EMPLOYERS, ...S.registry.employers.map(e => e.employer.replace(/ \/ AWS$/, '')).filter(n => n.length >= 4 && !AMBIG.has(n))]);
-  p.employers = [...names].filter(n => new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(t)).slice(0, 14);
-  const titleRe = /\b(manager|director|lead|head|vp|vice president|chief|engineer|analyst|consultant|architect|specialist|strategist|researcher|scientist|officer|owner|partner|executive)\b/i;
-  p.titles = [...new Set(lines.filter(l => l.length < 90 && l.split(/\s+/).length <= 12 && titleRe.test(l) && !contact(l)).map(l => l.replace(/\s*[|•·].*$/, '').trim()))].slice(0, 10);
-  p.skillsOn = C.extractSkills(t);
-  const fnHits = new Set(); let maxSen = 0;
-  for (const ti of p.titles) { C.classifyFunctions(ti).functions.forEach(f => fnHits.add(f)); maxSen = Math.max(maxSen, C.seniority(ti)); }
-  const g = id => C.SKILLS.find(s => s.id === id)?.group;
-  const groups = p.skillsOn.map(g);
-  if (groups.filter(x => x === 'Go-to-market').length >= 3) { fnHits.add('sales'); fnHits.add('pmm'); fnHits.add('partner'); }
-  if (groups.filter(x => x === 'Product').length >= 2) fnHits.add('product');
-  p.suggestedFns = [...fnHits];
-  const years = [...t.matchAll(/\b(19[7-9]\d|20[0-3]\d)\b/g)].map(m => +m[1]).filter(y => y <= new Date().getFullYear());
-  p.years = years.length ? new Date().getFullYear() - Math.min(...years) : null;
-  p.maxSen = maxSen;
-  return p;
+  return { ...DEFAULT_PROFILE(), ...extractResume(text, { knownEmployers: S.registry.employers.map(e => e.employer.replace(/ \/ AWS$/, '')) }) };
 }
 function applyProfile(p, how) {
-  const keepLinkedIn = S.profile.linkedin;
-  S.profile = { ...p, linkedin: p.linkedin || keepLinkedIn };
+  S.profile = { ...p };
   if (p.location) {
     const [city, st] = p.location.split(',').map(x => x.trim());
     if (st && C.STATES[st]) S.crit.state = st;
@@ -181,7 +145,6 @@ function wireProfile() {
   $('#btnExtract').onclick = () => { const v = $('#paste').value.trim(); if (!v) return toast('Paste text or drop a file first'); S.lastText = v; applyProfile(extractProfile(v), 'Pasted text'); };
   $('#btnPreset').onclick = () => { $('#paste').value = SAMPLE; S.lastText = SAMPLE; applyProfile(extractProfile(SAMPLE), 'Sample resume (fictional)'); };
   $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); logIngest('<span class="p">cacheflow&gt;</span> cleared', true); };
-  $('#liUrl').onchange = e => { S.profile.linkedin = e.target.value.trim(); save(); renderDiscover(); };
   $('#btnClaude').onclick = enhanceWithClaude;
   $('#heroUpload').onclick = e => { e.preventDefault(); $('#drop').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => $('#file').click(), 450); };
   for (const [id, key] of [['#pName', 'name'], ['#pLoc', 'location'], ['#pHead', 'headline']]) $(id).onchange = e => {
@@ -228,7 +191,7 @@ async function enhanceWithClaude() {
 }
 function renderProfile() {
   const p = S.profile;
-  $('#pName').value = p.name || ''; $('#pLoc').value = p.location || ''; $('#pHead').value = p.headline || ''; $('#liUrl').value = p.linkedin || '';
+  $('#pName').value = p.name || ''; $('#pLoc').value = p.location || ''; $('#pHead').value = p.headline || '';
   $('#profSource').textContent = p.source === 'empty' ? 'no resume loaded' : p.source + (p.years ? ` · ~${p.years} yrs` : '');
   $('#pCreds').innerHTML = [...(p.creds || []).map(c => `<span class="tag m">${esc(c)}</span>`), ...(p.employers || []).map(c => `<span class="tag">${esc(c)}</span>`), ...(p.titles || []).slice(0, 6).map(c => `<span class="tag f">${esc(c)}</span>`)].join('') || '<span class="hint">Nothing yet. Drop a resume or load the sample.</span>';
   const on = new Set(p.skillsOn || []), off = new Set(p.skillsOff || []);
@@ -237,9 +200,10 @@ function renderProfile() {
   $('#pSkills').innerHTML = Object.entries(groups).map(([g, list]) => `<div style="margin:8px 0 4px" class="hint">${esc(g)}</div><div class="chips">` +
     list.map(s => `<button class="chip ${on.has(s.id) && !off.has(s.id) ? 'on' : ''}" data-skill="${esc(s.id)}">${esc(s.id)}</button>`).join('') + '</div>').join('') +
     ((p.custom || []).length ? `<div style="margin:8px 0 4px" class="hint">Custom keywords</div><div class="chips">${p.custom.map((c, i) => `<button class="chip on m" data-custom="${i}">${esc(c)}<span class="x">×</span></button>`).join('')}</div>` : '');
+  $('#skillSum').textContent = `Skills used for match scoring · ${(p.skillsOn || []).length} on${(p.custom || []).length ? ` · ${p.custom.length} custom` : ''}`;
   $$('#pSkills [data-skill]').forEach(b => b.onclick = () => {
     const id = b.dataset.skill; const s = new Set(S.profile.skillsOn || []);
-    s.has(id) ? s.delete(id) : s.add(id); S.profile.skillsOn = [...s]; save(); b.classList.toggle('on');
+    s.has(id) ? s.delete(id) : s.add(id); S.profile.skillsOn = [...s]; save(); b.classList.toggle('on'); $('#skillSum').textContent = `Skills used for match scoring · ${s.size} on`;
   });
   $$('#pSkills [data-custom]').forEach(b => b.onclick = () => { S.profile.custom.splice(+b.dataset.custom, 1); save(); renderProfile(); });
 }
@@ -570,11 +534,7 @@ function renderSetup() {
     <pre>{ "id": "wd:acme", "ats": "workday", "host": "acme.wd5.myworkdayjobs.com",
   "tenant": "acme", "site": "AcmeCareers", "queries": ["product manager"] }</pre>
     <p>Run <code>node collector/collect.mjs --probe</code> to get suggested boards for unresolved employers. Suggestions go to <code>data/probe-results.json</code> for you to review; nothing is auto-added.</p>
-    <h4>Email alerts</h4>
-    <ol><li>Create a free <b>Resend</b> account, verify a sending domain, and add repo secrets <code>RESEND_API_KEY</code>, <code>ALERT_FROM</code>, <code>DIGEST_SALT</code> (any random string), <code>SITE_URL</code> and optionally <code>ALERT_REPLY_TO</code>.</li>
-    <li>For signups, create a Formspree (or similar) form and put its URL in <code>data/site.json → signup_endpoint</code>. Requests arrive in your inbox as JSON.</li>
-    <li>Add approved requests to the <code>SUBSCRIBERS</code> secret as a JSON array of those payloads. Remove an entry to unsubscribe someone.</li>
-    <li>After each collection run, every subscriber gets only their <b>new</b> matches. The public <code>data/digest-state.json</code> stores hashed subscriber IDs and job IDs only, never email addresses.</li></ol>`;
+`;
   $('#setupRight').innerHTML = `<div class="kicker">Method &amp; limits</div>
     <h4>Salary</h4><ul><li>Only base salary counts. OTE, on-target earnings, total comp, bonus, equity and aggregator-predicted figures are shown but never used as base.</li>
     <li><b>Starts</b> = the range minimum meets your threshold. <b>Reaches</b> = only the maximum does. They're listed separately.</li>
@@ -590,35 +550,5 @@ function renderSetup() {
     <p class="hint">Repo: ${esc(repo)} · resume parsing runs locally in this browser · nothing about you leaves this page unless you use the optional Claude call</p>`;
 }
 
-/* ============================================================ email alerts */
-function alertPayload(email) {
-  return { email, tz: LOCAL_TZ, crit: S.crit, skillsOn: S.profile.skillsOn || [], custom: S.profile.custom || [], requested_at: new Date().toISOString() };
-}
-function wireAlerts() {
-  const msg = t => { $('#alertMsg').textContent = t; };
-  $('#btnCopyAlert').onclick = async () => {
-    const email = $('#alertEmail').value.trim() || 'you@example.com';
-    const txt = JSON.stringify(alertPayload(email));
-    try { await navigator.clipboard.writeText(txt); toast('Alert criteria copied'); } catch { prompt('Copy this:', txt); }
-  };
-  $('#btnSubscribe').onclick = async () => {
-    const email = $('#alertEmail').value.trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return msg('Enter a valid email.');
-    if (!$('#alertConsent').checked) return msg('Tick the consent box first.');
-    const ep = S.site.signup_endpoint;
-    if (!ep) {
-      const owner = S.site.owner_contact;
-      msg(owner ? 'No signup form configured. Opening an email to the site owner.' : 'Signup isn\'t configured on this site yet. Use "Copy alert criteria" and send it to the owner.');
-      if (owner) location.href = `mailto:${owner}?subject=${encodeURIComponent('Cache Flow alerts')}&body=${encodeURIComponent(JSON.stringify(alertPayload(email)))}`;
-      return;
-    }
-    msg('sending…');
-    try {
-      const r = await fetch(ep, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ ...alertPayload(email), _subject: 'Cache Flow alert signup' }) });
-      msg(r.ok ? 'Request received. Alerts start once the owner approves it.' : `Signup form returned ${r.status}.`);
-    } catch { msg('Could not reach the signup form.'); }
-  };
-}
-
-wireMatches(); wireSources(); wireAlerts();
+wireMatches(); wireSources();
 boot();

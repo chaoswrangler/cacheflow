@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { homeFit, parseSalaries, chooseSalary, salaryTier, classifyLocation, classifyFunctions, weekWindow, relativePosted, htmlToText, extractSkills } from '../../assets/shared/core.mjs';
 import { run } from '../collect.mjs';
 import { runDigest } from '../digest.mjs';
+import { extractResume } from '../../assets/shared/resume.mjs';
 
 let pass = 0; const t = (name, fn) => { try { fn(); pass++; } catch (e) { console.error('FAIL', name, '\n', e.message); process.exitCode = 1; } };
 
@@ -64,6 +65,42 @@ t('late evening NY is still same day', () => assert.equal(weekWindow(new Date('2
 t('relative posted', () => assert.equal(relativePosted('Posted 3 Days Ago', new Date('2026-11-19T18:00:00Z')), '2026-11-16'));
 t('30+ days is not a date', () => assert.equal(relativePosted('Posted 30+ Days Ago'), null));
 t('greenhouse double-escaped html', () => assert.equal(htmlToText('&lt;p&gt;Base salary &amp;amp; equity&lt;/p&gt;'), 'Base salary & equity'));
+
+/* ---------- resume parser */
+{
+// Layout mirrors a real resume header (fictional person), including the cases that broke before
+const cv = `Jane Rivera   |   jane.rivera@example.com   |   https://www.linkedin.com/in/janerivera   /   Page   1   of   2
+Jane Rivera, MBA, MS, MPH , PMP
+Cybersecurity Strategist | Business Strategy · GTM · AI
+Executive Summary
+Strategic operator at the intersection of cybersecurity, AI, and GTM innovation. Proven record unifying
+identity, data security, and compliance into a unified executive security strategy.
+Executive - grade differentiation.
+Professional Experience
+Microsoft — Senior Security Strategy Operations Lead, GTM & Growth   Nov 2025 – Present
+• Positioned against CrowdStrike, Palo Alto Networks and SentinelOne in competitive deals.
+• Partnered with Google Cloud and AWS marketplaces on co-sell.
+Senior Security Product Manager | Microsoft | 2022 – 2025
+Amazon Web Services (AWS)
+Program Manager , Custom Billing Solutions   2017 – 2019
+Memorial Sloan Kettering Cancer Center   2014 – 2016
+Education
+MBA, NYU Stern School of Business`;
+const p = extractResume(cv, { knownEmployers: ['CrowdStrike', 'SentinelOne', 'Palo Alto Networks', 'Okta'] });
+const ok = (n, c) => t('resume: ' + n.split(':')[0], () => assert.ok(c, n));
+ok('name = Jane Rivera (not Executive Summary): ' + p.name, p.name === 'Jane Rivera');
+ok('location not "MBA, MS": "' + p.location + '"', p.location === '');
+ok('headline: ' + p.headline, p.headline.startsWith('Cybersecurity Strategist'));
+ok('employers: ' + p.employers.join(', '), p.employers.includes('Microsoft') && p.employers.includes('Amazon Web Services') && p.employers.includes('Memorial Sloan Kettering') && !p.employers.includes('CrowdStrike') && !p.employers.includes('Google'));
+ok('titles: ' + JSON.stringify(p.titles), p.titles.every(t => !/summary|unified|differentiation/i.test(t) && t.length) && p.titles.some(t => /Program Manager/.test(t)));
+ok('creds: ' + p.creds.join(','), ['MBA', 'MPH', 'MS / MSc', 'PMP'].every(c => p.creds.includes(c)));
+const li = extractResume(`Contact\nwww.linkedin.com/in/sam-lee\nTop Skills\nGo-to-Market Strategy\nSam Lee\nDirector, Product Marketing at Acme\nBrooklyn, New York, United States\nSummary\nI build things.`);
+ok('LinkedIn PDF name: ' + li.name, li.name === 'Sam Lee');
+ok('LinkedIn PDF location: ' + li.location, li.location === 'Brooklyn, NY');
+const caps = extractResume(`JOHN SMITH\nNew York, NY | john@x.com\nVP, Alliances`);
+ok('ALL CAPS name: ' + caps.name + ' / loc ' + caps.location, caps.name === 'John Smith' && caps.location === 'New York, NY');
+
+}
 
 /* ---------- end-to-end collector with mocked fetch */
 const NOW = new Date('2026-11-19T18:00:00Z');

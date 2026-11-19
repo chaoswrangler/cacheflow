@@ -293,3 +293,60 @@ td.emp{color:var(--ice);font-family:var(--sans);font-size:14px;font-weight:600}
 @media (max-width:860px){.cbox{grid-template-columns:1fr!important;min-height:0}.howl{order:-1;max-width:400px;justify-self:center;margin:-40px auto -30px}}
 @media (prefers-reduced-motion:reduce){.hw .sh{transform:none;opacity:1}.hw .rimline{stroke-dashoffset:0}.hw .eye,.hw .eyeglow,.hw .facets{opacity:1}.howl .rays{animation:none}}
 
+
+/* ================= MOBILE ================= */
+@media (max-width:1000px){
+  .hud-in{height:auto;flex-wrap:wrap;gap:10px 14px;padding:10px 18px}
+  .nav{order:3;width:100%;margin-left:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nav::-webkit-scrollbar{display:none}
+  .nav button{flex:none}
+  .status{display:none}
+}
+@media (max-width:720px){
+  body{font-size:15px}
+  main{padding:20px 14px 70px}
+  .hud-in{padding:10px 14px}
+  .mk-t b{font-size:16px}
+  .wolfmark{width:34px;height:34px}
+  .sec-head{margin:4px 0 20px}
+  .sec-head .sub{font-size:15.5px}
+  .cbox{padding:26px 18px 30px;border-radius:22px;gap:6px;min-height:0;margin-bottom:24px}
+  .cbox h1{font-size:clamp(40px,12vw,56px)}
+  .cbox .intro{font-size:15.5px}
+  .howl{max-width:300px!important;margin:-20px auto -10px!important}
+  .kick{font-size:11px;gap:6px}
+  .kick span{padding:5px 10px}
+  .panel{padding:18px 16px;border-radius:18px}
+  .panel h3{flex-wrap:wrap}
+  .panel h3 small{margin-left:0;width:100%}
+  /* 16px inputs stop iOS from zooming on focus */
+  input[type=text],input[type=url],input[type=number],input[type=password],input[type=search],select,textarea{font-size:16px;padding:11px 12px}
+  .row{gap:8px}
+  .row>.btn:not(.sm){flex:1 1 auto}
+  .row>input,.row>select{max-width:none!important;flex:1 1 100%}
+  .row[style*="nowrap"]{flex-wrap:wrap!important}
+  .check{font-size:14.5px}
+  .chip{font-size:11px;padding:7px 11px}
+  .tiles{grid-template-columns:repeat(2,1fr);gap:10px}
+  .tile{padding:14px 14px}
+  .tile .n{font-size:30px}
+  .tile .l{font-size:12.5px}
+  .window{flex-direction:column;align-items:flex-start;gap:6px;padding:12px 14px}
+  .window .spacer{display:none}
+  .job{grid-template-columns:1fr;padding:16px 14px 14px 18px;gap:8px}
+  .job h4{font-size:18px}
+  .score{text-align:left;display:flex;align-items:center;gap:12px;min-width:0}
+  .score .v{font-size:26px}
+  .score .meter{flex:1;margin-top:0}
+  .score .why{display:none}
+  .job .facts{grid-template-columns:1fr}
+  .job .acts .btn{flex:1 1 calc(50% - 8px)}
+  .group-h{font-size:11px;letter-spacing:.1em}
+  .tbl-wrap{max-height:none;-webkit-overflow-scrolling:touch}
+  #srcTable,#xTable,#uTable{min-width:900px}
+  .term{font-size:11px}
+  .page-wolf,.letterbox{display:none}
+  .grain{opacity:.035}
+}
+.grid>*,.g2>*,.g-side>*{min-width:0}
+@media (max-width:720px){ html,body{overflow-x:hidden} .cbox{overflow:hidden!important} #fieldVis{overflow-x:auto} }

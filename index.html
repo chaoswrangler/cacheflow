@@ -43,7 +43,7 @@
       <div>
         <div class="kick"><span class="live" id="heroLive">Live job feeds</span><span id="heroEmp">— employers</span><span id="heroRoles">— open roles</span></div>
         <h1><span class="nm" data-text="Cache Flow">Cache Flow</span><span class="htag">Roles that match your range, straight from the source.</span></h1>
-        <p class="intro">Drop in a resume and pick a minimum <b>base</b> salary. Cache Flow checks employers' own job boards, scores every match, and shows exactly where each date, salary and location came from.</p>
+        <p class="intro">Drop in a resume and pick a minimum <b>base</b> salary. Cache Flow watches the job boards of <b id="heroCount">340</b> employers: the cybersecurity vendors you'd meet on the RSAC Conference expo floor, plus the big tech, cloud, AI and SaaS companies around them. It scores every match and shows exactly where each date, salary and location came from.</p>
         <div class="row" style="margin-top:28px"><a class="btn pri" href="#" id="heroUpload">Upload resume</a><a class="btn sec" href="#matches">See matches ↗</a></div>
       </div>
       <div class="howl" aria-hidden="true">
@@ -75,9 +75,7 @@
         <div class="panel">
           <h3>Ingest <small>PDF · DOCX · TXT</small></h3>
           <div class="drop" id="drop"><b>DROP RESUME</b><span class="hint">or click to choose a file · parsed locally with pdf.js / mammoth</span><input type="file" id="file" accept=".pdf,.docx,.txt,.md" hidden></div>
-          <label class="f" for="liUrl">LinkedIn profile URL</label>
-          <input type="url" id="liUrl" placeholder="https://www.linkedin.com/in/…">
-          <p class="hint" style="margin-top:6px">LinkedIn blocks automated profile reads. On your profile, open <b>More → Save to PDF</b> and drop that PDF above. The URL is kept for your discovery links.</p>
+          <p class="hint" style="margin-top:10px">LinkedIn PDF exports work too: on your profile, open <b>More → Save to PDF</b>.</p>
           <label class="f" for="paste">…or paste resume text</label>
           <textarea id="paste" placeholder="Paste resume or LinkedIn About/Experience text"></textarea>
           <div class="row" style="margin-top:12px">
@@ -96,20 +94,6 @@
       </div>
 
       <div class="grid">
-        <div class="panel mag">
-          <h3>Extracted profile <small id="profSource">preset</small></h3>
-          <div class="grid g2">
-            <div><label class="f">Name</label><input type="text" id="pName"></div>
-            <div><label class="f">Home location</label><input type="text" id="pLoc"></div>
-          </div>
-          <label class="f">Headline</label><input type="text" id="pHead">
-          <label class="f">Credentials &amp; employers detected</label>
-          <div class="chips" id="pCreds"></div>
-          <label class="f">Skills (click to toggle weight off · used for match scoring)</label>
-          <div id="pSkills"></div>
-          <div class="row" style="margin-top:8px"><input type="text" id="addSkill" placeholder="add keyword, press Enter" style="max-width:280px"></div>
-        </div>
-
         <div class="panel">
           <h3>Search criteria <small>auto-saved in this browser</small></h3>
           <div class="grid g2">
@@ -131,7 +115,7 @@
               <p class="hint" style="margin-top:6px">OTE, bonus, equity, total comp and predicted salaries never count as base.</p>
               <label class="f" for="cWindow">Posting window</label>
               <select id="cWindow">
-                <option value="week">Monday of this week → today (ET)</option>
+                <option value="week">Monday of this week → today</option>
                 <option value="d7">Last 7 days</option><option value="d14">Last 14 days</option><option value="d30">Last 30 days</option><option value="all">Any date</option>
               </select>
               <label class="check" style="margin-top:8px"><input type="checkbox" id="cFirstSeen"> When no posting date exists, use first-observed date (flagged)</label>
@@ -169,14 +153,24 @@
         </div>
 
         <div class="panel mag">
-          <h3>Email alerts <small>new matches after each collection run</small></h3>
-          <p class="hint">Alerts use the criteria above. Your email and criteria go to the site owner's signup form; they're never written to the public repo.</p>
-          <div class="grid g2" style="margin-top:6px">
-            <div><label class="f" for="alertEmail">Email</label><input type="text" id="alertEmail" placeholder="you@example.com" autocomplete="email"></div>
-            <div><label class="f">&nbsp;</label><label class="check"><input type="checkbox" id="alertConsent"> Email me new matches. I can unsubscribe any time by replying "unsubscribe".</label></div>
+          <h3>Extracted profile <small id="profSource">preset</small></h3>
+          <div class="grid g2">
+            <div><label class="f">Name</label><input type="text" id="pName"></div>
+            <div><label class="f">Home location</label><input type="text" id="pLoc"></div>
           </div>
-          <div class="row" style="margin-top:12px"><button class="btn pri" id="btnSubscribe">Request alerts</button><button class="btn sec sm" id="btnCopyAlert">Copy alert criteria (JSON)</button><span class="hint" id="alertMsg"></span></div>
+          <label class="f">Headline</label><input type="text" id="pHead">
+          <label class="f">Credentials &amp; employers detected</label>
+          <div class="chips" id="pCreds"></div>
+          <details id="skillBox">
+            <summary id="skillSum">Skills used for match scoring</summary>
+            <p class="hint" style="margin:10px 0 4px">Highlighted skills add points to a job's match score when the posting mentions them (up to 25 of 100). They don't hide any jobs. Click to turn one on or off; add your own keywords below.</p>
+            <div id="pSkills"></div>
+            <div class="row" style="margin-top:8px"><input type="text" id="addSkill" placeholder="add keyword, press Enter" style="max-width:280px"></div>
+          </details>
         </div>
+
+
+
       </div>
     </div>
   </section>
