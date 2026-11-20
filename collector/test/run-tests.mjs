@@ -53,7 +53,9 @@ t('Stamford counts as metro', () => assert.equal(classifyLocation({ locations: [
 t('GTM engineer flagged for review not dropped', () => { const f = classifyFunctions('GTM Engineer'); assert.equal(f.eng_review, true); });
 t('software engineer not flagged', () => assert.equal(classifyFunctions('Senior Software Engineer').eng_review, false));
 t('PMM', () => assert.deepEqual(classifyFunctions('Senior Product Marketing Manager, Identity').functions.includes('pmm'), true));
-t('chief of staff', () => assert.ok(classifyFunctions('Chief of Staff to the CISO').functions.includes('strategy')));
+t('chief of staff', () => assert.ok(classifyFunctions('Chief of Staff to the CISO').functions.includes('cos')));
+t('threat research category', () => { for (const x of ['Principal Security Researcher', 'Senior Threat Intelligence Analyst', 'Malware Reverse Engineer', 'CTI Lead']) assert.ok(classifyFunctions(x).functions.includes('threat'), x); assert.ok(!classifyFunctions('Business Intelligence Analyst').functions.includes('threat')); });
+t('category edge cases', () => { assert.deepEqual(classifyFunctions('HR Business Partner').functions, ['people']); assert.ok(classifyFunctions('Solutions Engineer').functions.includes('se')); assert.ok(classifyFunctions('Staff Software Engineer').functions.includes('eng')); });
 t('skills', () => assert.ok(extractSkills('Built GTM for Defender XDR and MDR; KQL; MBA; agentic AI').includes('KQL')));
 
 /* ---------- dates */
