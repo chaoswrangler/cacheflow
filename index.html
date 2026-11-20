@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120i">
+<link rel="stylesheet" href="assets/styles.css?v=20261120j">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -153,6 +153,8 @@
             <div>
               <label class="f" for="cMinBase">Minimum annual BASE salary (USD)</label>
               <select id="cMinBase" aria-label="Minimum annual base salary"></select>
+              <label class="f" for="cMaxBase">Range tops out at <span class="hint" style="text-transform:none;letter-spacing:0">top of the stated base range</span></label>
+              <select id="cMaxBase" aria-label="Top of base range at least"></select>
               <label class="f" for="cSalMode">Salary rule</label>
               <select id="cSalMode">
                 <option value="starts" title="Range starts at or above your minimum">Starts at my minimum</option>
@@ -218,7 +220,7 @@
     <div class="panel" style="padding:14px 18px;margin-bottom:6px">
       <div class="row">
         <input type="search" id="q" placeholder="Search roles…" aria-label="Search titles, employers and keywords" style="max-width:360px">
-        <select id="msort" class="mobile-only" aria-label="Sort by"><option value="score">Sort: match score</option><option value="base">Sort: base pay</option><option value="posted">Sort: newest</option><option value="employer">Sort: employer</option><option value="loc">Sort: location fit</option></select>
+        <select id="msort" aria-label="Sort by"><option value="score">Sort: match score</option><option value="base">Sort: base pay (start)</option><option value="top">Sort: top of range</option><option value="posted">Sort: newest</option><option value="employer">Sort: employer</option><option value="loc">Sort: location fit</option></select>
         <select id="typeFilter" aria-label="Filter by company type"></select>
         <select id="applyFilter" aria-label="Filter by application type"></select>
         <select id="groupBy" aria-label="Group roles">
@@ -379,7 +381,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120i" defer></script>
+<script src="assets/fx.js?v=20261120j" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -397,6 +399,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261120i"></script>
+<script type="module" src="assets/app.js?v=20261120j"></script>
 </body>
 </html>

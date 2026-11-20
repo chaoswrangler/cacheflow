@@ -470,4 +470,11 @@ try {
   t('location: whole-state search location matches in-office roles there', () => { const j = { title: 'PM', locations: ['Austin, TX'] }; assert.equal(P.homeFit(j, { metro: 'new york', state: 'NY', states: ['TX'] }).in_metro, true); assert.equal(P.homeFit(j, { metro: 'new york', state: 'NY' }).in_metro, false); });
   t('location: territory in a searched state is not tied', () => assert.equal(P.homeFit({ remote_us: true, title: 'Enterprise AE - Texas', locations: ['Remote, US'] }, { state: 'NY', states: ['TX'] }).tied, false));
 }
+{
+  const Q = await import('../../assets/shared/core.mjs');
+  const job = (min, max) => ({ uid: 'x', status: 'open', us: true, title: 'Director, Product Marketing', employer: 'Acme', locations: ['New York, NY'], salary: { min, max, kind: 'base', period: 'year' }, functions: ['pmm'], seniority: 5, posted_at: new Date().toISOString(), posted_kind: 'first_published' });
+  const crit = { functions: ['pmm'], minBase: 200000, maxBase: 300000, salMode: 'starts_reaches', window: 'all', metro: 'new york', state: 'NY', lMetro: true, types: {}, sectors: [], verticals: [], blockEmp: [], sen: 2 };
+  t('pay: top-of-range filter keeps 200-420K, drops 200-220K', () => { assert.ok(Q.evaluateJob(job(200000, 420000), { crit })); assert.equal(Q.evaluateJob(job(200000, 220000), { crit }), null); });
+  t('pay: baseTop ignores OTE-only', () => { assert.equal(Q.baseTop({ min: 150000, max: 300000, kind: 'ote_only' }), null); assert.equal(Q.baseTop({ min: 210000, max: null, kind: 'base' }), 210000); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

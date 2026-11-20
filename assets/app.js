@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120i';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120i';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120i';
+import * as C from './shared/core.mjs?v=20261120j';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120j';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120j';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -12,6 +12,7 @@ const store = {
   set(k, v) { try { localStorage.setItem('rr:' + k, JSON.stringify(v)); } catch { /* storage unavailable: keep in memory */ } },
 };
 const FN_KEYS = Object.keys(C.FUNCTIONS);
+const TOP_LEVELS = [0, 175000, 200000, 225000, 250000, 275000, 300000, 325000, 350000, 400000, 450000, 500000, 600000];
 const PAY_LEVELS = [0, 80000, 100000, 120000, 140000, 150000, 160000, 175000, 180000, 200000, 220000, 225000, 250000, 275000, 300000, 350000, 400000];
 /* Company types, so you can tell what kind of employer a role is at. */
 const EMP_TYPE = {
@@ -349,7 +350,7 @@ function critSummary() {
   const rule = { starts: 'starts ≥', starts_reaches: 'starts or reaches', plus_unknown: '≥ (or unstated)', any: 'any' }[c.salMode] || '';
   const win = { week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', all: 'any date' }[c.window] || c.window;
   const locs = [c.lMetro && ((c.places || []).filter(p => p.on).map(p => p.label).join(', ') || 'no places'), (c.lRemoteYes || c.lRemoteUnknown) && 'remote', c.lOther && 'other US'].filter(Boolean).join(' + ') || 'no locations';
-  return `${n} categor${n === 1 ? 'y' : 'ies'} · base ${c.salMode === 'any' ? 'any' : rule + ' ' + money(c.minBase)} · ${win} · ${locs}`;
+  return `${n} categor${n === 1 ? 'y' : 'ies'} · base ${c.salMode === 'any' ? 'any' : rule + ' ' + money(c.minBase)}${+c.maxBase ? ', tops ≥ ' + money(c.maxBase) : ''} · ${win} · ${locs}`;
 }
 function wireCritLayout() {
   const d = $('#critBox'); if (!d) return;
@@ -416,6 +417,9 @@ function renderCriteria() {
       return `<details class="fn-group" data-grp="${esc(g)}" ${S.fnOpen.has(g) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
   const levels = [...new Set([...PAY_LEVELS, +c.minBase || 0])].sort((a, b) => a - b);
   $('#cMinBase').innerHTML = levels.map(v => `<option value="${v}">${v ? money(v) + '+' : 'No minimum'}${v && !PAY_LEVELS.includes(v) ? ' (from your profile)' : ''}</option>`).join('');
+  const tops = [...new Set([...TOP_LEVELS, +c.maxBase || 0])].sort((a, b) => a - b);
+  $('#cMaxBase').innerHTML = tops.map(v => `<option value="${v}">${v ? 'Reaches ' + money(v) + '+' : 'Any top of range'}</option>`).join('');
+  $('#cMaxBase').value = String(+c.maxBase || 0);
   $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
@@ -448,6 +452,7 @@ function renderCriteria() {
   $$('#cFunctions [data-fnset]').forEach(b => b.onclick = e => { e.preventDefault();
     c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
   $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); upd(); };
+  $('#cMaxBase').onchange = e => { c.maxBase = Math.max(0, +e.target.value || 0); upd(); };
   $('#cSalMode').onchange = e => { c.salMode = e.target.value; upd(); };
   $('#cWindow').onchange = e => { c.window = e.target.value; upd(); };
   $('#cFirstSeen').onchange = e => { c.firstSeen = e.target.checked; upd(); };
@@ -617,7 +622,7 @@ function renderMatches() {
   const { key, dir } = S.sort || { key: 'score', dir: -1 };
   if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
   const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, other: 1 };
-  const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0),
+  const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0), top: m => C.baseTop(m.j.salary) ?? -1,
     loc: m => LOCR[m.loc] || 0, posted: m => m.dt.d || '', source: m => (m.j.source_class === 'official' ? '0' : '1') + m.j.ats }[key];
   ms.sort((x, y) => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; });
   const limit = S.showN || 200;
@@ -668,7 +673,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120i');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120j');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

@@ -140,6 +140,11 @@ export function chooseSalary(ranges = [], structured = null) {
   return { min: c.min, max: c.max, period: c.period || 'year', kind: c.kind, src: c.src || 'text',
            snippet: c.snippet || null, multi: usable.length > 1, ote: ote[0] || null };
 }
+// Highest base the posting states (null when there's no usable base range).
+export function baseTop(sal) {
+  if (!sal || ['ote_only', 'predicted'].includes(sal.kind)) return null;
+  const v = sal.max ?? sal.min; return Number.isFinite(+v) && +v > 0 ? +v : null;
+}
 export function salaryTier(sal, threshold) {
   if (!sal) return 'unknown';
   if (sal.kind === 'ote_only') return 'ote_only';
@@ -697,6 +702,12 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const tier = salaryTier(j.salary, c.minBase || 0);
   const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
   if (salOk && !salOk.includes(tier)) if (!force) return null;
+  // Top of the stated base range must reach crit.maxBase (separates a $200-220K role from a $200-420K one).
+  // Roles with no stated base pass only when the salary rule already lets them in.
+  if (+c.maxBase > 0 && !force) {
+    const top = baseTop(j.salary);
+    if (top == null ? !['plus_unknown', 'any'].includes(c.salMode) : top < +c.maxBase) return null;
+  }
   const hf = homeFit(j, { metro: c.metro || '', state: c.remoteState || c.state || '', states: c.placeStates || [] });
   let loc;
   if (hf.in_metro) loc = 'metro';

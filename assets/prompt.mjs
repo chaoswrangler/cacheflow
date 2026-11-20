@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120i';
+import * as C from './shared/core.mjs?v=20261120j';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
@@ -78,7 +78,7 @@ ${bullets(cats.length ? cats : ['Any category'])}
 **Seniority:** ${C.SENIORITY_LABEL[c.sen] || 'Mid'} and above, judged from the title (Senior, Staff, Principal, Lead, Manager, Director, Head, VP). Skip titles containing: ${c.exclude || 'none'}.
 
 **Base pay:** include a role only if ${SAL_TXT[c.salMode]?.(min) || SAL_TXT.starts_reaches(min)}.
-- Count base salary only. On-target earnings (OTE), commission, bonus, equity and "total compensation" never count as base. If only OTE is given, say "OTE only".
+${+c.maxBase ? `- Also require the TOP of the stated base range to be at least ${money(+c.maxBase)} (a $200K-$220K range and a $200K-$420K range are different roles).\n` : ''}- Count base salary only. On-target earnings (OTE), commission, bonus, equity and "total compensation" never count as base. If only OTE is given, say "OTE only".
 - Use the range the posting states (pay-transparency sections, "The base salary range for this role is…"). If several ranges are given by location, use the one for the candidate's location; otherwise the lowest.
 - Only US-dollar ranges count. Ignore ranges in other currencies, and ignore third-party salary estimates.
 
