@@ -225,15 +225,45 @@ export function classifyLocation(job, opts = {}) {
 }
 
 /* ------------------------------------------------------------------ functions & seniority */
+// Job-function categories. Title-matched; a role can land in several. `group` drives the grouped picker,
+// `hint` shows example titles, `broad` categories are off by default and get no description excerpt.
+const F = (group, label, hint, re, broad = false) => ({ group, label, hint, re, broad });
 export const FUNCTIONS = {
-  product:  { label: 'Product management', re: /\bproduct\s+(manager|management|lead|owner|director|leader|strategy)|\b(group|principal|staff|senior|sr\.?|lead)\s+product\b|\bhead of product\b|\bvp,?\s+(of\s+)?product\b|\bcpo\b/i },
-  tpm:      { label: 'Technical product & program mgmt', re: /\b(technical\s+)?program manag|\btpm\b|\bprogram (lead|director)|portfolio manag/i },
-  pmm:      { label: 'Product marketing, marketing & demand gen', re: /product marketing|\bpmm\b|marketing|demand gen|growth|brand|content strateg|communications|campaign|evangel|analyst relations/i },
-  sales:    { label: 'Sales, commercial strategy & GTM', re: /\baccount (executive|director|manager)|\bsales\b|go[- ]to[- ]market|\bgtm\b|commercial|revenue|business development|specialist|field cto|overlay|client (partner|director)|deal (desk|strategy)/i },
-  partner:  { label: 'Partnerships, alliances & channel', re: /partner|alliance|channel|ecosystem|marketplace|\bisv\b|reseller|\bmssp\b|distribution|co-?sell/i },
-  ci:       { label: 'Competitive intel, adoption & enablement', re: /competitive|enablement|adoption|customer success|customer value|value (engineer|consult|advis)|customer experience|readiness|win[- ]loss|market intelligence/i },
-  strategy: { label: 'Strategy, BizOps & chief of staff', re: /strateg|business operations|biz ?ops|chief of staff|\boperations (lead|manager|director)|transformation|special projects|(gtm|revenue|sales|field|business) operations|initiatives|office of the (ceo|cto|ciso|cio)|business planning/i },
+  product:  F('Product & programs', 'Product management', 'Product Manager, Group PM, Head of Product', /\bproduct\s+(manager|management|lead|owner|director|leader|strategy)|\b(group|principal|staff|senior|sr\.?|lead)\s+product\b|\bhead of product\b|\bvp,?\s+(of\s+)?product\b|\bcpo\b/i),
+  tpm:      F('Product & programs', 'Program & technical program mgmt', 'Program Manager, TPM, Portfolio Manager', /\b(technical\s+)?program manag|\btpm\b|\bprogram (lead|director)|portfolio manag/i),
+  pmm:      F('Marketing', 'Product marketing', 'Product Marketing Manager, Solutions Marketing', /product marketing|\bpmm\b|solutions? marketing|portfolio marketing|competitive marketing|industry marketing/i),
+  marketing:F('Marketing', 'Marketing, brand & communications', 'Brand, Content, Comms, Events, DevRel', /\bmarketing\b|\bbrand\b|communications|\bpr\b|public relations|content (strateg|market|lead|manager|writer|director)|campaign|\bevents?\b|social media|evangel|developer relations|devrel|analyst relations|community (manager|lead)|copywrit|storytell/i),
+  demand:   F('Marketing', 'Demand gen, growth & lifecycle', 'Demand Gen, Growth, ABM, Field Marketing', /demand gen|\bgrowth\b|lifecycle|performance marketing|\babm\b|account[- ]based|marketing operations|field marketing|digital marketing|\bseo\b|paid (media|social|search)/i),
+  sales:    F('Sales & customers', 'Sales & account management', 'Account Executive, Sales Director, BDR', /\baccount (executive|director)|\bsales\b|commercial (lead|director|manager)|business development|\b[bs]dr\b|(security|solutions?|technology|cloud|ai|data|technical) specialist|client (partner|director)|enterprise (seller|executive)|\bterritory\b/i),
+  se:       F('Sales & customers', 'Solutions & sales engineering', 'Solutions Engineer, Sales Engineer, Field CTO', /(solutions?|sales|pre-?sales|customer|field|partner|forward[- ]deployed|value) (engineer|architect|consultant)|field cto|technical (seller|specialist)|deployment strategist|\bpresales\b/i),
+  partner:  F('Sales & customers', 'Partnerships, alliances & channel', 'Alliances, Channel, ISV, MSSP partners', /(?<!business |talent |hr |people |finance |hrbp |learning )partner|alliance|channel|ecosystem|marketplace|\bisv\b|reseller|\bmssp\b|distribution|co-?sell/i),
+  cs:       F('Sales & customers', 'Customer success & adoption', 'Customer Success, TAM, Adoption, Renewals', /customer success|customer (experience|outcomes|value)|adoption|value (realization|management|engineer|consult|advis)|technical account manager|\btam\b|renewal|client success|implementation (manager|lead)|onboarding/i),
+  enable:   F('Sales & customers', 'Enablement & training', 'Sales Enablement, Readiness, Training', /enablement|readiness|training|learning (and|&) development|curriculum|instructional|\bacademy\b/i),
+  gtm:      F('Strategy & operations', 'Go-to-market strategy & ops', 'GTM Strategy, Revenue Ops, Sales Strategy', /go[- ]to[- ]market|\bgtm\b|(revenue|sales|field|commercial|partner) (operations|strategy|planning)|rev ?ops|sales ?ops|deal (desk|strategy)|territory planning/i),
+  strategy: F('Strategy & operations', 'Strategy & business operations', 'Strategy, BizOps, Transformation, Corp Dev', /strateg(?!ic account)|business operations|biz ?ops|\boperations (lead|manager|director)|transformation|special projects|initiatives|business planning|corporate development|\bm&a\b|\bpricing\b/i),
+  cos:      F('Strategy & operations', 'Chief of staff & executive office', 'Chief of Staff, Office of the CEO/CISO', /chief of staff|office of the (ceo|cto|ciso|cio|cpo|coo|president)|executive (operations|business partner)|technical advisor to/i),
+  ci:       F('Strategy & operations', 'Competitive & market intelligence', 'Competitive Intel, Market Research, Win/Loss', /competitive|market (intelligence|research|insights)|win[- ]loss|industry analyst/i),
+  threat:   F('Security practice', 'Threat research & intelligence', 'Threat Intel Analyst, Security Researcher, CTI', /threat (intel|research|hunt|analy|insight|landscape|actor)|\bcti\b|(cyber|security|adversary|counter[- ]?threat|threat actor) (intelligence|research)|security researcher|(?<!business |market |competitive |sales |revenue |customer |partner |marketing )intelligence (analyst|researcher|lead|manager|director)|malware (analy|research|reverse)|reverse engineer|vulnerability research|exploit research|adversary emulation|intel(ligence)? (operations|collection|fusion)|\bosint\b/i),
+  secops:   F('Security practice', 'Security operations, IR & testing', 'SOC, Incident Response, DFIR, Red Team', /security operations|\bsoc\b|incident (response|responder|handler)|\bdfir\b|forensic|detection (engineer|and response|& response)|\bmdr\b|security analyst|cyber (defense|analyst)|(blue|purple|red) team|penetration test|pen ?test|offensive security/i),
+  seceng:   F('Security practice', 'Security engineering & architecture', 'Security Engineer, Cloud/AppSec, Product Security', /security (engineer|architect)|(cloud|application|product|infrastructure|network|endpoint|data) security (engineer|architect|lead|manager|analyst)|\bappsec\b|devsecops|identity (engineer|architect)|\biam (engineer|architect)|cryptograph|vulnerability (management|engineer)/i),
+  grc:      F('Security practice', 'GRC, risk, privacy & trust', 'GRC, Risk, Compliance, Privacy, CISO', /\bgrc\b|governance|\brisk\b|compliance|privacy|trust (and|&) safety|security assurance|(?<!to the |of the )\bciso\b|security program|fedramp/i),
+  ai:       F('Technology', 'AI & machine learning', 'ML Engineer, Applied Scientist, AI Product', /machine learning|\bml\b|\bai\b|artificial intelligence|deep learning|\bllms?\b|applied scientist|research scientist|generative|\bgenai\b|\bnlp\b|computer vision|agentic/i),
+  eng:      F('Technology', 'Software & infrastructure engineering', 'Software, Platform, SRE, DevOps Engineer', /(software|backend|back[- ]end|frontend|front[- ]end|full[- ]?stack|platform|infrastructure|site reliability|devops|systems|network|mobile|ios|android|firmware|embedded|qa|test|reliability|cloud|data|build|release) engineer|\bsre\b|\bsde\b|\bswe\b|\bdeveloper\b|engineering manager|\bprogrammer\b/i, true),
+  data:     F('Technology', 'Data, analytics & BI', 'Data Scientist, Analyst, BI, Analytics Eng', /data (scien|analy|engineer|architect)|analytics|business intelligence|\bbi (analyst|developer|engineer)|insights analyst|statistic/i, true),
+  design:   F('Technology', 'Design & UX research', 'Product Designer, UX Researcher', /\bdesigner\b|\bux\b|user experience|user research|product design|content design|\bui\b/i, true),
+  support:  F('Corporate & services', 'Support & professional services', 'Support Engineer, Consultant, Services', /support (engineer|specialist|agent|manager|lead)|technical support|help ?desk|service desk|customer (support|service)|professional services|\bconsultant\b/i, true),
+  finance:  F('Corporate & services', 'Finance & accounting', 'FP&A, Accounting, Controller, Procurement', /financ|accounting|accountant|controller|\bfp&a\b|treasury|\btax\b|payroll|procurement/i, true),
+  people:   F('Corporate & services', 'People, HR & recruiting', 'Recruiter, HRBP, People Ops, Total Rewards', /recruit|talent (acquisition|partner)|\bhr\b|human resources|people (partner|operations|business|team)|\bhrbp\b|total rewards|\bsourcer\b/i, true),
+  legal:    F('Corporate & services', 'Legal, policy & government affairs', 'Counsel, Paralegal, Public Policy', /\blegal\b|counsel|attorney|lawyer|paralegal|public policy|government (affairs|relations)|regulatory/i, true),
 };
+// Criteria saved before the categories were split (no fnKnown): old keys also cover their new children.
+const LEGACY_FN = { strategy: ['cos', 'gtm'], sales: ['gtm', 'se'], ci: ['cs', 'enable'], pmm: ['marketing', 'demand'] };
+export function selectedFunctions(c) {
+  const f = c.functions || [];
+  return c.fnKnown ? f : [...new Set([...f, ...f.flatMap(k => LEGACY_FN[k] || [])])];
+}
+export const FUNCTION_GROUPS = [...new Set(Object.values(FUNCTIONS).map(f => f.group))];
+export const DEFAULT_FUNCTIONS = Object.keys(FUNCTIONS).filter(k => !FUNCTIONS[k].broad);
 const ENG_REVIEW = /\b(engineer|architect)\b/i;
 const ENG_GTM = /gtm|go[- ]to[- ]market|sales|solutions?|field|forward[- ]deployed|customer|partner|pre-?sales|growth|value|deployment strategist/i;
 export function classifyFunctions(title = '', desc = '') {
@@ -259,7 +289,7 @@ const SK = (group, items) => items.map(([id, re]) => ({ id, group, re: new RegEx
 export const SKILLS = [
   ...SK('Security', [
     ['XDR / EDR', String.raw`\b(x|e)dr\b|extended detection`], ['SIEM / SOAR', String.raw`\bsiem\b|\bsoar\b`], ['MDR / managed security', String.raw`\bmdr\b|managed (detection|security)|mssp`],
-    ['SOC operations', String.raw`\bsoc\b|security operations`], ['Threat intelligence', String.raw`threat intel`], ['Threat hunting', String.raw`threat hunt|advanced hunting`],
+    ['SOC operations', String.raw`\bsoc\b|security operations`], ['Threat intelligence', String.raw`threat intel`], ['Threat hunting', String.raw`threat hunt|advanced hunting`], ['Malware analysis & reverse engineering', String.raw`malware analy|reverse engineer|\bida pro\b|ghidra`], ['OSINT', String.raw`\bosint\b|open[- ]source intelligence`], ['Threat actor tracking', String.raw`threat actor|nation[- ]state|\bapt\d*\b|adversary (tracking|research)`], ['Vulnerability research', String.raw`vulnerability research|exploit (development|research)|\bcve\b`],
     ['Incident response', String.raw`incident response|\bdfir\b`], ['Zero trust', String.raw`zero[- ]trust`], ['Identity & access', String.raw`\biam\b|identity (and|&) access|identity security|\bpam\b|privileged access`],
     ['SASE / network security', String.raw`\bsase\b|\bsse\b|\bcasb\b|network security|firewall`], ['Cloud security', String.raw`cloud security|\bcnapp\b|\bcspm\b|\bcwpp\b`], ['AppSec / DevSecOps', String.raw`appsec|application security|devsecops|software supply chain`],
     ['Data security / DLP', String.raw`data security|\bdlp\b|data loss`], ['Email security', String.raw`email security|phishing|\bbec\b`], ['Vulnerability & exposure mgmt', String.raw`vulnerability management|exposure management|attack surface`],
@@ -309,7 +339,7 @@ export function enrichJob(raw) {
   const sal = chooseSalary(parseSalaries(text), raw.salary_struct || null);
   const fn = classifyFunctions(raw.title, text);
   const kw = extractSkills(raw.title + '\n' + text);
-  const relevant = fn.functions.length > 0 || fn.eng_review;
+  const relevant = fn.functions.some(f => !FUNCTIONS[f].broad) || fn.eng_review;
   return {
     uid: `${raw.source_id}:${raw.ext_id}`,
     source_id: raw.source_id, ats: raw.ats, employer: raw.employer, source_class: raw.source_class || 'official',
@@ -409,7 +439,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const sectors = c.sectors || [], verticals = c.verticals || [];
   if (sectors.length && !sectors.includes(sector)) return null;
   if (verticals.length && sector === 'Cybersecurity' && !verticals.includes(vertical)) return null;
-  const fnHit = (j.functions || []).filter(f => (c.functions || []).includes(f));
+  const sel = selectedFunctions(c), fnHit = (j.functions || []).filter(f => sel.includes(f));
   const engOnly = !fnHit.length && c.engReview && j.eng_review;
   if (!fnHit.length && !engOnly) return null;
   if (excl && excl.test(j.title)) return null;

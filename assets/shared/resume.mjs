@@ -1,5 +1,5 @@
 // Resume / LinkedIn-PDF text → profile. Pure function so it can be tested in Node.
-import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261119p';
+import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261119r';
 
 export const CRED_RES = [
   ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.D\.?(?=\s|,|$)/], ['MD', /\bM\.D\.\b/],
@@ -110,14 +110,26 @@ export function extractResume(text = '', { knownEmployers = [] } = {}) {
   p.titles = titles.slice(0, 10);
 
   p.skillsOn = extractSkills(t);
-  const fn = new Set(); let maxSen = 0;
-  for (const ti of p.titles) { classifyFunctions(ti).functions.forEach(f => fn.add(f)); maxSen = Math.max(maxSen, seniority(ti)); }
-  const groups = p.skillsOn.map(id => SKILLS.find(s => s.id === id)?.group);
-  if (groups.filter(x => x === 'Go-to-market').length >= 3) { fn.add('sales'); fn.add('pmm'); fn.add('partner'); }
-  if (groups.filter(x => x === 'Product').length >= 2) fn.add('product');
-  p.suggestedFns = [...fn];
+  let maxSen = 0;
+  for (const ti of p.titles) maxSen = Math.max(maxSen, seniority(ti));
+  p.suggestedFns = suggestFunctions(p);
   const years = [...t.matchAll(/\b(19[7-9]\d|20[0-4]\d)\b/g)].map(x => +x[1]).filter(y => y <= new Date().getFullYear());
   p.years = years.length ? new Date().getFullYear() - Math.min(...years) : null;
   p.maxSen = maxSen;
   return p;
+}
+
+// Job-function categories suggested by a parsed profile: from titles and headline, plus skill clusters.
+export function suggestFunctions(p) {
+  const fn = new Set();
+  for (const ti of p.titles || []) classifyFunctions(ti).functions.forEach(f => fn.add(f));
+  const groups = (p.skillsOn || []).map(id => SKILLS.find(s => s.id === id)?.group);
+  if (p.headline) classifyFunctions(p.headline).functions.forEach(f => fn.add(f));
+  const n = g => groups.filter(x => x === g).length, has = id => (p.skillsOn || []).includes(id);
+  if (n('Go-to-market') >= 3) { fn.add('gtm'); fn.add('pmm'); }
+  if (n('Product') >= 2) fn.add('product');
+  if (n('AI') >= 2) fn.add('ai');
+  if (['Threat intelligence', 'Threat hunting', 'Malware analysis & reverse engineering', 'OSINT', 'Threat actor tracking'].filter(has).length >= 2) fn.add('threat');
+  if (has('GRC & compliance') && n('Security') >= 3) fn.add('grc');
+  return [...fn];
 }
