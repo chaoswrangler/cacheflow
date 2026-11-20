@@ -610,8 +610,20 @@ export const ADAPTERS = {
     const list = r.data?.jobs;
     if (!Array.isArray(list)) return { result: 'parse_error', status: r.status, jobs: [], note: 'No jobs array' };
     const jobs = list.filter(j => j.isListed !== false).map(j => {
-      const comp = (j.compensation?.summaryComponents || []).find(c => /salary/i.test(c.compensationType || ''));
-      const per = comp && /hour/i.test(comp.interval || '') ? 'hour' : 'year';
+      // Pay can sit in three places: a single summary range, per-location tiers (zones), or only a summary line.
+      const isSal = c => /salary/i.test(c?.compensationType || '') && !/commission|equity|bonus/i.test(c?.compensationType || '');
+      const usd = c => !c.currencyCode || /^usd$/i.test(c.currencyCode);
+      let comp = (j.compensation?.summaryComponents || []).find(c => isSal(c) && usd(c));
+      if (!comp) { // tiers: lowest to highest US-dollar base across zones
+        const tc = (j.compensation?.compensationTiers || []).flatMap(t => t.components || []).filter(c => isSal(c) && usd(c) && c.minValue);
+        if (tc.length) comp = { ...tc[0], minValue: Math.min(...tc.map(c => c.minValue)), maxValue: Math.max(...tc.map(c => c.maxValue || c.minValue)), multi: tc.length > 1 };
+      }
+      if (!comp) { // summary line only, e.g. "$160K – $200K • Offers Equity"
+        const txt = j.compensation?.scrapeableCompensationSalarySummary || j.compensation?.compensationTierSummary || '';
+        const sal = /\$|usd/i.test(txt) && !/\bote\b|on[- ]target|commission/i.test(txt.split('•')[0]) ? chooseSalary(parseSalaries('Base salary range: ' + txt.split('•')[0])) : null;
+        if (sal?.min) comp = { minValue: sal.min, maxValue: sal.max, interval: sal.period === 'hour' ? '1 HOUR' : '1 YEAR', currencyCode: 'USD', fromText: true };
+      }
+      const per = comp && /hour/i.test(comp.interval || '') && comp.minValue < 1000 ? 'hour' : 'year';
       return {
         source_id: src.id, ats: 'ashby', employer: emp.employer, ext_id: j.id, title: j.title, url: j.jobUrl,
         locations: [j.location, ...(j.secondaryLocations || []).map(s => s.location)].filter(Boolean),

@@ -335,6 +335,22 @@ try {
   t('company page: query-string and path job links found across next pages, numeric ids kept', () => assert.deepEqual(ids, ['html:india:25925', 'html:india:25973', 'html:india:7118273', 'html:india:7120001']));
 }
 
+/* ---------- Ashby pay: per-zone tiers and summary-line-only compensation */
+{
+  const { ADAPTERS: A } = await import('../../assets/shared/core.mjs');
+  const jobsResp = { jobs: [
+    { id: 't1', title: 'Solutions Consultant, Post Sales, Strategic', jobUrl: 'https://jobs.ashbyhq.com/ramp/t1', location: 'New York, NY', publishedAt: '2026-11-19T19:09:55Z', descriptionPlain: 'About Ramp',
+      compensation: { summaryComponents: [], compensationTiers: [{ title: 'Zone 1', components: [{ compensationType: 'Salary', minValue: 160000, maxValue: 200000, currencyCode: 'USD', interval: '1 YEAR' }] }, { title: 'Zone 2', components: [{ compensationType: 'Salary', minValue: 144000, maxValue: 180000, currencyCode: 'USD', interval: '1 YEAR' }] }, { title: 'Toronto', components: [{ compensationType: 'Salary', minValue: 150000, maxValue: 190000, currencyCode: 'CAD', interval: '1 YEAR' }] }] } },
+    { id: 't2', title: 'Product Marketing Lead', jobUrl: 'https://jobs.ashbyhq.com/ramp/t2', location: 'New York, NY', publishedAt: '2026-11-19T19:09:55Z', descriptionPlain: 'About Ramp', compensation: { scrapeableCompensationSalarySummary: '$172K - $215K', compensationTierSummary: '$172K – $215K • Offers Equity' } },
+    { id: 't3', title: 'Account Executive', jobUrl: 'https://jobs.ashbyhq.com/ramp/t3', location: 'New York, NY', publishedAt: '2026-11-19T19:09:55Z', descriptionPlain: 'About Ramp', compensation: { compensationTierSummary: '$250K OTE • Offers Equity' } } ] };
+  const http = { json: async () => ({ ok: true, status: 200, data: jobsResp }) };
+  const out = await A.ashby({ id: 'ashby:ramp', slug: 'ramp' }, { employer: 'Ramp' }, http);
+  const by = Object.fromEntries(out.jobs.map(j => [j.ext_id, j]));
+  t('ashby: tiered pay read across US zones (CAD tier ignored)', () => { assert.equal(by.t1.salary_struct.min, 144000); assert.equal(by.t1.salary_struct.max, 200000); });
+  t('ashby: summary-line-only pay is read', () => { assert.equal(by.t2.salary_struct.min, 172000); assert.equal(by.t2.salary_struct.max, 215000); });
+  t('ashby: an OTE-only summary is not counted as base', () => assert.equal(by.t3.salary_struct, null));
+}
+
 /* ---------- Google Careers (experimental, shape-matched) and Radancy (robots → sitemap → JSON-LD) */
 {
   const gJob = (id, title, loc, ts) => [id, title, `https://www.google.com/about/careers/applications/signin?jobId=${id}`, [null, '<ul><li>Lead launches</li></ul>'], [null, '<p>Minimum qualifications: 10 years.</p>'], null, null, 'Google', 'en-US', [[loc, [loc], loc.split(',')[0], null, 'NY', 'US']], [null, '<p>The US base salary range for this full-time position is $197,000-$291,000 + bonus + equity + benefits.</p>'], [ts, 0]];
