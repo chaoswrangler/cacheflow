@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120w';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120w';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120w';
+import * as C from './shared/core.mjs?v=20261120x';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120x';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120x';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -829,7 +829,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120w');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120x');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

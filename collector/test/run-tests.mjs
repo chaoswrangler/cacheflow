@@ -268,6 +268,33 @@ try {
   t('completed full scan clears the resume point', () => assert.equal(b.statusOut.sources.find(x => x.id === 'wd:fox').resume_offset, null));
 }
 
+/* ---------- Workday: US-only filter read from the tenant's own facets, saved, reused; resume point survives a total refusal */
+{
+  const mk = (n, where, tag) => Array.from({ length: n }, (_, i) => ({ externalPath: `/job/${tag}/Role-${i}_${tag}${i}`, title: `Account Executive ${i}`, locationsText: where, postedOn: 'Posted Today' }));
+  const us = mk(45, 'USA - Remote', 'U'), intl = mk(40, 'London, UK', 'X');
+  const FACETS = [{ facetParameter: 'locationMainGroup', descriptor: 'Locations', values: [{ facetParameter: 'locationCountry', descriptor: 'Country', values: [{ descriptor: 'United Kingdom', id: 'uk1', count: 40 }, { descriptor: 'United States of America', id: 'us9', count: 45 }] }] }];
+  const dir = await mkdtemp(join(tmpdir(), 'cf-us-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Golf', tier: 'heavy', sources: [{ id: 'wd:golf', ats: 'workday', host: 'golf.wd5.myworkdayjobs.com', tenant: 'golf', site: 'Ext', queries: [''], max_results: 2000 }] }] }));
+  const bodies = []; let mode = 'refuse20';
+  const f = async (url, init = {}) => {
+    if (url.includes('/jobs')) { const b = JSON.parse(init.body); bodies.push(b);
+      if (mode === 'refuseAll' || (mode === 'refuse20' && b.offset === 20 && b.appliedFacets.locationCountry)) return new Response('slow', { status: 429, headers: { 'retry-after': '0' } });
+      const list = b.appliedFacets.locationCountry ? us : [...us, ...intl];
+      return new Response(JSON.stringify({ total: list.length, facets: FACETS, jobPostings: list.slice(b.offset, b.offset + 20) }), { status: 200 }); }
+    return new Response(JSON.stringify({ jobPostingInfo: { jobDescription: '', location: 'Remote, USA', startDate: '2026-11-18' } }), { status: 200 });
+  };
+  const a = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const sa = a.statusOut.sources.find(x => x.id === 'wd:golf');
+  t('workday: US filter found in nested facets and applied', () => { assert.deepEqual(bodies[0].appliedFacets, {}); assert.deepEqual(bodies[1].appliedFacets, { locationCountry: ['us9'] }); assert.deepEqual(sa.us_facet, { locationCountry: ['us9'] }); assert.ok(a.jobsOut.jobs.every(j => !/London/.test(j.locations.join()))); });
+  bodies.length = 0; mode = 'refuseAll';
+  const b = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const sb = b.statusOut.sources.find(x => x.id === 'wd:golf');
+  t('workday: a run refused outright keeps the resume point and the saved filter', () => { assert.equal(sb.result, 'http_429'); assert.equal(sb.resume_offset, 20); assert.deepEqual(sb.us_facet, { locationCountry: ['us9'] }); });
+  bodies.length = 0; mode = 'ok';
+  const c = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  t('workday: next run uses the saved filter from the first request and resumes where it stopped', () => { assert.deepEqual(bodies[0].appliedFacets, { locationCountry: ['us9'] }); assert.equal(bodies[0].offset, 20); assert.equal(c.statusOut.sources.find(x => x.id === 'wd:golf').result, 'ok'); });
+}
+
 /* ---------- Google Careers (experimental, shape-matched) and Radancy (robots → sitemap → JSON-LD) */
 {
   const gJob = (id, title, loc, ts) => [id, title, `https://www.google.com/about/careers/applications/signin?jobId=${id}`, [null, '<ul><li>Lead launches</li></ul>'], [null, '<p>Minimum qualifications: 10 years.</p>'], null, null, 'Google', 'en-US', [[loc, [loc], loc.split(',')[0], null, 'NY', 'US']], [null, '<p>The US base salary range for this full-time position is $197,000-$291,000 + bonus + equity + benefits.</p>'], [ts, 0]];
@@ -504,5 +531,9 @@ try {
   const oj = (locs, remote) => ({ uid: 'o', status: 'open', us: true, remote_us: remote, title: 'Director, Product Marketing', employer: 'Acme', locations: locs, salary: null, functions: ['pmm'], seniority: 5, posted_at: new Date().toISOString(), posted_kind: 'first_published' });
   const oc = { functions: ['pmm'], minBase: 0, maxBase: 0, salMode: 'any', window: 'all', metro: 'new york', state: 'NY', remoteStates: ['NY'], lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, types: {}, sectors: [], verticals: [], blockEmp: [], sen: 0 };
   t('location: every selected location earns the same score (OR, no discount)', () => { const a = O.evaluateJob(oj(['New York, NY'], false), { crit: oc }), b = O.evaluateJob(oj(['Remote - US'], true), { crit: oc }); assert.equal(a.parts.loc, 15); assert.equal(b.parts.loc, 15); });
+}
+{
+  const H = await import('../../assets/shared/core.mjs');
+  t('functions: HR partner roles for GTM/security orgs are People only', () => { for (const x of ['HRBP, GTM', 'People Partner, Sales', 'Talent Acquisition Partner, GTM', 'Sr HR Business Partner, Agentic AI']) assert.deepEqual(H.classifyFunctions(x).functions, ['people'], x); assert.ok(H.classifyFunctions('Principal Product Manager, HR Experiences').functions.includes('product')); assert.ok(H.classifyFunctions('Sales Compensation Analyst').functions.includes('sales')); });
 }
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

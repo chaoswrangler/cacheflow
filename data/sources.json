@@ -332,7 +332,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'airbyte', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'airbyte', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -483,7 +483,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'alchemy', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'alchemy', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -752,7 +752,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'anrok', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'anrok', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -1531,7 +1531,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists smartrecruiters 'BoschGroup', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists smartrecruiters 'BoschGroup', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -1641,7 +1641,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'browserbase', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'browserbase', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -1738,12 +1738,14 @@
    "notes": [],
    "sources": [
     {
-     "id": "link:cato-networks",
-     "ats": "link_only",
+     "id": "gh:catonetworks",
+     "ats": "greenhouse",
+     "slug": "catonetworks",
+     "board_url": "https://job-boards.greenhouse.io/catonetworks",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "Careers site is Greenhouse-powered (posting IDs like 4856732101); board name from user-supplied research. User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -1846,9 +1848,8 @@
      "id": "link:check-point",
      "ats": "link_only",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "link_only",
+      "method": "Not collected yet: Check Point runs its own careers site and no supported job feed has been confirmed. Browse it directly."
      }
     }
    ],
@@ -2142,7 +2143,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'cognition', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'cognition', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -2187,22 +2188,30 @@
    "notes": [],
    "sources": [
     {
-     "id": "gh404:cohesity",
-     "ats": "unresolved",
-     "slug": "cohesity",
+     "id": "wd:cohesity",
+     "ats": "workday",
+     "host": "cohesity.wd5.myworkdayjobs.com",
+     "tenant": "cohesity",
+     "site": "Cohesity_Careers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "unresolved_404",
-      "method": "Greenhouse identifier \"cohesity\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "link:cohesity",
-     "ats": "link_only",
-     "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -2584,7 +2593,7 @@
    "sector": "Cybersecurity",
    "vertical": "Identity & access",
    "tier": "named",
-   "careers_url": "https://www.cyberark.com/careers/",
+   "careers_url": "https://jobs.paloaltonetworks.com/en/search-jobs/CyberArk",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
@@ -2592,9 +2601,8 @@
      "id": "link:cyberark",
      "ats": "link_only",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "link_only",
+      "method": "CyberArk is now part of Palo Alto Networks; its roles are listed on Palo Alto Networks careers, which Cache Flow already collects."
      }
     }
    ],
@@ -3891,22 +3899,29 @@
    "notes": [],
    "sources": [
     {
-     "id": "gh404:fortinet",
-     "ats": "unresolved",
-     "slug": "fortinet",
+     "id": "orc:fortinet",
+     "ats": "oracle_hcm",
+     "host": "edel.fa.us2.oraclecloud.com",
+     "site": "CX_2001",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "unresolved_404",
-      "method": "Greenhouse identifier \"fortinet\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "link:fortinet",
-     "ats": "link_only",
-     "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "Oracle Recruiting Cloud site CX_2001. User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -4094,7 +4109,7 @@
      "board_url": "https://www.google.com/about/careers/applications/jobs/results",
      "verification": {
       "status": "experimental",
-      "method": "Public results page; job list read from the embedded AF_initDataCallback ds:1 block (20 per page). Field positions are undocumented, so records are matched by shape. First live run confirms the format. 2026-11-19: searches re-aimed at partner, security sales, product and marketing roles (27 searches \u00d7 up to 3 pages) after the earlier 12 broad searches returned mostly engineering roles.",
+      "method": "Public results page; job list read from the embedded AF_initDataCallback ds:1 block (20 per page). Field positions are undocumented, so records are matched by shape. First live run confirms the format. 2026-11-19: searches re-aimed at partner, security sales, product and marketing roles (27 searches × up to 3 pages) after the earlier 12 broad searches returned mostly engineering roles.",
       "date": "2026-11-19"
      }
     }
@@ -4735,9 +4750,8 @@
      "id": "link:ibm",
      "ats": "link_only",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "link_only",
+      "method": "Not collected yet: IBM runs its own careers search. Browse it directly."
      }
     }
    ],
@@ -5830,27 +5844,35 @@
    "sector": "Cybersecurity",
    "vertical": "Email & human risk",
    "tier": "named",
-   "careers_url": "https://www.mimecast.com/careers/",
+   "careers_url": "https://careers.mimecast.com/en/jobs/",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "gh404:mimecast",
-     "ats": "unresolved",
-     "slug": "mimecast",
+     "id": "wd:mimecast",
+     "ats": "workday",
+     "host": "mimecast.wd5.myworkdayjobs.com",
+     "tenant": "mimecast",
+     "site": "mimecast-careers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "unresolved_404",
-      "method": "Greenhouse identifier \"mimecast\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
-      "date": "prior scan"
-     }
-    },
-    {
-     "id": "link:mimecast",
-     "ats": "link_only",
-     "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -5883,7 +5905,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'mintlify', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'mintlify', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -7339,7 +7361,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'posthog', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'posthog', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -7581,12 +7603,30 @@
    "notes": [],
    "sources": [
     {
-     "id": "link:qualys",
-     "ats": "link_only",
+     "id": "wd:qualys",
+     "ats": "workday",
+     "host": "qualys.wd5.myworkdayjobs.com",
+     "tenant": "qualys",
+     "site": "Careers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -7619,7 +7659,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists lever 'quantinuum', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists lever 'quantinuum', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -7675,7 +7715,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'quora', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'quora', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -7731,7 +7771,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'railway', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'railway', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -7770,17 +7810,35 @@
    "sector": "Cybersecurity",
    "vertical": "Threat intel & exposure",
    "tier": "named",
-   "careers_url": "https://www.rapid7.com/careers/",
+   "careers_url": "https://careers.rapid7.com/jobs/search",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "link:rapid7",
-     "ats": "link_only",
+     "id": "wd:mymoose",
+     "ats": "workday",
+     "host": "mymoose.wd1.myworkdayjobs.com",
+     "tenant": "mymoose",
+     "site": "careers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -8240,12 +8298,30 @@
    "notes": [],
    "sources": [
     {
-     "id": "link:sailpoint",
-     "ats": "link_only",
+     "id": "wd:sailpoint",
+     "ats": "workday",
+     "host": "sailpoint.wd1.myworkdayjobs.com",
+     "tenant": "sailpoint",
+     "site": "SailPoint",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -8390,9 +8466,8 @@
      "id": "link:sap",
      "ats": "link_only",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "link_only",
+      "method": "Not collected yet: SAP is moving between two careers boards. Browse them directly."
      }
     }
    ],
@@ -8452,7 +8527,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'saronic', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'saronic', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -8771,7 +8846,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'sentry', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'sentry', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -9089,27 +9164,22 @@
    "sector": "Cloud, data & dev tools",
    "vertical": "Data & observability",
    "tier": "named",
-   "careers_url": "https://careers.snowflake.com/",
+   "careers_url": "https://careers.snowflake.com/us/en/search-results",
    "careers_url_verified": false,
    "notes": [
     "Roster lists Ashby 'snowflake'; not found in indexed pages, so it stays a candidate for the probe."
    ],
    "sources": [
     {
-     "id": "link:snowflake",
-     "ats": "link_only",
+     "id": "ashby:snowflake",
+     "ats": "ashby",
+     "slug": "snowflake",
+     "board_url": "https://jobs.ashbyhq.com/snowflake",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
-     },
-     "candidates": [
-      {
-       "ats": "ashby",
-       "slug": "snowflake",
-       "source": "roster 2026-11-19"
-      }
-     ]
+      "status": "unverified_config",
+      "method": "Snowflake recruiting runs on Ashby (its careers site names no-reply@ashbyhq.com). User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     }
     }
    ],
    "id": "snowflake",
@@ -9703,7 +9773,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'synthesia', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'synthesia', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -9946,17 +10016,19 @@
    "sector": "Cybersecurity",
    "vertical": "SecOps, SIEM & AI SOC",
    "tier": "named",
-   "careers_url": "https://www.tines.com/careers",
+   "careers_url": "https://job-boards.greenhouse.io/tines",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "link:tines",
-     "ats": "link_only",
+     "id": "gh:tines",
+     "ats": "greenhouse",
+     "slug": "tines",
+     "board_url": "https://job-boards.greenhouse.io/tines",
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "verified_board",
+      "method": "Board job-boards.greenhouse.io/tines returns live Tines postings (seen 2026-11-20).",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -10150,17 +10222,35 @@
    "sector": "Cybersecurity",
    "vertical": "Endpoint & XDR",
    "tier": "named",
-   "careers_url": "https://www.trellix.com/about/careers/",
+   "careers_url": "https://careers.trellix.com/jobs/",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "link:trellix",
-     "ats": "link_only",
+     "id": "wd:trellix",
+     "ats": "workday",
+     "host": "trellix.wd1.myworkdayjobs.com",
+     "tenant": "trellix",
+     "site": "EnterpriseCareers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "security researcher",
+      "solutions engineer",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
      "verification": {
-      "status": "needs_ats_discovery",
-      "method": "Careers URL from the company domain, not yet fetched. Open it, click Apply on any role, and note the ATS host (myworkdayjobs.com, greenhouse, lever, ashby, smartrecruiters\u2026). Add that to sources.json, or run --probe.",
-      "date": "2026-11-19"
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -10744,7 +10834,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'writer', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'writer', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -10776,7 +10866,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'ycombinator', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'ycombinator', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }
@@ -10996,7 +11086,7 @@
      ],
      "verification": {
       "status": "needs_confirmation",
-      "method": "The researched roster lists ashby 'zip', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions \u2192 Collect jobs \u2192 args --probe) shows the board is reachable and belongs to this employer.",
+      "method": "The researched roster lists ashby 'zip', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
       "date": "2026-11-19"
      }
     }

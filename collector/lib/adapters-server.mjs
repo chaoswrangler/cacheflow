@@ -114,6 +114,19 @@ const relevantTitle = t => { const c = classifyFunctions(t); return c.functions.
 // US or unclear location: worth a detail request. Explicitly foreign ("Brazil - Remote", "Japan - Tokyo") is not.
 const usText = s => classifyWorkplace({ locations: [String(s || '').replace(/---?/g, ', ')] }).us !== false;
 
+// Find a Workday tenant's "United States" country facet in its own /jobs response. Facets can be nested
+// (a location group holding a country facet), so walk the tree. Returns { [facetParameter]: [id] } or null.
+export function workdayUSFacet(facets) {
+  const walk = (list, param) => {
+    for (const f of list || []) {
+      const p = f.facetParameter || param;
+      if (Array.isArray(f.values) && f.values.length) { const hit = walk(f.values, p); if (hit) return hit; }
+      if (f.id && /^united states( of america)?$/i.test(String(f.descriptor || '').trim()) && /country|location/i.test(String(param || ''))) return { [param]: [f.id] };
+    }
+    return null;
+  };
+  return walk(facets, '');
+}
 export const ADAPTERS = {
   ...BASE,
 
@@ -367,10 +380,18 @@ export const ADAPTERS = {
     const refused = r => r.status === 429 || r.status === 403;
     const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0, capHit = [];
     const maxPer = src.max_results || opt.workdayMaxPerQuery || opt.maxPerQuery;
+    // US-only listing: the tenant's own "United States" country filter, read from its response (never guessed) and
+    // saved in status, so later runs page through US postings only. Far fewer pages means far fewer 429s.
+    const prevSt = opt.prevStatusById?.get(src.id);
+    let facets = src.us_only === false ? {} : (prevSt?.us_facet ?? null), usFacetNew = null; // {} = checked, none found
     const page = async (q, offset) => {
-      const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: q }) });
+      const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ appliedFacets: facets || {}, limit: 20, offset, searchText: q }) });
       if (!r.ok) return { r };
       anyOk = true; scanned++;
+      if (facets === null) { // first page this tenant has ever returned: look for its US filter
+        const f = workdayUSFacet(r.data?.facets); facets = f || {};
+        if (f) { usFacetNew = f; seen.clear(); return { r, restart: true }; } // re-ask with the filter applied
+      }
       if (offset === 0 && Number(r.data?.total) >= 2000) capHit.push(q || '(all)'); // Workday stops paging at 2,000 results
       const list = r.data?.jobPostings || [];
       for (const p of list) if (p.externalPath) seen.set(p.externalPath, p);
@@ -379,17 +400,19 @@ export const ADAPTERS = {
     const fullScan = queries.length === 1 && queries[0] === '';
     if (fullScan) {
       // Every listing, paged by 20. If refused part-way, the next run resumes from that page and wraps around.
-      const start = Math.min(opt.prevStatusById?.get(src.id)?.resume_offset || 0, maxPer);
+      const start = facets === null ? 0 : Math.min(prevSt?.resume_offset || 0, maxPer); // filter not known yet: offsets may change, start at 0
       const ranges = start ? [[start, maxPer], [0, start]] : [[0, maxPer]];
       scan: for (const [from, to] of ranges) for (let offset = from; offset < to; offset += 20) {
-        const { r, more } = await page('', offset);
+        const { r, more, restart } = await page('', offset);
+        if (restart) { offset = -20; continue; } // filter found on page 1: start over US-only (offsets changed)
         if (!r.ok) { lastFail = r; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
         if (!more) break;
       }
     } else {
       search: for (const [qi, q] of queries.entries()) {
         for (let offset = 0; offset < maxPer; offset += 20) {
-          const { r, more } = await page(q, offset);
+          const { r, more, restart } = await page(q, offset);
+          if (restart) { offset = -20; continue; }
           if (!r.ok) { lastFail = r; if (refused(r)) { stoppedAt = qi; break search; } break; } // refused: stop, keep what we have
           if (!more) break;
         }
@@ -430,13 +453,13 @@ export const ADAPTERS = {
       jobs.push(j);
     }
     const partial = stoppedAt !== null;
-    const note = [fullScan ? `${seen.size} postings from a full scan (${scanned} pages${resumeOffset !== null ? `, stopped at listing ${resumeOffset}; next run resumes there` : ''})`
+    const note = [Object.keys(facets || {}).length ? 'US postings only (site filter)' : '', fullScan ? `${seen.size} postings from a full scan (${scanned} pages${resumeOffset !== null ? `, stopped at listing ${resumeOffset}; next run resumes there` : ''})`
         : `${seen.size} postings from ${partial ? `${stoppedAt} of ` : ''}${queries.length} searches` + (nRot > 1 ? ` (rotation ${slot + 1}/${nRot} of ${allQ.length} total)` : ''),
       `${details} detail pages read, ${reused} reused from earlier runs`,
       partial ? `refused (${lastFail.status}) part-way: results so far kept, unreached roles kept and marked not refreshed` : '',
       detailRefused ? 'detail reads stopped after a refusal' : '',
       capHit.length ? `WARNING: ${capHit.join(', ')} matched 2,000+ listings, Workday's paging limit; postings past 2,000 are unreachable. Narrow the search terms or split by location/job-family facets copied from the site` : ''].filter(Boolean).join('; ');
-    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: nRot > 1, resume_offset: resumeOffset, note,
+    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: nRot > 1, resume_offset: resumeOffset, us_facet: facets, note,
              fields: { posted_date: 'list: relative ("Posted 3 Days Ago"); detail: startDate', salary: 'detail description text', location: 'yes', remote: 'detail remoteType (if tenant sets it)', req_id: 'yes' } };
   },
 

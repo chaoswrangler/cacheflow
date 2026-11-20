@@ -107,7 +107,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     if (out.close_after_hours) closeHours.set(s.id, out.close_after_hours);
     const prev = prevStatusById.get(s.id);
     statuses.push({ ...base, result: out.result, http_status: out.status ?? null, message: out.note || '', fields: out.fields || prev?.fields || null,
-      jobs_total: (out.jobs || []).length, jobs_stored: stored.length, resume_offset: out.resume_offset ?? null,
+      jobs_total: (out.jobs || []).length, jobs_stored: stored.length,
+      // a run refused before any results keeps its place, so the next run continues instead of starting over
+      resume_offset: out.resume_offset ?? (ok ? null : prev?.resume_offset ?? null), us_facet: out.us_facet ?? prev?.us_facet ?? null,
       last_success_at: ok ? base.checked_at : (prev?.last_success_at || null),
       consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1 });
     log(`${out.result.padEnd(14)} ${s.id} → ${(out.jobs || []).length} jobs`);

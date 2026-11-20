@@ -364,6 +364,7 @@ export const FUNCTION_GROUPS = [...new Set(Object.values(FUNCTIONS).map(f => f.g
 export const DEFAULT_FUNCTIONS = Object.keys(FUNCTIONS).filter(k => !FUNCTIONS[k].broad);
 const ENG_REVIEW = /\b(engineer|architect)\b/i;
 const ENG_GTM = /gtm|go[- ]to[- ]market|sales|solutions?|field|forward[- ]deployed|customer|partner|pre-?sales|growth|value|deployment strategist/i;
+const HR_ROLE = /\b(hr ?bps?|hr business (partner|advisor)|human resources|people (business )?partners?|talent (acquisition|partner)s?|employee relations|compensation (business partner|partner|consultant|programs)|executive comp|total rewards|learning (and|&) development|l&d|hr (manager|director|generalist|lead|operations|partner))\b/i;
 const HEAD_ROLES = [
   [/\b(counsel|attorney|lawyer|paralegal)\b/i, 'legal'],
   [/\b(recruiter|sourcer|recruiting coordinator)\b/i, 'people'],
@@ -374,6 +375,9 @@ export function classifyFunctions(title = '', desc = '') {
   for (const [k, f] of Object.entries(FUNCTIONS)) if (f.re.test(title)) hits.push(k);
   // The job noun decides: "Commercial Counsel - US Sales" is a legal role, "Senior Product Designer" a design role.
   for (const [re, k] of HEAD_ROLES) if (re.test(title)) { hits.length = 0; hits.push(k); break; }
+  // HR jobs that support a GTM/security/sales org ("HRBP, GTM", "People Partner, Sales") are HR roles, not GTM roles.
+  // Builders of HR products ("Product Manager, HR Experiences", "Software Engineer, HR") and sales-comp ops keep their categories.
+  if (HR_ROLE.test(title) && !/\b(product (manager|management|lead|owner)|engineer|engineering|software|developer|designer|data scientist|counsel|attorney)\b/i.test(title)) { hits.length = 0; hits.push('people'); }
   // AI builders (ML engineer, research scientist) are their own category; AI product/strategy/GTM stays in `ai`.
   const builder = /\b(engineer|engineering|scientist|researcher|research|developer|programmer)\b/i.test(title) && !ENG_GTM.test(title) && !/\bproduct (manager|lead|owner)|strateg|governance|policy/i.test(title);
   if (builder && (hits.includes('ai') || hits.includes('mleng'))) { const r = hits.filter(k => k !== 'ai' && k !== 'mleng'); hits.length = 0; hits.push(...r, 'mleng'); }
