@@ -215,4 +215,83 @@ try {
   const d3 = await runDigest({ env: { SUBSCRIBERS: env.SUBSCRIBERS }, fetchImpl: mailFetch, dataDir: dir, now: NOW });
   t('no keys → skipped', () => assert.equal(d3.sent, 0));
 } finally {}
+
+/* ---------- Workday under rate limiting: partial results, detail reuse, search rotation */
+{
+  const wdPost = (path, title) => ({ externalPath: `/job/New-York/${path}`, title, locationsText: 'New York, NY', postedOn: 'Posted Today', bulletFields: [path] });
+  const mkFetch = (plan, log) => async (url, init = {}) => {
+    log.push(url + ' ' + (init.body || ''));
+    const q = init.body ? JSON.parse(init.body).searchText : null;
+    if (url.includes('/jobs')) { const r = plan[q]; if (r === 429) return new Response('slow down', { status: 429, headers: { 'retry-after': '0' } }); return new Response(JSON.stringify({ jobPostings: r || [] }), { status: 200 }); }
+    return new Response(JSON.stringify({ jobPostingInfo: { jobDescription: '<p>Base salary range: $210,000 - $260,000</p>', location: 'New York, NY', startDate: '2026-11-18', jobReqId: url.split('_').pop() } }), { status: 200 });
+  };
+  const dir = await mkdtemp(join(tmpdir(), 'cf-wd-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Echo', tier: 'heavy', sectors: 'Cybersecurity', sources: [{ id: 'wd:echo', ats: 'workday', host: 'echo.wd5.myworkdayjobs.com', tenant: 'echo', site: 'Ext', queries: ['product manager', 'threat intelligence'] }] }] }));
+  const plan1 = { 'product manager': [wdPost('PM_R1', 'Senior Product Manager, Security')], 'threat intelligence': [wdPost('TI_R2', 'Threat Intelligence Lead')] };
+  const L1 = []; await run({ fetchImpl: mkFetch(plan1, L1), env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const L2 = []; const r2 = await run({ fetchImpl: mkFetch({ 'product manager': plan1['product manager'], 'threat intelligence': 429 }, L2), env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const J2 = Object.fromEntries(r2.jobsOut.jobs.map(j => [j.uid, j])), S2 = r2.statusOut.sources.find(x => x.id === 'wd:echo');
+  t('workday refused part-way → partial, earlier results kept', () => { assert.equal(S2.result, 'partial'); assert.equal(J2['wd:echo:R1'].status, 'open'); assert.ok(!J2['wd:echo:R1'].stale); });
+  t('workday partial: unreached role stays open, marked not refreshed', () => { assert.equal(J2['wd:echo:R2'].status, 'open'); assert.equal(J2['wd:echo:R2'].stale, true); });
+  t('workday known posting: details reused, not re-fetched', () => { assert.equal(L2.filter(u => u.includes('/job/New-York/PM_R1') && !u.includes('/jobs')).length, 0); assert.equal(J2['wd:echo:R1'].salary.min, 210000); assert.equal(J2['wd:echo:R1'].posted_kind, 'start_date'); });
+  t('workday 429 message is about rate limits, not identifiers', () => assert.doesNotMatch(S2.message, /tenant\/site/));
+  // rotation: 9 searches over 3 runs
+  const many = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Echo', tier: 'heavy', sources: [{ id: 'wd:echo', ats: 'workday', host: 'echo.wd5.myworkdayjobs.com', tenant: 'echo', site: 'Ext', queries: many }] }] }));
+  const L3 = []; const r3 = await run({ fetchImpl: mkFetch({}, L3), env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: { ...FAST, workday_query_rotation: 3 } });
+  const searched = L3.filter(u => u.includes('/jobs')).map(u => JSON.parse(u.slice(u.indexOf(' ') + 1)).searchText);
+  t('workday rotation runs a third of the searches per run', () => { assert.equal(searched.length, 3); assert.match(r3.statusOut.sources.find(x => x.id === 'wd:echo').message, /rotation \d\/3 of 9/); });
+  t('rotation keeps unseen roles open (not closed)', () => assert.equal(r3.jobsOut.jobs.find(j => j.uid === 'wd:echo:R2').status, 'open'));
+}
+
+/* ---------- Workday full scan (blank search) with resume after a refusal */
+{
+  const mk = n => Array.from({ length: n }, (_, i) => ({ externalPath: `/job/Remote/Role-${i}_F${i}`, title: `Account Executive ${i}`, locationsText: 'USA - Remote', postedOn: 'Posted Today' }));
+  const all = mk(50);
+  const dir = await mkdtemp(join(tmpdir(), 'cf-fs-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Foxtrot', tier: 'heavy', sources: [{ id: 'wd:fox', ats: 'workday', host: 'fox.wd5.myworkdayjobs.com', tenant: 'fox', site: 'Ext', queries: [''], max_results: 2000 }] }] }));
+  const offsets = []; let refuseAt = 20;
+  const f = async (url, init = {}) => {
+    if (url.includes('/jobs')) { const { offset, searchText } = JSON.parse(init.body); offsets.push(offset);
+      if (searchText !== '') return new Response('{}', { status: 400 });
+      if (offset === refuseAt) return new Response('slow', { status: 429, headers: { 'retry-after': '0' } });
+      return new Response(JSON.stringify({ total: all.length, jobPostings: all.slice(offset, offset + 20) }), { status: 200 }); }
+    return new Response(JSON.stringify({ jobPostingInfo: { jobDescription: '', location: 'Remote, USA', startDate: '2026-11-18' } }), { status: 200 });
+  };
+  const a = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const sa = a.statusOut.sources.find(x => x.id === 'wd:fox');
+  t('full scan refused at page 2 → partial with resume point', () => { assert.equal(sa.result, 'partial'); assert.equal(sa.resume_offset, 20); assert.equal(a.jobsOut.jobs.length, 20); });
+  offsets.length = 0; refuseAt = -1;
+  const b = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  t('next run resumes at the refused page, then wraps to the start', () => { assert.deepEqual(offsets.slice(0, 3), [20, 40, 0]); assert.equal(b.statusOut.sources.find(x => x.id === 'wd:fox').result, 'ok'); assert.equal(b.jobsOut.jobs.filter(j => j.status === 'open').length, 50); });
+  t('completed full scan clears the resume point', () => assert.equal(b.statusOut.sources.find(x => x.id === 'wd:fox').resume_offset, null));
+}
+
+/* ---------- Google Careers (experimental, shape-matched) and Radancy (robots → sitemap → JSON-LD) */
+{
+  const gJob = (id, title, loc, ts) => [id, title, `https://www.google.com/about/careers/applications/signin?jobId=${id}`, [null, '<ul><li>Lead launches</li></ul>'], [null, '<p>Minimum qualifications: 10 years.</p>'], null, null, 'Google', 'en-US', [[loc, [loc], loc.split(',')[0], null, 'NY', 'US']], [null, '<p>The US base salary range for this full-time position is $197,000-$291,000 + bonus + equity + benefits.</p>'], [ts, 0]];
+  const gPage = jobs => `<html><script>AF_initDataCallback({key: 'ds:0', hash: '1', data:[1,2], sideChannel: {}});</script><script class="ds:1">AF_initDataCallback({key: 'ds:1', hash: '2', data:[[${jobs.map(j => JSON.stringify(j)).join(',')}],null,${jobs.length}], sideChannel: {}});</script></html>`;
+  const dir = await mkdtemp(join(tmpdir(), 'cf-gr-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [
+    { employer: 'Google', tier: 'heavy', sources: [{ id: 'google:careers', ats: 'google_careers', queries: ['threat intelligence'], max_pages: 2 }] },
+    { employer: 'Palo Alto Networks', tier: 'heavy', sources: [{ id: 'radancy:panw', ats: 'radancy', base: 'https://jobs.example-radancy.com', lang: 'en' }] },
+    { employer: 'Blocked Co', tier: 'core', sources: [{ id: 'radancy:blocked', ats: 'radancy', base: 'https://jobs.blocked-radancy.com', lang: 'en' }] } ] }));
+  const calls = [];
+  const f = async url => { calls.push(url);
+    if (url.includes('google.com/about/careers') && url.includes('page=1')) return new Response(gPage([gJob('123456789012345678', 'Senior Threat Intelligence Analyst, Mandiant', 'New York, NY, USA', 1763500000)]), { status: 200 });
+    if (url.includes('google.com/about/careers')) return new Response(gPage([]), { status: 200 });
+    if (url === 'https://jobs.blocked-radancy.com/robots.txt') return new Response('User-agent: *\nDisallow: /en/job/\n', { status: 200 });
+    if (url === 'https://jobs.example-radancy.com/robots.txt') return new Response('User-agent: *\nDisallow: /account/\nSitemap: https://jobs.example-radancy.com/sitemap.xml\n', { status: 200 });
+    if (url.endsWith('/sitemap.xml')) return new Response('<urlset><url><loc>https://jobs.example-radancy.com/en/job/new-york/senior-product-marketing-manager/47263/9001</loc></url><url><loc>https://jobs.example-radancy.com/en/job/santa-clara/staff-software-engineer/47263/9002</loc></url></urlset>', { status: 200 });
+    if (url.includes('/en/job/new-york/')) return new Response(`<html><script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'JobPosting', title: 'Senior Product Marketing Manager, Cortex', datePosted: '2026-11-17', identifier: { value: 'JR-123' }, description: '<p>The base salary range for this role is $180,000 - $250,000.</p>', jobLocation: [{ '@type': 'Place', address: { addressLocality: 'New York', addressRegion: 'NY', addressCountry: 'US' } }] })}</script></html>`, { status: 200 });
+    return new Response('not found', { status: 404 });
+  };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const J = Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j])), S = Object.fromEntries(r.statusOut.sources.map(x => [x.id, x]));
+  t('google careers: job found by shape, base salary from text', () => { const g = J['google:careers:123456789012345678']; assert.ok(g, JSON.stringify(S['google:careers'])); assert.equal(g.salary.min, 197000); assert.ok(g.functions.includes('threat')); assert.match(g.locations[0], /New York/); });
+  t('google careers: a short page (<20) is the last page', () => assert.equal(calls.filter(u => u.includes('google.com/about')).length, 1));
+  t('radancy: sitemap → JSON-LD title, date, req id, base pay', () => { const p = J['radancy:panw:9001']; assert.equal(p.title, 'Senior Product Marketing Manager, Cortex'); assert.equal(p.posted_kind, 'json_ld_date_posted'); assert.equal(p.req_id, 'JR-123'); assert.equal(p.salary.min, 180000); });
+  t('radancy: irrelevant posting listed from sitemap without a page fetch', () => { assert.ok(J['radancy:panw:9002']); assert.equal(calls.filter(u => u.includes('staff-software-engineer')).length, 0); });
+  t('radancy: robots.txt disallow is honored', () => { assert.equal(S['radancy:blocked'].result, 'blocked_by_robots'); assert.equal(calls.filter(u => u.includes('blocked-radancy') && !u.endsWith('robots.txt')).length, 0); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
