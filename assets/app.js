@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119z';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119z';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119z';
+import * as C from './shared/core.mjs?v=20261120c';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120c';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120c';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -154,9 +154,10 @@ function loadScript(src) {
 async function fileToText(file) {
   const name = file.name.toLowerCase();
   if (name.endsWith('.pdf')) {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-    const lib = window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    // pdf.js 4.10.38, vendored (patched for CVE-2024-4367); eval disabled as defense in depth
+    const lib = await import(new URL('./vendor/pdf.min.mjs', import.meta.url).href);
+    lib.GlobalWorkerOptions.workerSrc = new URL('./vendor/pdf.worker.min.mjs', import.meta.url).href;
+    const pdf = await lib.getDocument({ data: await file.arrayBuffer(), isEvalSupported: false }).promise;
     let out = '';
     for (let i = 1; i <= pdf.numPages; i++) {
       const tc = await (await pdf.getPage(i)).getTextContent();
@@ -166,7 +167,7 @@ async function fileToText(file) {
     return out;
   }
   if (name.endsWith('.docx')) {
-    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+    await loadScript(new URL('./vendor/mammoth.browser.min.js', import.meta.url).href); // mammoth 1.13.0, vendored (patched for CVE-2025-11849)
     return (await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
   }
   return await file.text();
@@ -220,6 +221,8 @@ function wireProfile() {
     if (key === 'location') applyProfile({ ...S.profile }, 'Location updated');
     save(); renderHud();
   };
+  $('#skillFind').oninput = filterSkills;
+  $('#skillOnly').onclick = e => { const b = e.currentTarget, v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); b.classList.toggle('on', v); filterSkills(); };
   $('#addSkill').onkeydown = e => { if (e.key === 'Enter' && e.target.value.trim()) { S.profile.custom.push(e.target.value.trim()); e.target.value = ''; save(); renderProfile(); } };
 }
 async function ingestFile(f) {
@@ -231,6 +234,15 @@ async function ingestFile(f) {
     applyProfile(extractProfile(text), /linkedin/i.test(text) && /top skills/i.test(text) ? 'LinkedIn PDF export' : 'Resume file');
   } catch (e) { logIngest(`<span class="r">✗</span> ${esc(e.message)}. Paste the text instead.`); }
 }
+function filterSkills() {
+  const q = ($('#skillFind')?.value || '').trim().toLowerCase(), only = $('#skillOnly')?.getAttribute('aria-pressed') === 'true';
+  $$('#pSkills .skgrp').forEach(d => {
+    let shown = 0;
+    d.querySelectorAll('.chip').forEach(c => { const v = (!q || c.textContent.toLowerCase().includes(q) || d.dataset.g.toLowerCase().includes(q)) && (!only || c.classList.contains('on')); c.hidden = !v; shown += v; });
+    d.hidden = !shown;
+    if (q || only) d.open = shown > 0; else d.open = new Set(store.get('skOpen', [])).has(d.dataset.g);
+  });
+}
 function renderProfile() {
   const p = S.profile;
   $('#pName').value = p.name || ''; $('#pLoc').value = p.location || ''; $('#pHead').value = p.headline || '';
@@ -239,14 +251,19 @@ function renderProfile() {
   const on = new Set(p.skillsOn || []), off = new Set(p.skillsOff || []);
   const groups = {};
   for (const s of C.SKILLS) (groups[s.group] ||= []).push(s);
-  $('#pSkills').innerHTML = Object.entries(groups).map(([g, list]) => `<div style="margin:8px 0 4px" class="hint">${esc(g)}</div><div class="chips">` +
-    list.map(s => `<button class="chip ${on.has(s.id) && !off.has(s.id) ? 'on' : ''}" data-skill="${esc(s.id)}">${esc(s.id)}</button>`).join('') + '</div>').join('') +
+  const skOpen = new Set(store.get('skOpen', []));
+  $('#pSkills').innerHTML = Object.entries(groups).map(([g, list]) => { const k = list.filter(s => on.has(s.id) && !off.has(s.id)).length;
+    return `<details class="skgrp" data-g="${esc(g)}" ${skOpen.has(g) ? 'open' : ''}><summary>${esc(g)} <span class="skn">${k ? `${k} on · ` : ''}${list.length}</span></summary><div class="chips">` +
+    list.map(s => `<button class="chip ${on.has(s.id) && !off.has(s.id) ? 'on' : ''}" data-skill="${esc(s.id)}">${esc(s.id)}</button>`).join('') + '</div></details>'; }).join('') +
     ((p.custom || []).length ? `<div style="margin:8px 0 4px" class="hint">Custom keywords</div><div class="chips">${p.custom.map((c, i) => `<button class="chip on m" data-custom="${i}">${esc(c)}<span class="x">×</span></button>`).join('')}</div>` : '');
   $('#skillSum').textContent = `Skills used for match scoring · ${(p.skillsOn || []).length} on${(p.custom || []).length ? ` · ${p.custom.length} custom` : ''}`;
   $$('#pSkills [data-skill]').forEach(b => b.onclick = () => {
     const id = b.dataset.skill; const s = new Set(S.profile.skillsOn || []);
     s.has(id) ? s.delete(id) : s.add(id); S.profile.skillsOn = [...s]; save(); b.classList.toggle('on'); $('#skillSum').textContent = `Skills used for match scoring · ${s.size} on`;
+    const d = b.closest('.skgrp'), k = d.querySelectorAll('.chip.on').length; d.querySelector('.skn').textContent = (k ? `${k} on · ` : '') + d.querySelectorAll('.chip').length;
   });
+  $$('#pSkills .skgrp').forEach(d => d.ontoggle = () => { if (($('#skillFind')?.value || '').trim() || $('#skillOnly')?.getAttribute('aria-pressed') === 'true') return; const o = new Set(store.get('skOpen', [])); d.open ? o.add(d.dataset.g) : o.delete(d.dataset.g); store.set('skOpen', [...o]); });
+  filterSkills();
   $$('#pSkills [data-custom]').forEach(b => b.onclick = () => { S.profile.custom.splice(+b.dataset.custom, 1); save(); renderProfile(); });
 }
 
@@ -373,7 +390,7 @@ function jobRow(m) {
   if (s && s.kind === 'ote_only') base = `<span class="sal ote_only">OTE only</span><div class="sub2">${money(s.ote?.min)}–${money(s.ote?.max)} excluded</div>`;
   else if (s && s.kind === 'predicted') base = `<span class="sal predicted">${money(s.min)}–${money(s.max)}</span><div class="sub2">predicted, not base</div>`;
   else if (s) base = `<span class="sal ${m.tier}">${money(s.min)}–${money(s.max)}</span><div class="sub2">${m.tier === 'starts' ? 'starts ≥ min' : m.tier === 'reaches' ? 'reaches min' : 'below min'}${s.kind === 'base' ? '' : s.kind === 'base_likely' ? ' · implied' : ' · type unstated'}</div>`;
-  const [ll, lc] = LOC_SHORT[m.loc];
+  const [ll, lc] = m.hf?.tied ? ['Remote · tied to area', 'a'] : LOC_SHORT[m.loc];
   const sl = C.shownLocation(j, m.hf, m.loc), slTitle = sl.all.join(' · ');
   const slText = esc(sl.text) + (sl.more ? ` <span class="more-loc">+${sl.more}</span>` : '');
   const dYmd = m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : null;
@@ -397,15 +414,23 @@ function jobRow(m) {
   return `<tr class="mt-row ${m.tier} ${open ? 'open' : ''} ${st ? STATUS[st].cls : ''}" data-uid="${esc(j.uid)}">
     <td class="c-save"><button class="stbtn ${st ? STATUS[st].cls + ' on' : ''}" data-act="stmenu" title="Status: ${st ? esc(STATUS[st].label) : 'none'}" aria-label="Set status" aria-haspopup="menu">${st ? STATUS[st].icon : '○'}</button></td>
     <td class="c-score" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
-    <td class="c-role">${S.groupBy === 'employer' ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div><div class="mmeta"><span title="${esc(slTitle)}">${slText}</span> <span class="tag ${lc}">${ll}</span>${dYmd ? ` <span>${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)} ${esc(dYmd.slice(5))}</span>` : ''}</div></td>
+    <td class="c-role">${S.groupBy === 'employer' ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div><div class="mmeta"><span title="${esc(slTitle)}">${slText}</span> <span class="tag ${lc}">${ll}</span>${applyOf(m) === 'quick' ? ' <span class="tag m" title="' + esc(APPLY.quick.hint) + '">QUICK APPLY</span>' : ''}${dYmd ? ` <span>${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)} ${esc(dYmd.slice(5))}</span>` : ''}</div></td>
     <td class="c-base">${base}</td>
-    <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div><span class="tag ${lc}">${ll}</span></td>
+    <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div><span class="tag ${lc}">${ll}</span>${applyOf(m) === 'quick' ? ' <span class="tag m" title="' + esc(APPLY.quick.hint) + '">QUICK APPLY</span>' : ''}</td>
     <td class="c-date">${dYmd ? esc(dYmd.slice(5)) : '—'}<div class="sub2">${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)}</div></td>
     <td class="c-src">${j.source_class === 'aggregator' ? '<span class="tag a">agg</span>' : '<span class="tag">official</span>'}<div class="sub2">${esc(j.ats)}</div></td>
     <td class="c-act"><button class="more" data-act="open" title="Details">${open ? '−' : '+'}</button></td></tr>${detail}`;
 }
 // group rows by employer, keeping the current sort: groups are ordered by their best-placed role
+/* How much work applying takes, from the hiring system behind the posting. */
+const APPLY = {
+  quick: { label: 'Quick apply', hint: 'One form, no account (Greenhouse, Ashby, Lever, SmartRecruiters, Comeet, Workable…)', ats: ['greenhouse', 'ashby', 'lever', 'smartrecruiters', 'comeet', 'workable', 'jazzhr', 'rippling', 'recruitee', 'breezy'] },
+  account: { label: 'Account required', hint: 'Sign-up or multi-step portal (Workday, Oracle, Eightfold, Phenom, Amazon, Google…)', ats: ['workday', 'oracle_hcm', 'eightfold', 'phenom', 'amazon', 'google', 'successfactors', 'icims', 'taleo', 'dayforce', 'radancy', 'cisco'] },
+  other: { label: 'Company site or other', hint: 'Applies on a careers page or through another site' },
+};
+const applyOf = m => Object.keys(APPLY).find(k => APPLY[k].ats?.includes(m.j.ats)) || 'other';
 const GROUP_BY = {
+  apply: { key: applyOf, label: k => APPLY[k].label, order: Object.keys(APPLY) },
   employer: { key: m => m.j.employer, label: k => k },
   type: { key: typeOf, label: k => EMP_TYPE[k]?.label || k },
   sector: { key: m => m.sector, label: k => k },
@@ -418,10 +443,11 @@ function groupedRows(list) {
   for (const m of list) { const k = gb.key(m); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(m); }
   if (S.groupBy !== 'employer') {
     S.collapsed ||= new Set();
-    return [...groups].map(([k, ms]) => {
+    const entries = gb.order ? [...groups].sort((a, b) => gb.order.indexOf(a[0]) - gb.order.indexOf(b[0])) : [...groups];
+    return entries.map(([k, ms]) => {
       const gk = S.groupBy + ':' + k, closed = S.collapsed.has(gk), emps = new Set(ms.map(m => m.j.employer)).size, starts = ms.filter(m => m.tier === 'starts').length;
       return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(gk)}"><td colspan="8"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(gb.label(k))}</b>
-        <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''} · ${emps} employer${emps > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${S.groupBy === 'type' && EMP_TYPE[k] ? ' · ' + esc(EMP_TYPE[k].hint) : ''}</span></td></tr>` +
+        <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''} · ${emps} employer${emps > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${S.groupBy === 'type' && EMP_TYPE[k] ? ' · ' + esc(EMP_TYPE[k].hint) : ''}${S.groupBy === 'apply' ? ' · ' + esc(APPLY[k].hint) : ''}</span></td></tr>` +
         (closed ? '' : ms.map(jobRow).join(''));
     }).join('');
   }
@@ -449,8 +475,11 @@ function renderMatches() {
   if (S.empOnly) ms = ms.filter(m => m.j.employer === S.empOnly);
   const tf = $('#typeFilter').value;
   if (tf) ms = ms.filter(m => typeOf(m) === tf);
+  const af = $('#applyFilter').value;
+  if (af) ms = ms.filter(m => applyOf(m) === af);
   const all = ms.filter(m => m.inFilters);
   const stSel = $('#stFilter').value || 'active';
+  S.stUniverse = ms.map(m => m.j.uid);
   const stCount = k => ms.filter(m => stOf(m.j.uid) === k).length;
   for (const o of $('#stFilter').options) o.textContent = o.dataset.l + (STATUS[o.value] ? ` · ${stCount(o.value)}` : '');
   ms = stSel === 'active' ? ms.filter(m => m.inFilters && stOf(m.j.uid) !== 'no')
@@ -504,6 +533,9 @@ function wireMatches() {
   $('#typeFilter').innerHTML = '<option value="">All company types</option>' + Object.entries(EMP_TYPE).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join('');
   $('#typeFilter').value = store.get('typeFilter', '');
   $('#typeFilter').addEventListener('change', e => { store.set('typeFilter', e.target.value); S.showN = 200; renderMatches(); });
+  $('#applyFilter').innerHTML = '<option value="">Any application type</option>' + Object.entries(APPLY).map(([k, v]) => `<option value="${k}" title="${esc(v.hint)}">${esc(v.label)}</option>`).join('');
+  $('#applyFilter').value = store.get('applyFilter', '');
+  $('#applyFilter').addEventListener('change', e => { store.set('applyFilter', e.target.value); S.showN = 200; renderMatches(); });
   $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; renderMatches(); });
   $('#tierChips').addEventListener('click', e => { if (e.target.closest('[data-clearemp]')) { S.empOnly = null; S.showN = 200; renderMatches(); return; } const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
   $('#jobGroups').addEventListener('click', e => {
@@ -519,11 +551,11 @@ function wireMatches() {
     if (b.dataset.act === 'st') { applyStatus(uid, b.dataset.st); return; }
     if (b.dataset.act === 'blockemp') {
       const emp = S.jobs.find(x => x.uid === uid)?.employer; if (!emp) return;
-      S.crit.blockEmp = [...new Set([...(S.crit.blockEmp || []), emp])]; save(); renderMatches(); renderCriteria();
+      S.crit.blockEmp = [...new Set([...(S.crit.blockEmp || []), emp])]; save(); keepPlace(uid, () => { renderMatches(); renderCriteria(); });
       undoToast(`Hiding roles from ${emp}`, () => { S.crit.blockEmp = S.crit.blockEmp.filter(n => n !== emp); save(); renderMatches(); renderCriteria(); }); return;
     }
     if (b.dataset.act === 'open') S.open.has(uid) ? S.open.delete(uid) : S.open.add(uid);
-    save(); renderMatches();
+    save(); keepPlace(uid, () => replaceRow(uid) || renderMatches());
   });
   $('#btnCsv').onclick = () => {
     const rows = (S.lastMatches || []).map(m => ({ score: m.score, salary_tier: m.tier, base_min: m.j.salary?.min ?? '', base_max: m.j.salary?.max ?? '', salary_kind: m.j.salary?.kind ?? '', ote_excluded: m.j.salary?.ote ? `${m.j.salary.ote.min}-${m.j.salary.ote.max}` : '',
@@ -539,7 +571,7 @@ function scoreParts(m) {
   const p = m.parts || {}, c = S.crit, j = m.j;
   const fnNames = (m.fnHit || []).map(f => C.FUNCTIONS[f]?.label || f);
   const hits = [...(m.skillHits || []), ...(m.customHits || [])];
-  const LOCTXT = { metro: 'in your commute area', remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your home state is listed as eligible' : 'remote, and your home state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
+  const LOCTXT = m.hf?.tied ? { other: 'listed as remote, but tied to a city or territory outside your home state (only specific places are listed and nothing says anywhere in the US)' } : { metro: 'in your commute area', remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your home state is listed as eligible' : 'remote, and your home state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
   const BASETXT = { starts: `base pay starts at or above your ${money(c.minBase)} minimum`, reaches: `base pay range reaches your ${money(c.minBase)} minimum but starts below it`, unknown: 'no base pay stated', ote_only: 'only on-target earnings (base + commission) stated, which is not counted as base', predicted: 'only a predicted range from an aggregator, not the employer', below: `base pay tops out below your ${money(c.minBase)} minimum` };
   return [
     ['Job category', p.fn, 30, fnNames.length ? 'matches ' + fnNames.join(', ') : 'flagged for review; not in your selected categories'],
@@ -552,11 +584,44 @@ function scoreParts(m) {
 const scoreTitle = m => `Match score ${m.score}/100: ` + scoreParts(m).map(([l, v, mx]) => `${l} ${v}/${mx}`).join(' · ');
 const STALE_HELP = "Not refreshed on the latest update: the employer's job site refused or rate-limited part of the last check (or this search wasn't in this run's rotation), so this role is carried over from an earlier check. It is probably still open, but confirm on the posting.";
 const shortDay = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+/* Re-render the list without moving the reader: pin a row (the one acted on, or the next one if it
+   disappears) to the same spot on screen. Safari has no CSS scroll anchoring, so do it explicitly. */
+/* Update one row in place (expand/collapse, status) instead of rebuilding the list, so nothing above moves. */
+function replaceRow(uid) {
+  const m = (S.lastMatches || []).find(x => x.j.uid === uid), row = document.querySelector(`#jobGroups tr.mt-row[data-uid="${CSS.escape(uid)}"]`);
+  if (!m || !row) return false;
+  const det = row.nextElementSibling?.classList.contains('mt-detail') ? row.nextElementSibling : null;
+  const stSel = $('#stFilter').value || 'active', st = stOf(uid);
+  const hide = (stSel === 'active' && st === 'no') || (stSel === 'none' && st) || (STATUS[stSel] && st !== stSel);
+  det?.remove();
+  if (hide) { row.remove(); S.lastMatches = S.lastMatches.filter(x => x.j.uid !== uid); }
+  else { const tb = document.createElement('tbody'); tb.innerHTML = jobRow(m); row.replaceWith(...tb.children); }
+  updateStatusCounts();
+  return true;
+}
+function updateStatusCounts() {
+  const n = k => (S.stUniverse || []).filter(u => stOf(u) === k).length;
+  for (const o of $('#stFilter').options) if (STATUS[o.value]) o.textContent = o.dataset.l + ` · ${n(o.value)}`;
+}
+function keepPlace(uid, fn) {
+  const rows = $$('#jobGroups tr.mt-row'), i = rows.findIndex(r => r.dataset.uid === uid);
+  const cands = i < 0 ? [] : [rows[i], ...rows.slice(i + 1, i + 6), ...rows.slice(Math.max(0, i - 5), i).reverse()].map(r => r.dataset.uid);
+  const top0 = i < 0 ? null : rows[i].getBoundingClientRect().top;
+  fn();
+  if (top0 == null) return;
+  const pin = () => {
+    for (const u of cands) {
+      const el = document.querySelector(`#jobGroups tr.mt-row[data-uid="${CSS.escape(u)}"]`);
+      if (el) { const d = el.getBoundingClientRect().top - top0; if (Math.abs(d) > 1) scrollBy({ top: d, behavior: 'instant' }); el.querySelector('.stbtn')?.focus({ preventScroll: true }); return; }
+    }
+  };
+  pin(); requestAnimationFrame(pin);
+}
 function applyStatus(uid, st) {
   const before = S.track[uid] ? { ...S.track[uid] } : null;
   setStatus(uid, st);
   const now = stOf(uid);
-  renderMatches();
+  keepPlace(uid, () => replaceRow(uid) || renderMatches());
   const msg = now ? `Marked ${STATUS[now].label.toLowerCase()}` : 'Status cleared';
   undoToast(msg + (now === 'no' && ($('#stFilter').value || 'active') === 'active' ? ' · hidden from this list' : ''), () => { if (before) S.track[uid] = before; else delete S.track[uid]; save(); renderMatches(); });
 }
@@ -572,7 +637,7 @@ function openStatusMenu(btn, uid) {
   menu.dataset.uid = uid;
   const r = btn.getBoundingClientRect();
   menu.style.top = (r.bottom + scrollY + 6) + 'px'; menu.style.left = Math.min(r.left + scrollX, innerWidth - 220) + 'px';
-  menu.hidden = false; menu.querySelector('button')?.focus();
+  menu.hidden = false; menu.querySelector('button')?.focus({ preventScroll: true });
 }
 function wireStatusMenu() {
   const menu = $('#stMenu');
@@ -797,18 +862,25 @@ function renderDiscover() {
   const c = S.crit, home = S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
   const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || (c.verticals.length && c.verticals.every(v => (c.vertSectors?.[v] || 'Cybersecurity') === 'Cybersecurity')) ? ' security' : '';
   const enc = encodeURIComponent;
+  // LinkedIn experience filter from the seniority setting (4 mid-senior, 5 director, 6 executive)
+  const fE = c.sen >= 5 ? '5,6' : c.sen >= 3 ? '4,5,6' : '';
+  const city = home.split(',')[0];
+  const SITES_ATS = ['job-boards.greenhouse.io', 'boards.greenhouse.io', 'jobs.lever.co', 'jobs.ashbyhq.com', 'myworkdayjobs.com', 'jobs.smartrecruiters.com', 'apply.workable.com'];
+  const SITES_STARTUP = ['wellfound.com/jobs', 'workatastartup.com/jobs', 'ats.rippling.com', 'jobs.jobvite.com'];
+  const xray = (sites, terms) => `(${sites.map(x => 'site:' + x).join(' OR ')}) (${C.orQuery(terms, 4)})${secWord ? ' security' : ''} ("${city}" OR remote)`;
   const rows = c.functions.map(f => {
-    const q = FN_QUERY[f] + secWord;
-    const ats = `(site:job-boards.greenhouse.io OR site:jobs.lever.co OR site:jobs.ashbyhq.com OR site:myworkdayjobs.com) "${FN_QUERY[f]}"${secWord ? ' security' : ''} ("${home.split(',')[0]}" OR remote)`;
-    return `<tr><td class="emp">${esc(C.FUNCTIONS[f].label)}</td><td>${esc(q)}</td><td>
-      <a target="_blank" rel="noopener" href="https://www.linkedin.com/jobs/search/?keywords=${enc(q)}&location=${enc(home)}&f_TPR=r604800">LinkedIn · ${esc(home.split(',')[0])}</a> ·
-      <a target="_blank" rel="noopener" href="https://www.linkedin.com/jobs/search/?keywords=${enc(q)}&location=United%20States&f_WT=2&f_TPR=r604800">LinkedIn · remote US</a> ·
-      <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${enc(q + ' jobs ' + home)}&ibp=htl;jobs">Google Jobs</a> ·
-      <a target="_blank" rel="noopener" href="https://www.indeed.com/jobs?q=${enc(q)}&l=${enc(home)}&fromage=7">Indeed · 7d</a> ·
-      <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${enc(ats)}&tbs=qdr:w">ATS x-ray · past week</a></td></tr>`;
+    const terms = C.FN_TERMS[f] || [FN_QUERY[f]];
+    const li = `(${C.orQuery(terms, 8)})${secWord}`, ind = `(${C.orQuery(terms, 6)})${secWord}`, gj = `${C.orQuery(terms, 4)}${secWord} jobs ${home}`;
+    return `<tr><td class="emp">${esc(C.FUNCTIONS[f].label)}</td><td><span class="terms">${esc(terms.join(' · '))}</span>${secWord ? '<div class="sub2">+ security</div>' : ''}</td><td class="links">
+      <a target="_blank" rel="noopener" href="https://www.linkedin.com/jobs/search/?keywords=${enc(li)}&location=${enc(home)}&f_TPR=r604800${fE ? '&f_E=' + enc(fE) : ''}">LinkedIn · ${esc(city)}</a>
+      <a target="_blank" rel="noopener" href="https://www.linkedin.com/jobs/search/?keywords=${enc(li)}&location=United%20States&f_WT=2&f_TPR=r604800${fE ? '&f_E=' + enc(fE) : ''}">LinkedIn · remote US</a>
+      <a target="_blank" rel="noopener" href="https://www.indeed.com/jobs?q=${enc(ind)}&l=${enc(home)}&fromage=7">Indeed · 7 days</a>
+      <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${enc(gj)}&ibp=htl;jobs">Google Jobs</a>
+      <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${enc(xray(SITES_ATS, terms))}&tbs=qdr:w">Job boards · past week</a>
+      <a target="_blank" rel="noopener" href="https://www.google.com/search?q=${enc(xray(SITES_STARTUP, terms))}&tbs=qdr:m">Startup boards · past month</a></td></tr>`;
   }).join('');
-  $('#genLinks').innerHTML = `<div class="tbl-wrap" style="max-height:none"><table><thead><tr><th>Function</th><th>Query</th><th>Searches</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="hint" style="margin-top:8px">Built from your selected functions and home location (<b>${esc(home)}</b>). The ATS x-ray finds employers that aren't in the roster yet. Add any you find to <code>data/sources.json</code>. These URL formats are standard query strings and may change on the sites' side. Salary filters on these sites mix in estimates, so check base pay on the posting itself.</p>`;
+  $('#genLinks').innerHTML = `<div class="tbl-wrap" style="max-height:none"><table><thead><tr><th>Job category</th><th>Titles searched</th><th>Searches</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint" style="margin-top:8px">Each row searches every title variant for that category, near <b>${esc(home)}</b> or remote, at your seniority. LinkedIn and Indeed show the past week; the job-board x-ray (Greenhouse, Lever, Ashby, Workday, SmartRecruiters, Workable) shows the past week and the startup x-ray (Wellfound, YC, Rippling, Jobvite) the past month. Both x-rays surface employers that aren't in the roster yet. Add any you find to <code>data/sources.json</code>. These URL formats are standard query strings and may change on the sites' side. Salary filters on these sites mix in estimates, so check base pay on the posting itself.</p>`;
   const vTag = v => v === 'seen' ? '<span class="tag g">seen 2026-11-19</span>' : '<span class="tag f">unverified link</span>';
   $('#xTable').innerHTML = `<thead><tr><th>Source</th><th>Type</th><th>Employers / functions</th><th>Date filters</th><th>Base salary</th><th>Location / remote</th><th>Access limits</th><th>Duplicate / coverage</th><th>Link</th></tr></thead><tbody>` +
     CROSS.map(x => `<tr><td class="emp"><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name)}</a></td><td>${esc(x.type)}</td><td>${esc(x.covers)}</td><td>${esc(x.date)}</td><td>${esc(x.base)}</td><td>${esc(x.ny)}</td><td>${esc(x.limits)}</td><td>${esc(x.dup)}</td><td>${vTag(x.v)}</td></tr>`).join('') + '</tbody>';

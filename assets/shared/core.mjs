@@ -203,6 +203,13 @@ export function eligibilityText(desc = '') {
   return [...new Set([...keep, ...pay])].join(' ').slice(0, 900);
 }
 // Viewer-specific: is this job in my commutable metro, or remote and open to my state?
+const GENERIC_LOC = /remote|anywhere|nationwide|virtual|distributed|home[- ]based|work from home|\bwfh\b|^\s*(united states( of america)?|usa?|u\.s\.a?\.?)\s*$/i;
+const NATIONWIDE = /anywhere in the (u\.?s|united states)|(remote|work) (from )?anywhere|remote[- ](within|in|across) the (u\.?s|united states)|u\.?s\.?[- ]based,? remote|fully remote|100% remote|remote[- ]first|any (u\.?s\.? )?state/i;
+export function remoteTied(job) {
+  const L = job.locations || [];
+  if (!L.length || L.some(l => GENERIC_LOC.test(l))) return false;
+  return !NATIONWIDE.test((job.elig_text || '') + ' ' + (job.excerpt || ''));
+}
 export function homeFit(job, { metro = '', state = '' } = {}) {
   const locText = (job.locations || []).join(' | ');
   const abbr = (state || '').toUpperCase();
@@ -224,7 +231,10 @@ export function homeFit(job, { metro = '', state = '' } = {}) {
     else if (new RegExp(`${esc(name)}[^.]{0,60}(pay|salary|range|\\$)|(pay|salary|range)[^.]{0,80}${esc(name)}`, 'i').test(d)) elig = 'likely';
     else elig = 'unknown';
   } else if (job.remote_us) elig = 'unknown';
-  return { in_metro: inMetro, eligibility: elig, metro_loc: metroLoc };
+  // "Remote" but every listed place is a specific city/region outside the home state, and nothing says
+  // anywhere-in-the-US: a territory or office-tied role (ServiceNow work personas, regional AEs).
+  const tied = !!job.remote_us && elig !== 'yes' && remoteTied(job);
+  return { in_metro: inMetro, eligibility: tied ? 'tied' : elig, metro_loc: metroLoc, tied };
 }
 // The location to show for a role: the one that made it match (commute area, then remote, then a US place),
 // not simply the first one the employer listed.
@@ -249,7 +259,7 @@ export function classifyLocation(job, opts = {}) {
 // `hint` shows example titles, `broad` categories are off by default and get no description excerpt.
 const F = (group, label, hint, re, broad = false) => ({ group, label, hint, re, broad });
 export const FUNCTIONS = {
-  product:  F('Product & programs', 'Product management', 'Product Manager, Group PM, Head of Product', /\bproduct\s+(manager|management|lead|owner|director|leader|strategy)|\b(group|principal|staff|senior|sr\.?|lead)\s+product\b|\bhead of product\b|\bvp,?\s+(of\s+)?product\b|\bcpo\b/i),
+  product:  F('Product & programs', 'Product management', 'Product Manager, Group PM, Head of Product', /\bproduct\s+(manager|management|lead|owner|director|leader|strategy)|\bproduct\s+mgr\b|\b(group|principal|staff|senior|sr\.?|lead)\s+product\b(?!\s+(marketing|designer|design|security|engineer|engineering|counsel|recruiter|analyst|analytics|data|ux|ui|specialist|associate|support|writer|photographer|sales|partnerships))|\bhead of product\b|\bvp,?\s+(of\s+)?product\b|\bcpo\b/i),
   tpm:      F('Product & programs', 'Program & technical program mgmt', 'Program Manager, TPM, Portfolio Manager', /\b(technical\s+)?program manag|\btpm\b|\bprogram (lead|director)|portfolio manag/i),
   pmm:      F('Marketing', 'Product marketing', 'Product Marketing Manager, Solutions Marketing', /product marketing|\bpmm\b|solutions? marketing|portfolio marketing|competitive marketing|industry marketing/i),
   marketing:F('Marketing', 'Marketing, brand & communications', 'Brand, Content, Comms, Events, DevRel', /\bmarketing\b|\bbrand\b|communications|\bpr\b|public relations|content (strateg|market|lead|manager|writer|director)|campaign|\bevents?\b|social media|evangel|developer relations|devrel|analyst relations|community (manager|lead)|copywrit|storytell/i),
@@ -267,7 +277,8 @@ export const FUNCTIONS = {
   secops:   F('Security practice', 'Security operations, IR & testing', 'SOC, Incident Response, DFIR, Red Team', /security operations|\bsoc\b|incident (response|responder|handler)|\bdfir\b|forensic|detection (engineer|and response|& response)|\bmdr\b|security analyst|cyber (defense|analyst)|(blue|purple|red) team|penetration test|pen ?test|offensive security/i),
   seceng:   F('Security practice', 'Security engineering & architecture', 'Security Engineer, Cloud/AppSec, Product Security', /security (engineer|architect)|(cloud|application|product|infrastructure|network|endpoint|data) security (engineer|architect|lead|manager|analyst)|\bappsec\b|devsecops|identity (engineer|architect)|\biam (engineer|architect)|cryptograph|vulnerability (management|engineer)/i),
   grc:      F('Security practice', 'GRC, risk, privacy & trust', 'GRC, Risk, Compliance, Privacy, CISO', /\bgrc\b|governance|\brisk\b|compliance|privacy|trust (and|&) safety|security assurance|(?<!to the |of the )\bciso\b|security program|fedramp/i),
-  ai:       F('Technology', 'AI & machine learning', 'ML Engineer, Applied Scientist, AI Product', /machine learning|\bml\b|\bai\b|artificial intelligence|deep learning|\bllms?\b|applied scientist|research scientist|generative|\bgenai\b|\bnlp\b|computer vision|agentic/i),
+  ai:       F('Technology', 'AI product, strategy & GTM', 'AI Product Manager, AI Strategy, AI Solutions, AI Governance', /machine learning|\bml\b|\bai\b|artificial intelligence|deep learning|\bllms?\b|applied scientist|research scientist|generative|\bgenai\b|\bnlp\b|computer vision|agentic/i),
+  mleng:    F('Technology', 'ML engineering & research', 'ML Engineer, Applied/Research Scientist, AI Researcher', /machine learning|\bml\b|\bai\b|artificial intelligence|deep learning|\bllms?\b|applied scientist|research scientist|\bnlp\b|computer vision/i, true),
   eng:      F('Technology', 'Software & infrastructure engineering', 'Software, Platform, SRE, DevOps Engineer', /(software|backend|back[- ]end|frontend|front[- ]end|full[- ]?stack|platform|infrastructure|site reliability|devops|systems|network|mobile|ios|android|firmware|embedded|qa|test|reliability|cloud|data|build|release) engineer|\bsre\b|\bsde\b|\bswe\b|\bdeveloper\b|engineering manager|\bprogrammer\b/i, true),
   data:     F('Technology', 'Data, analytics & BI', 'Data Scientist, Analyst, BI, Analytics Eng', /data (scien|analy|engineer|architect)|analytics|business intelligence|\bbi (analyst|developer|engineer)|insights analyst|statistic/i, true),
   design:   F('Technology', 'Design & UX research', 'Product Designer, UX Researcher', /\bdesigner\b|\bux\b|user experience|user research|product design|content design|\bui\b/i, true),
@@ -286,9 +297,20 @@ export const FUNCTION_GROUPS = [...new Set(Object.values(FUNCTIONS).map(f => f.g
 export const DEFAULT_FUNCTIONS = Object.keys(FUNCTIONS).filter(k => !FUNCTIONS[k].broad);
 const ENG_REVIEW = /\b(engineer|architect)\b/i;
 const ENG_GTM = /gtm|go[- ]to[- ]market|sales|solutions?|field|forward[- ]deployed|customer|partner|pre-?sales|growth|value|deployment strategist/i;
+const HEAD_ROLES = [
+  [/\b(counsel|attorney|lawyer|paralegal)\b/i, 'legal'],
+  [/\b(recruiter|sourcer|recruiting coordinator)\b/i, 'people'],
+  [/\bdesigner\b/i, 'design'],
+];
 export function classifyFunctions(title = '', desc = '') {
   const hits = [];
   for (const [k, f] of Object.entries(FUNCTIONS)) if (f.re.test(title)) hits.push(k);
+  // The job noun decides: "Commercial Counsel - US Sales" is a legal role, "Senior Product Designer" a design role.
+  for (const [re, k] of HEAD_ROLES) if (re.test(title)) { hits.length = 0; hits.push(k); break; }
+  // AI builders (ML engineer, research scientist) are their own category; AI product/strategy/GTM stays in `ai`.
+  const builder = /\b(engineer|engineering|scientist|researcher|research|developer|programmer)\b/i.test(title) && !ENG_GTM.test(title) && !/\bproduct (manager|lead|owner)|strateg|governance|policy/i.test(title);
+  if (builder && (hits.includes('ai') || hits.includes('mleng'))) { const r = hits.filter(k => k !== 'ai' && k !== 'mleng'); hits.length = 0; hits.push(...r, 'mleng'); }
+  else { const at = hits.indexOf('mleng'); if (at >= 0) hits.splice(at, 1); }
   const engReview = ENG_REVIEW.test(title) && ENG_GTM.test(title);
   return { functions: hits, eng_review: engReview };
 }
@@ -307,32 +329,95 @@ export const SENIORITY_LABEL = { 1: 'Entry/associate', 2: 'Mid', 3: 'Senior', 4:
    Used for resume extraction AND job tagging, so overlap is apples to apples. */
 const SK = (group, items) => items.map(([id, re]) => ({ id, group, re: new RegExp(re, 'i') }));
 export const SKILLS = [
-  ...SK('Security', [
+  ...SK('Security · threat & operations', [
     ['XDR / EDR', String.raw`\b(x|e)dr\b|extended detection`], ['SIEM / SOAR', String.raw`\bsiem\b|\bsoar\b`], ['MDR / managed security', String.raw`\bmdr\b|managed (detection|security)|mssp`],
-    ['SOC operations', String.raw`\bsoc\b|security operations`], ['Threat intelligence', String.raw`threat intel`], ['Threat hunting', String.raw`threat hunt|advanced hunting`], ['Malware analysis & reverse engineering', String.raw`malware analy|reverse engineer|\bida pro\b|ghidra`], ['OSINT', String.raw`\bosint\b|open[- ]source intelligence`], ['Threat actor tracking', String.raw`threat actor|nation[- ]state|\bapt\d*\b|adversary (tracking|research)`], ['Vulnerability research', String.raw`vulnerability research|exploit (development|research)|\bcve\b`],
-    ['Incident response', String.raw`incident response|\bdfir\b`], ['Zero trust', String.raw`zero[- ]trust`], ['Identity & access', String.raw`\biam\b|identity (and|&) access|identity security|\bpam\b|privileged access`],
-    ['SASE / network security', String.raw`\bsase\b|\bsse\b|\bcasb\b|network security|firewall`], ['Cloud security', String.raw`cloud security|\bcnapp\b|\bcspm\b|\bcwpp\b`], ['AppSec / DevSecOps', String.raw`appsec|application security|devsecops|software supply chain`],
-    ['Data security / DLP', String.raw`data security|\bdlp\b|data loss`], ['Email security', String.raw`email security|phishing|\bbec\b`], ['Vulnerability & exposure mgmt', String.raw`vulnerability management|exposure management|attack surface`],
-    ['GRC & compliance', String.raw`\bgrc\b|governance,? risk|compliance|soc ?2|iso ?27001|fedramp|nist`], ['MITRE ATT&CK', String.raw`mitre|att&ck`], ['KQL', String.raw`\bkql\b|kusto`],
-    ['Microsoft Defender / Sentinel', String.raw`defender|microsoft sentinel|azure sentinel`], ['Ransomware', String.raw`ransomware`], ['OT / IoT security', String.raw`\bot security|\bics\b|operational technology|\biot\b`], ['Cybersecurity (general)', String.raw`cyber ?security|information security|infosec`],
+    ['SOC operations', String.raw`\bsoc\b|security operations`], ['Threat intelligence', String.raw`threat intel`], ['Threat hunting', String.raw`threat hunt|advanced hunting`], ['Detection engineering', String.raw`detection engineering|detection (rules?|content|logic)|\bsigma\b rules?|\byara\b`],
+    ['Incident response', String.raw`incident response|\bdfir\b`], ['Digital forensics', String.raw`forensic|memory analysis|disk imaging`], ['Malware analysis & reverse engineering', String.raw`malware analy|reverse engineer|\bida pro\b|ghidra`],
+    ['Threat actor tracking', String.raw`threat actor|nation[- ]state|\bapt\d*\b|adversary (tracking|research)`], ['OSINT', String.raw`\bosint\b|open[- ]source intelligence`], ['Dark web & cybercrime', String.raw`dark ?web|underground (forums?|markets?)|cyber ?crime`],
+    ['CTI standards (STIX, MISP, Diamond)', String.raw`\bstix\b|\btaxii\b|\bmisp\b|diamond model|kill chain`], ['MITRE ATT&CK', String.raw`mitre|att&ck`], ['Ransomware', String.raw`ransomware`],
+    ['Vulnerability research', String.raw`vulnerability research|exploit (development|research)|\bcve\b`], ['Red team / penetration testing', String.raw`red team|penetration test|\bpen ?test|offensive security|ethical hack`], ['Purple team & adversary emulation', String.raw`purple team|adversary emulation|breach and attack simulation`],
+    ['Threat modeling', String.raw`threat model`], ['Security research', String.raw`security research`], ['Deception', String.raw`deception technolog|honeypot|honeytoken`],
+    ['Insider risk', String.raw`insider (risk|threat)`], ['Fraud & trust and safety', String.raw`fraud (detection|prevention|risk|analytics|operations|investigat|strategy)|trust (and|&) safety|anti-?abuse|abuse prevention`], ['Tabletop & crisis exercises', String.raw`tabletop|crisis (communication|management|simulation)|breach (response|notification)`],
+    ['KQL', String.raw`\bkql\b|kusto`], ['SPL / Splunk', String.raw`splunk|\bspl\b`], ['Scripting (Python / PowerShell)', String.raw`\bpython\b|powershell`], ['SQL', String.raw`\bsql\b`],
+  ]),
+  ...SK('Security · domains', [
+    ['Cybersecurity (general)', String.raw`cyber ?security|information security|infosec`], ['Zero trust', String.raw`zero[- ]trust`], ['Security architecture', String.raw`security architect`],
+    ['Identity & access', String.raw`\biam\b|identity (and|&) access|identity security|\bpam\b|privileged access`], ['Identity threat detection (ITDR)', String.raw`\bitdr\b|identity threat`], ['Endpoint security', String.raw`endpoint (security|protection)|\bepp\b|anti-?virus|anti-?malware`],
+    ['SASE / network security', String.raw`\bsase\b|\bsse\b|\bcasb\b|network security|firewall`], ['Web, API & DDoS protection', String.raw`\bwaf\b|web application firewall|ddos|bot (management|mitigation)|api security`], ['DNS security', String.raw`dns security|protective dns`],
+    ['Cloud security', String.raw`cloud security|\bcnapp\b|\bcspm\b|\bcwpp\b`], ['CIEM & entitlements', String.raw`\bciem\b|entitlement management|cloud entitlements`], ['Container & workload security', String.raw`container security|workload protection|runtime security|kubernetes security`],
+    ['SaaS security (SSPM)', String.raw`\bsspm\b|saas security`], ['AppSec / DevSecOps', String.raw`appsec|application security|devsecops|software supply chain`], ['Supply chain & SBOM', String.raw`\bsbom\b|supply chain security|software composition|\bsast\b|\bdast\b`],
+    ['Data security / DLP', String.raw`data security|\bdlp\b|data loss`], ['Data security posture (DSPM)', String.raw`\bdspm\b|data security posture`], ['Encryption, PKI & secrets', String.raw`\bpki\b|encryption|key management|\bkms\b|secrets management|cryptograph`],
+    ['Post-quantum cryptography', String.raw`post-?quantum|quantum[- ](safe|resistant)`], ['Email security', String.raw`email security|phishing|\bbec\b`], ['Browser security', String.raw`browser security|enterprise browser|secure browser`],
+    ['Mobile security', String.raw`mobile security|mobile threat|\bmdm\b`], ['Vulnerability & exposure mgmt', String.raw`vulnerability management|exposure management|attack surface|\bctem\b`], ['Security awareness & human risk', String.raw`security awareness|human risk|phishing simulation`],
+    ['AI security', String.raw`ai security|securing ai|security for ai|llm security|prompt injection|model security|ai red team`], ['OT / IoT security', String.raw`\bot security|\bics\b|operational technology|\biot\b`], ['Cyber resilience & backup', String.raw`cyber resilience|cyber recovery|immutable backup|backup (and|&) recovery`],
+    ['Privacy', String.raw`privacy (program|engineer|compliance|regulation|counsel|by design|operations|impact|law)|data privacy|\bgdpr\b|\bccpa\b`],
+  ]),
+  ...SK('Security · risk & compliance', [
+    ['GRC & compliance', String.raw`\bgrc\b|governance,? risk|compliance|soc ?2|iso ?27001|fedramp|nist`], ['Security program & strategy', String.raw`security (program|strategy|roadmap|leadership)|\bciso\b|\bvciso\b|office of the ciso`],
+    ['Cyber risk & quantification', String.raw`cyber risk|risk quantification|fair (model|methodology)|risk assessment`], ['Third-party & vendor risk', String.raw`third[- ]party risk|vendor risk|\btprm\b|supply chain risk`],
+    ['FedRAMP, CMMC & public sector', String.raw`fedramp|\bcmmc\b|\bfisma\b|stateramp|\bitar\b|impact level [2-6]|\bil[2456]\b`], ['PCI, HIPAA & SOX', String.raw`pci[- ]?dss|\bpci\b|\bsox\b|sarbanes`],
+    ['ISO 27001 / SOC 2 / ISO 42001', String.raw`soc ?2|iso ?27001|iso ?42001`], ['NIST CSF / 800-53', String.raw`nist (csf|cybersecurity framework|800|sp ?800)|800-53|800-171`],
+    ['Cyber regulation (SEC, NIS2, DORA)', String.raw`\bnis ?2\b|\bdora\b|sec (cyber|disclosure)|incident reporting rule|\bcircia\b`], ['Audit', String.raw`\baudit`], ['Cyber insurance', String.raw`cyber insurance`],
+    ['Security metrics & board reporting', String.raw`security metrics|board reporting|risk reporting|board of directors`],
+  ]),
+  ...SK('Security · platforms & credentials', [
+    ['Microsoft Defender / Sentinel', String.raw`defender|microsoft sentinel|azure sentinel`], ['Microsoft Entra / Purview / Intune', String.raw`\bentra\b|azure ad|purview|intune|active directory`], ['CrowdStrike', String.raw`crowdstrike`],
+    ['Palo Alto Networks', String.raw`palo alto networks|prisma (cloud|access)|cortex (xsiam|xdr|xsoar)`], ['Google SecOps / Mandiant', String.raw`mandiant|chronicle|google secops|google security operations|virustotal`], ['Zscaler / Netskope / Cloudflare', String.raw`zscaler|netskope|cloudflare`],
+    ['Okta / CyberArk', String.raw`\bokta\b|cyberark`], ['Wiz / CNAPP vendors', String.raw`\bwiz\b|orca security|lacework|sysdig`], ['Elastic / OpenSearch', String.raw`elastic (security|siem|stack)|elasticsearch|opensearch`],
+    ['AWS security services', String.raw`guardduty|security hub|aws security|amazon inspector`], ['ServiceNow', String.raw`servicenow`],
+    ['CISSP / CISM / CCSP', String.raw`\bcissp\b|\bcism\b|\bccsp\b|\bcisa\b certif`], ['GIAC / OSCP / CEH', String.raw`\bgiac\b|\bgc(ih|ia|ti|fa|ed)\b|\boscp\b|\bceh\b`], ['CompTIA Security+', String.raw`security\+|comptia`], ['Security clearance', String.raw`security clearance|top secret|ts/sci|secret clearance|\bclearance\b`],
   ]),
   ...SK('Cloud & platform', [
     ['AWS', String.raw`\baws\b|amazon web services`], ['Azure', String.raw`\bazure\b`], ['GCP', String.raw`\bgcp\b|google cloud`], ['SaaS / B2B', String.raw`\bsaas\b|\bb2b\b`], ['APIs & platforms', String.raw`\bapis?\b|platform strategy|developer platform`], ['Kubernetes / cloud native', String.raw`kubernetes|cloud[- ]native|containers`],
+    ['Data platforms (Snowflake, Databricks)', String.raw`snowflake|databricks|data lake|lakehouse`], ['Observability', String.raw`observability|datadog|telemetry|opentelemetry`], ['Infrastructure as code', String.raw`terraform|infrastructure as code|\biac\b|cloudformation|bicep`],
   ]),
-  ...SK('Go-to-market', [
-    ['Go-to-market strategy', String.raw`go[- ]to[- ]market|\bgtm\b`], ['Enterprise sales', String.raw`enterprise sales|strategic accounts|named accounts|enterprise customers`], ['Pipeline & revenue', String.raw`pipeline|bookings|\barr\b|quota|revenue growth`],
+  ...SK('Sales', [
+    ['Enterprise sales', String.raw`enterprise sales|strategic accounts|named accounts|enterprise customers`], ['Pipeline & revenue', String.raw`pipeline|bookings|\barr\b|quota|revenue growth`], ['New logo acquisition', String.raw`new logos?|new business|net[- ]new|hunter`],
+    ['Account management & expansion', String.raw`account management|upsell|cross-?sell|land[- ]and[- ]expand|install base`], ['Renewals', String.raw`renewals?`], ['Sales methodology (MEDDICC, Challenger)', String.raw`\bmeddp?ic+\b|challenger|command of the message|value selling|solution selling|consultative selling|sandler|spin selling`],
+    ['Complex deals & negotiation', String.raw`negotiat|complex (sales|deals)|deal (strategy|structuring)|multi-?year (deals|agreements)|enterprise agreements?`], ['Forecasting & deal desk', String.raw`forecast|deal desk`], ['RevOps & CRM', String.raw`revops|revenue operations|sales operations|salesforce|hubspot|\bcrm\b|\bclari\b|\bgong\b`],
+    ['Territory & account planning', String.raw`territory|account plan`], ['Sales development (SDR/BDR)', String.raw`\bsdrs?\b|\bbdrs?\b|sales development|inside sales`], ['Overlay & specialist sales', String.raw`overlay|specialist sales|solution specialist|specialist team`],
+    ['Sales leadership', String.raw`sales (leader|management|manager)|regional (vice president|director)|\brvp\b|first[- ]line (sales )?manager`], ['Cloud marketplace & private offers', String.raw`private offers?|\bcppo\b|(aws|azure|google cloud|cloud) marketplace|marketplace (listing|transact)`],
+    ['Executive & C-suite selling', String.raw`c-?level (selling|relationships)|executive (selling|sponsor)|ciso relationships|selling to (the )?ciso`],
+  ]),
+  ...SK('Partnerships & alliances', [
     ['Channel & partners', String.raw`channel|reseller|distributor|\bvar\b|\bgsi\b|systems integrator|\bmsp\b`], ['Alliances & co-sell', String.raw`alliances?|co-?sell|marketplace|\bisv\b|technology partner`],
-    ['Positioning & messaging', String.raw`positioning|messaging|narrative|value proposition`], ['Launches', String.raw`product launch|launches|launch strategy`], ['Pricing & packaging', String.raw`pricing|packaging|monetization`],
-    ['Demand generation', String.raw`demand gen|\babm\b|account[- ]based|campaigns?\b|pipeline generation`], ['Sales enablement', String.raw`enablement|sales readiness|playbooks?`], ['Competitive intelligence', String.raw`competitive (intel|analysis|strategy|landscape)|battle ?cards|win[/ -]loss`],
-    ['Pre-sales / solutions', String.raw`pre-?sales|solutions? (engineer|architect|consult)|technical sales`], ['Customer success & adoption', String.raw`customer success|adoption|retention|expansion|\bnrr\b|churn`], ['Analyst relations', String.raw`analyst relations|gartner|forrester|\bidc\b`],
+    ['Hyperscaler partnerships', String.raw`hyperscaler|(aws|azure|microsoft|google cloud|gcp) (partner|alliance)|cloud alliances?|\bmacc\b|\bedp\b|committed spend`], ['GSI & consulting partners', String.raw`global system integrators?|\bgsis?\b|accenture|deloitte|kpmg|\bpwc\b|capgemini|booz allen`],
+    ['MSSP / MSP partners', String.raw`\bmssps?\b|\bmsps?\b|managed service providers?`], ['Technology ecosystem & integrations', String.raw`ecosystem|integration partners?|technology alliances?|tech partners?|partner integrations?`],
+    ['Partner programs & incentives', String.raw`partner (program|incentive|tier)|\bmdf\b|market development funds|rebates?|partner funding`], ['Partner marketing', String.raw`partner marketing|through-?channel|co-?marketing|joint marketing`],
+    ['Partner enablement', String.raw`partner (enablement|training|certification|readiness)`], ['Business development & strategic partnerships', String.raw`business development|strategic partnerships?|corporate development|\boem\b|white[- ]label`],
+    ['Partner sales & recruitment', String.raw`partner (sales|recruit|acquisition|sourced)|partner[- ]led|partner pipeline`],
+  ]),
+  ...SK('Marketing', [
+    ['Go-to-market strategy', String.raw`go[- ]to[- ]market|\bgtm\b`], ['Product marketing', String.raw`product marketing|\bpmms?\b`], ['Positioning & messaging', String.raw`positioning|messaging|narrative|value proposition`],
+    ['Launches', String.raw`product launch|launches|launch strategy`], ['Pricing & packaging', String.raw`pricing|packaging|monetization`], ['Competitive intelligence', String.raw`competitive (intel|analysis|strategy|landscape)|battle ?cards|win[/ -]loss`],
+    ['Market research & segmentation', String.raw`market research|segmentation|\bicp\b|ideal customer profile|buyer personas?|\btam\b|market sizing`], ['Analyst relations', String.raw`analyst relations|gartner|forrester|\bidc\b`],
+    ['Demand generation', String.raw`demand gen|\babm\b|account[- ]based|campaigns?\b|pipeline generation`], ['Digital & performance marketing', String.raw`digital marketing|performance marketing|paid (media|search|social)|\bsem\b|\bppc\b`], ['SEO', String.raw`\bseo\b|search engine optimi`],
+    ['Lifecycle & growth marketing', String.raw`lifecycle marketing|growth marketing|product[- ]led growth|\bplg\b|nurture`], ['Marketing operations & automation', String.raw`marketing (operations|automation|ops)|marketo|eloqua|pardot`], ['Marketing analytics & attribution', String.raw`attribution|marketing analytics|\bmqls?\b|marketing[- ]sourced`],
+    ['Field & event marketing', String.raw`field marketing|event marketing|trade ?shows?|sponsorships?|executive (dinners|roundtables)|roadshows?`], ['Brand', String.raw`brand (strategy|marketing|management|awareness|identity|campaigns?)|branding`], ['Customer marketing & references', String.raw`customer marketing|case stud(y|ies)|customer references?|reference program`],
+    ['PR & communications', String.raw`public relations|media relations|corporate comm|press releases?|\bpr (strategy|agency|team)\b`], ['Social media', String.raw`social media|linkedin (strategy|presence|content)`], ['Technical marketing', String.raw`technical marketing|\btmes?\b|demo (creation|development|environments?)`],
+  ]),
+  ...SK('Customer & solutions', [
+    ['Pre-sales / solutions', String.raw`pre-?sales|solutions? (engineer|architect|consult)|technical sales`], ['Proof of concept / value', String.raw`proof[- ]of[- ](concept|value)|\bpo[cv]s?\b|technical (evaluation|validation)`], ['Demos & workshops', String.raw`\bdemos?\b|workshops?|envisioning|technical deep[- ]dives?`],
+    ['RFPs & security questionnaires', String.raw`\brf[piq]s?\b|security questionnaires?|proposal (writing|responses?)`], ['Value engineering & ROI', String.raw`value engineering|business value|\broi\b|\btco\b`], ['Sales enablement', String.raw`enablement|sales readiness|playbooks?`],
+    ['Customer success & adoption', String.raw`customer success|adoption|retention|expansion|\bnrr\b|churn`], ['Technical account management', String.raw`technical account manag`], ['Professional services & delivery', String.raw`professional services|implementation (services|consult|manag|engineer|projects?)|deployment services|customer onboarding`],
+    ['Customer advisory boards', String.raw`customer advisory (board|council)|\bcab\b`], ['Escalation management', String.raw`escalation`], ['Training & certification programs', String.raw`training (programs?|curricul)|certification programs?|learning (programs?|paths?)|instructional design`],
   ]),
   ...SK('Product', [
     ['Product management', String.raw`product management|product manager|\bprd\b|product requirements`], ['Product strategy & roadmap', String.raw`product strategy|roadmap|product vision`], ['0→1 incubation', String.raw`0\s?(to|→|-)\s?1|zero to one|incubat|new (product|service) introduction`],
-    ['Program management', String.raw`program management|program manager|\bpmp\b|portfolio`], ['Experimentation & metrics', String.raw`a/b test|experimentation|\bokrs?\b|kpis?|north star`], ['Customer discovery', String.raw`customer discovery|user research|voice of (the )?customer`],
+    ['Security product management', String.raw`security product (manag|lead|strateg)`], ['Technical / platform product', String.raw`technical product manag|platform product|api product`], ['Product operations', String.raw`product op(eration)?s`],
+    ['Market requirements (MRD)', String.raw`\bmrd\b|market requirements`], ['Program management', String.raw`program management|program manager|\bpmp\b|portfolio`], ['Agile delivery', String.raw`\bagile\b|\bscrum\b|kanban|\bjira\b`],
+    ['Experimentation & metrics', String.raw`a/b test|experimentation|\bokrs?\b|kpis?|north star`], ['Customer discovery', String.raw`customer discovery|user research|voice of (the )?customer`],
   ]),
   ...SK('AI', [
     ['AI / ML (general)', String.raw`\bai\b|artificial intelligence|machine learning|\bml\b`], ['Generative AI / LLMs', String.raw`generative ai|gen ?ai|\bllms?\b|large language`], ['Agents & agentic workflows', String.raw`\bagents?\b|agentic|copilot|\bmcp\b|autonomous`],
-    ['AI governance', String.raw`ai governance|responsible ai|ai risk|model risk|ai safety`], ['Prompt & RAG engineering', String.raw`prompt engineering|\brag\b|retrieval[- ]augmented`], ['Automation', String.raw`automation|workflow automation|power automate|low[- ]code`],
+    ['AI for security operations', String.raw`security copilot|ai[- ](driven|powered|native) (soc|security)|\bai soc\b|autonomous soc`], ['AI platforms (OpenAI, Bedrock, Vertex)', String.raw`openai|anthropic|bedrock|vertex ai|gemini|hugging ?face`],
+    ['AI governance', String.raw`ai governance|responsible ai|ai risk|model risk|ai safety`], ['Model evaluation', String.raw`model evaluation|llm evaluation|\bevals\b`], ['Prompt & RAG engineering', String.raw`prompt engineering|\brag\b|retrieval[- ]augmented`],
+    ['AI product & GTM', String.raw`ai (products?|go-to-market|gtm|solutions|adoption)`], ['Automation', String.raw`automation|workflow automation|power automate|low[- ]code`],
+  ]),
+  ...SK('Markets & segments', [
+    ['Public sector & federal', String.raw`public sector|federal (agenc|government|customers|civilian|sales|market|systems|programs)|government (agenc|customers|sector|clients)|\bdod\b|department of defense|state and local government|\bsled\b|civilian agenc|intelligence community`], ['Financial services', String.raw`financial services|banking|fintech|\bfsi\b|insurance`],
+    ['Critical infrastructure', String.raw`critical infrastructure|energy (sector|and utilities)|utilit(y|ies) (sector|customers|industry)|industrial (control|cyber|security)|manufacturing (sector|customers|industry)`], ['Mid-market & SMB', String.raw`mid-?market|\bsmbs?\b|small (and|&) medium`], ['Fortune 500 / strategic', String.raw`fortune (100|500|1000) (customers|accounts|companies|clients)|global 2000|\bg2k\b`],
+    ['Global & international (EMEA/APAC)', String.raw`\bemea\b|\bapac\b|\blatam\b|international markets|global (markets|regions)`],
   ]),
   ...SK('Healthcare & public health', [
     ['Healthcare', String.raw`health ?care|hospital|health system|clinical`], ['HIPAA & health data', String.raw`hipaa|\bphi\b|\behr\b|\bemr\b|epic\b`], ['Payer / provider', String.raw`payer|provider network|health plan`], ['Pharma & life sciences', String.raw`pharma|life sciences|biotech`], ['Public health / MPH', String.raw`public health|\bmph\b|epidemiolog`],
@@ -340,12 +425,28 @@ export const SKILLS = [
   ...SK('Business & leadership', [
     ['MBA / business strategy', String.raw`\bmba\b|business strategy|corporate strategy`], ['P&L & business cases', String.raw`p&l|business case|financial model|unit economics`], ['Executive communication', String.raw`executive (communication|briefing|presence|stakeholder)|c-?suite|board[- ]level`],
     ['Executive advisory', String.raw`executive advis|trusted advisor|advisory`], ['Operating model & BizOps', String.raw`operating model|business operations|operating rhythm|\bqbr\b|planning cadence`], ['Chief of staff', String.raw`chief of staff`],
-    ['Cross-functional leadership', String.raw`cross[- ]functional|stakeholder management|influence without authority`], ['M&A & integration', String.raw`m&a|acquisition integration|merger`],
+    ['Cross-functional leadership', String.raw`cross[- ]functional|stakeholder management|influence without authority`], ['People leadership', String.raw`people manag|direct reports|build(ing)? (and lead(ing)? )?(high[- ]performing )?teams`], ['Change & transformation', String.raw`change management|(digital|business|security|cloud) transformation|transformation (program|office|initiatives?)`],
+    ['M&A & integration', String.raw`m&a|acquisition integration|merger`],
   ]),
   ...SK('Content & community', [
-    ['Thought leadership', String.raw`thought leadership|point of view|\bpov\b`], ['Webinars & events', String.raw`webinars?|events?|conferences?|keynote|\bcpe\b`], ['Content strategy', String.raw`content (strategy|marketing)|editorial|storytelling`], ['Community & advocacy', String.raw`community|advocacy|evangelism|developer relations`],
+    ['Thought leadership', String.raw`thought leadership|point of view|\bpov\b`], ['Content strategy', String.raw`content (strategy|marketing)|editorial|storytelling`], ['Research & threat reports', String.raw`threat reports?|research reports?|white ?papers?|e-?books?`],
+    ['Technical writing & blogs', String.raw`technical writing|blogs?\b|documentation`], ['Webinars & events', String.raw`webinars?|events?|conferences?|keynote|\bcpe\b`], ['Public speaking', String.raw`public speaking|speaker|keynote|panel(ist)?s?\b`],
+    ['Podcasts & video', String.raw`podcasts?|video (content|series)|youtube`], ['Security community & conferences', String.raw`bsides|def ?con|black ?hat|\brsac\b|rsa conference|owasp|\bissa\b|isaca|infragard|\bisc2\b`], ['Community & advocacy', String.raw`community|advocacy|evangelism|developer relations`],
   ]),
 ];
+
+// Tags a posting. The employer's own name is removed first, so a vendor skill (CrowdStrike, Okta, Cloudflare…)
+// means the role works with that product, not that the employer is that vendor.
+const CO_SUFFIX = /[,.]?\s+(inc|llc|ltd|corp(oration)?|co|plc|gmbh|holdings|technologies|group)\.?$/i;
+export function jobSkills(employer = '', text = '') {
+  const name = String(employer).replace(CO_SUFFIX, '').trim();
+  if (name.length >= 3) {
+    const esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = [name, ...(name.split(/\s+/)[0].length >= 5 ? [name.split(/\s+/)[0]] : [])];
+    text = text.replace(new RegExp(`\\b(${parts.map(esc).join('|')})\\b`, 'gi'), ' ');
+  }
+  return extractSkills(text);
+}
 export function extractSkills(text = '') {
   const out = [];
   for (const s of SKILLS) if (s.re.test(text)) out.push(s.id);
@@ -373,7 +474,7 @@ export function enrichJob(raw) {
   const sal = chooseSalary(parseSalaries(text), raw.salary_struct || null);
   const loc = foreignOnly(raw.locations, text, sal && sal.min != null ? sal : null) ? { ...loc0, us: false, remote_us: false } : loc0;
   const fn = classifyFunctions(raw.title, text);
-  const kw = extractSkills(raw.title + '\n' + text);
+  const kw = jobSkills(raw.employer, raw.title + '\n' + text);
   const relevant = fn.functions.some(f => !FUNCTIONS[f].broad) || fn.eng_review;
   return {
     uid: `${raw.source_id}:${raw.ext_id}`,
@@ -476,6 +577,39 @@ export function companyTypeFilter(c) {
   if (t.aggregator === false) out.aggregator = false;
   return out;
 }
+/* Title variants per job category, used for outside searches (LinkedIn, Indeed, Google, ATS x-ray, aggregators).
+   Ordered by how common the title is; outside searches use the first few when a site limits query length. */
+export const FN_TERMS = {
+  product: ['product manager', 'senior product manager', 'principal product manager', 'group product manager', 'director of product', 'head of product', 'product lead', 'technical product manager'],
+  tpm: ['technical program manager', 'program manager', 'senior program manager', 'program director', 'engineering program manager', 'portfolio manager'],
+  pmm: ['product marketing manager', 'senior product marketing manager', 'director of product marketing', 'head of product marketing', 'product marketing lead', 'solutions marketing manager', 'technical marketing manager'],
+  marketing: ['marketing manager', 'content marketing', 'brand marketing', 'communications manager', 'field marketing', 'marketing director', 'head of marketing'],
+  demand: ['demand generation', 'growth marketing', 'lifecycle marketing', 'ABM manager', 'marketing operations', 'head of growth', 'performance marketing'],
+  sales: ['account executive', 'enterprise account executive', 'strategic account executive', 'sales director', 'regional sales manager', 'account manager', 'head of sales'],
+  se: ['solutions engineer', 'sales engineer', 'solutions architect', 'customer engineer', 'field CTO', 'presales engineer', 'technical account manager'],
+  partner: ['partner manager', 'partnerships manager', 'alliances manager', 'channel manager', 'partner development manager', 'ISV partnerships', 'head of partnerships', 'strategic alliances director'],
+  cs: ['customer success manager', 'technical account manager', 'customer success director', 'head of customer success', 'adoption manager', 'renewals manager'],
+  enable: ['sales enablement', 'revenue enablement', 'enablement manager', 'GTM enablement', 'sales readiness', 'partner enablement'],
+  gtm: ['go-to-market', 'GTM strategy', 'GTM operations', 'revenue operations', 'sales strategy', 'commercial strategy', 'GTM lead'],
+  strategy: ['strategy and operations', 'business operations', 'strategic initiatives', 'corporate strategy', 'strategy manager', 'corporate development', 'business strategy'],
+  cos: ['chief of staff', 'chief of staff to the CEO', 'chief of staff to the CISO', 'office of the CEO', 'executive business partner'],
+  ci: ['competitive intelligence', 'market intelligence', 'competitive strategy', 'market research manager', 'win loss analyst', 'industry analyst'],
+  threat: ['threat intelligence', 'threat researcher', 'security researcher', 'threat intelligence analyst', 'CTI analyst', 'malware researcher', 'threat hunter'],
+  secops: ['security operations', 'incident response', 'SOC manager', 'detection and response', 'DFIR', 'red team', 'penetration tester'],
+  seceng: ['security engineer', 'security architect', 'cloud security engineer', 'application security', 'product security', 'security engineering manager'],
+  grc: ['GRC', 'governance risk compliance', 'security compliance', 'risk manager', 'privacy program manager', 'trust and safety', 'security assurance'],
+  ai: ['AI product manager', 'AI strategy', 'AI solutions', 'AI go-to-market', 'AI governance', 'AI partnerships', 'AI transformation'],
+  mleng: ['machine learning engineer', 'ML engineer', 'AI engineer', 'applied scientist', 'research scientist', 'AI researcher'],
+  eng: ['software engineer', 'senior software engineer', 'staff software engineer', 'engineering manager', 'platform engineer', 'site reliability engineer'],
+  data: ['data scientist', 'data analyst', 'analytics engineer', 'business intelligence', 'data engineer', 'analytics manager'],
+  design: ['product designer', 'UX designer', 'UX researcher', 'design lead', 'design manager'],
+  support: ['professional services consultant', 'implementation manager', 'support engineer', 'solutions consultant', 'customer support manager'],
+  finance: ['finance manager', 'FP&A', 'strategic finance', 'controller', 'finance director'],
+  people: ['recruiter', 'technical recruiter', 'people partner', 'HR business partner', 'talent acquisition'],
+  legal: ['counsel', 'product counsel', 'privacy counsel', 'policy manager', 'government affairs'],
+};
+// "a" OR "b" OR … for sites that take boolean queries; cap keeps long queries under search-engine limits
+export const orQuery = (terms, cap = 99) => terms.slice(0, cap).map(t => `"${t}"`).join(' OR ');
 export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], win = null, excl = null, tz = TZ, force = false }) {
   // force: a role the user is tracking stays visible even when it no longer passes the filters
   if (!force && (j.status === 'closed' || j.us === false)) return null;
@@ -490,7 +624,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   if (inSecs.size && !inSecs.has(sector)) if (!force) return null;
   const myVerts = verticals.filter(v => vSec(v) === sector);
   if (myVerts.length && !myVerts.includes(vertical)) if (!force) return null;
-  const sel = selectedFunctions(c), fnHit = (j.functions || []).filter(f => sel.includes(f));
+  const sel = selectedFunctions(c), fnHit = (j._fn || (j._fn = classifyFunctions(j.title).functions)).filter(f => sel.includes(f));
   const engOnly = !fnHit.length && c.engReview && j.eng_review;
   if (!fnHit.length && !engOnly) if (!force) return null;
   if (excl && excl.test(j.title)) if (!force) return null;
@@ -513,12 +647,14 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const hf = homeFit(j, { metro: c.metro || '', state: c.state || '' });
   let loc;
   if (hf.in_metro) loc = 'metro';
+  else if (hf.tied) loc = 'other';
   else if (j.remote_us && ['yes', 'likely'].includes(hf.eligibility)) loc = 'remote_yes';
   else if (j.remote_us && hf.eligibility === 'no') loc = 'remote_no';
   else if (j.remote_us) loc = 'remote_unknown';
   else loc = 'other';
   if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, remote_no: true }[loc]) if (!force) return null;
-  const kw = new Set(j.kw || []);
+  // stored kw comes from the collector; re-tag from title + excerpt so skills added since the last run still match
+  const kw = j._kw || (j._kw = new Set([...(j.kw || []), ...jobSkills(j.employer, j.title + '\n' + (j.excerpt || ''))]));
   const skillHits = skillsOn.filter(s => kw.has(s));
   const hay = (j.title + ' ' + (j.excerpt || '')).toLowerCase();
   const customHits = [...custom, ...csvList(c.include)].filter(k => hay.includes(k.toLowerCase()));

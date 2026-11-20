@@ -1,5 +1,5 @@
 // Resume / LinkedIn-PDF text → profile. Pure function so it can be tested in Node.
-import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261119z';
+import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261120c';
 
 export const CRED_RES = [
   ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.D\.?(?=\s|,|$)/], ['MD', /\bM\.D\.\b/],
@@ -126,10 +126,21 @@ export function suggestFunctions(p) {
   const groups = (p.skillsOn || []).map(id => SKILLS.find(s => s.id === id)?.group);
   if (p.headline) classifyFunctions(p.headline).functions.forEach(f => fn.add(f));
   const n = g => groups.filter(x => x === g).length, has = id => (p.skillsOn || []).includes(id);
-  if (n('Go-to-market') >= 3) { fn.add('gtm'); fn.add('pmm'); }
+  const nSec = groups.filter(x => x && x.startsWith('Security')).length, any = ids => ids.filter(has).length;
+  if (n('Sales') + n('Partnerships & alliances') + n('Marketing') + n('Customer & solutions') >= 4) fn.add('gtm');
+  if (any(['Product marketing', 'Positioning & messaging', 'Launches', 'Pricing & packaging', 'Market research & segmentation', 'Analyst relations']) >= 2) fn.add('pmm');
+  if (n('Marketing') >= 4) fn.add('marketing');
+  if (any(['Demand generation', 'Digital & performance marketing', 'Lifecycle & growth marketing', 'Marketing operations & automation', 'Field & event marketing', 'Marketing analytics & attribution']) >= 2) fn.add('demand');
+  if (n('Sales') >= 3) fn.add('sales');
+  if (n('Partnerships & alliances') >= 2) fn.add('partner');
+  if (any(['Pre-sales / solutions', 'Proof of concept / value', 'Demos & workshops', 'RFPs & security questionnaires', 'Value engineering & ROI']) >= 2) fn.add('se');
+  if (any(['Customer success & adoption', 'Technical account management', 'Professional services & delivery', 'Escalation management']) >= 2) fn.add('cs');
+  if (any(['Sales enablement', 'Partner enablement', 'Training & certification programs']) >= 2) fn.add('enable');
+  if (has('Competitive intelligence')) fn.add('ci');
   if (n('Product') >= 2) fn.add('product');
   if (n('AI') >= 2) fn.add('ai');
-  if (['Threat intelligence', 'Threat hunting', 'Malware analysis & reverse engineering', 'OSINT', 'Threat actor tracking'].filter(has).length >= 2) fn.add('threat');
-  if (has('GRC & compliance') && n('Security') >= 3) fn.add('grc');
+  if (any(['Threat intelligence', 'Threat hunting', 'Malware analysis & reverse engineering', 'OSINT', 'Threat actor tracking', 'Dark web & cybercrime', 'CTI standards (STIX, MISP, Diamond)', 'Security research']) >= 2) fn.add('threat');
+  if (any(['SOC operations', 'Incident response', 'Detection engineering', 'SIEM / SOAR', 'XDR / EDR', 'Digital forensics']) >= 2) fn.add('secops');
+  if (n('Security · risk & compliance') >= 2 && nSec >= 3) fn.add('grc');
   return [...fn];
 }

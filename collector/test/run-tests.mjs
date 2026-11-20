@@ -436,4 +436,24 @@ try {
   t('location: SF + NY role shows New York when NY is the commute match', () => { assert.equal(fit.metro_loc, 'New York, NY, USA'); const s = C6.shownLocation(job, fit, 'metro'); assert.equal(s.text, 'New York, NY, USA'); assert.equal(s.more, 1); });
   t('location: non-US first location skipped for display', () => assert.equal(C6.shownLocation({ locations: ['London, UK', 'Austin, TX'] }, {}, 'other').text, 'Austin, TX'));
 }
+{
+  const C7 = await import('../../assets/shared/core.mjs');
+  const ids = C7.SKILLS.map(s => s.id);
+  t('skills: ids unique', () => assert.equal(new Set(ids).size, ids.length));
+  t('skills: cyber + GTM breadth', () => { const k = C7.extractSkills('Partner marketing with MSSPs and GSIs; FedRAMP; detection engineering; MEDDICC; AWS Marketplace private offers; RSAC sponsorship'); for (const x of ['Partner marketing', 'MSSP / MSP partners', 'GSI & consulting partners', 'FedRAMP, CMMC & public sector', 'Detection engineering', 'Sales methodology (MEDDICC, Challenger)', 'Cloud marketplace & private offers', 'Field & event marketing']) assert.ok(k.includes(x), x); });
+  t('skills: employer name not tagged as vendor skill', () => { assert.ok(!C7.jobSkills('Cloudflare, Inc.', 'Join Cloudflare to sell network security').includes('Zscaler / Netskope / Cloudflare')); assert.ok(C7.jobSkills('Acme', 'Experience with Cloudflare and Zscaler').includes('Zscaler / Netskope / Cloudflare')); });
+  t('skills: EEO boilerplate is not a public-sector or fraud signal', () => { const k = C7.extractSkills('We comply with federal, state and local laws. Beware of recruitment fraud. Read our privacy policy.'); for (const x of ['Public sector & federal', 'Fraud & trust and safety', 'Privacy']) assert.ok(!k.includes(x), x); });
+}
+{
+  const C8 = await import('../../assets/shared/core.mjs');
+  t('functions: counsel is legal only', () => { assert.deepEqual(C8.classifyFunctions('Senior Product Counsel - HR Products').functions, ['legal']); assert.deepEqual(C8.classifyFunctions('Commercial Counsel - US Sales').functions, ['legal']); });
+  t('functions: senior product designer/security are not PM', () => { assert.ok(!C8.classifyFunctions('Senior Product Designer').functions.includes('product')); assert.ok(!C8.classifyFunctions('Staff Product Security Engineer').functions.includes('product')); assert.ok(C8.classifyFunctions('Sr Product Mgr, Identity').functions.includes('product')); });
+}
+{
+  const C9 = await import('../../assets/shared/core.mjs');
+  t('functions: ML engineer is mleng, AI strategy stays ai', () => { assert.deepEqual(C9.classifyFunctions('Staff Machine Learning Engineer, Homefeed & Search Quality').functions, ['mleng']); assert.ok(C9.classifyFunctions('Director, AI Go-to-Market').functions.includes('ai')); assert.ok(C9.classifyFunctions('AI Solutions Engineer').functions.includes('ai')); });
+  t('location: remote tied to an out-of-state city is not remote', () => { const f = C9.homeFit({ remote_us: true, locations: ['Santa Clara, California, United States'], excerpt: 'Work Personas: flexible or remote' }, { metro: 'new york', state: 'NY' }); assert.equal(f.tied, true); });
+  t('location: remote anywhere in the US is not tied', () => { const f = C9.homeFit({ remote_us: true, locations: ['San Francisco, CA, US; Remote, US'] }, { metro: 'new york', state: 'NY' }); assert.equal(f.tied, false); const g = C9.homeFit({ remote_us: true, locations: ['Austin, TX'], excerpt: 'This role can be based anywhere in the US.' }, { state: 'NY' }); assert.equal(g.tied, false); });
+  t('location: tied role in the home state still matches', () => { const f = C9.homeFit({ remote_us: true, locations: ['New York, New York, United States'] }, { metro: 'new york', state: 'NY' }); assert.equal(f.tied, false); assert.equal(f.in_metro, true); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

@@ -675,3 +675,14 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 @media (min-width:640px){#covTiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1180px){#covTiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
 #covTiles .tile{min-width:0}
+
+/* skills picker: collapsible groups */
+.skgrp{border-top:1px solid var(--line);padding:2px 0}
+.skgrp>summary{cursor:pointer;list-style:none;padding:8px 0;font-size:.85rem;display:flex;justify-content:space-between;gap:10px}
+.skgrp>summary::-webkit-details-marker{display:none}
+.skgrp>summary::before{content:'▸';margin-right:6px;opacity:.6}
+.skgrp[open]>summary::before{content:'▾'}
+.skgrp>summary{justify-content:flex-start}
+.skgrp .skn{margin-left:auto;opacity:.6;font-size:.78rem;white-space:nowrap}
+.skgrp .chips{padding:0 0 10px}
+#skillOnly.on{outline:1px solid currentColor}
