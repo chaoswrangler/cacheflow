@@ -251,20 +251,23 @@ export function territoryStates(job) {
 }
 export function remoteTied(job, home = '') {
   const L = splitLocs(job.locations);
-  const terr = territoryStates(job);
-  if (terr.size) return !terr.has(String(home).toUpperCase());
+  const terr = territoryStates(job), ok = [].concat(home).map(x => String(x).toUpperCase());
+  if (terr.size) return !ok.some(x => terr.has(x));
   if (!L.length) return false;
   const kinds = L.map(placeKind);
   if (kinds.includes('generic')) return false;
   return !NATIONWIDE.test((job.elig_text || '') + ' ' + (job.excerpt || ''));
 }
-export function homeFit(job, { metro = '', state = '' } = {}) {
+// metro: towns/cities (| separated) the viewer searches in; states: whole states they search in;
+// state: the state remote roles must be open to (usually home, but the viewer can change it).
+export function homeFit(job, { metro = '', state = '', states = [] } = {}) {
   const locText = (job.locations || []).join(' | ');
   const abbr = (state || '').toUpperCase();
   const name = STATES[abbr] || '';
   const metroParts = metro.split('|').map(x => x.trim()).filter(Boolean);
-  const metroRe = metroParts.length ? new RegExp(`\\b(${metroParts.map(esc).join('|')})\\b`, 'i') : null;
-  const inMetro = !!(metroRe && metroRe.test(locText));
+  const stAlts = (states || []).map(x => String(x).toUpperCase()).filter(x => STATES[x]).flatMap(x => [`\\b${esc(STATES[x])}\\b(?!,? d\\.?c)`, `,\\s*${x}\\b`]);
+  const metroRe = metroParts.length || stAlts.length ? new RegExp([metroParts.length && `\\b(${metroParts.map(esc).join('|')})\\b`, ...stAlts].filter(Boolean).join('|'), 'i') : null;
+  const inMetro = !!(metroRe && (job.locations || []).some(l => placeKind(l) !== 'foreign' && metroRe.test(l)));
   const metroLoc = inMetro ? (job.locations || []).find(l => metroRe.test(l)) || null : null;
   let elig = 'n/a';
   if (inMetro) elig = 'yes';
@@ -282,7 +285,7 @@ export function homeFit(job, { metro = '', state = '' } = {}) {
   // "Remote" but every listed place is a specific city/region outside the home state, and nothing says
   // anywhere-in-the-US: a territory or office-tied role (ServiceNow work personas, regional AEs).
   const foreign = !inMetro && foreignRemote(job);
-  const tied = !foreign && !!job.remote_us && !inMetro && remoteTied(job, abbr) && !(elig === 'yes' && !territoryStates(job).size);
+  const tied = !foreign && !!job.remote_us && !inMetro && remoteTied(job, [abbr, ...(states || [])]) && !(elig === 'yes' && !territoryStates(job).size);
   return { in_metro: inMetro, eligibility: foreign ? 'no' : tied ? 'tied' : elig, metro_loc: metroLoc, tied, foreign };
 }
 // The location to show for a role: the one that made it match (commute area, then remote, then a US place),
@@ -694,7 +697,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const tier = salaryTier(j.salary, c.minBase || 0);
   const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
   if (salOk && !salOk.includes(tier)) if (!force) return null;
-  const hf = homeFit(j, { metro: c.metro || '', state: c.state || '' });
+  const hf = homeFit(j, { metro: c.metro || '', state: c.remoteState || c.state || '', states: c.placeStates || [] });
   let loc;
   if (hf.in_metro) loc = 'metro';
   else if (hf.tied) loc = 'other';

@@ -465,4 +465,9 @@ try {
   t('location: combined "City; Remote, USA" stays open remote', () => assert.equal(fit({ title: 'Finance Manager', locations: ['Palo Alto, California; Remote, USA'] }).tied, false));
   t('functions: strategic finance is finance, not strategy', () => { assert.deepEqual(L.classifyFunctions('Senior Strategic Finance Manager').functions, ['finance']); assert.ok(L.classifyFunctions('Senior Manager, Strategy & Operations').functions.includes('strategy')); assert.ok(!L.classifyFunctions('Content Strategist').functions.includes('strategy')); });
 }
+{
+  const P = await import('../../assets/shared/core.mjs');
+  t('location: whole-state search location matches in-office roles there', () => { const j = { title: 'PM', locations: ['Austin, TX'] }; assert.equal(P.homeFit(j, { metro: 'new york', state: 'NY', states: ['TX'] }).in_metro, true); assert.equal(P.homeFit(j, { metro: 'new york', state: 'NY' }).in_metro, false); });
+  t('location: territory in a searched state is not tied', () => assert.equal(P.homeFit({ remote_us: true, title: 'Enterprise AE - Texas', locations: ['Remote, US'] }, { state: 'NY', states: ['TX'] }).tied, false));
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
