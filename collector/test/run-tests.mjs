@@ -456,4 +456,13 @@ try {
   t('location: remote anywhere in the US is not tied', () => { const f = C9.homeFit({ remote_us: true, locations: ['San Francisco, CA, US; Remote, US'] }, { metro: 'new york', state: 'NY' }); assert.equal(f.tied, false); const g = C9.homeFit({ remote_us: true, locations: ['Austin, TX'], excerpt: 'This role can be based anywhere in the US.' }, { state: 'NY' }); assert.equal(g.tied, false); });
   t('location: tied role in the home state still matches', () => { const f = C9.homeFit({ remote_us: true, locations: ['New York, New York, United States'] }, { metro: 'new york', state: 'NY' }); assert.equal(f.tied, false); assert.equal(f.in_metro, true); });
 }
+{
+  const L = await import('../../assets/shared/core.mjs'); const home = { metro: 'new york|nyc|pelham', state: 'NY' };
+  const fit = j => L.homeFit({ remote_us: true, ...j }, home);
+  t('location: foreign-only remote is not US', () => { assert.equal(fit({ title: 'PM', locations: ['Costa Rica, Remote'] }).foreign, true); assert.equal(fit({ title: 'PM', locations: ['Remote - Canada', 'Remote - U.S.'] }).foreign, false); });
+  t('location: remote limited to other states is tied', () => { assert.equal(fit({ title: 'SE', locations: ['REMCO - Remote Colorado', 'REMTX - Remote Texas'] }).tied, true); assert.equal(fit({ title: 'PM', locations: ['Remote - New York'] }).tied, false); });
+  t('location: territory in the title', () => { assert.equal(fit({ title: 'Senior Customer Engineer, Named - LA', locations: ['Distributed', 'Los Angeles, CA'] }).tied, true); assert.equal(fit({ title: 'Account Executive - East', locations: ['Remote'] }).tied, false); assert.equal(fit({ title: 'Enterprise AE - Central', locations: ['Remote, US'] }).tied, true); });
+  t('location: combined "City; Remote, USA" stays open remote', () => assert.equal(fit({ title: 'Finance Manager', locations: ['Palo Alto, California; Remote, USA'] }).tied, false));
+  t('functions: strategic finance is finance, not strategy', () => { assert.deepEqual(L.classifyFunctions('Senior Strategic Finance Manager').functions, ['finance']); assert.ok(L.classifyFunctions('Senior Manager, Strategy & Operations').functions.includes('strategy')); assert.ok(!L.classifyFunctions('Content Strategist').functions.includes('strategy')); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120c';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120c';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120c';
+import * as C from './shared/core.mjs?v=20261120f';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120f';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120f';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -45,12 +45,33 @@ if (!S.track) {
   for (const u of store.get('hidden', [])) S.track[u] = { s: 'no', t };
   store.set('track', S.track);
 }
-const stOf = uid => S.track[uid]?.s || '';
+/* Statuses merge by timestamp (newest wins), and clearing one leaves a dated blank entry, so a tab left open
+   from before an update can't overwrite newer statuses when it saves. A role's duplicates share one status. */
+const trEntry = uid => {
+  const g = S.dupGroup?.get(uid);
+  if (!g) return S.track[uid];
+  let best; for (const u of g) { const e = S.track[u]; if (e && (!best || String(e.t) > String(best.t))) best = e; }
+  return best;
+};
+const stOf = uid => trEntry(uid)?.s || '';
+function mergeTrack(a = {}, b = {}) {
+  const out = { ...a };
+  for (const [u, e] of Object.entries(b)) if (!out[u] || String(e.t) > String(out[u].t)) out[u] = e;
+  const cutoff = new Date(Date.now() - 30 * 864e5).toISOString();
+  for (const [u, e] of Object.entries(out)) if (!e.s && String(e.t) < cutoff) delete out[u];
+  return out;
+}
 function setStatus(uid, st) {
-  if (!st || stOf(uid) === st) delete S.track[uid];
-  else S.track[uid] = { ...(S.track[uid] || {}), s: st, t: new Date().toISOString(), ...(st === 'applied' && !S.track[uid]?.applied ? { applied: new Date().toISOString() } : {}) };
+  const now = new Date().toISOString(), cur = trEntry(uid);
+  if (!st || stOf(uid) === st) S.track[uid] = { s: '', t: now };
+  else S.track[uid] = { ...(cur || {}), s: st, t: now, ...(st === 'applied' && !cur?.applied ? { applied: now } : {}) };
   save();
 }
+addEventListener('storage', e => {
+  if (e.key !== 'rr:track' || !e.newValue) return;
+  try { S.track = mergeTrack(S.track, JSON.parse(e.newValue)); } catch { return; }
+  if (S.lastMatches) renderMatches();
+});
 // Category set changed since these criteria were saved: re-suggest from the stored profile (or use the
 // defaults) once, then leave the user's toggles alone.
 if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
@@ -67,7 +88,7 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   if (stored.tiers && !stored.types) { S.crit.types = { big: true, security: true, growth: true, aggregator: true, ...C.companyTypeFilter({ tiers: stored.tiers }) }; delete S.crit.tiers; store.set('crit', S.crit); }
   delete S.crit.tiers;
 }
-const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); store.set('track', S.track); };
+const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); S.track = mergeTrack(store.get('track', {}), S.track); store.set('track', S.track); };
 
 /* Phones show data tables as stacked cards; each cell carries its column name. */
 function labelTables(root = document) {
@@ -95,6 +116,9 @@ async function boot() {
       : `<div class="empty-state"><b>COULDN'T LOAD LISTINGS</b>Please refresh the page in a moment.</div>`);
   }
   S.registry = reg || S.registry; S.jobs = jobs.jobs || []; S.jobsMeta = jobs; S.status = status;
+  { const gs = new Map(); S.dupGroup = new Map();
+    for (const j of S.jobs) if (j.dup_of) { if (!gs.has(j.dup_of)) gs.set(j.dup_of, [j.dup_of]); gs.get(j.dup_of).push(j.uid); }
+    for (const g of gs.values()) for (const u of g) S.dupGroup.set(u, g); }
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
   applyOwnerMode(); wireNav(); wireProfile(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
   renderMatches(); renderSources(); renderDiscover(); renderSetup();
@@ -175,12 +199,25 @@ async function fileToText(file) {
 function extractProfile(text) {
   return { ...DEFAULT_PROFILE(), ...extractResume(text, { knownEmployers: S.registry.employers.map(e => e.employer.replace(/ \/ AWS$/, '')) }) };
 }
+/* Home location: a US state (required) and an optional city or town. Accepts "Pelham, NY", "Pelham, New York",
+   or résumé lines like "Jordan Example - Pelham, NY" (keeps only the last place). */
+function splitHome(raw = '') {
+  const seg = String(raw).split(/\s[-–—|·•]\s|\|/).map(x => x.trim()).filter(Boolean).pop() || '';
+  const parts = seg.split(',').map(x => x.trim()).filter(Boolean);
+  const toState = x => { if (!x) return ''; const u = x.toUpperCase().replace(/\./g, ''); if (C.STATES[u]) return u; const hit = Object.entries(C.STATES).find(([, n]) => n.toLowerCase() === x.toLowerCase()); return hit ? hit[0] : ''; };
+  let state = '', city = '';
+  for (let i = parts.length - 1; i >= 0; i--) { const st = toState(parts[i].replace(/\s+\d{5}(-\d{4})?$/, '')); if (st) { state = st; city = parts.slice(0, i).join(', '); break; } }
+  if (!state && parts.length === 1) city = parts[0];
+  return { city: city.replace(/\b(usa?|united states)\b/i, '').trim(), state };
+}
+const joinHome = (city, state) => [city, state].filter(Boolean).join(', ');
 function applyProfile(p, how) {
   S.profile = { ...p };
   if (p.location) {
-    const [city, st] = p.location.split(',').map(x => x.trim());
-    if (st && C.STATES[st]) S.crit.state = st;
-    if (!S.crit.metro && city) S.crit.metro = C.metroFor(city);
+    const { city, state } = splitHome(p.location);
+    S.profile.city = city; S.profile.state = state; S.profile.location = joinHome(city, state);
+    if (state) S.crit.state = state;
+    if (city && (!S.crit.metro || S.crit.metroAuto)) { S.crit.metro = C.metroFor(city); S.crit.metroAuto = true; }
   }
   if (p.maxSen) S.crit.sen = Math.max(2, Math.min(5, p.maxSen - 1));
   if (p.suggestedFns?.length) S.crit.functions = [...p.suggestedFns];
@@ -216,11 +253,10 @@ function wireProfile() {
   $('#btnPreset').onclick = () => { $('#paste').value = SAMPLE; S.lastText = SAMPLE; applyProfile(extractProfile(SAMPLE), 'Sample resume (fictional)'); };
   $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); $('#ingestLog').style.display = 'none'; };
   $('#heroUpload').onclick = e => { e.preventDefault(); $('#drop').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => $('#file').click(), 450); };
-  for (const [id, key] of [['#pName', 'name'], ['#pLoc', 'location'], ['#pHead', 'headline']]) $(id).onchange = e => {
-    S.profile[key] = e.target.value.trim();
-    if (key === 'location') applyProfile({ ...S.profile }, 'Location updated');
-    save(); renderHud();
-  };
+  for (const [id, key] of [['#pName', 'name'], ['#pHead', 'headline']]) $(id).onchange = e => { S.profile[key] = e.target.value.trim(); save(); renderHud(); };
+  $('#pState').innerHTML = '<option value="">Choose your state…</option>' + Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('');
+  const homeChanged = () => { const city = $('#pCity').value.trim(), st = $('#pState').value; S.profile.location = joinHome(city, st); applyProfile({ ...S.profile }, 'Home location updated'); };
+  $('#pState').onchange = homeChanged; $('#pCity').onchange = homeChanged;
   $('#skillFind').oninput = filterSkills;
   $('#skillOnly').onclick = e => { const b = e.currentTarget, v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); b.classList.toggle('on', v); filterSkills(); };
   $('#addSkill').onkeydown = e => { if (e.key === 'Enter' && e.target.value.trim()) { S.profile.custom.push(e.target.value.trim()); e.target.value = ''; save(); renderProfile(); } };
@@ -234,6 +270,14 @@ async function ingestFile(f) {
     applyProfile(extractProfile(text), /linkedin/i.test(text) && /top skills/i.test(text) ? 'LinkedIn PDF export' : 'Resume file');
   } catch (e) { logIngest(`<span class="r">✗</span> ${esc(e.message)}. Paste the text instead.`); }
 }
+// Grow a textarea to show its whole value (no hidden overflow, no inner scrollbar).
+const metroShow = m => String(m || '').split('|').join(' | ');
+function fitArea(t) {
+  if (!t) return;
+  if (!t._ro && 'ResizeObserver' in window) { t._ro = new ResizeObserver(() => { if (t.offsetWidth && t._w !== t.offsetWidth) { t._w = t.offsetWidth; fitArea(t); } }); t._ro.observe(t); }
+  if (!t.offsetWidth || CSS.supports?.('field-sizing', 'content')) return; // hidden: the observer refits when it appears
+  t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px';
+}
 function filterSkills() {
   const q = ($('#skillFind')?.value || '').trim().toLowerCase(), only = $('#skillOnly')?.getAttribute('aria-pressed') === 'true';
   $$('#pSkills .skgrp').forEach(d => {
@@ -245,7 +289,7 @@ function filterSkills() {
 }
 function renderProfile() {
   const p = S.profile;
-  $('#pName').value = p.name || ''; $('#pLoc').value = p.location || ''; $('#pHead').value = p.headline || '';
+  $('#pName').value = p.name || ''; { const h = p.state || p.city ? { city: p.city || '', state: p.state || '' } : splitHome(p.location); $('#pCity').value = h.city; $('#pState').value = h.state || S.crit.state || ''; } $('#pHead').value = p.headline || '';
   $('#profSource').textContent = p.source === 'empty' ? 'no resume loaded' : p.source + (p.years ? ` · ~${p.years} yrs` : '');
   $('#pCreds').innerHTML = [...(p.creds || []).map(c => `<span class="tag m">${esc(c)}</span>`), ...(p.employers || []).map(c => `<span class="tag">${esc(c)}</span>`), ...(p.titles || []).slice(0, 6).map(c => `<span class="tag f">${esc(c)}</span>`)].join('') || '<span class="hint">Nothing yet. Drop a resume or load the sample.</span>';
   const on = new Set(p.skillsOn || []), off = new Set(p.skillsOff || []);
@@ -308,9 +352,9 @@ function renderCriteria() {
   $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
-  $('#cMetro').value = c.metro; $('#cMetro').placeholder = 'set a home location, or type cities separated by |';
+  $('#cMetro').value = metroShow(c.metro); fitArea($('#cMetro')); $('#cMetro').placeholder = 'set a home location, or type cities separated by |';
   $('#cMetroPreset').innerHTML = '<option value="">Metro preset…</option>' + Object.keys(C.METRO_PRESETS).map(k => `<option>${esc(k)}</option>`).join('');
-  $('#cMetroPreset').onchange = e => { if (e.target.value) { c.metro = C.METRO_PRESETS[e.target.value]; $('#cMetro').value = c.metro; upd(); } };
+  $('#cMetroPreset').onchange = e => { if (e.target.value) { c.metroAuto = false; c.metro = C.METRO_PRESETS[e.target.value]; $('#cMetro').value = metroShow(c.metro); fitArea($('#cMetro')); upd(); } };
   $('#cSen').innerHTML = Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
   $('#cInclude').value = c.include; $('#cExclude').value = c.exclude;
   const tierN = {}; for (const e of S.registry.employers) { const k = C.companyType({}, e); tierN[k] = (tierN[k] || 0) + 1; }
@@ -344,7 +388,9 @@ function renderCriteria() {
   $('#cFirstSeen').onchange = e => { c.firstSeen = e.target.checked; upd(); };
   $('#cUpdated').onchange = e => { c.updated = e.target.checked; upd(); };
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).onchange = e => { c[k] = e.target.checked; upd(); };
-  $('#cMetro').onchange = e => { c.metro = e.target.value.trim().toLowerCase(); upd(); };
+  $('#cMetro').onchange = e => { c.metroAuto = false; c.metro = e.target.value.replace(/\s*[\n|]\s*/g, '|').replace(/^\||\|$/g, '').trim().toLowerCase(); e.target.value = metroShow(c.metro); upd(); };
+  $('#cMetro').oninput = e => fitArea(e.target);
+  $('#cMetro').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } };
   $('#cSen').onchange = e => { c.sen = +e.target.value; upd(); };
   $('#cInclude').onchange = $('#cInclude').oninput = e => { c.include = e.target.value; upd(); };
   $('#cExclude').onchange = $('#cExclude').oninput = e => { c.exclude = e.target.value; upd(); };
@@ -385,7 +431,7 @@ const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['Commu
 const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
   relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
 function jobRow(m) {
-  const { j, e } = m, s = j.salary, open = S.open.has(j.uid), st = stOf(j.uid), tr = S.track[j.uid];
+  const { j, e } = m, s = j.salary, open = S.open.has(j.uid), st = stOf(j.uid), tr = trEntry(j.uid);
   let base = '<span class="sal unknown">not stated</span>';
   if (s && s.kind === 'ote_only') base = `<span class="sal ote_only">OTE only</span><div class="sub2">${money(s.ote?.min)}–${money(s.ote?.max)} excluded</div>`;
   else if (s && s.kind === 'predicted') base = `<span class="sal predicted">${money(s.min)}–${money(s.max)}</span><div class="sub2">predicted, not base</div>`;
@@ -557,12 +603,32 @@ function wireMatches() {
     if (b.dataset.act === 'open') S.open.has(uid) ? S.open.delete(uid) : S.open.add(uid);
     save(); keepPlace(uid, () => replaceRow(uid) || renderMatches());
   });
+  { // prompt for your own AI
+    const dlg = $('#promptDlg');
+    const build = async () => {
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120f');
+      const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
+      const pv = $('#pdEmp').value;
+      const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
+        opts: { profile: $('#pdProfile').checked, exclude: $('#pdExclude').checked, employers: pv === 'all' ? 'all' : +pv } });
+      $('#pdText').value = txt;
+      $('#pdSize').textContent = `${txt.length.toLocaleString()} characters · about ${Math.round(txt.length / 4).toLocaleString()} tokens`;
+    };
+    $('#btnPrompt').onclick = async () => { await build(); dlg.showModal(); $('#pdText').scrollTop = 0; };
+    for (const id of ['#pdProfile', '#pdExclude', '#pdEmp']) $(id).onchange = build;
+    $('#pdCopy').onclick = async () => {
+      try { await navigator.clipboard.writeText($('#pdText').value); } catch { $('#pdText').select(); document.execCommand('copy'); }
+      $('#pdCopy').textContent = 'Copied ✓'; setTimeout(() => $('#pdCopy').textContent = 'Copy prompt', 1600);
+    };
+    $('#pdDown').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([$('#pdText').value], { type: 'text/markdown' })); a.download = 'cache-flow-search-prompt.md'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  }
   $('#btnCsv').onclick = () => {
     const rows = (S.lastMatches || []).map(m => ({ score: m.score, salary_tier: m.tier, base_min: m.j.salary?.min ?? '', base_max: m.j.salary?.max ?? '', salary_kind: m.j.salary?.kind ?? '', ote_excluded: m.j.salary?.ote ? `${m.j.salary.ote.min}-${m.j.salary.ote.max}` : '',
       title: m.j.title, employer: m.j.employer, employer_type: EMP_TYPE[typeOf(m)]?.label || '', sector: m.sector, vertical: m.vertical, location: (m.j.locations || []).join(' | '), workplace: m.j.workplace, location_fit: m.loc, home_state_eligibility: m.hf.eligibility,
       date: m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : '', date_basis: m.dt.kind, first_observed: m.j.first_observed, last_seen: m.j.last_seen, reposted: !!m.j.reposted, stale: !!m.j.stale,
       source_class: m.j.source_class, ats: m.j.ats, source_id: m.j.source_id, req_id: m.j.req_id || '', duplicates: m.j.dup_count || 1,
-      my_status: STATUS[stOf(m.j.uid)]?.label || '', applied_on: S.track[m.j.uid]?.applied ? C.nyDate(new Date(S.track[m.j.uid].applied), LOCAL_TZ) : '', url: m.j.url }));
+      my_status: STATUS[stOf(m.j.uid)]?.label || '', applied_on: trEntry(m.j.uid)?.applied ? C.nyDate(new Date(trEntry(m.j.uid).applied), LOCAL_TZ) : '', url: m.j.url }));
     downloadCSV(rows, `cache-flow-matches-${C.nyDate(new Date(), LOCAL_TZ)}.csv`);
   };
 }
@@ -618,12 +684,12 @@ function keepPlace(uid, fn) {
   pin(); requestAnimationFrame(pin);
 }
 function applyStatus(uid, st) {
-  const before = S.track[uid] ? { ...S.track[uid] } : null;
+  const before = trEntry(uid) ? { ...trEntry(uid) } : null;
   setStatus(uid, st);
   const now = stOf(uid);
   keepPlace(uid, () => replaceRow(uid) || renderMatches());
   const msg = now ? `Marked ${STATUS[now].label.toLowerCase()}` : 'Status cleared';
-  undoToast(msg + (now === 'no' && ($('#stFilter').value || 'active') === 'active' ? ' · hidden from this list' : ''), () => { if (before) S.track[uid] = before; else delete S.track[uid]; save(); renderMatches(); });
+  undoToast(msg + (now === 'no' && ($('#stFilter').value || 'active') === 'active' ? ' · hidden from this list' : ''), () => { S.track[uid] = before ? { ...before, t: new Date().toISOString() } : { s: '', t: new Date().toISOString() }; save(); renderMatches(); });
 }
 function undoToast(msg, undo) {
   const t = $('#toast'); t.innerHTML = `${esc(msg)} <button class="linkbtn" id="toastUndo">Undo</button>`; t.classList.add('on');
@@ -649,7 +715,7 @@ function wireStatusMenu() {
   // backup / restore so the tracker can move between browsers or devices
   $('#btnTrackOut').onclick = () => {
     const byUid = new Map(S.jobs.map(j => [j.uid, j]));
-    const roles = Object.entries(S.track).map(([uid, v]) => { const j = byUid.get(uid); return { uid, ...v, title: j?.title, employer: j?.employer, url: j?.url }; });
+    const roles = Object.entries(S.track).filter(([, v]) => v.s).map(([uid, v]) => { const j = byUid.get(uid); return { uid, ...v, title: j?.title, employer: j?.employer, url: j?.url }; });
     if (!roles.length) return toast('No statuses to back up yet');
     const blob = new Blob([JSON.stringify({ app: 'cache-flow', kind: 'tracker', exported: new Date().toISOString(), roles }, null, 1)], { type: 'application/json' });
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `cache-flow-tracker-${C.nyDate(new Date(), LOCAL_TZ)}.json` }); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);

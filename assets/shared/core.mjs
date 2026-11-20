@@ -204,10 +204,58 @@ export function eligibilityText(desc = '') {
 }
 // Viewer-specific: is this job in my commutable metro, or remote and open to my state?
 const GENERIC_LOC = /remote|anywhere|nationwide|virtual|distributed|home[- ]based|work from home|\bwfh\b|^\s*(united states( of america)?|usa?|u\.s\.a?\.?)\s*$/i;
-const NATIONWIDE = /anywhere in the (u\.?s|united states)|(remote|work) (from )?anywhere|remote[- ](within|in|across) the (u\.?s|united states)|u\.?s\.?[- ]based,? remote|fully remote|100% remote|remote[- ]first|any (u\.?s\.? )?state/i;
-export function remoteTied(job) {
-  const L = job.locations || [];
-  if (!L.length || L.some(l => GENERIC_LOC.test(l))) return false;
+const NATIONWIDE = /anywhere in the (u\.?s|united states)|(remote|work) (from )?anywhere in the|remote[- ](within|in|across) the (u\.?s|united states)|u\.?s\.?[- ]based,? remote|any (u\.?s\.? )?state|all (50 )?(u\.?s\.? )?states/i;
+const FOREIGN_RE = /\b(india|israel|united kingdom|\buk\b|england|scotland|london|ireland|dublin|germany|berlin|munich|france|paris|spain|madrid|barcelona|netherlands|amsterdam|poland|warsaw|krakow|romania|czech|prague|ukraine|serbia|canada|canadian|toronto|vancouver|montreal|ontario|quebec|british columbia|alberta|nova scotia|mexico|costa rica|brazil|são paulo|sao paulo|argentina|colombia|chile|peru|japan|tokyo|singapore|australia|\baus\b|sydney|melbourne|new zealand|china|taiwan|korea|seoul|philippines|manila|vietnam|hong kong|uae|dubai|saudi|sweden|stockholm|switzerland|zurich|italy|milan|portugal|lisbon|denmark|norway|finland|belgium|austria|europe|emea|apac|latam|south africa|nigeria|kenya|egypt|turkey|istanbul)\b/i;
+const US_MARK = /united states|\bu\.?s\.?a?\b|\busa\b/i;
+// Per listed location: 'foreign', 'generic' (remote/US with no place attached), or 'place' (a US city, state or region).
+export function placeKind(l = '') {
+  const t = String(l);
+  if (FOREIGN_RE.test(t) && !US_MARK.test(t)) return 'foreign';
+  const rest = (US_MARK.test(t) ? t.replace(new RegExp(FOREIGN_RE.source, 'gi'), ' ').replace(/\b(or|and)\b|&/gi, ' ') : t).replace(/\b(remote|anywhere|nationwide|virtual|distributed|home[- ]based|work from home|wfh|hybrid|in[- ]office|on[- ]?site|flexible|united states( of america)?|usa?|u\.s\.a?\.?|north america|americas|location|locations|multiple|various|any)(?![a-z])/gi, ' ')
+    .replace(/[^a-z]+/gi, ' ').trim();
+  return rest ? 'place' : 'generic';
+}
+// Remote roles that only open to non-US places.
+const splitLocs = L => (L || []).flatMap(l => String(l).split(/\s*[;|]\s*/)).filter(Boolean);
+export function foreignRemote(job) {
+  const L = splitLocs(job.locations);
+  return !!job.remote_us && L.length > 0 && L.every(l => placeKind(l) === 'foreign');
+}
+const REGION_STATES = {
+  'tri-state': 'NY NJ CT', 'tristate': 'NY NJ CT', 'new england': 'CT MA RI VT NH ME', 'northeast': 'NY NJ PA CT MA RI VT NH ME', 'north east': 'NY NJ PA CT MA RI VT NH ME',
+  'mid-atlantic': 'NY NJ PA DE MD DC VA WV', 'mid atlantic': 'NY NJ PA DE MD DC VA WV', 'east': 'NY NJ PA CT MA RI VT NH ME DE MD DC VA WV NC SC GA FL OH MI', 'east coast': 'NY NJ PA CT MA RI VT NH ME DE MD DC VA NC SC GA FL',
+  'southeast': 'GA FL NC SC TN AL MS VA KY', 'south east': 'GA FL NC SC TN AL MS VA KY', 'south': 'TX OK AR LA MS AL GA FL TN KY NC SC VA', 'southwest': 'AZ NM TX NV UT CO OK', 'south west': 'AZ NM TX NV UT CO OK',
+  'central': 'TX OK KS NE SD ND MN IA MO AR LA WI IL IN MI OH CO', 'midwest': 'OH MI IN IL WI MN IA MO KS NE SD ND', 'mid-west': 'OH MI IN IL WI MN IA MO KS NE SD ND', 'great lakes': 'OH MI IN IL WI MN',
+  'west': 'CA OR WA NV AZ UT CO ID MT WY NM AK HI', 'west coast': 'CA OR WA', 'pacific northwest': 'WA OR ID', 'pacnw': 'WA OR ID', 'pnw': 'WA OR ID', 'northwest': 'WA OR ID MT', 'socal': 'CA', 'norcal': 'CA', 'bay area': 'CA',
+  'rockies': 'CO UT WY MT ID', 'mountain': 'CO UT WY MT ID NV AZ NM', 'texas': 'TX', 'dmv': 'DC MD VA', 'carolinas': 'NC SC',
+};
+const CITY_ALIAS = { la: 'CA', 'l.a.': 'CA', 'los angeles': 'CA', sf: 'CA', 'san francisco': 'CA', 'bay area': 'CA', 'silicon valley': 'CA', nyc: 'NY', 'new york city': 'NY', dfw: 'TX', 'dallas': 'TX', houston: 'TX', austin: 'TX', atl: 'GA', atlanta: 'GA', chicago: 'IL', chi: 'IL', boston: 'MA', seattle: 'WA', denver: 'CO', phoenix: 'AZ', miami: 'FL', philadelphia: 'PA', philly: 'PA', minneapolis: 'MN', detroit: 'MI', 'twin cities': 'MN', 'research triangle': 'NC', raleigh: 'NC', charlotte: 'NC', nashville: 'TN', 'salt lake city': 'UT', portland: 'OR', 'san diego': 'CA', pittsburgh: 'PA', cincinnati: 'OH', columbus: 'OH', cleveland: 'OH', 'st. louis': 'MO', 'kansas city': 'MO', dc: 'DC' };
+const ABBR_SKIP = new Set(['IN', 'OR', 'ME', 'OK', 'HI', 'AI', 'IT', 'AL', 'DE', 'ID', 'PA', 'MA', 'CO']); // too ambiguous as a bare abbreviation in titles
+// States a title's territory names, e.g. "AE - Seattle", "(SoCal)", "Majors - Minnesota", "Customer Engineer, Raleigh, NC".
+export function territoryStates(job) {
+  const title = String(job.title || ''), out = new Set();
+  const segs = title.split(/\s[-–—|]\s|[(),/]|:\s/).slice(1).map(x => x.trim().toLowerCase()).filter(Boolean);
+  if (!segs.length) return out;
+  const names = Object.entries(STATES);
+  const cityState = new Map();
+  for (const l of splitLocs(job.locations)) { const m = String(l).match(/^\s*([a-z .'-]+?),\s*([A-Z]{2})\b/i); if (m && STATES[m[2].toUpperCase()]) cityState.set(m[1].trim().toLowerCase(), m[2].toUpperCase()); }
+  for (const seg of segs) {
+    for (const [ab, nm] of names) if (new RegExp(`\\b${nm.toLowerCase()}\\b`).test(seg) && !(ab === 'WA' && /washington,? d\.?c/.test(seg))) out.add(ab);
+    if (/washington,? d\.?c|\bd\.c\.?$/.test(seg)) out.add('DC');
+    const al = CITY_ALIAS[seg.replace(/\b(region|territory|metro|area)\b/g, '').trim()]; if (al) out.add(al);
+    for (const [rg, st] of Object.entries(REGION_STATES)) if (new RegExp(`^(${rg})(\\s+(region|territory|us|usa))?$`).test(seg)) st.split(' ').forEach(x => out.add(x));
+    for (const [city, st] of cityState) if (city.length > 2 && new RegExp(`\\b${city.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(seg)) out.add(st);
+  }
+  const abbr = title.match(/,\s*([A-Z]{2})\)?\s*$/); if (abbr && STATES[abbr[1]] && !ABBR_SKIP.has(abbr[1])) out.add(abbr[1]);
+  return out;
+}
+export function remoteTied(job, home = '') {
+  const L = splitLocs(job.locations);
+  const terr = territoryStates(job);
+  if (terr.size) return !terr.has(String(home).toUpperCase());
+  if (!L.length) return false;
+  const kinds = L.map(placeKind);
+  if (kinds.includes('generic')) return false;
   return !NATIONWIDE.test((job.elig_text || '') + ' ' + (job.excerpt || ''));
 }
 export function homeFit(job, { metro = '', state = '' } = {}) {
@@ -233,8 +281,9 @@ export function homeFit(job, { metro = '', state = '' } = {}) {
   } else if (job.remote_us) elig = 'unknown';
   // "Remote" but every listed place is a specific city/region outside the home state, and nothing says
   // anywhere-in-the-US: a territory or office-tied role (ServiceNow work personas, regional AEs).
-  const tied = !!job.remote_us && elig !== 'yes' && remoteTied(job);
-  return { in_metro: inMetro, eligibility: tied ? 'tied' : elig, metro_loc: metroLoc, tied };
+  const foreign = !inMetro && foreignRemote(job);
+  const tied = !foreign && !!job.remote_us && !inMetro && remoteTied(job, abbr) && !(elig === 'yes' && !territoryStates(job).size);
+  return { in_metro: inMetro, eligibility: foreign ? 'no' : tied ? 'tied' : elig, metro_loc: metroLoc, tied, foreign };
 }
 // The location to show for a role: the one that made it match (commute area, then remote, then a US place),
 // not simply the first one the employer listed.
@@ -264,13 +313,13 @@ export const FUNCTIONS = {
   pmm:      F('Marketing', 'Product marketing', 'Product Marketing Manager, Solutions Marketing', /product marketing|\bpmm\b|solutions? marketing|portfolio marketing|competitive marketing|industry marketing/i),
   marketing:F('Marketing', 'Marketing, brand & communications', 'Brand, Content, Comms, Events, DevRel', /\bmarketing\b|\bbrand\b|communications|\bpr\b|public relations|content (strateg|market|lead|manager|writer|director)|campaign|\bevents?\b|social media|evangel|developer relations|devrel|analyst relations|community (manager|lead)|copywrit|storytell/i),
   demand:   F('Marketing', 'Demand gen, growth & lifecycle', 'Demand Gen, Growth, ABM, Field Marketing', /demand gen|\bgrowth\b|lifecycle|performance marketing|\babm\b|account[- ]based|marketing operations|field marketing|digital marketing|\bseo\b|paid (media|social|search)/i),
-  sales:    F('Sales & customers', 'Sales & account management', 'Account Executive, Sales Director, BDR', /\baccount (executive|director)|\bsales\b|commercial (lead|director|manager)|business development|\b[bs]dr\b|(security|solutions?|technology|cloud|ai|data|technical) specialist|client (partner|director)|enterprise (seller|executive)|\bterritory\b/i),
-  se:       F('Sales & customers', 'Solutions & sales engineering', 'Solutions Engineer, Sales Engineer, Field CTO', /(solutions?|sales|pre-?sales|customer|field|partner|forward[- ]deployed|value) (engineer|architect|consultant)|field cto|technical (seller|specialist)|deployment strategist|\bpresales\b/i),
-  partner:  F('Sales & customers', 'Partnerships, alliances & channel', 'Alliances, Channel, ISV, MSSP partners', /(?<!business |talent |hr |people |finance |hrbp |learning )partner|alliance|channel|ecosystem|marketplace|\bisv\b|reseller|\bmssp\b|distribution|co-?sell/i),
+  sales:    F('Sales & customers', 'Sales & account management', 'Account Executive, Sales Director, BDR', /\baccount (executive|director)|\bsales\b|strategic pursuits?|capture (manager|lead|director)|commercial (lead|director|manager)|business development|\b[bs]dr\b|(security|solutions?|technology|cloud|ai|data|technical) specialist|client (partner|director)|enterprise (seller|executive)|\bterritory\b/i),
+  se:       F('Sales & customers', 'Solutions & sales engineering', 'Solutions Engineer, Sales Engineer, Field CTO', /(solutions?|sales|pre-?sales|customer|field|partner|forward[- ]deployed|value) (engineer|architect|consultant)|field cto|technical (seller|specialist)|(?:forward[- ]deployed |deployment )strategist|\bpresales\b/i),
+  partner:  F('Sales & customers', 'Partnerships, alliances & channel', 'Alliances, Channel, ISV, MSSP partners', /(?<!business |talent |hr |people |finance |hrbp |learning |client |acquisition |compensation |rewards |benefits |care |clinical |research |design |delivery |engagement |success )partner|alliance|channel|ecosystem|(?:cloud|aws|azure|gcp) marketplace|marketplace (?:alliances|partner)|\bisv\b|reseller|\bmssp\b|distribution (?:partner|channel|sales)|distributor|co-?sell/i),
   cs:       F('Sales & customers', 'Customer success & adoption', 'Customer Success, TAM, Adoption, Renewals', /customer success|customer (experience|outcomes|value)|adoption|value (realization|management|engineer|consult|advis)|technical account manager|\btam\b|renewal|client success|implementation (manager|lead)|onboarding/i),
   enable:   F('Sales & customers', 'Enablement & training', 'Sales Enablement, Readiness, Training', /enablement|readiness|training|learning (and|&) development|curriculum|instructional|\bacademy\b/i),
-  gtm:      F('Strategy & operations', 'Go-to-market strategy & ops', 'GTM Strategy, Revenue Ops, Sales Strategy', /go[- ]to[- ]market|\bgtm\b|(revenue|sales|field|commercial|partner) (operations|strategy|planning)|rev ?ops|sales ?ops|deal (desk|strategy)|territory planning/i),
-  strategy: F('Strategy & operations', 'Strategy & business operations', 'Strategy, BizOps, Transformation, Corp Dev', /strateg(?!ic account)|business operations|biz ?ops|\boperations (lead|manager|director)|transformation|special projects|initiatives|business planning|corporate development|\bm&a\b|\bpricing\b/i),
+  gtm:      F('Strategy & operations', 'Go-to-market strategy & ops', 'GTM Strategy, Revenue Ops, Sales Strategy', /go[- ]to[- ]market|\bgtm\b|(revenue|sales|field|commercial|partner) (operations|strategy|planning)|rev ?ops|sales ?ops|deal (desk|strategy|op(?:eration)?s)|territory planning/i),
+  strategy: F('Strategy & operations', 'Strategy & business operations', 'Strategy, BizOps, Transformation, Corp Dev', /(?:corporate|business|gtm|go[- ]to[- ]market|growth|revenue|sales|commercial|product|pricing|operations|market|global|deal|solutions|services|channel|partner(?:ship)?s?|platform|ai|security|enterprise|portfolio|ecosystem|company)\s+strateg(?:y|ies)\b|^(?:senior |sr\.? |lead |principal |staff |associate )?strategy\b|[,(|–—-]\s*strategy\b|\b(?:head|director|vp|vice president|chief|manager|lead) of (?:corporate |business |global )?strategy|\bstrategy\s*(?:&|and|\+)\s*(?:operations|ops|planning|analytics|bizops|business operations)|strategic (?:initiatives|projects|programs|planning|operations)|(?:business|corporate|gtm) strategist|business operations|biz ?ops|\boperations (?:lead|manager|director)|transformation|special projects|business planning|corporate development|\bm&a\b|\bpricing\b/i),
   cos:      F('Strategy & operations', 'Chief of staff & executive office', 'Chief of Staff, Office of the CEO/CISO', /chief of staff|office of the (ceo|cto|ciso|cio|cpo|coo|president)|executive (operations|business partner)|technical advisor to/i),
   ci:       F('Strategy & operations', 'Competitive & market intelligence', 'Competitive Intel, Market Research, Win/Loss', /competitive|market (intelligence|research|insights)|win[- ]loss|industry analyst/i),
   threat:   F('Security practice', 'Threat research & intelligence', 'Threat Intel Analyst, Security Researcher, CTI', /threat (intel|research|hunt|analy|insight|landscape|actor)|\bcti\b|(cyber|security|adversary|counter[- ]?threat|threat actor) (intelligence|research)|security researcher|(?<!business |market |competitive |sales |revenue |customer |partner |marketing )intelligence (analyst|researcher|lead|manager|director)|malware (analy|research|reverse)|reverse engineer|vulnerability research|exploit research|adversary emulation|intel(ligence)? (operations|collection|fusion)|\bosint\b/i),
@@ -613,6 +662,7 @@ export const orQuery = (terms, cap = 99) => terms.slice(0, cap).map(t => `"${t}"
 export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], win = null, excl = null, tz = TZ, force = false }) {
   // force: a role the user is tracking stays visible even when it no longer passes the filters
   if (!force && (j.status === 'closed' || j.us === false)) return null;
+  if (!force && foreignRemote(j)) return null;
   const ty = companyType(j, e), types = companyTypeFilter(c);
   if (types[ty] === false) if (!force) return null;
   const sector = e?.sector || 'Unclassified', vertical = e?.vertical || '';

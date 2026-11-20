@@ -6,6 +6,9 @@
 <title>Cache Flow | resume-aware job search</title>
 <meta name="description" content="Cache Flow: a resume-aware job search across official employer job boards, with base-salary-only filtering and an auditable source directory.">
 <meta name="theme-color" content="#06101f">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="canonical" href="https://chaoswrangler.github.io/cacheflow/">
 <!-- Link previews (LinkedIn, Slack, iMessage, X, Teams) -->
 <meta property="og:type" content="website">
@@ -26,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120c">
+<link rel="stylesheet" href="assets/styles.css?v=20261120f">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -111,8 +114,10 @@
           <h3>Extracted profile <small id="profSource">preset</small></h3>
           <div class="grid g2">
             <div><label class="f">Name</label><input type="text" id="pName"></div>
-            <div><label class="f">Home location</label><input type="text" id="pLoc"></div>
+            <div class="locpair"><label class="f" for="pState">Home state</label><select id="pState" aria-describedby="usNote"></select></div>
           </div>
+          <label class="f" for="pCity">City or town <span class="hint" style="text-transform:none;letter-spacing:0">optional; sets your commute area</span></label><input type="text" id="pCity" placeholder="e.g. Pelham" autocomplete="address-level2">
+          <p class="hint usnote" id="usNote"><b>Prototype, US roles for now.</b> Cache Flow is an early build, and its job data covers US-based roles only. The goal is global coverage, but every new country needs its own job sources, currencies, pay-transparency rules and work-eligibility checks, so coverage will grow as the data allows.</p>
           <label class="f">Headline</label><input type="text" id="pHead">
           <label class="f">Credentials &amp; employers detected</label>
           <div class="chips" id="pCreds"></div>
@@ -150,10 +155,10 @@
               <select id="cMinBase" aria-label="Minimum annual base salary"></select>
               <label class="f" for="cSalMode">Salary rule</label>
               <select id="cSalMode">
-                <option value="starts">Range STARTS at or above minimum</option>
-                <option value="starts_reaches">Starts at OR reaches minimum (shown separately)</option>
-                <option value="plus_unknown">…plus postings with no stated base</option>
-                <option value="any">Any (ignore salary)</option>
+                <option value="starts" title="Range starts at or above your minimum">Starts at my minimum</option>
+                <option value="starts_reaches" title="Range starts at, or reaches, your minimum (shown separately)">Starts at or reaches it</option>
+                <option value="plus_unknown" title="Starts at or reaches your minimum, plus postings with no stated base">…plus no stated base</option>
+                <option value="any">Any pay (ignore salary)</option>
               </select>
               <p class="hint" style="margin-top:6px">OTE, bonus, equity, total comp and predicted salaries never count as base.</p>
               <label class="f" for="cWindow">Posting window</label>
@@ -165,15 +170,15 @@
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
             <div>
-              <label class="f">Location eligibility</label>
+              <label class="f">Location eligibility <span class="hint" style="text-transform:none;letter-spacing:0">US roles only</span></label>
               <div class="checks">
                 <label class="check"><input type="checkbox" id="lMetro"> NY-compatible office / hybrid (metro list below)</label>
                 <label class="check"><input type="checkbox" id="lRemoteYes"> US remote, NY eligible (stated or likely)</label>
                 <label class="check"><input type="checkbox" id="lRemoteUnknown"> US remote, NY eligibility not stated</label>
                 <label class="check"><input type="checkbox" id="lOther"> Other US locations</label>
               </div>
-              <label class="f" for="cMetro">Commutable metro (regex alternatives)</label>
-              <div class="row" style="flex-wrap:nowrap"><input type="text" id="cMetro"><select id="cMetroPreset" style="max-width:170px"></select></div>
+              <label class="f" for="cMetro">Commute area <span class="hint" style="text-transform:none;letter-spacing:0">cities or towns, separated by |</span></label>
+              <div class="stack2"><select id="cMetroPreset" aria-label="Metro preset"></select><textarea id="cMetro" rows="2" spellcheck="false" autocapitalize="off"></textarea></div>
             </div>
           </div>
           <div class="crit-cats">
@@ -237,6 +242,7 @@
         <button class="btn sec sm" id="btnTrackIn" title="Load a statuses file you backed up">Restore</button>
         <input type="file" id="trackFile" accept="application/json,.json" hidden>
         <button class="btn sec sm" id="btnCsv">Export CSV</button>
+        <button class="btn sec sm" id="btnPrompt" title="Copy a prompt that runs this search in ChatGPT, Claude, Gemini or another AI with web browsing">Prompt for your AI</button>
       </div>
     </div>
     <details class="panel finds" id="findsBox">
@@ -285,6 +291,21 @@
     <div class="chips" id="tierChips" style="margin:16px 0 12px"></div>
     <div id="jobGroups"></div>
     <div id="stMenu" class="stmenu" role="menu" aria-label="Set status" hidden></div>
+    <dialog id="promptDlg" class="pdlg" aria-labelledby="pdTitle">
+      <form method="dialog" class="pdin">
+        <div class="pdhead"><h3 id="pdTitle">Run this search in your own AI</h3><button class="btn sec sm" value="close" aria-label="Close">✕</button></div>
+        <p class="hint">A self-contained brief built from your current criteria: categories, pay rule, locations, posting window, scoring and collection rules, plus verified employer board links. Paste it into ChatGPT, Claude, Gemini or Copilot with web browsing on. It never includes your name or contact details, and it's built in your browser; nothing is sent anywhere.</p>
+        <div class="pdopts">
+          <label class="check"><input type="checkbox" id="pdProfile" checked> Include résumé skills and titles</label>
+          <label class="check"><input type="checkbox" id="pdExclude" checked> Skip roles I've applied to or passed on</label>
+          <label class="pdsel">Employer boards <select id="pdEmp"><option value="0">None (search only)</option><option value="30">Top 30</option><option value="60" selected>Top 60</option><option value="150">Top 150</option><option value="all">All matching</option></select></label>
+        </div>
+        <textarea id="pdText" readonly spellcheck="false" aria-label="Generated prompt"></textarea>
+        <div class="pdfoot"><span class="hint" id="pdSize"></span><span class="spacer"></span>
+          <button type="button" class="btn sec sm" id="pdDown">Download .md</button>
+          <button type="button" class="btn pri sm" id="pdCopy">Copy prompt</button></div>
+      </form>
+    </dialog>
     <p class="sub2 trk-note">Statuses (To do, Applied, Not interested) are saved in this browser only. Nothing is uploaded. Use <b>Back up statuses</b> to move them to another device.</p>
     <p class="sub2 trk-note"><b>Tags:</b> <span class="tag r">stale</span> not refreshed on the latest update because the employer's site refused or rate-limited part of the check, so the role is carried over from an earlier check and is probably still open (confirm on the posting) · <span class="tag a">repost?</span> looks like an earlier posting put back up · <span class="tag r">closed</span> no longer on the employer's board · <span class="tag f">outside filters</span> a role you marked that no longer matches your criteria.</p>
       </div>
@@ -356,7 +377,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120c" defer></script>
-<script type="module" src="assets/app.js?v=20261120c"></script>
+<script src="assets/fx.js?v=20261120f" defer></script>
+<script type="module" src="assets/app.js?v=20261120f"></script>
 </body>
 </html>

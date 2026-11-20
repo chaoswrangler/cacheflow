@@ -1,5 +1,5 @@
 // Resume / LinkedIn-PDF text → profile. Pure function so it can be tested in Node.
-import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261120c';
+import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261120f';
 
 export const CRED_RES = [
   ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.D\.?(?=\s|,|$)/], ['MD', /\bM\.D\.\b/],

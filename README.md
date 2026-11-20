@@ -22,6 +22,8 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | `index.html`, `assets/app.js`, `assets/styles.css` | Browser | The app. Loads `data/*.json`; résumé parsing, matching and the tracker all run client-side. |
 | `assets/shared/core.mjs` | Browser and Node | Shared rules: salary parsing, currency and base-vs-OTE handling, dates, location and state eligibility, job categories, a 200-skill dictionary (security plus sales, partnerships, marketing and product), scoring, plus the Greenhouse/Lever/Ashby adapters. |
 | `assets/shared/resume.mjs` | Browser | Résumé text to skills, titles, credentials and suggested job categories |
+| `assets/prompt.mjs` | Browser | "Prompt for your AI": turns the current criteria into a self-contained search brief for any web-browsing LLM (no name or contact details) |
+| `collector/gate.mjs` | Actions | Hourly check that collects only when a New York-time slot is due |
 | `collector/collect.mjs` | Actions | Fetches every source, normalizes, merges with history, writes `data/jobs.json` and `data/status.json` |
 | `collector/lib/adapters-server.mjs` | Actions | Server-only adapters: SmartRecruiters, Workable, Workday CXS, Eightfold, Oracle HCM, Phenom, Cisco RSS, Amazon, Comeet, Google Careers, Radancy, company HTML pages |
 | `collector/lib/seeds.mjs` | Actions | Finds job boards for seed companies and checks they belong to the company |
@@ -89,7 +91,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-121 offline tests against mocked API responses. The workflow runs them before every collection.
+126 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 
@@ -98,6 +100,8 @@ node collector/test/run-tests.mjs
 - The workflow's only outside code is `actions/checkout` and `actions/setup-node`, pinned to commit SHAs.
 
 ## Limits
+
+- Prototype with US data only. Home location is a US state, pay rules assume USD, and postings based outside the US are dropped. The aim is global coverage; each new country needs its own sources, currency and pay-transparency handling, and work-eligibility rules.
 
 - LinkedIn can't be read automatically. Use its PDF profile export and the generated search links.
 - Sources marked `unverified_config` or `experimental` are confirmed only by a live run. Check the Sources page afterwards.
