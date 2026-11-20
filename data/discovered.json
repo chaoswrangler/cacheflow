@@ -1,5 +1,636 @@
 {
  "schema": 1,
- "updated_at": null,
- "employers": []
+ "updated_at": "2026-11-20T17:08:15.775Z",
+ "employers": [
+  {
+   "employer": "Promise",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 80,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/promise",
+   "careers_url": "http://promise-pay.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:promise",
+     "ats": "ashby",
+     "slug": "Promise",
+     "board_url": "https://jobs.ashbyhq.com/Promise",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 14 postings; ownership: linked from promise-pay.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "BioRender",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 250,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/biorender",
+   "careers_url": "https://www.biorender.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:biorenderinc",
+     "ats": "ashby",
+     "slug": "biorender-inc",
+     "board_url": "https://jobs.ashbyhq.com/biorender-inc",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 20 postings; ownership: linked from biorender.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Treasury Prime",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 100,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/treasury-prime",
+   "careers_url": "https://treasuryprime.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:treasuryprime",
+     "ats": "greenhouse",
+     "slug": "treasuryprime",
+     "board_url": "https://job-boards.greenhouse.io/treasuryprime",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 3 postings; ownership: linked from treasuryprime.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Pelago",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 180,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/pelago",
+   "careers_url": "https://www.pelagohealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:pelago",
+     "ats": "greenhouse",
+     "slug": "pelago",
+     "board_url": "https://job-boards.greenhouse.io/pelago",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 14 postings; ownership: postings name Pelago.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "CaptivateIQ",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 280,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/captivateiq",
+   "careers_url": "https://www.captivateiq.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:captivateiq",
+     "ats": "ashby",
+     "slug": "captivateiq",
+     "board_url": "https://jobs.ashbyhq.com/captivateiq",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 19 postings; ownership: postings mention captivateiq.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Swayable",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/swayable",
+   "careers_url": "http://swayable.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:swayable",
+     "ats": "greenhouse",
+     "slug": "swayable",
+     "board_url": "https://job-boards.greenhouse.io/swayable",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 16 postings; ownership: postings name Swayable.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Within",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 128,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/within",
+   "careers_url": "http://within.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:withinai",
+     "ats": "ashby",
+     "slug": "within.ai",
+     "board_url": "https://jobs.ashbyhq.com/within.ai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 20 postings; ownership: linked from within.ai.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Modern Treasury",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 160,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/modern-treasury",
+   "careers_url": "http://www.moderntreasury.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:moderntreasury",
+     "ats": "ashby",
+     "slug": "moderntreasury",
+     "board_url": "https://jobs.ashbyhq.com/moderntreasury",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 6 postings; ownership: linked from moderntreasury.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Verse Medical",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 250,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/jetlenses",
+   "careers_url": "http://versemedical.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:versemedical",
+     "ats": "ashby",
+     "slug": "versemedical",
+     "board_url": "https://jobs.ashbyhq.com/versemedical",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 30 postings; ownership: linked from versemedical.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Titan",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 40,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/titan",
+   "careers_url": "http://www.titan.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:titan",
+     "ats": "ashby",
+     "slug": "titan",
+     "board_url": "https://jobs.ashbyhq.com/titan",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 7 postings; ownership: linked from titan.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Inscribe",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 35,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/inscribe",
+   "careers_url": "https://www.inscribe.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:inscribeai",
+     "ats": "ashby",
+     "slug": "InscribeAI",
+     "board_url": "https://jobs.ashbyhq.com/InscribeAI",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 4 postings; ownership: linked from inscribe.ai.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "JITX",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 18,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/jitx",
+   "careers_url": "http://www.jitx.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "lever:jitxinc",
+     "ats": "lever",
+     "slug": "jitxinc",
+     "board_url": "https://jobs.lever.co/jitxinc",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 3 postings; ownership: linked from jitx.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Meru Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 55,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/meru-health",
+   "careers_url": "http://www.meruhealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:meruhealth",
+     "ats": "greenhouse",
+     "slug": "meruhealth",
+     "board_url": "https://job-boards.greenhouse.io/meruhealth",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 1 postings; ownership: linked from meruhealth.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Canary Technologies",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 150,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/canary-technologies",
+   "careers_url": "https://www.canarytechnologies.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "lever:canarytechnologies",
+     "ats": "lever",
+     "slug": "canarytechnologies",
+     "board_url": "https://jobs.lever.co/canarytechnologies",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 11 postings; ownership: postings name Canary Technologies.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Prodigal",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 99,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/prodigal",
+   "careers_url": "https://prodigaltech.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:prodigal",
+     "ats": "greenhouse",
+     "slug": "prodigal",
+     "board_url": "https://job-boards.greenhouse.io/prodigal",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 13 postings; ownership: linked from prodigaltech.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Mutiny",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/mutiny",
+   "careers_url": "https://www.mutinyhq.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:mutiny",
+     "ats": "ashby",
+     "slug": "Mutiny",
+     "board_url": "https://jobs.ashbyhq.com/Mutiny",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 7 postings; ownership: linked from mutinyhq.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Overview",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 40,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/overview",
+   "careers_url": "https://overview.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:overview",
+     "ats": "ashby",
+     "slug": "overview",
+     "board_url": "https://jobs.ashbyhq.com/overview",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 69 postings; ownership: postings mention overview.ai.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Sorting Robotics",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/sorting-robotics",
+   "careers_url": "https://www.sortingrobotics.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "workable:sortingrobotics",
+     "ats": "workable",
+     "slug": "sorting-robotics",
+     "board_url": "https://apply.workable.com/sorting-robotics/",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 12 postings; ownership: linked from sortingrobotics.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Middesk",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 140,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/middesk",
+   "careers_url": "http://www.middesk.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:middesk",
+     "ats": "ashby",
+     "slug": "middesk",
+     "board_url": "https://jobs.ashbyhq.com/middesk",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 17 postings; ownership: linked from middesk.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "GoLinks",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 70,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/golinks",
+   "careers_url": "https://www.golinks.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:golinks",
+     "ats": "ashby",
+     "slug": "golinks",
+     "board_url": "https://jobs.ashbyhq.com/golinks",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 3 postings; ownership: postings name GoLinks.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Nabis",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 700,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/nabis",
+   "careers_url": "https://www.nabis.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:nabis",
+     "ats": "greenhouse",
+     "slug": "nabis",
+     "board_url": "https://job-boards.greenhouse.io/nabis",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-20: board reachable with 18 postings; ownership: linked from nabis.com.",
+      "date": "2026-11-20"
+     }
+    }
+   ]
+  }
+ ]
 }
