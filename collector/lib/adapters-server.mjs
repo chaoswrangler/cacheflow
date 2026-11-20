@@ -3,6 +3,23 @@ import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, FUNCTI
 
 const iso = v => { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
 const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.detail || r.statusText || r.error || '', ...extra });
+// ATS boards referenced on an employer's own careers page (Apply links, embeds). Evidence for --probe, never auto-added.
+export function atsLinks(html) {
+  const out = new Map(); const add = (ats, id, url) => { const k = `${ats}:${id}`; if (!out.has(k)) out.set(k, { ats, slug: id, evidence_url: url }); };
+  const H = String(html || '');
+  for (const m of H.matchAll(/https?:\/\/(?:job-boards|boards)(?:\.eu)?\.greenhouse\.io\/(?:embed\/job_board\?for=)?([A-Za-z0-9_-]+)/g)) if (!['embed', 'v1'].includes(m[1])) add('greenhouse', m[1].toLowerCase(), m[0]);
+  for (const m of H.matchAll(/greenhouse\.io\/embed\/job_board(?:\/js)?\?for=([A-Za-z0-9_-]+)/g)) add('greenhouse', m[1].toLowerCase(), m[0]);
+  for (const m of H.matchAll(/https?:\/\/jobs\.(?:eu\.)?lever\.co\/([A-Za-z0-9_.-]+)/g)) add('lever', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/jobs\.ashbyhq\.com\/([A-Za-z0-9_.%-]+)/g)) add('ashby', decodeURIComponent(m[1]), m[0]);
+  for (const m of H.matchAll(/https?:\/\/([a-z0-9-]+)\.(wd\d+)\.myworkdayjobs\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?([A-Za-z0-9_-]+)/g)) add('workday', `${m[1]}/${m[3]}`, m[0]);
+  for (const m of H.matchAll(/https?:\/\/www\.comeet\.com\/jobs\/([a-z0-9-]+)\/([0-9A-F.]+)/gi)) add('comeet', `${m[1]}/${m[2]}`, m[0]);
+  for (const m of H.matchAll(/https?:\/\/apply\.workable\.com\/([A-Za-z0-9_-]+)/g)) if (m[1] !== 'api') add('workable', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/(?:jobs|careers)\.smartrecruiters\.com\/([A-Za-z0-9_-]+)/g)) add('smartrecruiters', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/ats\.rippling\.com\/([A-Za-z0-9_-]+)/g)) add('rippling', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/jobs\.gem\.com\/([A-Za-z0-9_-]+)/g)) add('gem', m[1], m[0]);
+  return [...out.values()];
+}
+
 // robots.txt: Disallow rules for "User-agent: *" plus Sitemap lines.
 export function robotsRules(txt) {
   const out = { disallow: [], sitemaps: [], crawlDelay: null }; let applies = false, sawAgent = false;
@@ -285,6 +302,56 @@ export const ADAPTERS = {
       fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'JSON-LD identifier' } };
   },
 
+  // Employer's own careers page (no ATS feed): robots check → links matching link_pattern on list_url → each job page.
+  // Uses JobPosting JSON-LD when present, otherwise <h1> + page text. The URL is the stable id. Dates stay unknown
+  // unless the page states them.
+  async company_html(src, emp, http, opt) {
+    const u = new URL(src.list_url), origin = u.origin;
+    const rb = await http.text(`${origin}/robots.txt`);
+    const rules = rb.ok ? robotsRules(rb.data) : { disallow: [] };
+    if (rules.disallow.some(dp => u.pathname.startsWith(dp))) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows ${u.pathname}` };
+    const r = await http.text(src.list_url);
+    if (!r.ok) return fail(r, { note: `careers page ${src.list_url}: ${r.status || r.error}` });
+    const pat = new RegExp(src.link_pattern || '/careers/[^/?#"]+/?$');
+    const links = new Map();
+    for (const m of r.data.matchAll(/<a\b[^>]*href="([^"#?]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+      const href = new URL(m[1], src.list_url).href.replace(/\/$/, '');
+      const path = new URL(href).pathname;
+      if (href.startsWith(origin) && pat.test(path) && href !== src.list_url.replace(/\/$/, '') && !links.has(href)) links.set(href, htmlToText(m[2]).split('\n')[0].trim());
+    }
+    if (!links.size) return { result: 'empty', status: 200, jobs: [], note: `no links matching ${pat} on ${src.list_url}` };
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    const jobs = []; let details = 0, reused = 0;
+    for (const [href, linkText] of links) {
+      const id = new URL(href).pathname.replace(/^\/|\/$/g, '').split('/').pop();
+      const j = { source_id: src.id, ats: 'company_html', employer: emp.employer, ext_id: id, title: linkText || titleCase(id.replace(/-/g, ' ')), url: href, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '' };
+      const pj = prev.get(id);
+      if (pj && pj.title) { j.title = pj.title; j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (rules.disallow.some(dp => new URL(href).pathname.startsWith(dp)) || details >= (src.detail_cap || opt.detailCap)) { jobs.push(j); continue; }
+      details++;
+      const d = await http.text(href);
+      if (d.ok) {
+        const jp = jsonLdJob(d.data);
+        if (jp) {
+          j.title = htmlToText(jp.title || '') || j.title; j.desc_text = htmlToText(jp.description || '');
+          const locs = [].concat(jp.jobLocation || []).map(l => [l?.address?.addressLocality, l?.address?.addressRegion, l?.address?.addressCountry?.name || l?.address?.addressCountry].filter(Boolean).join(', ')).filter(Boolean);
+          if (locs.length) j.locations = locs;
+          if (/telecommute/i.test(JSON.stringify(jp.jobLocationType || ''))) j.remote_hint = true;
+          if (jp.datePosted) { j.posted_at = iso(jp.datePosted); j.posted_kind = 'json_ld_date_posted'; }
+        } else {
+          const h1 = d.data.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i); if (h1) j.title = htmlToText(h1[1]).trim() || j.title;
+          const main = d.data.match(/<main[^>]*>([\s\S]*?)<\/main>/i) || d.data.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+          j.desc_text = htmlToText((main ? main[1] : d.data).replace(/<(script|style|nav|footer|header)[\s\S]*?<\/\1>/gi, '')).slice(0, 20000);
+          const loc = j.desc_text.match(/\b(?:location|based in)\s*[:\-–]\s*([^\n]{3,80})/i); if (loc) j.locations = [loc[1].trim()];
+          if (/\bremote\b/i.test(j.desc_text.slice(0, 600))) j.remote_hint = true;
+        }
+      }
+      jobs.push(j);
+    }
+    return { result: 'ok', status: 200, jobs, note: `${links.size} job links on the careers page; ${details} job pages read, ${reused} reused from earlier runs`,
+             fields: { posted_date: 'JSON-LD datePosted if present, else unknown (first-observed used)', salary: 'page text', location: 'JSON-LD or "Location:" line', remote: 'page text', req_id: 'page URL' } };
+  },
+
   // Workday CXS: the same JSON the public careers page calls. Search by function keywords, then
   // fetch details (exact startDate + description) only for relevant US roles.
   async workday(src, emp, http, opt) {
@@ -295,12 +362,13 @@ export const ADAPTERS = {
     const slot = (opt.runSeq || 0) % nRot;
     const queries = nRot > 1 ? allQ.filter((_, i) => i % nRot === slot) : allQ;
     const refused = r => r.status === 429 || r.status === 403;
-    const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0;
+    const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0, capHit = [];
     const maxPer = src.max_results || opt.workdayMaxPerQuery || opt.maxPerQuery;
     const page = async (q, offset) => {
       const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: q }) });
       if (!r.ok) return { r };
       anyOk = true; scanned++;
+      if (offset === 0 && Number(r.data?.total) >= 2000) capHit.push(q || '(all)'); // Workday stops paging at 2,000 results
       const list = r.data?.jobPostings || [];
       for (const p of list) if (p.externalPath) seen.set(p.externalPath, p);
       return { r, more: list.length === 20 };
@@ -363,7 +431,8 @@ export const ADAPTERS = {
         : `${seen.size} postings from ${partial ? `${stoppedAt} of ` : ''}${queries.length} searches` + (nRot > 1 ? ` (rotation ${slot + 1}/${nRot} of ${allQ.length} total)` : ''),
       `${details} detail pages read, ${reused} reused from earlier runs`,
       partial ? `refused (${lastFail.status}) part-way: results so far kept, unreached roles kept and marked not refreshed` : '',
-      detailRefused ? 'detail reads stopped after a refusal' : ''].filter(Boolean).join('; ');
+      detailRefused ? 'detail reads stopped after a refusal' : '',
+      capHit.length ? `WARNING: ${capHit.join(', ')} matched 2,000+ listings, Workday's paging limit; postings past 2,000 are unreachable. Narrow the search terms or split by location/job-family facets copied from the site` : ''].filter(Boolean).join('; ');
     return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: nRot > 1, resume_offset: resumeOffset, note,
              fields: { posted_date: 'list: relative ("Posted 3 Days Ago"); detail: startDate', salary: 'detail description text', location: 'yes', remote: 'detail remoteType (if tenant sets it)', req_id: 'yes' } };
   },
