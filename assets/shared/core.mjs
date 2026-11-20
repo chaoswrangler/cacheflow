@@ -66,6 +66,10 @@ export const norm = (s = '') => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim
 */
 const NUM = String.raw`(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:\.\d+)?\s?[kK]\b|\d{4,7}(?:\.\d{1,2})?|\d{2,3}(?:\.\d{1,2})?)`;
 const CUR = String.raw`(?:USD|US\$|CAD|CA\$|\$)`;
+const NON_USD = 'MXN|CAD|GBP|EUR|INR|AUD|BRL|JPY|SGD|CHF|PLN|SEK|NOK|DKK|ILS|NZD|ZAR|HKD|CNY|RMB|KRW|COP|ARS|CLP|PEN|AED|SAR|TWD|PHP|THB|IDR|MYR|CZK|HUF|RON|TRY|NIS';
+const NON_USD_AFTER = new RegExp(String.raw`^\s*(?:${NON_USD})\b|^\s*(?:pesos|euros|pounds|rupees|reais|yen)\b`, 'i');
+const NON_USD_BEFORE = new RegExp(String.raw`(?:\b(?:CA|C|A|AU|NZ|MX|MX\$|SG|S|HK|R|NT|NZ)|£|€|₹|¥|\b(?:${NON_USD}))\s*$`);
+export const MAX_PLAUSIBLE_BASE = 1500000;
 const RANGE_RE = new RegExp(String.raw`(${CUR})\s?${NUM}\s*(?:USD|CAD)?\s*(?:\/\s?(?:yr|year|annum|hr|hour))?\s*(?:-|–|—|to|and)\s*(?:${CUR})?\s?${NUM}`, 'g');
 const UPTO_RE = new RegExp(String.raw`(\$)\s?${NUM}(?:\s?\/\s?(?:year|yr))?[^$]{0,90}?\bup to\s*\$\s?${NUM}`, 'gi');
 
@@ -99,13 +103,16 @@ export function parseSalaries(text = '') {
     if (max < min) [min, max] = [max, min];
     const after = t.slice(idx + len, idx + len + 80);
     const before = t.slice(Math.max(0, idx - 220), idx);
+    // Base pay is compared in US dollars: skip ranges stated in another currency ("$912,000 - $1,254,000 MXN",
+    // "CA$150,000", "C$…", "A$…"), whether the code comes before, inside or right after the numbers.
+    if (/CAD|CA\$/i.test(m) || NON_USD_AFTER.test(after) || NON_USD_BEFORE.test(before)) return;
     let period = 'year';
     if (/^\s*(\/\s?|per\s|an\s)(hr|hour)|^\s*hourly/i.test(after) || /\/\s?(hr|hour)/i.test(m)) period = 'hour';
     if (/^\s*(m|mm|million|b|billion)\b/i.test(after)) return;
     if (period === 'year' && max < 1000) return; // "$5 - $10M" style noise
     const annMin = period === 'hour' ? min * 2080 : min;
     const annMax = period === 'hour' ? max * 2080 : max;
-    if (annMax < 25000 || annMin > 3000000) return;
+    if (annMax < 25000 || annMin > MAX_PLAUSIBLE_BASE) return; // grants, funding rounds and the like are not salaries
     const kind = classifyKind(before, after);
     const geo = /new york|\bnyc\b|\bny\b|tier ?1|zone ?(1|a)\b|highest/i.test(before.slice(-160) + after.slice(0, 40)) ? 'ny_or_top' : null;
     out.push({ min: Math.round(annMin), max: Math.round(annMax), period, kind, geo,
@@ -119,7 +126,8 @@ export function parseSalaries(text = '') {
 }
 const KIND_RANK = { base: 3, base_likely: 2, unlabeled: 1 };
 export function chooseSalary(ranges = [], structured = null) {
-  const all = [...(structured ? [structured] : []), ...ranges];
+  const okStruct = structured && (!structured.currency || /^usd$/i.test(structured.currency)) && !(structured.min > MAX_PLAUSIBLE_BASE) ? structured : null;
+  const all = [...(okStruct ? [okStruct] : []), ...ranges];
   const usable = all.filter(r => KIND_RANK[r.kind]);
   const ote = all.filter(r => r.kind === 'ote' || r.kind === 'total');
   if (!usable.length) return ote.length ? { min: null, max: null, kind: 'ote_only', ote: ote[0], multi: false, src: ote[0].src || 'text' } : null;
@@ -202,6 +210,7 @@ export function homeFit(job, { metro = '', state = '' } = {}) {
   const metroParts = metro.split('|').map(x => x.trim()).filter(Boolean);
   const metroRe = metroParts.length ? new RegExp(`\\b(${metroParts.map(esc).join('|')})\\b`, 'i') : null;
   const inMetro = !!(metroRe && metroRe.test(locText));
+  const metroLoc = inMetro ? (job.locations || []).find(l => metroRe.test(l)) || null : null;
   let elig = 'n/a';
   if (inMetro) elig = 'yes';
   else if (job.remote_us && name) {
@@ -215,7 +224,18 @@ export function homeFit(job, { metro = '', state = '' } = {}) {
     else if (new RegExp(`${esc(name)}[^.]{0,60}(pay|salary|range|\\$)|(pay|salary|range)[^.]{0,80}${esc(name)}`, 'i').test(d)) elig = 'likely';
     else elig = 'unknown';
   } else if (job.remote_us) elig = 'unknown';
-  return { in_metro: inMetro, eligibility: elig };
+  return { in_metro: inMetro, eligibility: elig, metro_loc: metroLoc };
+}
+// The location to show for a role: the one that made it match (commute area, then remote, then a US place),
+// not simply the first one the employer listed.
+export function shownLocation(job, fit = {}, loc = '') {
+  const L = job.locations || [];
+  if (!L.length) return { text: '—', more: 0, all: [] };
+  let pick = null;
+  if (loc === 'metro' && fit.metro_loc) pick = fit.metro_loc;
+  else if (loc.startsWith('remote')) pick = L.find(l => /remote|anywhere|distributed/i.test(l)) || null;
+  if (!pick) pick = L.find(l => classifyWorkplace({ locations: [l] }).us === true) || L[0];
+  return { text: pick, more: new Set(L).size - 1, all: [...new Set(L)] };
 }
 // Back-compat helper used by tests: one call with a metro and state
 export function classifyLocation(job, opts = {}) {
@@ -333,10 +353,25 @@ export function extractSkills(text = '') {
 }
 
 /* ------------------------------------------------------------------ enrichment */
+// A posting whose main (first) location is outside the US and whose only stated pay is in another currency
+// is a non-US role, even when the ATS also lists "United States" among its locations (e.g. "Remote (Canada)",
+// "Canada", "United States" with a CAD-only pay range).
+const BARE_US = /^\s*(?:united states(?: of america)?|usa|us|u\.s\.a?\.?)\s*$/i;
+// main location abroad, and the only US entry (if any) is a bare "United States" with no US city or state
+export function abroadFirst(locations = []) {
+  if (!locations.length || classifyWorkplace({ locations: [locations[0]] }).us !== false) return false;
+  return !locations.slice(1).some(l => !BARE_US.test(l) && classifyWorkplace({ locations: [l] }).us === true);
+}
+export function foreignOnly(locations = [], text = '', usdSalary = null) {
+  if (!locations.length || usdSalary) return false;
+  if (!abroadFirst(locations)) return false;
+  return new RegExp(String.raw`\d[\d,.]*\s*(?:${NON_USD})\b|\b(?:CA|C|A|AU|MX)\$\s?\d|£\s?\d|€\s?\d`).test(text);
+}
 export function enrichJob(raw) {
   const text = raw.desc_text || '';
-  const loc = classifyWorkplace(raw);
+  const loc0 = classifyWorkplace(raw);
   const sal = chooseSalary(parseSalaries(text), raw.salary_struct || null);
+  const loc = foreignOnly(raw.locations, text, sal && sal.min != null ? sal : null) ? { ...loc0, us: false, remote_us: false } : loc0;
   const fn = classifyFunctions(raw.title, text);
   const kw = extractSkills(raw.title + '\n' + text);
   const relevant = fn.functions.some(f => !FUNCTIONS[f].broad) || fn.eng_review;
@@ -361,7 +396,7 @@ const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r
 
 export const ADAPTERS = {
   async greenhouse(src, emp, http, opt = {}) {
-    const r = await http.json(`https://boards-api.greenhouse.io/v1/boards/${src.slug}/jobs?content=true`);
+    const r = await http.json(`https://boards-api${src.region === 'eu' ? '.eu' : ''}.greenhouse.io/v1/boards/${src.slug}/jobs?content=true`);
     if (!r.ok) return fail(r);
     const list = r.data?.jobs;
     if (!Array.isArray(list)) return { result: 'parse_error', status: r.status, jobs: [], note: 'No jobs array in response' };
@@ -391,14 +426,14 @@ export const ADAPTERS = {
         country: j.country || null,
         posted_at: j.createdAt ? new Date(j.createdAt).toISOString() : null, posted_kind: 'created',
         desc_text: [j.descriptionPlain, ...(j.lists || []).map(l => l.text + '\n' + htmlToText(l.content)), j.additionalPlain].filter(Boolean).join('\n'),
-        salary_struct: sr && sr.min ? { min: per === 'hour' ? sr.min * 2080 : sr.min, max: per === 'hour' ? sr.max * 2080 : sr.max, period: per, kind: 'base_likely', src: 'structured', snippet: `Lever salaryRange ${sr.currency || ''} ${sr.min}–${sr.max} ${sr.interval || ''}` } : null,
+        salary_struct: sr && sr.min ? { min: per === 'hour' ? sr.min * 2080 : sr.min, max: per === 'hour' ? sr.max * 2080 : sr.max, period: per, kind: 'base_likely', src: 'structured', currency: sr.currency || null, snippet: `Lever salaryRange ${sr.currency || ''} ${sr.min}–${sr.max} ${sr.interval || ''}` } : null,
       };
     });
     return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs,
              fields: { posted_date: 'createdAt', salary: 'salaryRange (when employer fills it) + text', location: 'yes', remote: 'workplaceType', req_id: 'no' } };
   },
   async ashby(src, emp, http) {
-    const r = await http.json(`https://api.ashbyhq.com/posting-api/job-board/${src.slug}?includeCompensation=true`);
+    const r = await http.json(`https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(src.slug)}?includeCompensation=true`);
     if (!r.ok) return fail(r);
     const list = r.data?.jobs;
     if (!Array.isArray(list)) return { result: 'parse_error', status: r.status, jobs: [], note: 'No jobs array' };
@@ -412,7 +447,7 @@ export const ADAPTERS = {
         workplace_hint: j.workplaceType ? j.workplaceType.toLowerCase().replace('onsite', 'onsite') : (j.isRemote ? 'remote' : null),
         remote_hint: j.isRemote === true, country: j.address?.postalAddress?.addressCountry || null,
         posted_at: iso(j.publishedAt), posted_kind: 'published', desc_text: j.descriptionPlain || htmlToText(j.descriptionHtml || ''),
-        salary_struct: comp && comp.minValue ? { min: per === 'hour' ? comp.minValue * 2080 : comp.minValue, max: per === 'hour' ? (comp.maxValue || comp.minValue) * 2080 : (comp.maxValue || comp.minValue), period: per, kind: 'base', src: 'structured', snippet: `Ashby compensation: ${j.compensation?.compensationTierSummary || ''}` } : null,
+        salary_struct: comp && comp.minValue ? { min: per === 'hour' ? comp.minValue * 2080 : comp.minValue, max: per === 'hour' ? (comp.maxValue || comp.minValue) * 2080 : (comp.maxValue || comp.minValue), period: per, kind: 'base', src: 'structured', currency: comp.currencyCode || null, snippet: `Ashby compensation: ${j.compensation?.compensationTierSummary || ''}` } : null,
       };
     });
     return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs,
@@ -430,29 +465,51 @@ export function dateFor(j, crit) {
   if (crit.firstSeen && j.first_observed) return { d: j.first_observed, kind: 'first_observed' };
   return { d: null, kind: 'none' };
 }
-export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], win = null, excl = null, tz = TZ }) {
-  if (j.status === 'closed' || j.us === false) return null;
-  const tiers = c.tiers || {};
-  if (j.source_class === 'aggregator') { if (tiers.aggregator === false) return null; }
-  else if (e && tiers[e.tier] === false) return null;
+// Company type: big tech & large companies, established security companies, startups & growth-stage,
+// or roles found through aggregators. Older registries/criteria used tiers (heavy/named/core).
+const TIER_TYPE = { heavy: 'big', named: 'security', core: 'growth' };
+export function companyType(j, e) { return j?.source_class === 'aggregator' ? 'aggregator' : (e?.type || TIER_TYPE[e?.tier] || 'growth'); }
+export function companyTypeFilter(c) {
+  if (c.types) return c.types;
+  const t = c.tiers || {}, out = {};
+  for (const [tier, ty] of Object.entries(TIER_TYPE)) if (t[tier] === false) out[ty] = false;
+  if (t.aggregator === false) out.aggregator = false;
+  return out;
+}
+export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], win = null, excl = null, tz = TZ, force = false }) {
+  // force: a role the user is tracking stays visible even when it no longer passes the filters
+  if (!force && (j.status === 'closed' || j.us === false)) return null;
+  const ty = companyType(j, e), types = companyTypeFilter(c);
+  if (types[ty] === false) if (!force) return null;
   const sector = e?.sector || 'Unclassified', vertical = e?.vertical || '';
   const sectors = c.sectors || [], verticals = c.verticals || [];
-  if (sectors.length && !sectors.includes(sector)) return null;
-  if (verticals.length && sector === 'Cybersecurity' && !verticals.includes(vertical)) return null;
+  // Industry filter: picked industries plus the industries of any picked subcategories (none = all).
+  // Within an industry that has picked subcategories, only those subcategories pass.
+  const vSec = v => (c.vertSectors || {})[v] || 'Cybersecurity';
+  const inSecs = new Set([...sectors, ...verticals.map(vSec)]);
+  if (inSecs.size && !inSecs.has(sector)) if (!force) return null;
+  const myVerts = verticals.filter(v => vSec(v) === sector);
+  if (myVerts.length && !myVerts.includes(vertical)) if (!force) return null;
   const sel = selectedFunctions(c), fnHit = (j.functions || []).filter(f => sel.includes(f));
   const engOnly = !fnHit.length && c.engReview && j.eng_review;
-  if (!fnHit.length && !engOnly) return null;
-  if (excl && excl.test(j.title)) return null;
-  if (j.seniority < (c.sen || 1)) return null;
+  if (!fnHit.length && !engOnly) if (!force) return null;
+  if (excl && excl.test(j.title)) if (!force) return null;
+  if (j.seniority < (c.sen || 1)) if (!force) return null;
   const dt = dateFor(j, c);
   if (win) {
-    if (!dt.d) return null;
+    if (!dt.d) if (!force) return null;
     const ymd = nyDate(new Date(dt.d), tz);
-    if (ymd < win.start || ymd > win.end) return null;
+    if (ymd < win.start || ymd > win.end) if (!force) return null;
+  }
+  // Stored before the currency fix: drop pay that was really another currency or not a salary at all.
+  if (j.salary && (j.salary.min > MAX_PLAUSIBLE_BASE || new RegExp(String.raw`\d\s*(?:${NON_USD})\b|CA\$|\bC\$`).test(j.salary.snippet || ''))) {
+    // stored before the currency fix: the pay was another currency, and if the main location is outside the US, so is the role
+    if (!force && abroadFirst(j.locations || [])) return null;
+    j = { ...j, salary: null };
   }
   const tier = salaryTier(j.salary, c.minBase || 0);
   const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
-  if (salOk && !salOk.includes(tier)) return null;
+  if (salOk && !salOk.includes(tier)) if (!force) return null;
   const hf = homeFit(j, { metro: c.metro || '', state: c.state || '' });
   let loc;
   if (hf.in_metro) loc = 'metro';
@@ -460,7 +517,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   else if (j.remote_us && hf.eligibility === 'no') loc = 'remote_no';
   else if (j.remote_us) loc = 'remote_unknown';
   else loc = 'other';
-  if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, remote_no: true }[loc]) return null;
+  if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, remote_no: true }[loc]) if (!force) return null;
   const kw = new Set(j.kw || []);
   const skillHits = skillsOn.filter(s => kw.has(s));
   const hay = (j.title + ' ' + (j.excerpt || '')).toLowerCase();
@@ -468,8 +525,8 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const sFn = fnHit.length ? 30 : 15;
   const sSkill = Math.min(25, skillHits.length * 4 + customHits.length * 4);
   const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[tier] || 0;
-  const sLoc = { metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, other: 4 }[loc];
+  const sLoc = { remote_no: 0, metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, other: 4 }[loc];
   const sSen = j.seniority > (c.sen || 1) ? 10 : 7;
-  return { j, e, sector, vertical, tier, loc, hf, dt, fnHit, skillHits, customHits, score: sFn + sSkill + sSal + sLoc + sSen,
+  return { j, e, sector, vertical, tier, loc, hf, dt, fnHit, skillHits, customHits, score: sFn + sSkill + sSal + (sLoc || 0) + sSen, parts: { fn: sFn, skills: sSkill, base: sSal, loc: sLoc || 0, level: sSen },
            why: `fn ${sFn} · skills ${sSkill} · base ${sSal} · loc ${sLoc} · level ${sSen}` };
 }

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119s';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119s';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119s';
+import * as C from './shared/core.mjs?v=20261119y';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119y';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119y';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -12,20 +12,45 @@ const store = {
   set(k, v) { try { localStorage.setItem('rr:' + k, JSON.stringify(v)); } catch { /* storage unavailable: keep in memory */ } },
 };
 const FN_KEYS = Object.keys(C.FUNCTIONS);
+const PAY_LEVELS = [0, 80000, 100000, 120000, 140000, 150000, 160000, 175000, 180000, 200000, 220000, 225000, 250000, 275000, 300000, 350000, 400000];
+/* Company types, so you can tell what kind of employer a role is at. */
+const EMP_TYPE = {
+  big: { label: 'Big tech & large companies', hint: 'Big tech, cloud giants and large public or late-stage companies (Microsoft, Google, AWS, Salesforce, Stripe, OpenAI, big trading firms…)' },
+  security: { label: 'Established security companies', hint: 'Large or long-running security vendors and security services firms (CrowdStrike, Palo Alto Networks, CyberArk, Fortinet, Optiv…)' },
+  growth: { label: 'Startups & growth-stage', hint: 'Younger, venture-backed companies in security, AI, SaaS, fintech and health, from early stage to pre-IPO' },
+  aggregator: { label: 'Found via job aggregators', hint: "Roles from aggregator searches rather than the employer's own job site; check the posting" },
+};
+const typeOf = m => C.companyType(m.j, m.e);
 const QS = new URLSearchParams(location.search);
 if (QS.has('owner')) store.set('owner', QS.get('owner') !== 'off');
 const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
   functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', sen: 2,
-  include: '', exclude: 'intern, new grad, apprentice', tiers: { heavy: true, named: true, core: true, aggregator: true }, sectors: [], verticals: [],
+  include: '', exclude: 'intern, new grad, apprentice', types: { big: true, security: true, growth: true, aggregator: true }, sectors: [], verticals: [], blockEmp: [],
 });
 const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'empty' });
 const S = {
   registry: { employers: [], unresolved_identifiers: [] }, jobs: [], jobsMeta: null, status: { sources: [] },
   crit: { ...DEFAULT_CRIT(), ...store.get('crit', {}) }, profile: { ...DEFAULT_PROFILE(), ...store.get('profile', {}) },
-  saved: new Set(store.get('saved', [])), hidden: new Set(store.get('hidden', [])), live: new Map(), empByName: new Map(), open: new Set(),
+  track: store.get('track', null), live: new Map(), empByName: new Map(), open: new Set(),
 };
+/* Application tracker: one status per role, kept in this browser only (never sent anywhere).
+   todo = interested / to do, applied, no = not interested. The old star and hide map onto todo and no. */
+const STATUS = { todo: { label: 'To do', short: 'To do', icon: '★', cls: 'st-todo' }, applied: { label: 'Applied', short: 'Applied', icon: '✓', cls: 'st-applied' }, no: { label: 'Not interested', short: 'Not interested', icon: '✕', cls: 'st-no' } };
+if (!S.track) {
+  S.track = {};
+  const t = new Date().toISOString();
+  for (const u of store.get('saved', [])) S.track[u] = { s: 'todo', t };
+  for (const u of store.get('hidden', [])) S.track[u] = { s: 'no', t };
+  store.set('track', S.track);
+}
+const stOf = uid => S.track[uid]?.s || '';
+function setStatus(uid, st) {
+  if (!st || stOf(uid) === st) delete S.track[uid];
+  else S.track[uid] = { ...(S.track[uid] || {}), s: st, t: new Date().toISOString(), ...(st === 'applied' && !S.track[uid]?.applied ? { applied: new Date().toISOString() } : {}) };
+  save();
+}
 // Category set changed since these criteria were saved: re-suggest from the stored profile (or use the
 // defaults) once, then leave the user's toggles alone.
 if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
@@ -37,7 +62,22 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   S.crit.functions = S.crit.functions.filter(k => FN_KEYS.includes(k));
   S.crit.fnKnown = [...FN_KEYS]; S.crit.engReview = false;
 }
-const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); store.set('saved', [...S.saved]); store.set('hidden', [...S.hidden]); };
+{ // criteria saved before company types: carry over any tier the user had switched off
+  const stored = store.get('crit', {});
+  if (stored.tiers && !stored.types) { S.crit.types = { big: true, security: true, growth: true, aggregator: true, ...C.companyTypeFilter({ tiers: stored.tiers }) }; delete S.crit.tiers; store.set('crit', S.crit); }
+  delete S.crit.tiers;
+}
+const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); store.set('track', S.track); };
+
+/* Phones show data tables as stacked cards; each cell carries its column name. */
+function labelTables(root = document) {
+  for (const t of root.querySelectorAll('table:not(.mt)')) {
+    const heads = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim());
+    if (!heads.length) continue;
+    for (const tr of t.querySelectorAll('tbody tr')) [...tr.children].forEach((td, i) => { if (td.tagName === 'TD' && !td.hasAttribute('data-label')) td.setAttribute('data-label', td.colSpan > 1 ? '' : heads[i] || ''); });
+  }
+}
+new MutationObserver(() => { cancelAnimationFrame(labelTables.f); labelTables.f = requestAnimationFrame(() => labelTables()); }).observe(document.documentElement, { childList: true, subtree: true });
 
 /* ============================================================ boot */
 async function loadJSON(p, fb) {
@@ -45,7 +85,9 @@ async function loadJSON(p, fb) {
   catch (e) { console.warn('load', p, e); return fb; }
 }
 async function boot() {
-  const [reg, jobs, status, site] = await Promise.all([loadJSON('data/sources.json', null), loadJSON('data/jobs.json', { jobs: [] }), loadJSON('data/status.json', { sources: [] }), loadJSON('data/site.json', {})]);
+  const [reg, jobs, status, site, disc] = await Promise.all([loadJSON('data/sources.json', null), loadJSON('data/jobs.json', { jobs: [] }), loadJSON('data/status.json', { sources: [] }), loadJSON('data/site.json', {}), loadJSON('data/discovered.json', { employers: [] })]);
+  // companies the seed probe found (YC directory, VC portfolios) join the registry
+  if (reg && disc?.employers?.length) { const names = new Set(reg.employers.map(e => e.employer.toLowerCase())); for (const e of disc.employers) if (!names.has(e.employer.toLowerCase())) reg.employers.push(e); }
   S.site = site || {};
   if (!reg) {
     document.querySelector('main').insertAdjacentHTML('afterbegin', OWNER
@@ -54,7 +96,7 @@ async function boot() {
   }
   S.registry = reg || S.registry; S.jobs = jobs.jobs || []; S.jobsMeta = jobs; S.status = status;
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
-  applyOwnerMode(); wireNav(); wireProfile(); renderProfile(); renderCriteria(); renderHud();
+  applyOwnerMode(); wireNav(); wireProfile(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
   renderMatches(); renderSources(); renderDiscover(); renderSetup();
   show(location.hash.slice(1) || (S.profile.source === 'empty' ? 'profile' : 'matches'));
 }
@@ -79,6 +121,7 @@ function show(v) {
   $$('.view').forEach(x => x.classList.toggle('active', x.id === 'view-' + v));
   $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
   if (location.hash.slice(1) !== v) history.replaceState(null, '', '#' + v);
+  document.body.classList.toggle('on-matches', v === 'matches');
   if (v === 'matches') renderMatches();
 }
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
@@ -209,9 +252,33 @@ function renderProfile() {
 
 /* ============================================================ criteria */
 function sectorsAndVerticals() {
-  const sec = new Map(), ver = new Map();
-  for (const e of S.registry.employers) { sec.set(e.sector, (sec.get(e.sector) || 0) + 1); if (e.sector === 'Cybersecurity') ver.set(e.vertical, (ver.get(e.vertical) || 0) + 1); }
-  return { sec: [...sec].sort((a, b) => b[1] - a[1]), ver: [...ver].sort((a, b) => b[1] - a[1]) };
+  const sec = new Map(), ver = new Map(), tree = new Map();
+  for (const e of S.registry.employers) {
+    sec.set(e.sector, (sec.get(e.sector) || 0) + 1);
+    if (e.vertical) { ver.set(e.vertical, (ver.get(e.vertical) || 0) + 1); if (!tree.has(e.sector)) tree.set(e.sector, new Map()); const t = tree.get(e.sector); t.set(e.vertical, (t.get(e.vertical) || 0) + 1); }
+  }
+  return { sec: [...sec].sort((a, b) => b[1] - a[1]), ver: [...ver].sort((a, b) => b[1] - a[1]), tree };
+}
+/* Criteria live beside the results: a sticky sidebar on wide screens, a collapsible panel above the results
+   otherwise. Every change re-runs the match list (debounced), so there's no separate "run search" step. */
+const wideLayout = () => innerWidth >= 1100;
+function queueMatches() { clearTimeout(queueMatches.t); queueMatches.t = setTimeout(() => { if ($('#view-matches').classList.contains('active')) renderMatches(); else S.matchesDirty = true; }, 150); }
+function setCritOpen(open) { const d = $('#critBox'); if (!d) return; d.open = open; syncLayout(); }
+function syncLayout() { const d = $('#critBox'); $('#mLayout')?.classList.toggle('side-open', !!d?.open && wideLayout()); }
+function critSummary() {
+  const c = S.crit, n = (c.functions || []).length;
+  const rule = { starts: 'starts ≥', starts_reaches: 'starts or reaches', plus_unknown: '≥ (or unstated)', any: 'any' }[c.salMode] || '';
+  const win = { week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', all: 'any date' }[c.window] || c.window;
+  const locs = [c.lMetro && 'commute area', (c.lRemoteYes || c.lRemoteUnknown) && 'remote', c.lOther && 'other US'].filter(Boolean).join(' + ') || 'no locations';
+  return `${n} categor${n === 1 ? 'y' : 'ies'} · base ${c.salMode === 'any' ? 'any' : rule + ' ' + money(c.minBase)} · ${win} · ${locs}`;
+}
+function wireCritLayout() {
+  const d = $('#critBox'); if (!d) return;
+  const stored = store.get('critOpen', null);
+  d.open = wideLayout() ? (stored ?? true) : false; // phones and narrow windows open on the results; criteria are one tap away
+  d.addEventListener('toggle', () => { store.set('critOpen', d.open); syncLayout(); });
+  addEventListener('resize', () => { clearTimeout(wireCritLayout.t); wireCritLayout.t = setTimeout(syncLayout, 120); });
+  syncLayout();
 }
 function renderCriteria() {
   const c = S.crit, sug = new Set(S.profile.suggestedFns || []);
@@ -219,7 +286,9 @@ function renderCriteria() {
   $('#cFunctions').innerHTML = `<div class="fn-tools"><span>${c.functions.length} of ${FN_KEYS.length} selected</span>${sug.size ? '<button class="linkbtn" data-fnset="sug">◆ From résumé</button>' : ''}<button class="linkbtn" data-fnset="def">Defaults</button><button class="linkbtn" data-fnset="all">All</button><button class="linkbtn" data-fnset="none">None</button></div>` +
     C.FUNCTION_GROUPS.map(g => { const ks = FN_KEYS.filter(k => C.FUNCTIONS[k].group === g), on = ks.filter(k => c.functions.includes(k)).length;
       return `<details class="fn-group" ${on || ks.some(k => sug.has(k)) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
-  $('#cMinBase').value = c.minBase; $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
+  const levels = [...new Set([...PAY_LEVELS, +c.minBase || 0])].sort((a, b) => a - b);
+  $('#cMinBase').innerHTML = levels.map(v => `<option value="${v}">${v ? money(v) + '+' : 'No minimum'}${v && !PAY_LEVELS.includes(v) ? ' (from your profile)' : ''}</option>`).join('');
+  $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
   $('#cMetro').value = c.metro; $('#cMetro').placeholder = 'set a home location, or type cities separated by |';
@@ -227,12 +296,23 @@ function renderCriteria() {
   $('#cMetroPreset').onchange = e => { if (e.target.value) { c.metro = C.METRO_PRESETS[e.target.value]; $('#cMetro').value = c.metro; upd(); } };
   $('#cSen').innerHTML = Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
   $('#cInclude').value = c.include; $('#cExclude').value = c.exclude;
-  const tierLbl = { heavy: 'Big tech & majors', named: 'Named targets', core: 'Core roster', aggregator: 'Aggregator finds' };
-  $('#cTiers').innerHTML = Object.entries(tierLbl).map(([k, l]) => `<button class="chip ${c.tiers[k] ? 'on' : ''}" data-tier="${k}">${l}</button>`).join('');
+  const tierN = {}; for (const e of S.registry.employers) { const k = C.companyType({}, e); tierN[k] = (tierN[k] || 0) + 1; }
+  c.types ||= {};
+  $('#cTiers').innerHTML = Object.entries(EMP_TYPE).map(([k, v]) => `<button class="chip ${c.types[k] !== false ? 'on' : ''}" data-tier="${k}" title="${esc(v.hint)}" aria-pressed="${c.types[k] !== false}">${esc(v.label)}${tierN[k] ? ' · ' + tierN[k] : ''}</button>`).join('') +
+    `<div class="typehelp">${Object.values(EMP_TYPE).map(v => `<div><b>${esc(v.label)}</b> ${esc(v.hint)}</div>`).join('')}</div>`;
+  c.blockEmp ||= [];
+  $('#cBlocked').innerHTML = c.blockEmp.length ? c.blockEmp.map(n => `<button class="chip on r" data-unblock="${esc(n)}" title="Show this employer again">${esc(n)} ✕</button>`).join('') : '<span class="sub2">None. Use “Hide this employer” in a role’s details to stop seeing a company.</span>';
   const { sec, ver } = sectorsAndVerticals();
-  $('#cSectors').innerHTML = sec.map(([s, n]) => `<button class="chip ${c.sectors.includes(s) ? 'on' : ''}" data-sector="${esc(s)}">${esc(s)} · ${n}</button>`).join('');
-  $('#cVerticals').innerHTML = ver.map(([s, n]) => `<button class="chip ${c.verticals.includes(s) ? 'on m' : ''}" data-vert="${esc(s)}">${esc(s)} · ${n}</button>`).join('');
-  const upd = () => { save(); renderHud(); };
+  const { tree } = sectorsAndVerticals();
+  c.vertSectors = {}; for (const [sc, vs] of tree) for (const v of vs.keys()) c.vertSectors[v] = sc;
+  const anyInd = c.sectors.length || c.verticals.length;
+  $('#cSectors').innerHTML = `<div class="fn-tools"><span>${anyInd ? (n => `Showing ${n} industr${n === 1 ? 'y' : 'ies'} · tap to change`)(new Set([...c.sectors, ...c.verticals.map(v => c.vertSectors[v])]).size) : 'All industries included. Pick an industry, or open one and pick subcategories, to narrow.'}</span>${anyInd ? '<button class="linkbtn" id="indAll">Include all</button>' : ''}</div>` +
+    sec.map(([sc, n]) => {
+      const vs = [...(tree.get(sc) || new Map())].sort((a, b) => b[1] - a[1]), picked = vs.filter(([v]) => c.verticals.includes(v)).length, on = c.sectors.includes(sc) || picked;
+      return `<details class="fn-group ind ${on ? 'on' : ''}" ${picked ? 'open' : ''}><summary><button class="chip ${c.sectors.includes(sc) ? 'on' : ''}" data-sector="${esc(sc)}" aria-pressed="${c.sectors.includes(sc)}">${esc(sc)} · ${n}</button><span class="sub2">${picked ? `${picked} of ${vs.length} subcategories` : vs.length > 1 ? `${vs.length} subcategories` : ''}</span></summary>` +
+        (vs.length > 1 ? `<div class="chips">${vs.map(([v, k]) => `<button class="chip ${c.verticals.includes(v) ? 'on m' : ''}" data-vert="${esc(v)}" aria-pressed="${c.verticals.includes(v)}">${esc(v)} · ${k}</button>`).join('')}</div>` : '') + `</details>`;
+    }).join('');
+  const upd = () => { save(); renderHud(); queueMatches(); };
   $$('#cFunctions [data-fn]').forEach(i => i.onchange = () => { c.functions = $$('#cFunctions [data-fn]:checked').map(x => x.dataset.fn); upd(); renderCriteria(); });
   $$('#cFunctions [data-fnset]').forEach(b => b.onclick = e => { e.preventDefault();
     c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
@@ -244,13 +324,16 @@ function renderCriteria() {
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).onchange = e => { c[k] = e.target.checked; upd(); };
   $('#cMetro').onchange = e => { c.metro = e.target.value.trim().toLowerCase(); upd(); };
   $('#cSen').onchange = e => { c.sen = +e.target.value; upd(); };
-  $('#cInclude').onchange = e => { c.include = e.target.value; upd(); };
-  $('#cExclude').onchange = e => { c.exclude = e.target.value; upd(); };
-  $$('#cTiers [data-tier]').forEach(b => b.onclick = () => { c.tiers[b.dataset.tier] = !c.tiers[b.dataset.tier]; b.classList.toggle('on'); upd(); });
-  $$('#cSectors [data-sector]').forEach(b => b.onclick = () => { const s = b.dataset.sector; c.sectors = c.sectors.includes(s) ? c.sectors.filter(x => x !== s) : [...c.sectors, s]; b.classList.toggle('on'); upd(); });
-  $$('#cVerticals [data-vert]').forEach(b => b.onclick = () => { const s = b.dataset.vert; c.verticals = c.verticals.includes(s) ? c.verticals.filter(x => x !== s) : [...c.verticals, s]; b.classList.toggle('on'); b.classList.toggle('m'); upd(); });
-  $('#btnReset').onclick = () => { S.crit = DEFAULT_CRIT(); if (S.profile.location) applyProfile({ ...S.profile }, 'Criteria reset'); save(); renderCriteria(); renderHud(); };
-  $('#btnGo').onclick = () => show('matches');
+  $('#cInclude').onchange = $('#cInclude').oninput = e => { c.include = e.target.value; upd(); };
+  $('#cExclude').onchange = $('#cExclude').oninput = e => { c.exclude = e.target.value; upd(); };
+  $$('#cTiers [data-tier]').forEach(b => b.onclick = () => { const k = b.dataset.tier; c.types[k] = c.types[k] === false; b.classList.toggle('on', c.types[k]); b.setAttribute('aria-pressed', c.types[k]); upd(); });
+  $$('#cBlocked [data-unblock]').forEach(b => b.onclick = () => { c.blockEmp = c.blockEmp.filter(n => n !== b.dataset.unblock); upd(); renderCriteria(); });
+  $$('#cSectors [data-sector]').forEach(b => b.onclick = e => { e.preventDefault(); const s = b.dataset.sector; c.sectors = c.sectors.includes(s) ? c.sectors.filter(x => x !== s) : [...c.sectors, s]; upd(); renderCriteria(); });
+  $$('#cSectors [data-vert]').forEach(b => b.onclick = () => { const s = b.dataset.vert; c.verticals = c.verticals.includes(s) ? c.verticals.filter(x => x !== s) : [...c.verticals, s]; upd(); renderCriteria(); });
+  $('#indAll') && ($('#indAll').onclick = () => { c.sectors = []; c.verticals = []; upd(); renderCriteria(); });
+  $('#btnReset').onclick = () => { S.crit = DEFAULT_CRIT(); if (S.profile.location) applyProfile({ ...S.profile }, 'Criteria reset'); save(); renderCriteria(); renderHud(); queueMatches(); };
+  $('#btnGo').onclick = () => { setCritOpen(true); show('matches'); scrollTo({ top: 0 }); };
+  $('#btnCritDone').onclick = () => { if (!wideLayout()) setCritOpen(false); $('#mResults').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 }
 
 /* ============================================================ matching */
@@ -261,51 +344,82 @@ function evaluate(j, ctx) {
 function computeMatches() {
   const c = S.crit;
   const ctx = { win: currentWindow(), excl: reFromList(csvList(c.exclude)) };
-  return S.jobs.map(j => evaluate(j, ctx)).filter(Boolean);
+  const out = [];
+  for (const j of S.jobs) {
+    const blocked = S.crit.blockEmp?.length && S.crit.blockEmp.includes(j.employer);
+    const hit = blocked ? null : evaluate(j, ctx);
+    const m = hit || (stOf(j.uid) ? C.evaluateJob(j, { crit: S.crit, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win: ctx.win, excl: ctx.excl, tz: LOCAL_TZ, force: true }) : null);
+    if (m) { m.inFilters = !!hit; out.push(m); }
+  }
+  return out;
 }
 const money = n => n == null ? '?' : '$' + (n >= 1000 ? Math.round(n / 1000) + 'K' : n);
 const KIND_LABEL = { base: 'BASE', base_likely: 'SALARY (base implied)', unlabeled: 'RANGE (type not stated)' };
 const DATE_LABEL = { first_published: 'first published', published: 'published', created: 'created', posted_date: 'posted', start_date: 'posting start date', released: 'released', feed_pubdate: 'feed date',
   relative_approx: 'approx. from "posted N days ago"', updated: 'UPDATED date — may be a refresh', first_observed: 'first observed by collector (no posting date)', aggregator_created: 'aggregator date', none: 'no date' };
-const LOC_LABEL = { metro: ['IN COMMUTE AREA', 'g'], remote_yes: ['REMOTE · HOME STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
+const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['IN COMMUTE AREA', 'g'], remote_yes: ['REMOTE · HOME STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
 
-const LOC_SHORT = { metro: ['Commute area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
+const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['Commute area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
 const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
   relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
 function jobRow(m) {
-  const { j, e } = m, s = j.salary, open = S.open.has(j.uid), saved = S.saved.has(j.uid);
+  const { j, e } = m, s = j.salary, open = S.open.has(j.uid), st = stOf(j.uid), tr = S.track[j.uid];
   let base = '<span class="sal unknown">not stated</span>';
   if (s && s.kind === 'ote_only') base = `<span class="sal ote_only">OTE only</span><div class="sub2">${money(s.ote?.min)}–${money(s.ote?.max)} excluded</div>`;
   else if (s && s.kind === 'predicted') base = `<span class="sal predicted">${money(s.min)}–${money(s.max)}</span><div class="sub2">predicted, not base</div>`;
   else if (s) base = `<span class="sal ${m.tier}">${money(s.min)}–${money(s.max)}</span><div class="sub2">${m.tier === 'starts' ? 'starts ≥ min' : m.tier === 'reaches' ? 'reaches min' : 'below min'}${s.kind === 'base' ? '' : s.kind === 'base_likely' ? ' · implied' : ' · type unstated'}</div>`;
   const [ll, lc] = LOC_SHORT[m.loc];
+  const sl = C.shownLocation(j, m.hf, m.loc), slTitle = sl.all.join(' · ');
+  const slText = esc(sl.text) + (sl.more ? ` <span class="more-loc">+${sl.more}</span>` : '');
   const dYmd = m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : null;
-  const flags = [j.reposted && '<span class="tag a">repost?</span>', j.stale && '<span class="tag r">stale</span>', j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
+  const stTag = st ? `<span class="tag ${STATUS[st].cls}">${esc(STATUS[st].short)}${(st === 'applied' ? tr.applied || tr.t : tr.t) ? ' · ' + esc(shortDay(st === 'applied' ? tr.applied || tr.t : tr.t)) : ''}</span>` : '';
+  const flags = [stTag, j.status === 'closed' && '<span class="tag r">closed</span>', st && !m.inFilters && j.status !== 'closed' && '<span class="tag f">outside filters</span>', j.reposted && '<span class="tag a">repost?</span>', j.stale && `<span class="tag r" title="${esc(STALE_HELP)}">stale</span>`, j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
   const li = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(j.title + ' ' + (e?.employer || j.employer))}`;
   const detail = open ? `<tr class="mt-detail" data-uid="${esc(j.uid)}"><td colspan="8"><div class="dgrid">
-      <div><b>Location</b>${esc((j.locations || []).join(' · ') || '—')} · ${esc(j.workplace)}${m.hf.eligibility !== 'n/a' ? ` · home-state eligibility: ${esc(m.hf.eligibility)}` : ''}</div>
+      <div><b>Location</b>${m.loc === 'metro' && m.hf.metro_loc ? `Matched on <b class="inl">${esc(m.hf.metro_loc)}</b> (commute area). ` : ''}${sl.more ? 'All listed: ' : ''}${esc(sl.all.join(' · ') || '—')} · ${esc(j.workplace)}${m.hf.eligibility !== 'n/a' ? ` · home-state eligibility: ${esc(m.hf.eligibility)}` : ''}</div>
       <div><b>Dates</b>${dYmd ? esc(fmtDay(dYmd)) + ' (' + esc(DATE_LABEL[m.dt.kind] || m.dt.kind) + ')' : '—'} · first seen ${esc((j.first_observed || '').slice(0, 10))} · last seen ${esc((j.last_seen || '').slice(0, 10))}</div>
-      <div><b>Score</b>${m.why}</div>
+      <div class="wide"><b>Why this scored ${m.score} of 100</b><div class="sbreak">${scoreParts(m).map(([l, v, mx, txt]) => `<div class="sb"><span class="sbl">${esc(l)}</span><span class="sbv">${v}<i>/${mx}</i></span><i class="sbar"><i style="width:${Math.round(100 * v / mx)}%"></i></i><span class="sbt">${esc(txt)}</span></div>`).join('')}</div></div>
       <div><b>Source</b>${esc(j.source_class === 'aggregator' ? 'aggregator · ' + (j.via || j.ats) : 'official · ' + j.ats)} · req ${esc(j.req_id || '—')}${j.department ? ' · ' + esc(j.department) : ''}</div>
+      ${j.stale ? `<div class="wide"><b>Stale</b>${esc(STALE_HELP)}${j.last_seen ? ' Last confirmed ' + esc(j.last_seen.slice(0, 10)) + '.' : ''}</div>` : ''}
       ${s?.snippet ? `<div class="wide"><b>Pay text</b>${esc(s.snippet)}</div>` : ''}
       ${m.skillHits.length || m.customHits.length ? `<div class="wide"><b>Matched</b>${esc([...m.skillHits, ...m.customHits].join(' · '))}</div>` : ''}
       ${j.excerpt ? `<div class="wide ex2">${esc(j.excerpt)}${j.excerpt.length >= 900 ? '…' : ''}</div>` : ''}
-      <div class="wide row"><a class="btn pri sm" href="${esc(j.url)}" target="_blank" rel="noopener">Open posting ↗</a><a class="btn sec sm" href="${li}" target="_blank" rel="noopener">LinkedIn ↗</a><button class="btn sec sm" data-act="hide">${S.hidden.has(j.uid) ? 'Unhide' : 'Hide'}</button></div>
+      <div class="wide row"><a class="btn pri sm" href="${esc(j.url)}" target="_blank" rel="noopener">Open posting ↗</a><a class="btn sec sm" href="${li}" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <button class="btn sec sm" data-act="blockemp" title="Stop showing roles from ${esc(j.employer)}. Undo under Profile → Search criteria → Hidden employers.">Hide this employer</button>
+        <span class="stseg" role="group" aria-label="Status">${Object.entries(STATUS).map(([k, v]) => `<button class="${v.cls} ${st === k ? 'on' : ''}" data-act="st" data-st="${k}" aria-pressed="${st === k}">${v.icon} ${esc(v.label)}</button>`).join('')}</span></div>
+      ${st ? `<div class="wide sub2">Status saved in this browser only${tr.applied ? ` · applied ${esc(new Date(tr.applied).toLocaleDateString())}` : ''} · last changed ${esc(new Date(tr.t).toLocaleString())}</div>` : ''}
     </div></td></tr>` : '';
-  return `<tr class="mt-row ${m.tier} ${open ? 'open' : ''} ${saved ? 'saved' : ''}" data-uid="${esc(j.uid)}">
-    <td class="c-save"><button class="star ${saved ? 'on' : ''}" data-act="save" title="${saved ? 'Unsave' : 'Save'}">${saved ? '★' : '☆'}</button></td>
-    <td class="c-score"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
-    <td class="c-role">${S.groupEmp ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div></td>
+  return `<tr class="mt-row ${m.tier} ${open ? 'open' : ''} ${st ? STATUS[st].cls : ''}" data-uid="${esc(j.uid)}">
+    <td class="c-save"><button class="stbtn ${st ? STATUS[st].cls + ' on' : ''}" data-act="stmenu" title="Status: ${st ? esc(STATUS[st].label) : 'none'}" aria-label="Set status" aria-haspopup="menu">${st ? STATUS[st].icon : '○'}</button></td>
+    <td class="c-score" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
+    <td class="c-role">${S.groupBy === 'employer' ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div><div class="mmeta"><span title="${esc(slTitle)}">${slText}</span> <span class="tag ${lc}">${ll}</span>${dYmd ? ` <span>${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)} ${esc(dYmd.slice(5))}</span>` : ''}</div></td>
     <td class="c-base">${base}</td>
-    <td class="c-loc"><div class="one">${esc((j.locations || [])[0] || '—')}</div><span class="tag ${lc}">${ll}</span></td>
+    <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div><span class="tag ${lc}">${ll}</span></td>
     <td class="c-date">${dYmd ? esc(dYmd.slice(5)) : '—'}<div class="sub2">${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)}</div></td>
     <td class="c-src">${j.source_class === 'aggregator' ? '<span class="tag a">agg</span>' : '<span class="tag">official</span>'}<div class="sub2">${esc(j.ats)}</div></td>
     <td class="c-act"><button class="more" data-act="open" title="Details">${open ? '−' : '+'}</button></td></tr>${detail}`;
 }
 // group rows by employer, keeping the current sort: groups are ordered by their best-placed role
+const GROUP_BY = {
+  employer: { key: m => m.j.employer, label: k => k },
+  type: { key: typeOf, label: k => EMP_TYPE[k]?.label || k },
+  sector: { key: m => m.sector, label: k => k },
+  vertical: { key: m => m.sector + (m.vertical ? ' · ' + m.vertical : ''), label: k => k },
+  status: { key: m => stOf(m.j.uid) || 'none', label: k => STATUS[k]?.label || 'No status yet' },
+};
 function groupedRows(list) {
+  const gb = GROUP_BY[S.groupBy] || GROUP_BY.employer;
   const groups = new Map();
-  for (const m of list) { const k = m.j.employer; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(m); }
+  for (const m of list) { const k = gb.key(m); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(m); }
+  if (S.groupBy !== 'employer') {
+    S.collapsed ||= new Set();
+    return [...groups].map(([k, ms]) => {
+      const gk = S.groupBy + ':' + k, closed = S.collapsed.has(gk), emps = new Set(ms.map(m => m.j.employer)).size, starts = ms.filter(m => m.tier === 'starts').length;
+      return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(gk)}"><td colspan="8"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(gb.label(k))}</b>
+        <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''} · ${emps} employer${emps > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${S.groupBy === 'type' && EMP_TYPE[k] ? ' · ' + esc(EMP_TYPE[k].hint) : ''}</span></td></tr>` +
+        (closed ? '' : ms.map(jobRow).join(''));
+    }).join('');
+  }
   S.collapsed ||= new Set();
   return [...groups].map(([emp, ms]) => {
     const closed = S.collapsed.has(emp), m0 = ms[0];
@@ -318,6 +432,8 @@ function groupedRows(list) {
   }).join('');
 }
 function renderMatches() {
+  S.matchesDirty = false;
+  if ($('#critSum')) $('#critSum').textContent = critSummary();
   const w = currentWindow();
   const meta = S.jobsMeta || {};
   $('#windowBanner').innerHTML = `<b>POSTING WINDOW</b><span class="d">${w ? `${fmtDay(w.start)} → ${fmtDay(w.end)}` : 'Any date'}</span><span>${esc(LOCAL_TZ)} · ${esc(w ? w.label : '')}</span><span class="spacer"></span>` +
@@ -325,15 +441,23 @@ function renderMatches() {
   let ms = computeMatches();
   const q = $('#q').value.trim().toLowerCase();
   if (q) ms = ms.filter(m => (m.j.title + ' ' + m.j.employer + ' ' + (m.j.excerpt || '') + ' ' + (m.j.kw || []).join(' ')).toLowerCase().includes(q));
-  const all = ms;
-  if (!$('#showHidden').checked) ms = ms.filter(m => !S.hidden.has(m.j.uid));
-  if ($('#onlySaved').checked) ms = ms.filter(m => S.saved.has(m.j.uid));
+  if (S.empOnly) ms = ms.filter(m => m.j.employer === S.empOnly);
+  const tf = $('#typeFilter').value;
+  if (tf) ms = ms.filter(m => typeOf(m) === tf);
+  const all = ms.filter(m => m.inFilters);
+  const stSel = $('#stFilter').value || 'active';
+  const stCount = k => ms.filter(m => stOf(m.j.uid) === k).length;
+  for (const o of $('#stFilter').options) o.textContent = o.dataset.l + (STATUS[o.value] ? ` · ${stCount(o.value)}` : '');
+  ms = stSel === 'active' ? ms.filter(m => m.inFilters && stOf(m.j.uid) !== 'no')
+    : stSel === 'none' ? ms.filter(m => m.inFilters && !stOf(m.j.uid))
+    : stSel === 'all' ? ms
+    : ms.filter(m => stOf(m.j.uid) === stSel);
   if (!$('#showDups').checked) ms = ms.filter(m => !m.j.dup_of);
   const count = t => all.filter(m => m.tier === t).length;
   $('#matchTiles').innerHTML = [
     ['c', all.length, 'matches in window'], ['g', count('starts'), `base starts ≥ ${money(S.crit.minBase)}`], ['a', count('reaches'), `base reaches ≥ ${money(S.crit.minBase)}`],
     ['', count('unknown') + count('ote_only') + count('predicted'), 'no base stated'], ['m', new Set(all.map(m => m.j.employer)).size, 'employers'],
-    ['', all.filter(m => m.loc === 'remote_yes').length, 'remote · home state OK'], ['', S.jobs.filter(j => j.status !== 'closed').length, 'open roles in dataset'],
+    ['', all.filter(m => m.loc === 'remote_yes').length, 'remote · home state OK'], ['', S.jobs.filter(j => j.status !== 'closed').length, 'open roles in dataset'], ['g', Object.values(S.track).filter(x => x.s === 'applied').length, 'applied'],
   ].map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${n}</div><div class="l">${esc(l)}</div></div>`).join('');
   if (!S.jobs.length) {
     $('#jobGroups').innerHTML = OWNER
@@ -345,7 +469,8 @@ function renderMatches() {
   const tierSel = S.tierSel || 'all';
   const tc = t => ms.filter(m => t === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === t).length;
   $('#tierChips').innerHTML = [['all', 'All', ms.length], ['starts', `Base starts ≥ ${money(S.crit.minBase)}`, tc('starts')], ['reaches', `Base reaches ${money(S.crit.minBase)}`, tc('reaches')], ['none', 'No base stated', tc('none')], ['below', 'Below minimum', tc('below')]]
-    .filter(([k, , n]) => k === 'all' || n).map(([k, l, n]) => `<button class="chip ${tierSel === k ? 'on' : ''}" data-tier="${k}">${esc(l)} · ${n}</button>`).join('');
+    .filter(([k, , n]) => k === 'all' || n).map(([k, l, n]) => `<button class="chip ${tierSel === k ? 'on' : ''}" data-tier="${k}">${esc(l)} · ${n}</button>`).join('') +
+    (S.empOnly ? `<button class="chip on m" data-clearemp="1" title="Show all employers again">Employer: ${esc(S.empOnly)} ✕</button>` : '');
   if (tierSel !== 'all') ms = ms.filter(m => tierSel === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === tierSel);
   const { key, dir } = S.sort || { key: 'score', dir: -1 };
   if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
@@ -356,16 +481,26 @@ function renderMatches() {
   const limit = S.showN || 200;
   const th = (k, l, cls = '') => `<th class="${cls} ${key === k ? 'sorted' : ''}" data-sort="${k}">${l}${key === k ? (dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
   $('#jobGroups').innerHTML = ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
-      (S.groupEmp ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
+      (S.groupBy ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
+    : STATUS[stSel] ? `<div class="empty-state"><b>NOTHING MARKED “${esc(STATUS[stSel].label.toUpperCase())}”</b>Use the ○ button at the left of any row, or the buttons in a row's details, to set Applied, To do or Not interested.</div>`
     : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`;
   S.lastMatches = ms;
+  renderFinds();
 }
 function wireMatches() {
-  ['#q', '#onlySaved', '#showHidden', '#showDups'].forEach(s => $(s).addEventListener(s === '#q' ? 'input' : 'change', () => { S.showN = 200; renderMatches(); }));
-  $('#groupEmp').checked = !!store.get('groupEmp', false); S.groupEmp = $('#groupEmp').checked;
-  $('#groupEmp').addEventListener('change', e => { S.groupEmp = e.target.checked; store.set('groupEmp', S.groupEmp); renderMatches(); });
+  $('#stFilter').value = store.get('stFilter', 'active');
+  $('#stFilter').addEventListener('change', e => store.set('stFilter', e.target.value));
+  wireStatusMenu();
+  wireFinds();
+  ['#q', '#stFilter', '#showDups'].forEach(s => $(s).addEventListener(s === '#q' ? 'input' : 'change', () => { S.showN = 200; renderMatches(); }));
+  S.groupBy = store.get('groupBy', store.get('groupEmp', false) ? 'employer' : '');
+  $('#groupBy').value = S.groupBy;
+  $('#groupBy').addEventListener('change', e => { S.groupBy = e.target.value; store.set('groupBy', S.groupBy); renderMatches(); });
+  $('#typeFilter').innerHTML = '<option value="">All company types</option>' + Object.entries(EMP_TYPE).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join('');
+  $('#typeFilter').value = store.get('typeFilter', '');
+  $('#typeFilter').addEventListener('change', e => { store.set('typeFilter', e.target.value); S.showN = 200; renderMatches(); });
   $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; renderMatches(); });
-  $('#tierChips').addEventListener('click', e => { const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
+  $('#tierChips').addEventListener('click', e => { if (e.target.closest('[data-clearemp]')) { S.empOnly = null; S.showN = 200; renderMatches(); return; } const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
   $('#jobGroups').addEventListener('click', e => {
     const h = e.target.closest('th[data-sort]');
     if (h) { const k = h.dataset.sort; const cur = S.sort || { key: 'score', dir: -1 }; S.sort = { key: k, dir: cur.key === k ? -cur.dir : (['role', 'employer', 'source'].includes(k) ? 1 : -1) }; renderMatches(); return; }
@@ -375,18 +510,150 @@ function wireMatches() {
     let b = e.target.closest('[data-act]');
     if (!b) { const row = e.target.closest('tr.mt-row'); if (!row || e.target.closest('a')) return; b = { dataset: { act: 'open' } }; b.closest = () => row; }
     const uid = b.closest('[data-uid]').dataset.uid;
-    if (b.dataset.act === 'save') S.saved.has(uid) ? S.saved.delete(uid) : S.saved.add(uid);
-    if (b.dataset.act === 'hide') S.hidden.has(uid) ? S.hidden.delete(uid) : S.hidden.add(uid);
+    if (b.dataset.act === 'stmenu') { openStatusMenu(b, uid); return; }
+    if (b.dataset.act === 'st') { applyStatus(uid, b.dataset.st); return; }
+    if (b.dataset.act === 'blockemp') {
+      const emp = S.jobs.find(x => x.uid === uid)?.employer; if (!emp) return;
+      S.crit.blockEmp = [...new Set([...(S.crit.blockEmp || []), emp])]; save(); renderMatches(); renderCriteria();
+      undoToast(`Hiding roles from ${emp}`, () => { S.crit.blockEmp = S.crit.blockEmp.filter(n => n !== emp); save(); renderMatches(); renderCriteria(); }); return;
+    }
     if (b.dataset.act === 'open') S.open.has(uid) ? S.open.delete(uid) : S.open.add(uid);
     save(); renderMatches();
   });
   $('#btnCsv').onclick = () => {
     const rows = (S.lastMatches || []).map(m => ({ score: m.score, salary_tier: m.tier, base_min: m.j.salary?.min ?? '', base_max: m.j.salary?.max ?? '', salary_kind: m.j.salary?.kind ?? '', ote_excluded: m.j.salary?.ote ? `${m.j.salary.ote.min}-${m.j.salary.ote.max}` : '',
-      title: m.j.title, employer: m.j.employer, sector: m.sector, vertical: m.vertical, location: (m.j.locations || []).join(' | '), workplace: m.j.workplace, location_fit: m.loc, home_state_eligibility: m.hf.eligibility,
+      title: m.j.title, employer: m.j.employer, employer_type: EMP_TYPE[typeOf(m)]?.label || '', sector: m.sector, vertical: m.vertical, location: (m.j.locations || []).join(' | '), workplace: m.j.workplace, location_fit: m.loc, home_state_eligibility: m.hf.eligibility,
       date: m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : '', date_basis: m.dt.kind, first_observed: m.j.first_observed, last_seen: m.j.last_seen, reposted: !!m.j.reposted, stale: !!m.j.stale,
-      source_class: m.j.source_class, ats: m.j.ats, source_id: m.j.source_id, req_id: m.j.req_id || '', duplicates: m.j.dup_count || 1, url: m.j.url }));
+      source_class: m.j.source_class, ats: m.j.ats, source_id: m.j.source_id, req_id: m.j.req_id || '', duplicates: m.j.dup_count || 1,
+      my_status: STATUS[stOf(m.j.uid)]?.label || '', applied_on: S.track[m.j.uid]?.applied ? C.nyDate(new Date(S.track[m.j.uid].applied), LOCAL_TZ) : '', url: m.j.url }));
     downloadCSV(rows, `cache-flow-matches-${C.nyDate(new Date(), LOCAL_TZ)}.csv`);
   };
+}
+/* Plain-language score breakdown. Weights mirror evaluateJob in core.mjs (max 100). */
+function scoreParts(m) {
+  const p = m.parts || {}, c = S.crit, j = m.j;
+  const fnNames = (m.fnHit || []).map(f => C.FUNCTIONS[f]?.label || f);
+  const hits = [...(m.skillHits || []), ...(m.customHits || [])];
+  const LOCTXT = { metro: 'in your commute area', remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your home state is listed as eligible' : 'remote, and your home state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
+  const BASETXT = { starts: `base pay starts at or above your ${money(c.minBase)} minimum`, reaches: `base pay range reaches your ${money(c.minBase)} minimum but starts below it`, unknown: 'no base pay stated', ote_only: 'only on-target earnings (base + commission) stated, which is not counted as base', predicted: 'only a predicted range from an aggregator, not the employer', below: `base pay tops out below your ${money(c.minBase)} minimum` };
+  return [
+    ['Job category', p.fn, 30, fnNames.length ? 'matches ' + fnNames.join(', ') : 'flagged for review; not in your selected categories'],
+    ['Skills & keywords', p.skills, 25, hits.length ? `${hits.length} found in the posting (4 points each): ${hits.slice(0, 8).join(', ')}${hits.length > 8 ? '…' : ''}` : 'none of your résumé skills or extra keywords appear in the title or excerpt'],
+    ['Base pay', p.base, 20, BASETXT[m.tier] || m.tier],
+    ['Location', p.loc, 15, LOCTXT[m.loc] || m.loc],
+    ['Level', p.level, 10, j.seniority > (c.sen || 1) ? 'above your minimum seniority' : 'at your minimum seniority'],
+  ];
+}
+const scoreTitle = m => `Match score ${m.score}/100: ` + scoreParts(m).map(([l, v, mx]) => `${l} ${v}/${mx}`).join(' · ');
+const STALE_HELP = "Not refreshed on the latest update: the employer's job site refused or rate-limited part of the last check (or this search wasn't in this run's rotation), so this role is carried over from an earlier check. It is probably still open, but confirm on the posting.";
+const shortDay = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+function applyStatus(uid, st) {
+  const before = S.track[uid] ? { ...S.track[uid] } : null;
+  setStatus(uid, st);
+  const now = stOf(uid);
+  renderMatches();
+  const msg = now ? `Marked ${STATUS[now].label.toLowerCase()}` : 'Status cleared';
+  undoToast(msg + (now === 'no' && ($('#stFilter').value || 'active') === 'active' ? ' · hidden from this list' : ''), () => { if (before) S.track[uid] = before; else delete S.track[uid]; save(); renderMatches(); });
+}
+function undoToast(msg, undo) {
+  const t = $('#toast'); t.innerHTML = `${esc(msg)} <button class="linkbtn" id="toastUndo">Undo</button>`; t.classList.add('on');
+  $('#toastUndo').onclick = () => { undo(); t.classList.remove('on'); };
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 5000);
+}
+function openStatusMenu(btn, uid) {
+  const menu = $('#stMenu'), st = stOf(uid);
+  menu.innerHTML = Object.entries(STATUS).map(([k, v]) => `<button role="menuitemradio" aria-checked="${st === k}" class="${v.cls} ${st === k ? 'on' : ''}" data-st="${k}"><i>${v.icon}</i>${esc(v.label)}</button>`).join('') +
+    (st ? `<button role="menuitem" data-st="" class="clr"><i>○</i>Clear status</button>` : '');
+  menu.dataset.uid = uid;
+  const r = btn.getBoundingClientRect();
+  menu.style.top = (r.bottom + scrollY + 6) + 'px'; menu.style.left = Math.min(r.left + scrollX, innerWidth - 220) + 'px';
+  menu.hidden = false; menu.querySelector('button')?.focus();
+}
+function wireStatusMenu() {
+  const menu = $('#stMenu');
+  const close = () => { menu.hidden = true; };
+  menu.addEventListener('click', e => { const b = e.target.closest('button[data-st]'); if (!b) return; const uid = menu.dataset.uid; close(); applyStatus(uid, b.dataset.st || stOf(uid)); });
+  document.addEventListener('click', e => { if (!menu.hidden && !e.target.closest('#stMenu') && !e.target.closest('[data-act="stmenu"]')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  addEventListener('scroll', close, { passive: true });
+  // backup / restore so the tracker can move between browsers or devices
+  $('#btnTrackOut').onclick = () => {
+    const byUid = new Map(S.jobs.map(j => [j.uid, j]));
+    const roles = Object.entries(S.track).map(([uid, v]) => { const j = byUid.get(uid); return { uid, ...v, title: j?.title, employer: j?.employer, url: j?.url }; });
+    if (!roles.length) return toast('No statuses to back up yet');
+    const blob = new Blob([JSON.stringify({ app: 'cache-flow', kind: 'tracker', exported: new Date().toISOString(), roles }, null, 1)], { type: 'application/json' });
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `cache-flow-tracker-${C.nyDate(new Date(), LOCAL_TZ)}.json` }); a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  };
+  $('#btnTrackIn').onclick = () => $('#trackFile').click();
+  $('#trackFile').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text()); if (d.kind !== 'tracker' || !Array.isArray(d.roles)) throw new Error('not a tracker file');
+      let n = 0;
+      for (const r of d.roles) {
+        if (!r.uid || !STATUS[r.s]) continue;
+        const cur = S.track[r.uid];
+        if (!cur || String(r.t) > String(cur.t)) { S.track[r.uid] = { s: r.s, t: r.t || new Date().toISOString(), ...(r.applied ? { applied: r.applied } : {}) }; n++; }
+      }
+      save(); renderMatches(); toast(`Restored ${n} status${n === 1 ? '' : 'es'}`);
+    } catch (err) { toast('Could not read that file: ' + err.message); }
+  };
+}
+/* Pay-first discovery: high published base at companies the user may not know, grouped by employer. */
+function renderFinds() {
+  if (!$('#findsList')) return;
+  const min = +($('#findsMin').value || 225000), tsel = $('#findsTypes').value || 'growth';
+  const focus = $('#findsFocus').value || 'mine', maxSize = +($('#findsSize').value || 0), keepUnknown = $('#findsUnknown').checked;
+  $('#findsUnknownWrap').style.display = maxSize ? '' : 'none';
+  const NONBROAD = FN_KEYS.filter(k => !C.FUNCTIONS[k].broad);
+  const FOCUS = {
+    mine: { functions: S.crit.functions, sectors: S.crit.sectors, verticals: S.crit.verticals },
+    secgtm: { functions: ['pmm', 'marketing', 'demand', 'sales', 'se', 'partner', 'cs', 'enable', 'gtm', 'strategy', 'cos', 'ci', 'threat', 'secops', 'seceng', 'grc', 'product'], sectors: ['Cybersecurity'], verticals: [] },
+    product: { functions: ['product', 'tpm', 'pmm'], sectors: [], verticals: [] },
+    aicloud: { functions: S.crit.functions, sectors: ['AI', 'Cloud, data & dev tools', 'Hyperscaler & big tech'], verticals: [] },
+    all: { functions: NONBROAD, sectors: [], verticals: [] },
+  }[focus];
+  const types = tsel === 'all' ? null : new Set(tsel.split(','));
+  const crit = { ...S.crit, ...FOCUS, fnKnown: FN_KEYS, salMode: 'starts', minBase: min, types: { big: true, security: true, growth: true, aggregator: false } };
+  const ctx = { win: currentWindow(), excl: reFromList(csvList(S.crit.exclude)) };
+  const blocked = new Set(S.crit.blockEmp || []);
+  const byEmp = new Map();
+  for (const j of S.jobs) {
+    if (blocked.has(j.employer) || stOf(j.uid) === 'no' || j.dup_of) continue;
+    const e = empOf(j), ty = C.companyType(j, e);
+    if (types && !types.has(ty)) continue;
+    if (maxSize && (e?.size == null ? !keepUnknown : e.size > maxSize)) continue;
+    const m = C.evaluateJob(j, { crit, emp: e, skillsOn: S.profile.skillsOn, custom: S.profile.custom, win: ctx.win, excl: ctx.excl, tz: LOCAL_TZ });
+    if (!m || !['base', 'base_likely'].includes(m.j.salary?.kind)) continue;
+    const g = byEmp.get(j.employer) || byEmp.set(j.employer, { emp: j.employer, e, ty, roles: [] }).get(j.employer);
+    g.roles.push(m);
+  }
+  const groups = [...byEmp.values()].map(g => { g.roles.sort((a, b) => (b.j.salary.min - a.j.salary.min) || b.score - a.score); g.top = g.roles[0]; return g; })
+    .sort((a, b) => b.top.j.salary.min - a.top.j.salary.min || b.roles.length - a.roles.length);
+  const nRoles = groups.reduce((n, g) => n + g.roles.length, 0);
+  $('#findsSum').textContent = groups.length ? `${groups.length} compan${groups.length === 1 ? 'y' : 'ies'} · ${nRoles} role${nRoles === 1 ? '' : 's'} with base starting at ${money(min)}+` : `none at ${money(min)}+ in this window`;
+  $('#findsList').innerHTML = groups.length ? groups.slice(0, 30).map(g => {
+    const t = g.top, s = t.j.salary;
+    return `<div class="find"><div class="fh"><b>${esc(g.emp)}</b><span class="tag ${g.ty === 'growth' ? 'm' : ''}">${esc(EMP_TYPE[g.ty]?.label || g.ty)}</span></div>
+      <div class="sub2">${esc(t.sector)}${t.vertical ? ' · ' + esc(t.vertical) : ''}${g.e?.size ? ` · ~${g.e.size} people` : ''}${g.e?.discovered ? ' · new from YC directory' : ''}</div>
+      <a class="ttl" href="${esc(t.j.url)}" target="_blank" rel="noopener">${esc(t.j.title)}</a>
+      <div class="fpay"><span class="sal starts">${money(s.min)}–${money(s.max)}</span> base${g.roles.length > 1 ? ` · ${g.roles.length} roles at ${money(min)}+` : ''}</div>
+      <div class="sub2">${esc(C.shownLocation(t.j, t.hf, t.loc).text)}${(t.j.locations || []).length > 1 ? ` +${new Set(t.j.locations).size - 1}` : ''}</div>
+      <button class="linkbtn" data-findemp="${esc(g.emp)}">Show in list</button></div>`;
+  }).join('') : `<div class="sub2">No published base ranges starting at ${money(min)}+ for your categories and locations in this posting window. Try a lower level, a wider window, or all company types.</div>`;
+}
+function wireFinds() {
+  if (!$('#findsBox')) return;
+  $('#findsMin').value = String(store.get('findsMin', 225000)); $('#findsTypes').value = store.get('findsTypes', 'growth');
+  $('#findsFocus').value = store.get('findsFocus', 'mine'); $('#findsSize').value = String(store.get('findsSize', '')); $('#findsUnknown').checked = store.get('findsUnknown', true);
+  for (const [id, k] of [['#findsFocus', 'findsFocus'], ['#findsSize', 'findsSize'], ['#findsUnknown', 'findsUnknown']])
+    $(id).onchange = e => { store.set(k, e.target.type === 'checkbox' ? e.target.checked : e.target.value); renderFinds(); };
+  $('#findsBox').open = !!store.get('findsOpen', false);
+  $('#findsBox').addEventListener('toggle', () => store.set('findsOpen', $('#findsBox').open));
+  $('#findsMin').onchange = e => { store.set('findsMin', +e.target.value); renderFinds(); };
+  $('#findsTypes').onchange = e => { store.set('findsTypes', e.target.value); renderFinds(); };
+  $('#findsList').addEventListener('click', e => { const b = e.target.closest('[data-findemp]'); if (!b) return;
+    S.empOnly = b.dataset.findemp; $('#typeFilter').value = ''; S.showN = 200; renderMatches(); $('#jobGroups').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 }
 function downloadCSV(rows, name) {
   if (!rows.length) return toast('Nothing to export');
@@ -398,8 +665,8 @@ function downloadCSV(rows, name) {
 
 /* ============================================================ sources */
 const VERIFIED = new Set(['verified_feed', 'verified_pattern', 'documented_public_json']);
-const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots'].includes(r) ? 'warn' : 'bad';
-const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
+const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots', 'no_links_found'].includes(r) ? 'warn' : 'bad';
+const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", no_links_found: 'Careers page read, but no job links matched. The list may be built by JavaScript; not evidence of zero jobs', partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
   http_429: 'Rate limited after retries', timeout: 'Timed out after retries', network_error: 'Network failure', parse_error: 'Response not in the expected shape', link_only: 'No public feed; open the careers link',
   not_fetchable: 'Needs ATS discovery (see verification note)', blocked_or_network: 'Browser blocked the request (CORS) or network failed; the collector can still read it', experimental_failed: 'Experimental adapter did not get data', never_run: 'Not collected yet', adapter_error: 'Adapter crashed; see message' };
 function sourceRows() {
@@ -409,7 +676,7 @@ function sourceRows() {
     const live = S.live.get(s.id), run = live || st.get(s.id);
     rows.push({ e, s, run, result: run?.result || (s.ats === 'link_only' ? 'link_only' : s.ats === 'unresolved' ? 'not_fetchable' : 'never_run'), live: !!live });
   }
-  for (const s of S.status.sources.filter(x => x.id.startsWith('agg:'))) rows.push({ e: { employer: '(aggregator) ' + s.ats, sector: 'Aggregator', vertical: '', tier: 'aggregator', sources: [] }, s: { id: s.id, ats: s.ats, verification: { status: 'aggregator' } }, run: s, result: s.result });
+  for (const s of S.status.sources.filter(x => x.id.startsWith('agg:'))) rows.push({ e: { employer: '(aggregator) ' + s.ats, sector: 'Aggregator', vertical: '', tier: 'aggregator', type: 'aggregator', sources: [] }, s: { id: s.id, ats: s.ats, verification: { status: 'aggregator' } }, run: s, result: s.result });
   return rows;
 }
 function coverage(rows) {
@@ -429,8 +696,9 @@ function renderSources() {
   fill('#sAts', 'All ATS', [...new Set(rows.map(r => r.s.ats))].sort());
   fill('#sStatus', 'All results', [...new Set(rows.map(r => r.result))].sort());
   fill('#sSector', 'All sectors', [...new Set(rows.map(r => r.e.sector))].sort());
-  const q = $('#sq').value.toLowerCase(), fa = $('#sAts').value, fs = $('#sStatus').value, fsec = $('#sSector').value;
-  const vis = rows.filter(r => (!q || r.e.employer.toLowerCase().includes(q)) && (!fa || r.s.ats === fa) && (!fs || r.result === fs) && (!fsec || r.e.sector === fsec));
+  if (!$('#sType').options.length) $('#sType').innerHTML = '<option value="">All company types</option>' + Object.entries(EMP_TYPE).map(([k, v]) => `<option value="${k}">${esc(v.label)}</option>`).join('');
+  const q = $('#sq').value.toLowerCase(), fa = $('#sAts').value, fs = $('#sStatus').value, fsec = $('#sSector').value, fty = $('#sType').value;
+  const vis = rows.filter(r => (!q || r.e.employer.toLowerCase().includes(q)) && (!fa || r.s.ats === fa) && (!fs || r.result === fs) && (!fsec || r.e.sector === fsec) && (!fty || C.companyType({}, r.e) === fty));
   // compact visibility chips: green = the source exposes it, grey = it doesn't; hover for the detail
   const FV = [['posted_date', 'Date'], ['salary', 'Pay'], ['location', 'Loc'], ['remote', 'Remote'], ['req_id', 'Req']];
   const fv = f => !f ? '—' : FV.map(([k, l]) => { const v = String(f[k] ?? 'n/a'); const has = !/^(no|n\/a|not |text only)/i.test(v); return `<span class="tag ${has ? 'g' : 'f'}" title="${esc(l + ': ' + v)}">${l}</span>`; }).join('');
@@ -439,7 +707,7 @@ function renderSources() {
       const s = r.s, e = r.e, run = r.run;
       const links = [e.careers_url && `<a href="${esc(e.careers_url)}" target="_blank" rel="noopener">careers${e.careers_url_verified ? '' : '*'}</a>`, s.board_url && `<a href="${esc(s.board_url)}" target="_blank" rel="noopener">board</a>`,
         s.feed_url && `<a href="${esc(s.feed_url)}" target="_blank" rel="noopener">feed</a>`, e.linkedin_jobs_url && `<a href="${esc(e.linkedin_jobs_url)}" target="_blank" rel="noopener">LinkedIn</a>`].filter(Boolean).join(' · ');
-      return `<tr><td class="emp">${esc(e.employer)}${(e.notes || []).length ? ` <span title="${esc(e.notes.join(' '))}" style="color:var(--acid);cursor:help">ⓘ</span>` : ''}<div class="sub">${esc(e.tier)}</div></td><td>${esc(e.sector)}<br><span style="color:var(--faint)">${esc(e.vertical || '')}</span></td><td>${esc(s.ats)}${s.slug ? `<br><span style="color:var(--faint)">${esc(s.slug)}</span>` : ''}</td>
+      return `<tr><td class="emp">${esc(e.employer)}${(e.notes || []).length ? ` <span title="${esc(e.notes.join(' '))}" style="color:var(--acid);cursor:help">ⓘ</span>` : ''}<div class="sub" title="${esc(EMP_TYPE[C.companyType({}, e)]?.hint || '')}">${esc(EMP_TYPE[C.companyType({}, e)]?.label || '')}${e.priority ? ' · priority' : ''}${e.discovered ? ' · found via ' + (e.seed_source === 'yc' ? 'YC directory' : esc(e.seed_source || 'seed list')) : ''}${e.size ? ' · ~' + e.size + ' people' : ''}</div></td><td>${esc(e.sector)}<br><span style="color:var(--faint)">${esc(e.vertical || '')}</span></td><td>${esc(s.ats)}${s.slug ? `<br><span style="color:var(--faint)">${esc(s.slug)}</span>` : ''}</td>
         <td title="${esc(s.verification?.method || '')}" style="cursor:help">${esc(s.verification?.status || '—')}</td>
         <td><span class="st ${resultClass(r.result)}" title="${esc(RESULT_HELP[r.result] || r.result)}">${esc(r.result)}</span>${run?.http_status ? ` <span style="color:var(--faint)">${run.http_status}</span>` : ''}${r.live ? ' <span class="tag m">live</span>' : ''}${run?.message ? `<div class="msg" title="${esc(run.message)}">${esc(String(run.message))}</div>` : ''}</td>
         <td>${run ? `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}` : '—'}</td><td>${fv(run?.fields)}</td>
@@ -462,13 +730,13 @@ function sortTable(i) {
   rows.sort((a, b) => a.cells[i].textContent.localeCompare(b.cells[i].textContent, undefined, { numeric: true }) * dir).forEach(r => tb.appendChild(r));
 }
 function wireSources() {
-  ['#sq', '#sAts', '#sStatus', '#sSector'].forEach(s => $(s).addEventListener(s === '#sq' ? 'input' : 'change', renderSources));
+  ['#sq', '#sAts', '#sStatus', '#sSector', '#sType'].forEach(s => $(s).addEventListener(s === '#sq' ? 'input' : 'change', renderSources));
   $('#btnLiveAll').onclick = () => {
     const ids = sourceRows().filter(r => C.BROWSER_ATS.has(r.s.ats)).map(r => r.s.id);
     if (!confirm(`Pull the latest listings from ${ids.length} Greenhouse, Lever and Ashby boards into this tab? Requests are paced (one at a time per host), so this takes a few minutes.`)) return;
     liveCheck(ids);
   };
-  $('#btnDirCsv').onclick = () => downloadCSV(sourceRows().map(r => ({ employer: r.e.employer, sector: r.e.sector, vertical: r.e.vertical, tier: r.e.tier, official_careers: r.e.careers_url || '', careers_url_verified: !!r.e.careers_url_verified,
+  $('#btnDirCsv').onclick = () => downloadCSV(sourceRows().map(r => ({ employer: r.e.employer, sector: r.e.sector, vertical: r.e.vertical, company_type: EMP_TYPE[C.companyType({}, r.e)]?.label || '', priority: !!r.e.priority, official_careers: r.e.careers_url || '', careers_url_verified: !!r.e.careers_url_verified,
     ats: r.s.ats, identifier: r.s.slug || r.s.tenant || r.s.company || '', board_url: r.s.board_url || '', feed_url: r.s.feed_url || '', linkedin_jobs: r.e.linkedin_jobs_url || '', verification: r.s.verification?.status || '', verification_method: r.s.verification?.method || '',
     last_result: r.result, http_status: r.run?.http_status || '', jobs_stored: r.run?.jobs_stored ?? '', fields: r.run?.fields ? JSON.stringify(r.run.fields) : '', last_checked: r.run?.checked_at || '', last_success: r.run?.last_success_at || '', notes: (r.e.notes || []).join(' ') })), `cache-flow-source-directory-${C.nyDate(new Date(), LOCAL_TZ)}.csv`);
 }
@@ -522,7 +790,7 @@ async function liveCheck(ids) {
 const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', marketing: 'marketing manager', demand: 'demand generation', sales: 'account executive', se: 'solutions engineer', partner: 'partnerships alliances', cs: 'customer success manager', enable: 'sales enablement', gtm: 'go-to-market strategy', strategy: 'strategy business operations', cos: 'chief of staff', ci: 'competitive intelligence', threat: 'threat intelligence researcher', secops: 'security operations incident response', seceng: 'security engineer', grc: 'governance risk compliance', ai: 'machine learning AI', eng: 'software engineer', data: 'data scientist analytics', design: 'product designer', support: 'professional services consultant', finance: 'finance', people: 'recruiter', legal: 'counsel' };
 function renderDiscover() {
   const c = S.crit, home = S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
-  const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || c.verticals.length ? ' security' : '';
+  const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || (c.verticals.length && c.verticals.every(v => (c.vertSectors?.[v] || 'Cybersecurity') === 'Cybersecurity')) ? ' security' : '';
   const enc = encodeURIComponent;
   const rows = c.functions.map(f => {
     const q = FN_QUERY[f] + secWord;

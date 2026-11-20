@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261119s">
+<link rel="stylesheet" href="assets/styles.css?v=20261119y">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -126,14 +126,30 @@
 
         <div class="panel">
           <h3>Search criteria <small>auto-saved in this browser</small></h3>
+          <p class="hint">Job categories, base pay, posting window, location, company types and industries now sit right next to your results, and the list updates as you change them.</p>
+          <div class="row end" style="margin-top:14px"><button class="btn pri" id="btnGo">Open matches &amp; criteria →</button></div>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MATCHES ===================== -->
+  <section class="view" id="view-matches">
+    <div class="sec-head"><div class="sec-idx"><i>02</i>Matches</div><h2>Matches</h2><span class="rule"></span>
+      <div class="sub">Scored against your profile. Base pay that starts at your minimum is listed separately from base that only reaches it. Click any column to sort, or a row for details.</div></div>
+    <div class="mlayout" id="mLayout">
+      <aside class="critside">
+        <details id="critBox" class="panel critbox">
+          <summary><span class="ct">Search criteria</span><span class="csum" id="critSum"></span><span class="ctog" aria-hidden="true"></span></summary>
+          <div class="critbody">
           <div class="grid g2">
             <div>
-              <label class="f">Job categories <small>pre-selected from your résumé · ◆ = suggested</small></label>
-              <div id="cFunctions"></div>
-            </div>
-            <div>
               <label class="f" for="cMinBase">Minimum annual BASE salary (USD)</label>
-              <input type="number" id="cMinBase" step="5000" min="0">
+              <select id="cMinBase" aria-label="Minimum annual base salary"></select>
               <label class="f" for="cSalMode">Salary rule</label>
               <select id="cSalMode">
                 <option value="starts">Range STARTS at or above minimum</option>
@@ -150,8 +166,6 @@
               <label class="check" style="margin-top:8px"><input type="checkbox" id="cFirstSeen"> When no posting date exists, use first-observed date (flagged)</label>
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
-          </div>
-          <div class="grid g2">
             <div>
               <label class="f">Location eligibility</label>
               <div class="checks">
@@ -163,6 +177,14 @@
               <label class="f" for="cMetro">Commutable metro (regex alternatives)</label>
               <div class="row" style="flex-wrap:nowrap"><input type="text" id="cMetro"><select id="cMetroPreset" style="max-width:170px"></select></div>
             </div>
+          </div>
+          <div class="crit-cats">
+            <div class="cats">
+              <label class="f">Job categories <small>pre-selected from your résumé · ◆ = suggested</small></label>
+              <div id="cFunctions"></div>
+            </div>
+          </div>
+          <div class="grid g2">
             <div>
               <label class="f" for="cSen">Minimum seniority</label>
               <select id="cSen"></select>
@@ -170,44 +192,102 @@
               <input type="text" id="cInclude">
               <label class="f" for="cExclude">Exclude title keywords</label>
               <input type="text" id="cExclude">
-              <label class="f">Employer tiers &amp; source class</label>
+              <label class="f">Company types (tap to include or leave out)</label>
               <div class="chips" id="cTiers"></div>
+              <label class="f">Hidden employers</label>
+              <div class="chips" id="cBlocked"></div>
+            </div>
+            <div>
+              <label class="f">Industries &amp; subcategories</label>
+              <div id="cSectors" class="indpick"></div>
             </div>
           </div>
-          <label class="f">Industries (none selected = all)</label>
-          <div class="chips" id="cSectors"></div>
-          <label class="f">Security verticals (none selected = all)</label>
-          <div class="chips" id="cVerticals"></div>
-          <div class="row end" style="margin-top:18px"><button class="btn sec sm" id="btnReset">Reset criteria</button><button class="btn pri" id="btnGo">Run search →</button></div>
-        </div>
-
-
-
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== MATCHES ===================== -->
-  <section class="view" id="view-matches">
-    <div class="sec-head"><div class="sec-idx"><i>02</i>Matches</div><h2>Matches</h2><span class="rule"></span>
-      <div class="sub">Scored against your profile. Base pay that starts at your minimum is listed separately from base that only reaches it. Click any column to sort, or a row for details.</div></div>
+          <div class="row end crit-actions"><button class="btn sec sm" id="btnReset">Reset criteria</button><button class="btn pri sm" id="btnCritDone">Show results</button></div>
+          </div>
+        </details>
+      </aside>
+      <div class="mresults" id="mResults">
     <div class="window" id="windowBanner"></div>
     <div class="tiles" id="matchTiles"></div>
     <div class="panel" style="padding:14px 18px;margin-bottom:6px">
       <div class="row">
-        <input type="search" id="q" placeholder="filter titles, employers, keywords…" style="max-width:360px">
+        <input type="search" id="q" placeholder="Search roles…" aria-label="Search titles, employers and keywords" style="max-width:360px">
         <select id="msort" class="mobile-only" aria-label="Sort by"><option value="score">Sort: match score</option><option value="base">Sort: base pay</option><option value="posted">Sort: newest</option><option value="employer">Sort: employer</option><option value="loc">Sort: location fit</option></select>
-        <label class="check"><input type="checkbox" id="groupEmp"> Group by employer</label>
-        <label class="check"><input type="checkbox" id="onlySaved"> Saved only</label>
-        <label class="check"><input type="checkbox" id="showHidden"> Show hidden</label>
+        <select id="typeFilter" aria-label="Filter by company type"></select>
+        <select id="groupBy" aria-label="Group roles">
+          <option value="">No grouping</option>
+          <option value="employer">Group by employer</option>
+          <option value="type">Group by company type</option>
+          <option value="sector">Group by industry</option>
+          <option value="vertical">Group by industry subcategory</option>
+          <option value="status">Group by my status</option>
+        </select>
+        <select id="stFilter" aria-label="Show roles by status">
+          <option value="active" data-l="Hide not interested">Hide not interested</option>
+          <option value="none" data-l="No status yet">No status yet</option>
+          <option value="todo" data-l="To do">To do</option>
+          <option value="applied" data-l="Applied">Applied</option>
+          <option value="no" data-l="Not interested">Not interested</option>
+          <option value="all" data-l="Everything, incl. outside filters">Everything, incl. outside filters</option>
+        </select>
         <label class="check"><input type="checkbox" id="showDups"> Show syndicated duplicates</label>
         <span class="spacer"></span>
+        <button class="btn sec sm" id="btnTrackOut" title="Download your statuses as a file to move them to another browser or device">Back up statuses</button>
+        <button class="btn sec sm" id="btnTrackIn" title="Load a statuses file you backed up">Restore</button>
+        <input type="file" id="trackFile" accept="application/json,.json" hidden>
         <button class="btn sec sm" id="btnCsv">Export CSV</button>
       </div>
     </div>
+    <details class="panel finds" id="findsBox">
+      <summary><span class="ft">Discover employers you may not know</span><span class="fsum" id="findsSum"></span><span class="ctog" aria-hidden="true"></span></summary>
+      <div class="findsbody">
+        <p class="hint">Companies whose published base pay starts at the level below, for roles in your job categories, locations and posting window. Ranked by base pay, so smaller companies paying senior salaries surface even if you'd never have searched for them. Only published base ranges count; roles with no stated pay aren't assumed to be low, just left out here.</p>
+        <div class="row">
+          <label class="f" for="findsMin" style="margin:0">Base starts at</label>
+          <select id="findsMin"><option value="200000">$200K+</option><option value="225000">$225K+</option><option value="250000">$250K+</option><option value="275000">$275K+</option><option value="300000">$300K+</option></select>
+          <select id="findsFocus" aria-label="Career focus for discovery">
+            <option value="mine">Focus: my job categories</option>
+            <option value="secgtm">Focus: cybersecurity &amp; security GTM</option>
+            <option value="product">Focus: product leadership</option>
+            <option value="aicloud">Focus: AI, cloud &amp; infrastructure companies</option>
+            <option value="all">Focus: all high-paying roles</option>
+          </select>
+          <select id="findsSize" aria-label="Company size for discovery">
+            <option value="">Any company size</option>
+            <option value="50">Up to 50 people</option>
+            <option value="200">Up to 200 people</option>
+            <option value="500">Up to 500 people</option>
+            <option value="1000">Up to 1,000 people</option>
+          </select>
+          <label class="check" id="findsUnknownWrap"><input type="checkbox" id="findsUnknown" checked> include companies with unknown size</label>
+          <select id="findsTypes" aria-label="Company types for discovery">
+            <option value="growth">Startups &amp; growth-stage only</option>
+            <option value="growth,security">+ established security companies</option>
+            <option value="all">All company types</option>
+          </select>
+        </div>
+        <div id="findsList" class="findslist"></div>
+      </div>
+    </details>
+    <details class="howscore">
+      <summary>How the match score works</summary>
+      <p>Each role gets a score out of 100 from five parts. Roles only appear if they already pass your filters (category, posting window, base pay rule, location, level), so the score ranks roles that fit; it doesn't decide which ones show up.</p>
+      <ul>
+        <li><b>Job category · up to 30.</b> 30 when the role is in one of your selected job categories.</li>
+        <li><b>Skills &amp; keywords · up to 25.</b> 4 points for each skill turned on in your profile, or extra keyword from your criteria, that appears in the job title or excerpt.</li>
+        <li><b>Base pay · up to 20.</b> 20 if base starts at or above your minimum, 12 if the range only reaches it, 6 if no base is stated, 3 if only on-target earnings or an aggregator's estimate is given. Commission and bonus never count as base.</li>
+        <li><b>Location · up to 15.</b> 15 in your commute area or remote with your home state eligible (12 if eligibility is only likely), 8 remote with no state list, 4 elsewhere.</li>
+        <li><b>Level · up to 10.</b> 10 above your minimum seniority, 7 at it.</li>
+      </ul>
+      <p>Open any row with <b>+</b> to see its breakdown. The score is computed in your browser from your profile and the posting text; nothing is sent anywhere.</p>
+    </details>
     <div class="chips" id="tierChips" style="margin:16px 0 12px"></div>
     <div id="jobGroups"></div>
+    <div id="stMenu" class="stmenu" role="menu" aria-label="Set status" hidden></div>
+    <p class="sub2 trk-note">Statuses (To do, Applied, Not interested) are saved in this browser only. Nothing is uploaded. Use <b>Back up statuses</b> to move them to another device.</p>
+    <p class="sub2 trk-note"><b>Tags:</b> <span class="tag r">stale</span> not refreshed on the latest update because the employer's site refused or rate-limited part of the check, so the role is carried over from an earlier check and is probably still open (confirm on the posting) · <span class="tag a">repost?</span> looks like an earlier posting put back up · <span class="tag r">closed</span> no longer on the employer's board · <span class="tag f">outside filters</span> a role you marked that no longer matches your criteria.</p>
+      </div>
+    </div>
   </section>
 
   <!-- ===================== SOURCES ===================== -->
@@ -221,6 +301,7 @@
         <select id="sAts" style="max-width:170px"></select>
         <select id="sStatus" style="max-width:200px"></select>
         <select id="sSector" style="max-width:220px"></select>
+        <select id="sType" style="max-width:240px" aria-label="Filter by company type"></select>
         <span class="spacer"></span>
         <button class="btn mag sm" id="btnLiveAll">Refresh boards now</button>
         <button class="btn sec sm" id="btnDirCsv">Export directory CSV</button>
@@ -274,7 +355,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261119s" defer></script>
-<script type="module" src="assets/app.js?v=20261119s"></script>
+<script src="assets/fx.js?v=20261119y" defer></script>
+<script type="module" src="assets/app.js?v=20261119y"></script>
 </body>
 </html>

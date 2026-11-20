@@ -319,4 +319,121 @@ try {
   t('company page: heading + text when no JSON-LD (title, location, base pay)', () => { const j = J['html:exaforce:founding-product-marketing-manager']; assert.equal(j.title, 'Founding Product Marketing Manager'); assert.match(j.locations[0], /New York/); assert.equal(j.salary.min, 190000); assert.equal(j.posted_kind, 'unknown'); });
   t('company page: JSON-LD used when present', () => { const j = J['html:exaforce:security-researcher']; assert.equal(j.title, 'Senior Security Researcher'); assert.ok(j.functions.includes('threat')); });
 }
+
+{ // tracker: roles the user marked keep showing after they leave the filters or close
+  const C2 = await import('../../assets/shared/core.mjs');
+  const crit = { functions: ['pm'], minBase: 150000, salMode: 'starts', sen: 1, lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, tiers: {} };
+  const j = { uid: 'x:1', title: 'Barista', employer: 'Cafe', functions: [], seniority: 1, status: 'closed', salary: null, locations: ['Austin, TX'], remote_us: false, posted_at: null };
+  t('tracker: untracked closed role is filtered out', () => assert.equal(C2.evaluateJob(j, { crit }), null));
+  t('tracker: force keeps a closed, off-filter role visible', () => { const m = C2.evaluateJob(j, { crit, force: true }); assert.ok(m); assert.equal(typeof m.score, 'number'); assert.ok(!Number.isNaN(m.score)); });
+}
+
+{ // review follow-ups: JazzHR/Dayforce link discovery
+  const { atsLinks: AL } = await import('../lib/adapters-server.mjs');
+  const L = AL('<a href="https://bluevoyant.applytojob.com/apply/">Jobs</a><a href="https://jobs.dayforcehcm.com/en-US/esentire/CANDIDATEPORTAL/jobs/5648">x</a>');
+  t('probe: JazzHR and Dayforce careers links recognized', () => { assert.ok(L.some(x => x.ats === 'jazzhr' && x.slug === 'bluevoyant')); assert.ok(L.some(x => x.ats === 'dayforce' && x.slug === 'esentire/CANDIDATEPORTAL')); });
+}
+
+{ // company types replace heavy/named/core
+  const C3 = await import('../../assets/shared/core.mjs');
+  t('company type: explicit type wins; old tiers map; aggregator by source', () => {
+    assert.equal(C3.companyType({}, { type: 'security', tier: 'core' }), 'security');
+    assert.equal(C3.companyType({}, { tier: 'heavy' }), 'big');
+    assert.equal(C3.companyType({ source_class: 'aggregator' }, { type: 'big' }), 'aggregator');
+    assert.deepEqual(C3.companyTypeFilter({ tiers: { heavy: false, core: true } }), { big: false });
+  });
+}
+
+{ // Microsoft: full list in chunks, resume, refusal keeps roles, US decided locally, Microsoft AI duplicates grouped
+  const dir = await mkdtemp(join(tmpdir(), 'cf-ms-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Microsoft', type: 'big', sources: [
+    { id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: [], full_scan: true, scan_pages_per_run: 2, close_after_hours: 168 },
+    { id: 'gh:microsoftcorporation', ats: 'greenhouse', slug: 'microsoftcorporation' }] }] }));
+  const loc = i => i <= 20 ? 'Redmond, WA, US' : i <= 23 ? 'London, United Kingdom' : i === 24 ? 'USA - Remote' : 'Multiple Locations';
+  const pos = i => ({ id: 1000 + i, name: i === 1 ? 'Principal Product Manager' : `Software Engineer ${i}`, displayJobId: `R${i}`, locations: [loc(i)], workLocationOption: 'onsite', postedTs: 1763500000 });
+  let refuseAt = null; const calls = [];
+  const f = async url => { calls.push(url);
+    if (url.includes('/api/pcsx/search')) {
+      const start = +new URL(url).searchParams.get('start');
+      if (refuseAt !== null && start === refuseAt) return new Response('slow down', { status: 429, headers: { 'retry-after': '0' } });
+      const ids = Array.from({ length: 25 }, (_, k) => k + 1).slice(start, start + 10);
+      return new Response(JSON.stringify({ data: { count: 25, positions: ids.map(pos) } }), { status: 200 });
+    }
+    if (url.includes('position_details')) return new Response(JSON.stringify({ data: { jobDescription: '<p>Base pay range USD $150,000 - $250,000 per year.</p>', efcustomTextWorkSite: '100% remote' } }), { status: 200 });
+    if (url.includes('boards-api.greenhouse.io/v1/boards/microsoftcorporation')) return new Response(JSON.stringify({ jobs: [{ id: 77, title: 'Principal Product Manager', absolute_url: 'https://job-boards.greenhouse.io/microsoftcorporation/jobs/77', location: { name: 'Redmond, WA' }, updated_at: '2026-11-18T00:00:00Z', first_published: '2026-11-18T00:00:00Z', content: '' }] }), { status: 200 });
+    return new Response('nf', { status: 404 }); };
+  const r1 = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const S1 = Object.fromEntries(r1.statusOut.sources.map(x => [x.id, x])), J1 = Object.fromEntries(r1.jobsOut.jobs.map(j => [j.uid, j]));
+  t('microsoft full list: first chunk of 2 pages, resumes at 20', () => { assert.equal(S1['ms:eightfold'].resume_offset, 20); assert.ok(J1['ms:eightfold:1015']); assert.ok(!J1['ms:eightfold:1022']); });
+  t('microsoft: listing "onsite" ignored, detail work site decides', () => assert.equal(J1['ms:eightfold:1001'].workplace, 'remote'));
+  t('microsoft AI board role grouped with the same Microsoft role', () => { const a = J1['ms:eightfold:1001'], b = J1['gh:microsoftcorporation:77']; assert.ok(a && b); assert.equal(a.dup_count, 2); assert.ok(a.dup_of === null ? b.dup_of === a.uid : a.dup_of === b.uid); });
+  const r2 = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + 4 * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
+  const S2 = Object.fromEntries(r2.statusOut.sources.map(x => [x.id, x])), J2 = Object.fromEntries(r2.jobsOut.jobs.map(j => [j.uid, j]));
+  t('microsoft full list: second run reads 20-25, keeps US + unclear remote, skips UK, wraps to 0', () => { assert.equal(S2['ms:eightfold'].resume_offset, 0); assert.ok(J2['ms:eightfold:1024']); assert.ok(J2['ms:eightfold:1025']); assert.ok(!J2['ms:eightfold:1021']); });
+  t('microsoft: roles from the earlier chunk stay open (not closed by a chunked run)', () => assert.notEqual(J2['ms:eightfold:1015'].status, 'closed'));
+  t('microsoft: known role reused, no second detail read', () => assert.equal(calls.filter(c => c.includes('position_id=1001')).length, 1));
+  refuseAt = 10;
+  const r3 = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + 8 * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
+  const S3 = Object.fromEntries(r3.statusOut.sources.map(x => [x.id, x])), J3 = Object.fromEntries(r3.jobsOut.jobs.map(j => [j.uid, j]));
+  t('microsoft refused part-way: partial, resume at the refused page, roles kept and flagged stale', () => { assert.equal(S3['ms:eightfold'].result, 'partial'); assert.equal(S3['ms:eightfold'].resume_offset, 10); assert.equal(J3['ms:eightfold:1024'].status !== 'closed', true); assert.equal(J3['ms:eightfold:1024'].stale, true); });
+}
+
+{ // pay in other currencies and non-salary amounts never count as US base pay
+  const C4 = await import('../../assets/shared/core.mjs');
+  const pick = s => C4.chooseSalary(C4.parseSalaries(s))?.min ?? null;
+  t('salary: peso range written as "$… MXN" is skipped', () => assert.equal(pick('The typical base salary range for this position is $912,000 - $1,254,000 MXN annually.'), null));
+  t('salary: US range kept when a peso range is also listed', () => assert.equal(pick('US: base salary range $150,000 - $190,000. Mexico: $912,000 - $1,254,000 MXN.'), 150000));
+  t('salary: CA$ / A$ ranges skipped, "USD" kept', () => { assert.equal(pick('Base salary CA$140,000 - CA$170,000'), null); assert.equal(pick('Salary A$150,000 - $180,000'), null); assert.equal(pick('Base salary $150,000 - $200,000 USD per year'), 150000); });
+  t('salary: $5M grant or EUR structured pay is not base salary', () => { assert.equal(C4.chooseSalary([], { min: 5e6, max: 5e6, kind: 'base' }), null); assert.equal(C4.chooseSalary([], { min: 9e4, max: 12e4, kind: 'base', currency: 'EUR' }), null); });
+}
+
+{ // seed probe: boards found from company sites or guessed names, kept only with ownership evidence
+  const SD = await import('../lib/seeds.mjs');
+  t('seeds: slug guesses from name and domain', () => { const g = SD.guessSlugs({ name: 'Credal.ai', website: 'https://www.credal.ai' }); assert.ok(g.includes('credalai')); assert.ok(g.includes('credal')); });
+  t('seeds: identity — domain in postings passes, unrelated same-name board fails', () => {
+    assert.equal(SD.identityCheck({ name: 'Castle', website: 'https://castle.io' }, { jobs: 3, name: null, texts: ['Engineer at castle.io'] }, false).ok, true);
+    assert.equal(SD.identityCheck({ name: 'Castle', website: 'https://castle.io' }, { jobs: 3, name: null, texts: ['Join our roofing crew'] }, false).ok, false);
+    assert.equal(SD.identityCheck({ name: 'Infisical', website: 'https://infisical.com' }, { jobs: 2, name: null, texts: ['At Infisical we build secrets management'] }, false).ok, true);
+  });
+  const calls = [];
+  const resp = (b, st = 200) => new Response(typeof b === 'string' ? b : JSON.stringify(b), { status: st });
+  const f = async url => { calls.push(url);
+    if (url === 'https://alpha.example/robots.txt') return resp('User-agent: *\nDisallow: /admin');
+    if (url === 'https://alpha.example/') return resp('<a href="https://jobs.ashbyhq.com/alpha-sec">Careers</a>');
+    if (url.includes('job-board/alpha-sec')) return resp({ jobs: [{ title: 'Director of Product', jobUrl: 'https://jobs.ashbyhq.com/alpha-sec/1', descriptionPlain: 'x' }] });
+    if (url.startsWith('https://beta.example')) return resp('nf', 404);
+    if (url.includes('job-board/beta')) return resp({ jobs: [{ title: 'PM', jobUrl: 'u', descriptionPlain: 'Beta is hiring; see beta.example' }] });
+    if (url.includes('boards/gamma/jobs')) return resp({ name: 'Gamma Roofing LLC', jobs: [{ title: 'Roofer', absolute_url: 'u', content: 'Roofing work' }] });
+    if (url.startsWith('https://gamma.example')) return resp('nf', 404);
+    return resp('nf', 404); };
+  const { Http } = await import('../lib/http.mjs').catch(() => ({}));
+  const http = Http ? new Http({ minDelay: 0, maxDelay: 1, retries: 0, fetchImpl: f, log: () => {} }) : { json: async u => { const r = await f(u); return r.ok ? { ok: true, data: await r.json() } : { ok: false, status: r.status }; }, text: async u => { const r = await f(u); return r.ok ? { ok: true, data: await r.text() } : { ok: false, status: r.status }; } };
+  const seeds = { seeds: [{ name: 'Alpha', website: 'https://alpha.example', size: 20, sector: 'Cybersecurity', source: 'yc' }, { name: 'Beta', website: 'https://beta.example', size: 120, source: 'yc' }, { name: 'Gamma', website: 'https://gamma.example', size: 8, source: 'yc' }, { name: 'Known Co', known: true }] };
+  const discovered = { employers: [] }, state = {};
+  const res = await SD.seedProbe({ seeds, discovered, state, http, now: NOW, batch: 10 });
+  const by = Object.fromEntries(discovered.employers.map(e => [e.employer, e]));
+  t('seeds: board linked from the company site is accepted', () => { assert.equal(by.Alpha.sources[0].id, 'ashby:alphasec'); assert.equal(by.Alpha.size, 20); assert.match(by.Alpha.sources[0].verification.method, /linked from alpha\.example/); });
+  t('seeds: guessed board accepted when postings mention the domain', () => assert.equal(by.Beta?.sources[0].ats, 'ashby'));
+  t('seeds: same-named board for another company rejected; known seeds skipped', () => { assert.ok(!by.Gamma); assert.equal(res.done, 3); assert.match(state.checked.gamma.tried.join(' '), /rejected/); });
+}
+
+{ // Canada-first postings with CAD-only pay are not US roles, even when "United States" is also listed
+  const C5 = await import('../../assets/shared/core.mjs');
+  const raw = { source_id: 'gh:tailscale', ext_id: '4756305005', ats: 'greenhouse', employer: 'Tailscale', title: 'Senior Business Operations & Strategy Manager', url: 'u',
+    locations: ['Remote (Canada)', 'Canada', 'United States'], desc_text: 'Individual offers may vary. CAN Pay Range $166,160 — $241,200 CAD What We Offer' };
+  const j = C5.enrichJob(raw);
+  t('location: Remote (Canada) + CAD-only pay → not a US role, no base salary', () => { assert.equal(j.us, false); assert.equal(j.salary, null); });
+  const j2 = C5.enrichJob({ ...raw, desc_text: 'US Pay Range $180,000 — $250,000 USD. CAN Pay Range $166,160 — $241,200 CAD' });
+  t('location: same posting with a US range stays a US role', () => { assert.notEqual(j2.us, false); assert.equal(j2.salary.min, 180000); });
+  const stored = { ...j, us: true, remote_us: true, salary: { min: 166160, max: 241200, kind: 'base', snippet: 'CAN Pay Range $166,160 — $241,200 CAD What' }, functions: ['strategy'], seniority: 3, status: 'open' };
+  t('location: already-stored Canada/CAD posting is dropped from matches', () => assert.equal(C5.evaluateJob(stored, { crit: { functions: ['strategy'], salMode: 'any', lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: true } }), null));
+}
+
+{ // the location shown is the one that matched, not just the first listed
+  const C6 = await import('../../assets/shared/core.mjs');
+  const job = { locations: ['San Francisco, CA, USA', 'New York, NY, USA'], remote_us: false };
+  const fit = C6.homeFit(job, { metro: 'new york|brooklyn|jersey city', state: 'NY' });
+  t('location: SF + NY role shows New York when NY is the commute match', () => { assert.equal(fit.metro_loc, 'New York, NY, USA'); const s = C6.shownLocation(job, fit, 'metro'); assert.equal(s.text, 'New York, NY, USA'); assert.equal(s.more, 1); });
+  t('location: non-US first location skipped for display', () => assert.equal(C6.shownLocation({ locations: ['London, UK', 'Austin, TX'] }, {}, 'other').text, 'Austin, TX'));
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

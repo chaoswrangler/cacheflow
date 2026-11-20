@@ -82,5 +82,7 @@
   "workday_detail_cap": 40,
   "workday_query_rotation": 3,
   "workday_rotate_min_queries": 7,
-  "rotation_close_hours": 74
+  "rotation_close_hours": 74,
+  "eightfold_scan_pages_per_run": 40,
+  "seed_probe_batch": 40
 }

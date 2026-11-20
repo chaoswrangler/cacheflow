@@ -16,6 +16,8 @@ export function atsLinks(html) {
   for (const m of H.matchAll(/https?:\/\/apply\.workable\.com\/([A-Za-z0-9_-]+)/g)) if (m[1] !== 'api') add('workable', m[1], m[0]);
   for (const m of H.matchAll(/https?:\/\/(?:jobs|careers)\.smartrecruiters\.com\/([A-Za-z0-9_-]+)/g)) add('smartrecruiters', m[1], m[0]);
   for (const m of H.matchAll(/https?:\/\/ats\.rippling\.com\/([A-Za-z0-9_-]+)/g)) add('rippling', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/([a-z0-9-]+)\.applytojob\.com/g)) if (m[1] !== 'www') add('jazzhr', m[1], m[0]);
+  for (const m of H.matchAll(/https?:\/\/jobs\.dayforcehcm\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?([A-Za-z0-9_-]+)\/([A-Za-z0-9_-]+)/g)) add('dayforce', `${m[1]}/${m[2]}`, m[0]);
   for (const m of H.matchAll(/https?:\/\/jobs\.gem\.com\/([A-Za-z0-9_-]+)/g)) add('gem', m[1], m[0]);
   return [...out.values()];
 }
@@ -124,9 +126,9 @@ export const ADAPTERS = {
       if (n >= opt.ghPayCap) break;
       if (!relevantTitle(j.title) || parseSalaries(j.desc_text).length) continue;
       n++;
-      const r = await http.json(`https://boards-api.greenhouse.io/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
-      const pr = r.ok && (r.data?.pay_input_ranges || [])[0];
-      if (pr && pr.min_cents) j.salary_struct = { min: pr.min_cents / 100, max: pr.max_cents / 100, period: 'year', kind: /base|salary/i.test((pr.title || '') + (pr.blurb || '')) ? 'base' : 'base_likely', src: 'structured', snippet: `Greenhouse pay range: ${pr.title || ''}` };
+      const r = await http.json(`https://boards-api${src.region === 'eu' ? '.eu' : ''}.greenhouse.io/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
+      const pr = r.ok && (r.data?.pay_input_ranges || []).find(p => !p.currency_type || /^usd$/i.test(p.currency_type)); // US-dollar range only
+      if (pr && pr.min_cents) j.salary_struct = { min: pr.min_cents / 100, max: pr.max_cents / 100, period: 'year', kind: /base|salary/i.test((pr.title || '') + (pr.blurb || '')) ? 'base' : 'base_likely', src: 'structured', currency: pr.currency_type || null, snippet: `Greenhouse pay range: ${pr.title || ''}` };
     }
     out.note = n ? `pay_transparency checked for ${n} relevant jobs` : out.note;
     return out;
@@ -319,7 +321,8 @@ export const ADAPTERS = {
       const path = new URL(href).pathname;
       if (href.startsWith(origin) && pat.test(path) && href !== src.list_url.replace(/\/$/, '') && !links.has(href)) links.set(href, htmlToText(m[2]).split('\n')[0].trim());
     }
-    if (!links.size) return { result: 'empty', status: 200, jobs: [], note: `no links matching ${pat} on ${src.list_url}` };
+    // No matching links is not evidence of zero jobs: the listing may be built by JavaScript or the link format may have changed.
+    if (!links.size) return { result: 'no_links_found', status: 200, jobs: [], note: `page read, but no links matching ${pat} on ${src.list_url}; the listing may be rendered by JavaScript` };
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0;
     for (const [href, linkText] of links) {
@@ -538,53 +541,93 @@ export const ADAPTERS = {
       fields: { posted_date: 'postedDate', salary: 'detail description', location: 'location / multi_location', remote: 'work-site flags', req_id: 'reqId' } };
   },
 
-  // Eightfold PCSX (Microsoft). Verified by request: /api/pcsx/search and /api/pcsx/position_details.
-  // Pages hold ~10 positions; advance by the number actually returned; stop at data.count, an empty page or a repeat.
+  // Eightfold PCSx (Microsoft): /api/pcsx/search (10 positions per page whatever num says) and /api/pcsx/position_details.
+  // No server-side location filter (location=United States was refused once): US eligibility is decided locally from
+  // every listed location. Each run: the keyword searches (fresh roles), then, with full_scan, the next chunk of the whole
+  // list, resuming where the last run stopped. A refusal (403/429) stops the run and returns 'partial', so roles not
+  // reached are kept, never closed. Details are read once per role and reused afterwards.
   async eightfold(src, emp, http, opt) {
     const host = `https://${src.host}`, D = encodeURIComponent(src.domain);
-    const seen = new Map(); let anyOk = false, lastFail = null, incomplete = [];
-    for (const q of src.queries || ['']) {
-      let start = 0, prevFirst = null, count = Infinity, pages = 0;
-      while (start < count && start < (opt.eightfoldMaxPerQuery || 30)) {
-        const r = await http.json(`${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=&start=${start}`);
-        if (!r.ok) { lastFail = r; if (anyOk || pages) incomplete.push(`${q}@${start}: ${r.status || r.error}`); break; }
-        const data = r.data?.data || {}; const list = data.positions;
-        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'No data.positions in response' }; break; }
-        anyOk = true; pages++; count = Number(data.count ?? count);
+    const refused = r => [403, 429].includes(r?.status);
+    const seen = new Map(); let anyOk = false, lastFail = null, cut = null, pagesRun = 0, total = null;
+    const page = async (q, start) => {
+      const r = await http.json(`${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=&start=${start}&num=10`);
+      if (!r.ok) return { r };
+      const data = r.data?.data || {}, list = data.positions;
+      if (!Array.isArray(list)) return { r: { ok: false, error: 'parse_error', detail: 'No data.positions in response' } };
+      anyOk = true; pagesRun++; if (data.count != null) total = Number(data.count);
+      for (const p of list) seen.set(String(p.id), p);
+      return { r, list, count: Number(data.count ?? Infinity) };
+    };
+    // 1) keyword searches
+    const maxPer = src.max_per_query || opt.eightfoldMaxPerQuery || 30;
+    search: for (const q of src.queries || []) {
+      let start = 0, prevFirst = null;
+      while (start < maxPer) {
+        const { r, list, count } = await page(q, start);
+        if (!r.ok) { lastFail = r; if (refused(r)) { cut = `search "${q}" at ${start}`; break search; } break; }
         if (!list.length || String(list[0]?.id) === prevFirst) break;
-        prevFirst = String(list[0]?.id);
-        for (const p of list) seen.set(String(p.id), p);
-        start += list.length;
+        prevFirst = String(list[0]?.id); start += list.length;
+        if (start >= count) break;
       }
-      if (!anyOk && lastFail) break; // first request refused: don't keep knocking
+      if (!anyOk && lastFail) break; // first request failed outright: don't keep knocking
     }
-    if (!anyOk) return fail(lastFail || {});
+    // 2) full-list chunk
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
+    if (src.full_scan && !cut && (anyOk || !lastFail)) {
+      let start = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
+      const maxPages = src.scan_pages_per_run || opt.eightfoldScanPages || 40;
+      while (scanned < maxPages) {
+        const { r, list, count } = await page('', start);
+        if (!r.ok) { lastFail = r; resume = start; if (refused(r)) cut = `full list at ${start}`; break; }
+        scanned++;
+        if (!list.length || start + list.length >= count) { resume = 0; wrapped = true; break; }
+        start += list.length; resume = start;
+      }
+    }
+    if (!anyOk) return fail(lastFail || {}, { resume_offset: resume ?? opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
     const ts = v => v ? new Date((v > 1e12 ? v : v * 1000)).toISOString() : null;
-    const jobs = []; let details = 0;
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    const jobs = []; let details = 0, reused = 0, detailRefused = false, skippedNonUS = 0;
     for (const p of seen.values()) {
-      const locs = (p.standardizedLocations?.length ? p.standardizedLocations : p.locations) || [];
+      const locs = ((p.standardizedLocations?.length ? p.standardizedLocations : p.locations) || []).map(l => typeof l === 'string' ? l : (l.name || l.location || '')).filter(Boolean);
+      const allLocs = [...new Set([...locs, ...((p.locations || []).map(l => typeof l === 'string' ? l : (l.name || '')))])].filter(Boolean);
+      // keep: any US location, no location, or a remote / multi-location posting that doesn't name a country yet
+      const ambiguous = !allLocs.length || allLocs.some(l => /remote|multiple locations/i.test(l) && !/,\s*[A-Z][a-z]{3,}$/.test(l));
+      if (!usText(allLocs.join(' | ')) && !ambiguous) { skippedNonUS++; continue; }
       const wlo = String(p.workLocationOption || '');
       const j = { source_id: src.id, ats: 'eightfold', employer: emp.employer, ext_id: String(p.id), req_id: p.displayJobId || null, title: p.name,
         url: p.positionUrl ? (p.positionUrl.startsWith('http') ? p.positionUrl : host + p.positionUrl) : `${host}/careers/job/${p.id}`,
-        locations: locs.map(l => typeof l === 'string' ? l : (l.name || l.location || '')).filter(Boolean), department: p.department || null,
-        workplace_hint: /remote/i.test(wlo) ? 'remote' : /hybrid|flex/i.test(wlo) ? 'hybrid' : /onsite|on-site|office/i.test(wlo) ? 'onsite' : null,
+        locations: allLocs, department: p.department || null,
+        // the listing's work-site field has labelled remote roles as onsite: trust only remote/hybrid here, the detail record decides
+        workplace_hint: /remote/i.test(wlo) ? 'remote' : /hybrid|flex/i.test(wlo) ? 'hybrid' : null,
         posted_at: ts(p.postedTs), posted_kind: p.postedTs ? 'posted_ts' : 'unknown', created_at: ts(p.creationTs), desc_text: '' };
       if (!j.posted_at && j.created_at) { j.posted_at = j.created_at; j.posted_kind = 'creation_ts (may predate public posting)'; }
-      if (relevantTitle(p.name) && (usText(j.locations.join(' ')) || !j.locations.length) && details < opt.detailCap) {
+      const pj = prev.get(j.ext_id);
+      if (pj && pj.title === j.title && (!relevantTitle(p.name) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
+      if (!detailRefused && relevantTitle(p.name) && details < (src.detail_cap || opt.detailCap)) {
         details++;
         const d = await http.json(`${host}/api/pcsx/position_details?domain=${D}&position_id=${encodeURIComponent(p.id)}&hl=en`);
         const dd = d.ok ? d.data?.data : null;
         if (dd) {
           const site = dd.efcustomTextWorkSite || '';
           j.desc_text = htmlToText(dd.jobDescription || '') + (site ? `\nWork site: ${site}` : '');
-          if (site) j.workplace_hint = /100%|fully remote|remote/i.test(site) ? 'remote' : /up to \d+%|hybrid|flex/i.test(site) ? 'hybrid' : /on-?site/i.test(site) ? 'onsite' : j.workplace_hint;
-        } else if (!d.ok) incomplete.push(`details ${p.id}: ${d.status || d.error}`);
+          if (site) j.workplace_hint = /100%|fully remote|remote/i.test(site) ? 'remote' : /up to \d+%|hybrid|flex/i.test(site) ? 'hybrid' : /on-?site|0%/i.test(site) ? 'onsite' : j.workplace_hint;
+        } else if (refused(d)) detailRefused = true; // stop reading details this run; the rest are read next run
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs,
-      note: `${seen.size} positions from ${(src.queries || []).length} searches; ${details} detail pages` + (incomplete.length ? `; INCOMPLETE (${incomplete.length} requests cut short, e.g. ${incomplete[0]})` : ''),
-      fields: { posted_date: 'postedTs (creationTs kept separately)', salary: 'position_details jobDescription', location: 'standardizedLocations', remote: 'workLocationOption + efcustomTextWorkSite', req_id: 'displayJobId' } };
+    const partial = !!cut;
+    const note = [`${seen.size} positions listed (${pagesRun} pages${total != null ? ` of ${total} worldwide` : ''})`,
+      src.full_scan ? (scanned ? `full list: ${scanned} pages from listing ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : 'full list not scanned this run') : null,
+      `${jobs.length} kept as US or location-unclear, ${skippedNonUS} outside the US skipped`,
+      `${details} detail records read, ${reused} reused`,
+      cut ? `REFUSED part-way (${cut}: ${lastFail?.status}); roles not reached are kept` : null,
+      detailRefused ? 'detail reads refused part-way; the rest are read next run' : null].filter(Boolean).join('; ');
+    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, note,
+      resume_offset: src.full_scan ? resume ?? scanFrom : null,
+      rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 168) : undefined,
+      fields: { posted_date: 'postedTs (creationTs kept separately)', salary: 'position_details jobDescription', location: 'standardizedLocations + locations (US decided locally)', remote: 'efcustomTextWorkSite (detail); listing flag used only for remote/hybrid', req_id: 'displayJobId' } };
   },
 
   async oracle_hcm(src, emp, http, opt) {

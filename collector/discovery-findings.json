@@ -1,0 +1,638 @@
+{
+ "_about": "Job boards found by web search on 2026-11-19 for employers that had no working source. Evidence = a real indexed URL on the board's host. Applied to data/sources.json as unverified_config; the next collector run confirms each (404 = wrong id, 'empty' = valid board, no jobs).",
+ "found": {
+  "Abacum": {
+   "ats": "ashby",
+   "slug": "abacum",
+   "evidence": "https://jobs.ashbyhq.com/abacum"
+  },
+  "Abridge": {
+   "ats": "ashby",
+   "slug": "abridge",
+   "evidence": "https://api.ashbyhq.com/posting-api/job-board/abridge"
+  },
+  "Aembit": {
+   "ats": "company_html",
+   "list_url": "https://aembit.io/careers/",
+   "link_pattern": "/job-posting/[a-z0-9][a-z0-9-]+/?$",
+   "evidence": "https://aembit.io/job-posting/"
+  },
+  "Aidoc": {
+   "ats": "greenhouse",
+   "slug": "aidocmedical",
+   "region": "eu",
+   "evidence": "https://job-boards.eu.greenhouse.io/aidocmedical/jobs/4876560101"
+  },
+  "Aircall": {
+   "ats": "greenhouse",
+   "slug": "aircallioinc",
+   "evidence": "https://job-boards.greenhouse.io/aircallioinc"
+  },
+  "Alation": {
+   "ats": "workday",
+   "host": "alation.wd503.myworkdayjobs.com",
+   "tenant": "alation",
+   "site": "ExternalSite",
+   "evidence": "https://alation.wd503.myworkdayjobs.com/en-US/ExternalSite/job/Director--Inside-Sales_R10000728"
+  },
+  "Alma": {
+   "ats": "greenhouse",
+   "slug": "alma",
+   "evidence": "https://job-boards.greenhouse.io/alma/jobs/8394865002"
+  },
+  "Ambience Healthcare": {
+   "ats": "greenhouse",
+   "slug": "ambiencehealthcare",
+   "evidence": "https://job-boards.greenhouse.io/ambiencehealthcare/jobs/4414750005"
+  },
+  "Amplitude": {
+   "ats": "greenhouse",
+   "slug": "amplitude",
+   "evidence": "https://job-boards.greenhouse.io/amplitude/jobs/8394842002"
+  },
+  "anecdotes": {
+   "ats": "comeet",
+   "slug": "anecdotes",
+   "company_uid": "F9.00B",
+   "evidence": "https://www.comeet.com/jobs/anecdotes/F9.00B/grc-solutions-engineer/B8.668"
+  },
+  "Anvilogic": {
+   "ats": "workable",
+   "slug": "anvilogic-inc",
+   "evidence": "https://apply.workable.com/anvilogic-inc/"
+  },
+  "Armis": {
+   "ats": "greenhouse",
+   "slug": "armissecurity",
+   "evidence": "https://job-boards.greenhouse.io/armissecurity/jobs/5971059004"
+  },
+  "Bitdefender": {
+   "ats": "greenhouse",
+   "slug": "scbitdefendersrl",
+   "region": "eu",
+   "evidence": "https://job-boards.eu.greenhouse.io/scbitdefendersrl"
+  },
+  "Blockaid": {
+   "ats": "comeet",
+   "slug": "blockaid",
+   "company_uid": "69.00B",
+   "evidence": "https://www.comeet.com/jobs/blockaid/69.00B/product-marketing-manager/71.377"
+  },
+  "CertiK": {
+   "ats": "lever",
+   "slug": "certik",
+   "evidence": "https://jobs.lever.co/certik"
+  },
+  "Clerk": {
+   "ats": "ashby",
+   "slug": "clerk",
+   "evidence": "https://jobs.ashbyhq.com/clerk/36597279-a42d-401c-88aa-153cc1a64f35"
+  },
+  "Contentsquare": {
+   "ats": "lever",
+   "slug": "contentsquare",
+   "evidence": "https://jobs.lever.co/contentsquare/d415f65a-5029-4f2c-8a71-b33326c0f700"
+  },
+  "Cyberhaven": {
+   "ats": "ashby",
+   "slug": "cyberhaven",
+   "evidence": "https://jobs.ashbyhq.com/cyberhaven/6cbfc886-9fa2-4cd0-bccc-f4964623fc4a"
+  },
+  "Cycode": {
+   "ats": "comeet",
+   "slug": "cycode",
+   "company_uid": "A8.00D",
+   "evidence": "https://www.comeet.com/jobs/cycode/A8.00D/senior-product-manager---application-security/90.94B"
+  },
+  "Datavant": {
+   "ats": "greenhouse",
+   "slug": "datavant",
+   "evidence": "https://boards.greenhouse.io/datavant/jobs/7196045002",
+   "careers_url": "https://www.datavant.com/about/careers"
+  },
+  "Deepwatch": {
+   "ats": "greenhouse",
+   "slug": "deepwatchinc",
+   "evidence": "https://boards.greenhouse.io/deepwatchinc/jobs/4595302005"
+  },
+  "Flashpoint": {
+   "ats": "ashby",
+   "slug": "flashpoint.io",
+   "evidence": "https://jobs.ashbyhq.com/flashpoint.io/4e6c4e1d-f93e-4ed3-a10e-3afc899df5a8"
+  },
+  "Fullstory": {
+   "ats": "ashby",
+   "slug": "fullstory",
+   "evidence": "https://jobs.ashbyhq.com/fullstory/174e935c-c70f-4c16-806a-adaac4a10a76"
+  },
+  "Superhuman": {
+   "ats": "ashby",
+   "slug": "Superhuman Platform Inc",
+   "evidence": "https://jobs.ashbyhq.com/Superhuman%20Platform%20Inc/20f72343-72d6-43d0-aaa2-b5360aea0e5f",
+   "note": "Grammarly is now part of Superhuman; Grammarly roles post on this board."
+  },
+  "Grow Therapy": {
+   "ats": "ashby",
+   "slug": "grow-therapy",
+   "evidence": "https://jobs.ashbyhq.com/grow-therapy/edc00402-3fa2-4a0e-8e47-aacb3d170c58"
+  },
+  "Halborn": {
+   "ats": "company_html",
+   "list_url": "https://ats.rippling.com/halborn-inc/jobs",
+   "link_pattern": "^/halborn-inc/jobs/[0-9a-f-]{36}/?$",
+   "evidence": "https://ats.rippling.com/halborn-inc/jobs"
+  },
+  "Headspace": {
+   "ats": "greenhouse",
+   "slug": "hs",
+   "evidence": "https://job-boards.greenhouse.io/hs"
+  },
+  "Hims & Hers": {
+   "ats": "ashby",
+   "slug": "hims-and-hers",
+   "evidence": "https://jobs.ashbyhq.com/hims-and-hers"
+  },
+  "Hoxhunt": {
+   "ats": "ashby",
+   "slug": "hoxhunt",
+   "evidence": "https://jobs.ashbyhq.com/hoxhunt/ba83244c-e46e-4a9e-beff-50ea72bbd074"
+  },
+  "Hypernative": {
+   "ats": "comeet",
+   "slug": "hypernative",
+   "company_uid": "8A.00E",
+   "evidence": "https://www.comeet.com/jobs/hypernative/8A.00E/sales-engineer---us/BD.D51"
+  },
+  "Immuta": {
+   "ats": "lever",
+   "slug": "immuta",
+   "evidence": "https://jobs.lever.co/immuta/086532e4-0c4c-4993-8295-b7e4ebe8bdb4"
+  },
+  "Ironclad": {
+   "ats": "ashby",
+   "slug": "ironcladhq",
+   "evidence": "https://jobs.ashbyhq.com/ironcladhq"
+  },
+  "Iterable": {
+   "ats": "ashby",
+   "slug": "iterable",
+   "evidence": "https://jobs.ashbyhq.com/iterable/168956eb-0ff2-492e-b058-adb917685e90",
+   "note": "Older Greenhouse board 'iterable' also exists; Ashby postings are newer."
+  },
+  "Keyfactor": {
+   "ats": "greenhouse",
+   "slug": "keyfactorinc",
+   "evidence": "https://job-boards.greenhouse.io/keyfactorinc/jobs/6002420004"
+  },
+  "Legit Security": {
+   "ats": "comeet",
+   "slug": "legitsecurity.com",
+   "company_uid": "37.004",
+   "evidence": "https://www.comeet.com/jobs/legitsecurity.com/37.004/enterprise-account-executive---west-coast/B2.D6D"
+  },
+  "Lumos": {
+   "ats": "ashby",
+   "slug": "lumos",
+   "evidence": "https://jobs.ashbyhq.com/lumos/561c10d5-c598-450e-9936-e3883bf74ec6"
+  },
+  "Optiv": {
+   "ats": "workday",
+   "host": "optiv.wd5.myworkdayjobs.com",
+   "tenant": "optiv",
+   "site": "Optiv_Careers",
+   "evidence": "https://optiv.wd5.myworkdayjobs.com/Optiv_Careers"
+  },
+  "Pentera": {
+   "ats": "comeet",
+   "slug": "pentera",
+   "company_uid": "C5.00D",
+   "evidence": "https://www.comeet.com/jobs/pentera/C5.00D/customer-success-manager/96.652"
+  },
+  "Silverfort": {
+   "ats": "comeet",
+   "slug": "silverfort",
+   "company_uid": "54.007",
+   "evidence": "https://www.comeet.com/jobs/silverfort/54.007/technical-enablement-manager/18.E6F"
+  },
+  "ThreatLocker": {
+   "ats": "greenhouse",
+   "slug": "threatlocker",
+   "evidence": "https://job-boards.greenhouse.io/threatlocker/jobs/5710154004"
+  },
+  "Trail of Bits": {
+   "ats": "workable",
+   "slug": "trailofbits",
+   "evidence": "https://apply.workable.com/trailofbits/j/BA9F2FCDA6/"
+  },
+  "WorkOS": {
+   "ats": "ashby",
+   "slug": "workos",
+   "evidence": "https://jobs.ashbyhq.com/workos/990c41b1-e3c3-4a75-83c2-ca916899c110"
+  },
+  "Zapier": {
+   "ats": "ashby",
+   "slug": "zapier",
+   "evidence": "https://jobs.ashbyhq.com/zapier/283b909d-c5b0-4d78-844c-7b25a7d5faf7"
+  },
+  "Zenity": {
+   "ats": "comeet",
+   "slug": "zenity",
+   "company_uid": "19.000",
+   "evidence": "https://www.comeet.com/jobs/zenity/19.000"
+  },
+  "Zimperium": {
+   "ats": "lever",
+   "slug": "zimperium",
+   "evidence": "https://jobs.lever.co/zimperium"
+  },
+  "Lyra Health": {
+   "ats": "lever",
+   "slug": "lyrahealth",
+   "evidence": "https://jobs.lever.co/lyrahealth"
+  },
+  "Material Security": {
+   "ats": "ashby",
+   "slug": "materialsecurity",
+   "evidence": "https://jobs.ashbyhq.com/materialsecurity/69207bb6-ea25-403d-bfb9-647b725a0b00"
+  },
+  "Medallia": {
+   "ats": "lever",
+   "slug": "medallia",
+   "evidence": "https://jobs.lever.co/medallia/5b632abb-9a4b-4482-b650-4995e576c29e"
+  },
+  "n8n": {
+   "ats": "ashby",
+   "slug": "n8n",
+   "evidence": "https://jobs.ashbyhq.com/n8n/569612ef-9772-4351-9ea7-56c359225301 (linked from https://n8n.io/careers/)"
+  },
+  "Noom": {
+   "ats": "greenhouse",
+   "slug": "noomgrowth",
+   "evidence": "https://boards.greenhouse.io/noomgrowth/jobs/7162811"
+  },
+  "Spring Health": {
+   "ats": "ashby",
+   "slug": "deaa6ad2-d184-436b-b69e-17f761da1d94",
+   "evidence": "https://jobs.ashbyhq.com/deaa6ad2-d184-436b-b69e-17f761da1d94/eda7d2b7-7fb9-460a-8e7b-d61e22d3d26e",
+   "note": "Ashby board is addressed by organization UUID, not a name; the API may need the name instead."
+  },
+  "AttackIQ": {
+   "ats": "company_html",
+   "list_url": "https://attackiq.applytojob.com/apply/",
+   "link_pattern": "/apply/[A-Za-z0-9]{6,14}/[A-Za-z0-9-]+/?$",
+   "evidence": "Found by web search on 2026-11-19: https://attackiq.applytojob.com/apply (JazzHR career page). The next collector run confirms it. Read as HTML job pages; JazzHR job pages are on the same host."
+  },
+  "BlueVoyant": {
+   "ats": "company_html",
+   "list_url": "https://bluevoyant.applytojob.com/apply/",
+   "link_pattern": "/apply/[A-Za-z0-9]{6,14}/[A-Za-z0-9-]+/?$",
+   "evidence": "Found by web search on 2026-11-19: https://bluevoyant.applytojob.com/apply/ and job pages such as /apply/XTZcJQZ75D/Talent-Acquisition-Specialist (JazzHR). The next collector run confirms it."
+  },
+  "eSentire": {
+   "ats": "company_html",
+   "list_url": "https://jobs.dayforcehcm.com/en-US/esentire/CANDIDATEPORTAL",
+   "link_pattern": "/esentire/CANDIDATEPORTAL/jobs/[0-9]+/?$",
+   "evidence": "Found by web search on 2026-11-19: Dayforce job pages such as https://jobs.dayforcehcm.com/en-US/esentire/CANDIDATEPORTAL/jobs/5648. The next collector run confirms it. Experimental: the Dayforce listing may be built by JavaScript; if so the run reports no_links_found and a dedicated Dayforce collector is needed."
+  },
+  "Veza": {
+   "ats": "greenhouse",
+   "slug": "veza",
+   "evidence": "https://job-boards.greenhouse.io/veza/jobs/5617924004"
+  },
+  "HackerOne": {
+   "ats": "ashby",
+   "slug": "hackerone",
+   "evidence": "https://jobs.ashbyhq.com/hackerone"
+  },
+  "Illumio": {
+   "ats": "ashby",
+   "slug": "illumio",
+   "evidence": "https://jobs.ashbyhq.com/illumio/823ff2f2-481c-4fc4-a813-a6434b71a1b8"
+  },
+  "SpaceX": {
+   "ats": "greenhouse",
+   "slug": "spacex",
+   "evidence": "https://job-boards.greenhouse.io/spacex/jobs/8763488002"
+  },
+  "Anduril": {
+   "ats": "greenhouse",
+   "slug": "andurilindustries",
+   "evidence": "https://job-boards.greenhouse.io/andurilindustries/jobs/5261334007"
+  },
+  "Airbnb": {
+   "ats": "greenhouse",
+   "slug": "airbnb",
+   "evidence": "https://job-boards.greenhouse.io/airbnb"
+  },
+  "DoorDash": {
+   "ats": "greenhouse",
+   "slug": "doordashusa",
+   "evidence": "https://job-boards.greenhouse.io/doordashusa (458 jobs)"
+  },
+  "Discord": {
+   "ats": "greenhouse",
+   "slug": "discord",
+   "evidence": "https://job-boards.greenhouse.io/discord"
+  },
+  "Spotify": {
+   "ats": "lever",
+   "slug": "spotify",
+   "evidence": "https://jobs.lever.co/spotify/"
+  },
+  "Palantir": {
+   "ats": "lever",
+   "slug": "palantir",
+   "evidence": "https://jobs.lever.co/palantir/24060586-7ba8-47c0-bfc1-f1dd5b82d8bd"
+  },
+  "Zoox": {
+   "ats": "lever",
+   "slug": "zoox",
+   "evidence": "https://jobs.lever.co/zoox"
+  },
+  "Extreme Networks": {
+   "ats": "lever",
+   "slug": "extremenetworks",
+   "evidence": "https://jobs.lever.co/extremenetworks"
+  },
+  "Cohere": {
+   "ats": "ashby",
+   "slug": "cohere",
+   "evidence": "https://jobs.ashbyhq.com/cohere"
+  },
+  "Mistral AI": {
+   "ats": "ashby",
+   "slug": "mistral.ai",
+   "evidence": "https://jobs.ashbyhq.com/mistral.ai"
+  },
+  "Cerebras": {
+   "ats": "ashby",
+   "slug": "cerebras",
+   "evidence": "https://jobs.ashbyhq.com/cerebras/40e0d3ee-8f0a-4b19-9bf9-79410b1c7735"
+  },
+  "Replit": {
+   "ats": "ashby",
+   "slug": "replit",
+   "evidence": "https://jobs.ashbyhq.com/replit"
+  },
+  "Midjourney": {
+   "ats": "ashby",
+   "slug": "midjourney",
+   "evidence": "https://jobs.ashbyhq.com/midjourney"
+  },
+  "Plaid": {
+   "ats": "ashby",
+   "slug": "plaid",
+   "evidence": "https://jobs.ashbyhq.com/plaid"
+  },
+  "Supabase": {
+   "ats": "ashby",
+   "slug": "supabase",
+   "evidence": "https://jobs.ashbyhq.com/supabase/603a39a9-7cbd-4a57-b27e-daae86885d82"
+  },
+  "Temporal": {
+   "ats": "ashby",
+   "slug": "temporal",
+   "evidence": "https://jobs.ashbyhq.com/temporal/e3d7f035-7946-469f-84cf-e1c775bf25e8"
+  },
+  "ClickHouse": {
+   "ats": "ashby",
+   "slug": "clickhouse",
+   "evidence": "https://jobs.ashbyhq.com/clickhouse/56992f29-17a5-4150-b50b-7a72206c2af6"
+  },
+  "Linear": {
+   "ats": "ashby",
+   "slug": "linear",
+   "evidence": "https://jobs.ashbyhq.com/linear/069c4628-88d7-4e4d-b393-c996fc7f3076"
+  },
+  "Skydio": {
+   "ats": "ashby",
+   "slug": "skydio",
+   "evidence": "https://jobs.ashbyhq.com/skydio"
+  },
+  "Scanner": {
+   "ats": "greenhouse",
+   "slug": "scanner",
+   "evidence": "https://job-boards.greenhouse.io/scanner"
+  },
+  "Backblaze": {
+   "ats": "greenhouse",
+   "slug": "backblaze",
+   "evidence": "https://job-boards.greenhouse.io/backblaze (32 jobs)"
+  },
+  "Axon": {
+   "ats": "greenhouse",
+   "slug": "axon",
+   "evidence": "https://job-boards.greenhouse.io/axon (481 jobs)"
+  },
+  "Ashby": {
+   "ats": "ashby",
+   "slug": "ashby",
+   "evidence": "https://jobs.ashbyhq.com/Ashby/238c230f-3dc6-455c-98fd-81872a12d34c"
+  },
+  "Benchling": {
+   "ats": "ashby",
+   "slug": "benchling",
+   "evidence": "https://jobs.ashbyhq.com/benchling (59 open positions)"
+  },
+  "Watershed": {
+   "ats": "ashby",
+   "slug": "watershed",
+   "evidence": "https://jobs.ashbyhq.com/Watershed (39 open positions)"
+  },
+  "Resend": {
+   "ats": "ashby",
+   "slug": "resend",
+   "evidence": "https://jobs.ashbyhq.com/resend"
+  },
+  "Hex": {
+   "ats": "ashby",
+   "slug": "hex",
+   "evidence": "https://jobs.ashbyhq.com/hex"
+  },
+  "Pinecone": {
+   "ats": "ashby",
+   "slug": "pinecone",
+   "evidence": "https://jobs.ashbyhq.com/pinecone/a50c376a-0216-40b2-9525-da89d47ef190"
+  },
+  "Lovable": {
+   "ats": "ashby",
+   "slug": "lovable",
+   "evidence": "https://jobs.ashbyhq.com/lovable"
+  },
+  "Crusoe": {
+   "ats": "ashby",
+   "slug": "crusoe",
+   "evidence": "https://jobs.ashbyhq.com/crusoe/e726109d-5c4f-478b-a80f-cb277455484a"
+  },
+  "Baseten": {
+   "ats": "ashby",
+   "slug": "baseten",
+   "evidence": "https://jobs.ashbyhq.com/baseten"
+  },
+  "Attio": {
+   "ats": "ashby",
+   "slug": "attio",
+   "evidence": "https://jobs.ashbyhq.com/attio"
+  },
+  "Pylon": {
+   "ats": "ashby",
+   "slug": "pylon-labs",
+   "evidence": "https://jobs.ashbyhq.com/pylon-labs (roster's 'pylon' corrected)"
+  },
+  "Suno": {
+   "ats": "ashby",
+   "slug": "suno",
+   "evidence": "https://jobs.ashbyhq.com/suno/adb5c5ef-5897-4acb-8014-0a7f162742d8"
+  },
+  "Etched": {
+   "ats": "ashby",
+   "slug": "etched",
+   "evidence": "https://jobs.ashbyhq.com/etched/e6416d04-da00-4917-a817-787b77c35650"
+  },
+  "Wealthsimple": {
+   "ats": "ashby",
+   "slug": "wealthsimple",
+   "evidence": "https://jobs.ashbyhq.com/wealthsimple"
+  },
+  "Nubank": {
+   "ats": "ashby",
+   "slug": "nubank",
+   "evidence": "https://jobs.ashbyhq.com/nubank"
+  },
+  "Cartesia": {
+   "ats": "ashby",
+   "slug": "cartesia",
+   "evidence": "https://jobs.ashbyhq.com/cartesia"
+  },
+  "Kalshi": {
+   "ats": "ashby",
+   "slug": "kalshi",
+   "evidence": "https://jobs.ashbyhq.com/kalshi"
+  },
+  "Polymarket": {
+   "ats": "ashby",
+   "slug": "polymarket",
+   "evidence": "https://jobs.ashbyhq.com/polymarket/15446487-1397-4d4a-90da-5143a48a7d42"
+  },
+  "Poolside": {
+   "ats": "ashby",
+   "slug": "poolside",
+   "evidence": "https://jobs.ashbyhq.com/poolside/1f2a733a-a3fe-48fe-bf61-1425eddb30f6"
+  },
+  "Pika": {
+   "ats": "ashby",
+   "slug": "pika",
+   "evidence": "https://jobs.ashbyhq.com/pika"
+  },
+  "Hugging Face": {
+   "ats": "workable",
+   "slug": "huggingface",
+   "evidence": "https://apply.workable.com/huggingface/"
+  },
+  "Latent Defense": {
+   "ats": "ashby",
+   "slug": "Latent Defense",
+   "evidence": "https://jobs.ashbyhq.com/Latent%20Defense/f325f8eb-6a7c-436c-8d18-6ade4988d1ce (Director of Product)"
+  },
+  "Rillet": {
+   "ats": "ashby",
+   "slug": "rillet",
+   "evidence": "https://jobs.ashbyhq.com/rillet (24 open positions)"
+  },
+  "Sauce Labs": {
+   "ats": "greenhouse",
+   "slug": "saucelabs",
+   "evidence": "https://job-boards.greenhouse.io/saucelabs (Senior Director, Growth)"
+  }
+ },
+ "careers_only": {
+  "Docusign": {
+   "careers_url": "https://careers.docusign.com/",
+   "evidence": "https://careers.docusign.com/careers-home/jobs/30224",
+   "note": "Own careers site (job pages carry structured job data); no public ATS board found. Needs a dedicated collector."
+  }
+ },
+ "not_found": [
+  "ESET"
+ ],
+ "merged": {
+  "Grammarly": "Collected under Superhuman (ashby: 'Superhuman Platform Inc'); Grammarly's old Greenhouse postings are 400+ days old.",
+  "Securiti": "Acquired by Veeam; Securiti roles now post on Veeam's Greenhouse board (veeamsoftware).",
+  "StrongDM": "Now part of Delinea; StrongDM's Ashby board shows 0 openings and StrongDM roles post on Delinea's Ashby board (delinea)."
+ },
+ "remaining": [
+  "Assetnote",
+  "Compa",
+  "Docusign",
+  "Hornetsecurity",
+  "LexisNexis",
+  "NCC Group",
+  "NetSPI",
+  "Oasis Security",
+  "Opal",
+  "OX Security",
+  "Parloa",
+  "Persona",
+  "Picus Security",
+  "Pindrop",
+  "Postman",
+  "Privacera",
+  "ProjectDiscovery",
+  "Push Security",
+  "Qlik",
+  "Query.AI",
+  "Radiant Security",
+  "Relyance AI",
+  "Resourcely",
+  "RevenueCat",
+  "Ro",
+  "Sardine",
+  "Scrut Automation",
+  "Second Front Systems",
+  "Securiti",
+  "Securonix",
+  "SEON",
+  "SimSpace",
+  "Sprinto",
+  "Stellar Cyber",
+  "StrongDM",
+  "Stytch",
+  "Swimlane",
+  "Talkiatry",
+  "Tekion",
+  "TerraTrue",
+  "ThoughtSpot",
+  "Token Security",
+  "Transcarent",
+  "TrustArc",
+  "Viz.ai",
+  "WatchGuard"
+ ],
+ "not_found_roster": [
+  "Snowflake (no Ashby board found)",
+  "Sentry",
+  "LangChain",
+  "Quantinuum"
+ ],
+ "roster_candidates": [
+  "PostHog",
+  "Sentry",
+  "Synthesia",
+  "Railway",
+  "Writer",
+  "Alchemy",
+  "Airbyte",
+  "Saronic",
+  "Cognition",
+  "Browserbase",
+  "Mintlify",
+  "Zip",
+  "Anrok",
+  "Quora",
+  "Y Combinator",
+  "Quantinuum",
+  "Bosch",
+  "Snowflake",
+  "Persona"
+ ]
+}
