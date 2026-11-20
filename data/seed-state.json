@@ -1,0 +1,346 @@
+{
+ "next": 40,
+ "checked": {
+  "rescale": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:rescale",
+   "tried": [
+    "lever:rescale=404",
+    "ashby:rescale=17 jobs"
+   ]
+  },
+  "apollo": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:apollo-graphql",
+   "tried": [
+    "ashby:apollo-graphql=8 jobs"
+   ]
+  },
+  "hackerrank": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:hackerrank",
+   "tried": [
+    "ashby:hackerrank=404",
+    "greenhouse:hackerrank=31 jobs"
+   ]
+  },
+  "onesignal": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:onesignal=404",
+    "greenhouse:onesignal=404",
+    "lever:onesignal=404"
+   ]
+  },
+  "streak": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:streak=404",
+    "greenhouse:streak=404",
+    "lever:streak=404"
+   ]
+  },
+  "quartzy": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "lever:quartzy",
+   "tried": [
+    "ashby:quartzy=404",
+    "greenhouse:quartzy=404",
+    "lever:quartzy=2 jobs"
+   ]
+  },
+  "mixrank": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:mixrank=404",
+    "greenhouse:mixrank=404",
+    "lever:mixrank=404"
+   ]
+  },
+  "volantio": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:volantio=404",
+    "greenhouse:volantio=404",
+    "lever:volantio=404"
+   ]
+  },
+  "zentail": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:zentail=404",
+    "greenhouse:zentail=404",
+    "lever:zentail=404"
+   ]
+  },
+  "padlet": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:padlet",
+   "tried": [
+    "ashby:padlet=20 jobs"
+   ]
+  },
+  "etleap": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:etleap=404",
+    "greenhouse:etleap=404",
+    "lever:etleap=404"
+   ]
+  },
+  "influxdata": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:Influxdata",
+   "tried": [
+    "ashby:Influxdata=8 jobs"
+   ]
+  },
+  "radar": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:radar",
+   "tried": [
+    "greenhouse:radar=7 jobs"
+   ]
+  },
+  "simplyinsured": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:si",
+   "tried": [
+    "greenhouse:si=4 jobs"
+   ]
+  },
+  "wefunder": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:wefunder=404",
+    "greenhouse:wefunder=404",
+    "lever:wefunder=404"
+   ]
+  },
+  "lob": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:lob",
+   "tried": [
+    "ashby:lob=404",
+    "greenhouse:lob=4 jobs"
+   ]
+  },
+  "flexport": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:flexport",
+   "tried": [
+    "greenhouse:flexport=209 jobs"
+   ]
+  },
+  "algolia": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:algolia",
+   "tried": [
+    "greenhouse:algolia=27 jobs"
+   ]
+  },
+  "picnicai": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:picnicai",
+   "tried": [
+    "greenhouse:picnicai=3 jobs"
+   ]
+  },
+  "hive": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:hive.co",
+   "tried": [
+    "ashby:hive.co=1 jobs"
+   ]
+  },
+  "ginkgobioworks": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:ginkgobioworks",
+   "tried": [
+    "greenhouse:ginkgobioworks=17 jobs"
+   ]
+  },
+  "notablelabs": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:notablelabs=404",
+    "greenhouse:notablelabs=404",
+    "lever:notablelabs=404",
+    "ashby:notable-labs=404",
+    "greenhouse:notable-labs=404",
+    "lever:notable-labs=404",
+    "ashby:notable=9 jobs (rejected: postings don't name the company or its domain)",
+    "greenhouse:notable=404"
+   ]
+  },
+  "qventus": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:qventus",
+   "tried": [
+    "greenhouse:qventus=15 jobs"
+   ]
+  },
+  "magic": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:magic=9 jobs (rejected: postings don't name the company or its domain)",
+    "greenhouse:magic=0 jobs",
+    "lever:magic=404",
+    "ashby:getmagic=404",
+    "greenhouse:getmagic=404",
+    "lever:getmagic=404"
+   ]
+  },
+  "tempo": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:tempo",
+   "tried": [
+    "greenhouse:tempo=5 jobs"
+   ]
+  },
+  "mashgin": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "lever:mashgin",
+   "tried": [
+    "lever:mashgin=10 jobs"
+   ]
+  },
+  "gemnote": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:gemnote=404",
+    "greenhouse:gemnote=404",
+    "lever:gemnote=404"
+   ]
+  },
+  "snapmagic": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:snapmagic",
+   "tried": [
+    "ashby:snapmagic=6 jobs"
+   ]
+  },
+  "reach": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:reach=6 jobs (rejected: postings don't name the company or its domain)",
+    "greenhouse:reach=404",
+    "lever:reach=404",
+    "ashby:reachpower=404",
+    "greenhouse:reachpower=404",
+    "lever:reachpower=2 jobs (rejected: postings don't name the company or its domain)"
+   ]
+  },
+  "vergegenomics": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:verge-labs",
+   "tried": [
+    "ashby:verge-labs=1 jobs"
+   ]
+  },
+  "go1": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:go1=404",
+    "greenhouse:go1=404",
+    "lever:go1=404"
+   ]
+  },
+  "bitmovin": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:bitmovin",
+   "tried": [
+    "ashby:bitmovin=404",
+    "greenhouse:bitmovin=11 jobs"
+   ]
+  },
+  "instawork": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:instawork",
+   "tried": [
+    "ashby:instawork=404",
+    "greenhouse:instawork=56 jobs"
+   ]
+  },
+  "humaninterest": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:humaninterest",
+   "tried": [
+    "greenhouse:humaninterest=62 jobs"
+   ]
+  },
+  "isonohealth": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:isonohealth=404",
+    "greenhouse:isonohealth=404",
+    "lever:isonohealth=404",
+    "ashby:isono-health=404",
+    "greenhouse:isono-health=404",
+    "lever:isono-health=404"
+   ]
+  },
+  "mason": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:mason=404",
+    "greenhouse:mason=404",
+    "lever:mason=404",
+    "ashby:bymason=404",
+    "greenhouse:bymason=404",
+    "lever:bymason=404"
+   ]
+  },
+  "pocketsuite": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:pocketsuite=404",
+    "greenhouse:pocketsuite=404",
+    "lever:pocketsuite=404"
+   ]
+  },
+  "castle": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "ashby:castle",
+   "tried": [
+    "ashby:castle=2 jobs"
+   ]
+  },
+  "podium": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:podium81",
+   "tried": [
+    "greenhouse:podium81=67 jobs"
+   ]
+  },
+  "apolloio": {
+   "at": "2026-11-20T04:21:49.368Z",
+   "result": "greenhouse:apolloio",
+   "tried": [
+    "ashby:apolloio=404",
+    "greenhouse:apolloio=46 jobs"
+   ]
+  }
+ },
+ "updated_at": "2026-11-20T04:21:49.368Z",
+ "progress": {
+  "seeds": 792,
+  "checked": 40,
+  "found": 25
+ }
+}
