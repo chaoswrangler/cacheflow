@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120r';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120r';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120r';
+import * as C from './shared/core.mjs?v=20261120s';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120s';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120s';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -437,21 +437,17 @@ function payParts(c) {
   else c.salMode = unknown || c.payUnknown ? 'starts_unknown' : 'starts';
   return { unknown: c.salMode !== 'starts' };
 }
-// Worked examples so the bars are visible: ranges around each bar, marked shown or hidden.
+// One plain sentence describing the pay filter, plus a live count filled in by renderMatches.
 function renderPayEx() {
-  const c = S.crit, min = +c.minBase || 0, top = +c.maxBase || 0, f = payParts(c), k = v => Math.round(v / 5000) * 5000;
+  const c = S.crit, min = +c.minBase || 0, top = +c.maxBase || 0, f = payParts(c);
   $('#payUnkRow').hidden = !min && !top;
-  if (!min && !top) { $('#payEx').innerHTML = '<span class="pex ok">✓ every role, with or without stated pay</span>'; return; }
-  const ex = [];
-  if (min) ex.push([k(min), k(Math.max(min * 1.3, top))], [k(min * 0.85), k(Math.max(min * 1.15, top))]);
-  if (top) ex.push([k(Math.max(min, top * 0.7)), k(top * 0.85)], [k(Math.max(min, top * 0.75)), k(top * 1.2)]);
-  const okLo = lo => lo >= min, okHi = hi => !top || hi >= top;
-  const seen = new Set();
-  $('#payEx').innerHTML = ex.filter(r => r[1] > r[0] && !seen.has(r.join()) && seen.add(r.join())).map(([lo, hi]) => {
-    const ok = okLo(lo) && okHi(hi), why = !okLo(lo) ? 'starts below ' + money(min) : 'tops out below ' + money(top);
-    return `<span class="pex ${ok ? 'ok' : 'no'}">${ok ? '✓' : '✗'} ${money(lo)}–${money(hi)}${ok ? '' : ' <i>' + why + '</i>'}</span>`;
-  }).join('') + `<span class="pex ${f.unknown ? 'ok' : 'no'}">${f.unknown ? '✓' : '✗'} no pay stated</span>`;
+  const parts = [min && `starts at <b>${money(min)} or more</b>`, top && `goes up to <b>${money(top)} or more</b>`].filter(Boolean);
+  const txt = !parts.length ? 'Showing roles at <b>any pay</b>, including ones that don’t state it'
+    : `Showing roles whose base pay ${parts.join(' and ')}${f.unknown ? ', plus roles that don’t state pay' : ''}`;
+  $('#payEx').innerHTML = `<p class="paysum">${txt}<span id="payCount"></span></p>`;
+  updatePayCount();
 }
+function updatePayCount() { const n = S.lastMatches?.length; if ($('#payCount') && n != null) $('#payCount').textContent = ` · ${n.toLocaleString()} role${n === 1 ? '' : 's'}`; }
 function renderCriteria() {
   const c = S.crit, sug = new Set(S.profile.suggestedFns || []);
   const fnRow = k => `<label class="check" title="${esc(C.FUNCTIONS[k].hint)}"><input type="checkbox" data-fn="${k}" ${c.functions.includes(k) ? 'checked' : ''}> <span>${esc(C.FUNCTIONS[k].label)}${sug.has(k) ? ' <span class="fn-sug" title="Suggested from your résumé">◆</span>' : ''}<small>${esc(C.FUNCTIONS[k].hint)}</small></span></label>`;
@@ -683,6 +679,7 @@ function renderMatches() {
     : STATUS[stSel] ? `<div class="empty-state"><b>NOTHING MARKED “${esc(STATUS[stSel].label.toUpperCase())}”</b>Use the ○ button at the left of any row, or the buttons in a row's details, to set Applied, To do or Not interested.</div>`
     : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`;
   S.lastMatches = ms;
+  updatePayCount();
   renderFinds();
 }
 function wireMatches() {
@@ -724,7 +721,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120r');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120s');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
