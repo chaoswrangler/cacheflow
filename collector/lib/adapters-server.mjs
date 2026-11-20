@@ -1,8 +1,80 @@
 // Adapters that only work server-side (no CORS) or need many paced requests.
-import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, parseSalaries, classifyWorkplace } from '../../assets/shared/core.mjs';
+import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, FUNCTIONS, parseSalaries, classifyWorkplace } from '../../assets/shared/core.mjs';
 
 const iso = v => { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
 const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.detail || r.statusText || r.error || '', ...extra });
+// robots.txt: Disallow rules for "User-agent: *" plus Sitemap lines.
+export function robotsRules(txt) {
+  const out = { disallow: [], sitemaps: [], crawlDelay: null }; let applies = false, sawAgent = false;
+  for (const raw of String(txt || '').split(/\r?\n/)) {
+    const line = raw.replace(/#.*/, '').trim(); if (!line) continue;
+    const [k, ...rest] = line.split(':'); const v = rest.join(':').trim(), key = k.trim().toLowerCase();
+    if (key === 'sitemap') out.sitemaps.push(v);
+    else if (key === 'user-agent') { if (!sawAgent || !applies) applies = v === '*'; sawAgent = true; }
+    else if (applies && key === 'disallow' && v) out.disallow.push(v);
+    else if (applies && key === 'crawl-delay') out.crawlDelay = Number(v) || null;
+    else if (key !== 'user-agent') sawAgent = false;
+  }
+  return out;
+}
+// First schema.org JobPosting in a page's JSON-LD blocks.
+export function jsonLdJob(html) {
+  for (const m of String(html || '').matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)) {
+    let d; try { d = JSON.parse(m[1].trim()); } catch { continue; }
+    const items = [].concat(d['@graph'] || d);
+    const jp = items.find(x => x && [].concat(x['@type']).includes('JobPosting'));
+    if (jp) return jp;
+  }
+  return null;
+}
+const titleCase = s => String(s || '').replace(/\b\w/g, c => c.toUpperCase());
+
+// Balanced JSON value starting at index i (array or object), skipping string contents.
+function balancedAt(str, i) {
+  let depth = 0, inStr = false, esc = false, q = '';
+  for (let k = i; k < str.length; k++) {
+    const c = str[k];
+    if (inStr) { if (esc) esc = false; else if (c === '\\') esc = true; else if (c === q) inStr = false; continue; }
+    if (c === '"' || c === "'") { inStr = true; q = c; }
+    else if (c === '[' || c === '{') depth++;
+    else if ((c === ']' || c === '}') && --depth === 0) return str.slice(i, k + 1);
+  }
+  return null;
+}
+// data payload of AF_initDataCallback({key: 'ds:1', ..., data: [...]})
+export function afData(html, key) {
+  const re = /AF_initDataCallback\(\s*\{/g; let m;
+  while ((m = re.exec(String(html || '')))) {
+    const head = html.slice(m.index, m.index + 80);
+    if (!new RegExp(`^AF_initDataCallback\\(\\s*\\{\\s*key:\\s*'${key}'`).test(head)) continue;
+    const d = html.indexOf('data:', m.index); if (d < 0) return null;
+    const txt = balancedAt(html, html.indexOf('[', d)); if (!txt) return null;
+    try { return JSON.parse(txt); } catch { return null; }
+  }
+  return null;
+}
+// Find job records by shape: [ '<long numeric id>', '<title>', ...fields ]
+export function googleJobs(data) {
+  const out = [];
+  const walk = (a, depth) => {
+    if (!Array.isArray(a) || depth > 6) return;
+    if (typeof a[0] === 'string' && /^\d{10,}$/.test(a[0]) && typeof a[1] === 'string' && a[1].length > 3 && a[1].length < 200 && !/[<>]/.test(a[1])) { out.push(googleRecord(a)); return; }
+    for (const x of a) walk(x, depth + 1);
+  };
+  walk(data, 0);
+  return out;
+}
+function googleRecord(a) {
+  const strings = [], arrays = [], stamps = [];
+  const flat = (x, d) => { if (d > 5) return; if (typeof x === 'string') strings.push(x); else if (Array.isArray(x)) { arrays.push(x); if (x.length === 2 && Number.isInteger(x[0]) && x[0] > 1.5e9 && x[0] < 2.2e9) stamps.push(x[0]); x.forEach(y => flat(y, d + 1)); } };
+  a.slice(2).forEach(x => flat(x, 0));
+  const isPlace = t => typeof t === 'string' && t.length < 90 && !/[<>]|https?:/.test(t) && /^[A-Z][\w .'-]+(, [\w .'-]+){1,3}$/.test(t);
+  const locations = [...new Set(arrays.filter(x => isPlace(x[0])).map(x => x[0]))].slice(0, 8);
+  const text = htmlToText(strings.filter(t => /<\/?(p|li|ul|br|h\d)\b/i.test(t)).join('\n'));
+  const company = strings.find(t => /^(Google|YouTube|Waymo|Mandiant|Fitbit|DeepMind|Google DeepMind|Google Cloud|Wing|Verily|X)$/.test(t)) || null;
+  return { id: a[0], title: a[1], locations, text, company, ts: stamps.length ? new Date(Math.max(...stamps) * 1000).toISOString() : null };
+}
+
 // Pull `NAME = [ ... ]` out of an inline script, matching brackets while skipping string contents.
 export function embeddedArray(html, name) {
   const at = String(html || '').search(new RegExp(name + '\\s*=\\s*\\['));
@@ -18,7 +90,8 @@ export function embeddedArray(html, name) {
   }
   return null;
 }
-const relevantTitle =t => { const c = classifyFunctions(t); return c.functions.length || c.eng_review; };
+// Detail pages are fetched only for non-broad categories (broad ones like software engineering get list data only).
+const relevantTitle = t => { const c = classifyFunctions(t); return c.functions.some(f => !FUNCTIONS[f].broad) || c.eng_review; };
 // US or unclear location: worth a detail request. Explicitly foreign ("Brazil - Remote", "Japan - Tokyo") is not.
 const usText = s => classifyWorkplace({ locations: [String(s || '').replace(/---?/g, ', ')] }).us !== false;
 
@@ -119,33 +192,159 @@ export const ADAPTERS = {
              fields: { posted_date: 'time_updated only (first-observed date used)', salary: 'description text', location: 'location object', remote: 'workplace_type / is_remote', req_id: 'internal_use_custom_id' } };
   },
 
+  // Google Careers (experimental): the public results page embeds its job list in an AF_initDataCallback 'ds:1'
+  // block, 20 per page. Field positions aren't documented, so jobs are found by shape (long numeric id + title)
+  // and fields by content. If the page doesn't match, the run reports what it saw instead of guessing.
+  async google_careers(src, emp, http, opt) {
+    const seen = new Map(); let pages = 0, lastFail = null, diag = '';
+    for (const q of src.queries || ['']) {
+      for (let page = 1; page <= (src.max_pages || 5); page++) {
+        const url = `https://www.google.com/about/careers/applications/jobs/results?hl=en_US&q=${encodeURIComponent(q)}&location=United%20States&page=${page}`;
+        const r = await http.text(url);
+        if (!r.ok) { lastFail = r; if (r.status === 429 || r.status === 403) break; continue; }
+        const block = afData(r.data, 'ds:1');
+        if (!block) { diag = `page ${page} of "${q}": ${r.data.length} bytes, AF_initDataCallback ${/AF_initDataCallback/.test(r.data) ? 'present but no ds:1 data' : 'absent'}`; break; }
+        pages++;
+        const found = googleJobs(block); let fresh = 0;
+        for (const g of found) if (!seen.has(g.id)) { seen.set(g.id, g); fresh++; }
+        if (found.length < 20 || !fresh) break;
+      }
+      if (lastFail && (lastFail.status === 429 || lastFail.status === 403)) break;
+    }
+    if (!seen.size) {
+      if (lastFail && !pages) return fail(lastFail, { note: `Google Careers refused or failed (${lastFail.status || lastFail.error}); previous roles kept.` });
+      return { result: pages ? 'empty' : 'experimental_failed', status: 200, jobs: [], note: pages ? `${pages} pages read; no jobs matched the searches` : `Google Careers page format not recognized: ${diag || 'no data block found'}` };
+    }
+    const jobs = [...seen.values()].map(g => ({ source_id: src.id, ats: 'google_careers', employer: emp.employer, ext_id: g.id, title: g.title,
+      url: `https://www.google.com/about/careers/applications/jobs/results/${g.id}-${g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
+      locations: g.locations, remote_hint: g.locations.some(l => /remote/i.test(l)), department: g.company && g.company !== 'Google' ? g.company : null,
+      posted_at: null, posted_kind: g.ts ? 'updated_only' : 'unknown', updated_at: g.ts, desc_text: g.text }));
+    return { result: 'ok', status: 200, jobs, note: `${jobs.length} roles from ${pages} result pages across ${(src.queries || ['']).length} searches (experimental parser)`,
+             fields: { posted_date: 'page timestamp treated as updated date; first-observed used', salary: 'description text (US base range is usually stated)', location: 'yes', remote: 'from location text', req_id: 'Google job id' } };
+  },
+
+  // Radancy / TalentBrew career sites (server-rendered, no JSON feed). Order: robots.txt check → sitemap job URLs
+  // (fallback: /{lang}/search-jobs?p=N) → JobPosting JSON-LD on each relevant job page. Known postings are reused.
+  async radancy(src, emp, http, opt) {
+    const base = src.base.replace(/\/$/, ''), lang = src.lang || 'en';
+    const refused = r => r.status === 429 || r.status === 403;
+    const rb = await http.text(`${base}/robots.txt`);
+    const rules = rb.ok ? robotsRules(rb.data) : { disallow: [], sitemaps: [] };
+    const blocked = path => rules.disallow.some(d => d && path.startsWith(d));
+    if (blocked(`/${lang}/job/`)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows /${lang}/job/ pages; not collected` };
+    // 1) discover job URLs
+    const found = new Map(); let via = '', lastFail = null;
+    const addUrl = (u, title) => { const m = u.match(/\/job\/([^/]+)\/([^/]+)\/(\d+)\/(\d+)/); if (m && !found.has(m[4])) found.set(m[4], { url: u.startsWith('http') ? u : base + u, slugTitle: title || m[2].replace(/-/g, ' '), slugCity: m[1].replace(/-/g, ' ') }); };
+    for (const sm of (rules.sitemaps.length ? rules.sitemaps : [`${base}/sitemap.xml`]).slice(0, 3)) {
+      const r = await http.text(sm); if (!r.ok) { lastFail = r; if (refused(r)) break; continue; }
+      const locs = [...r.data.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map(m => m[1]);
+      const children = /<sitemapindex/i.test(r.data) ? locs.filter(l => /job/i.test(l)).slice(0, 10) : [];
+      for (const c of children) { const cr = await http.text(c); if (cr.ok) for (const m of cr.data.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)) addUrl(m[1]); else if (refused(cr)) { lastFail = cr; break; } }
+      for (const l of locs) addUrl(l);
+      if (found.size) { via = 'sitemap'; break; }
+    }
+    if (!found.size && !blocked(`/${lang}/search-jobs`)) {
+      via = 'search pages';
+      for (let p = 1; p <= (src.max_pages || 100); p++) {
+        const r = await http.text(`${base}/${lang}/search-jobs?p=${p}`); if (!r.ok) { lastFail = r; break; }
+        const before = found.size;
+        for (const m of r.data.matchAll(/<a[^>]+href="([^"]*\/job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/g)) addUrl(m[1], htmlToText(m[2]).split('\n')[0].trim() || null);
+        if (found.size === before) break;
+      }
+    }
+    if (!found.size) return lastFail ? fail(lastFail, { note: `Radancy ${base}: no job links found (${lastFail.status || lastFail.error})` }) : { result: 'empty', status: 200, jobs: [], note: `no job URLs in sitemap or search pages` };
+    // 2) details from JSON-LD for relevant postings
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    const jobs = []; let details = 0, reused = 0, detailRefused = false;
+    for (const [id, f] of found) {
+      const j = { source_id: src.id, ats: 'radancy', employer: emp.employer, ext_id: id, title: titleCase(f.slugTitle), url: f.url, locations: [titleCase(f.slugCity)], posted_at: null, posted_kind: 'unknown', desc_text: '' };
+      const pj = prev.get(id);
+      if (pj && pj.title) { j.title = pj.title; if (pj.excerpt || pj.posted_kind !== 'unknown') { j.reuse = pj; reused++; jobs.push(j); continue; } }
+      if (relevantTitle(j.title) && !detailRefused && details < (src.detail_cap || opt.detailCap)) {
+        details++;
+        const r = await http.text(f.url);
+        if (!r.ok) { if (refused(r)) detailRefused = true; jobs.push(j); continue; }
+        const jp = jsonLdJob(r.data);
+        if (jp) {
+          j.title = htmlToText(jp.title || '') || j.title;
+          j.desc_text = htmlToText(jp.description || '');
+          const locs = [].concat(jp.jobLocation || []).map(l => [l?.address?.addressLocality, l?.address?.addressRegion, l?.address?.addressCountry?.name || l?.address?.addressCountry].filter(Boolean).join(', ')).filter(Boolean);
+          if (locs.length) j.locations = locs;
+          if (/telecommute/i.test(JSON.stringify(jp.jobLocationType || ''))) j.remote_hint = true;
+          if (jp.datePosted) { j.posted_at = iso(jp.datePosted); j.posted_kind = 'json_ld_date_posted'; }
+          j.req_id = jp.identifier?.value || jp.identifier || null;
+          const bs = jp.baseSalary?.value; const unit = String(jp.baseSalary?.value?.unitText || '').toLowerCase();
+          if (bs && Number(bs.minValue) > 0 && (!unit || unit === 'year')) j.salary_struct = { min: Number(bs.minValue), max: Number(bs.maxValue) || Number(bs.minValue), period: 'year', kind: 'base_likely', src: 'structured', snippet: 'JobPosting baseSalary' };
+        }
+      }
+      jobs.push(j);
+    }
+    const partial = detailRefused;
+    return { result: partial ? 'partial' : 'ok', status: 200, jobs,
+      note: `${found.size} postings via ${via}; ${details} job pages read, ${reused} reused from earlier runs` + (partial ? '; job-page reads refused part-way, the rest are read next run' : '') + (rules.crawlDelay ? `; robots crawl-delay ${rules.crawlDelay}s` : ''),
+      fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'JSON-LD identifier' } };
+  },
+
   // Workday CXS: the same JSON the public careers page calls. Search by function keywords, then
   // fetch details (exact startDate + description) only for relevant US roles.
   async workday(src, emp, http, opt) {
     const base = `https://${src.host}/wday/cxs/${src.tenant}/${src.site}`;
-    const seen = new Map(); let anyOk = false, lastFail = null;
-    for (const q of src.queries || ['']) {
-      for (let offset = 0; offset < (opt.workdayMaxPerQuery || opt.maxPerQuery); offset += 20) {
-        const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: q }) });
-        if (!r.ok) { lastFail = r; break; }
-        anyOk = true;
-        const list = r.data?.jobPostings || [];
-        for (const p of list) if (p.externalPath) seen.set(p.externalPath, p);
-        if (list.length < 20) break;
+    const allQ = src.queries?.length ? src.queries : [''];
+    // Rotation: sources with many searches run a different slice each run (full coverage every N runs).
+    const nRot = allQ.length >= (opt.rotateMinQueries || 7) ? Math.max(1, opt.queryRotation || 1) : 1;
+    const slot = (opt.runSeq || 0) % nRot;
+    const queries = nRot > 1 ? allQ.filter((_, i) => i % nRot === slot) : allQ;
+    const refused = r => r.status === 429 || r.status === 403;
+    const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0;
+    const maxPer = src.max_results || opt.workdayMaxPerQuery || opt.maxPerQuery;
+    const page = async (q, offset) => {
+      const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: q }) });
+      if (!r.ok) return { r };
+      anyOk = true; scanned++;
+      const list = r.data?.jobPostings || [];
+      for (const p of list) if (p.externalPath) seen.set(p.externalPath, p);
+      return { r, more: list.length === 20 };
+    };
+    const fullScan = queries.length === 1 && queries[0] === '';
+    if (fullScan) {
+      // Every listing, paged by 20. If refused part-way, the next run resumes from that page and wraps around.
+      const start = Math.min(opt.prevStatusById?.get(src.id)?.resume_offset || 0, maxPer);
+      const ranges = start ? [[start, maxPer], [0, start]] : [[0, maxPer]];
+      scan: for (const [from, to] of ranges) for (let offset = from; offset < to; offset += 20) {
+        const { r, more } = await page('', offset);
+        if (!r.ok) { lastFail = r; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
+        if (!more) break;
       }
-      if (!anyOk && lastFail) break; // first query failed: config is wrong, stop early
+    } else {
+      search: for (const [qi, q] of queries.entries()) {
+        for (let offset = 0; offset < maxPer; offset += 20) {
+          const { r, more } = await page(q, offset);
+          if (!r.ok) { lastFail = r; if (refused(r)) { stoppedAt = qi; break search; } break; } // refused: stop, keep what we have
+          if (!more) break;
+        }
+        if (!anyOk && lastFail) break; // first search failed outright: config is wrong or site is refusing
+      }
     }
-    if (!anyOk) return fail(lastFail || {}, { note: `Workday ${src.host}/${src.site}: ${lastFail?.status || lastFail?.error}. A 404/422 usually means the tenant/site name is wrong; copy it from an Apply URL.` });
-    const jobs = []; let details = 0;
+    if (!anyOk) {
+      const why = refused(lastFail || {}) ? `refused (${lastFail.status}) before any results; previous roles kept. Retries after the Retry-After wait were exhausted.`
+        : `${lastFail?.status || lastFail?.error}. A 404/422 usually means the tenant/site name is wrong; copy it from an Apply URL.`;
+      return fail(lastFail || {}, { note: `Workday ${src.host}/${src.site}: ${why}` });
+    }
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    const jobs = []; let details = 0, reused = 0, detailRefused = false;
     for (const p of seen.values()) {
       const approx = relativePosted(p.postedOn);
-      const j = { source_id: src.id, ats: 'workday', employer: emp.employer, ext_id: p.externalPath.split('_').pop(), req_id: (p.bulletFields || [])[0] || null,
+      const ext = p.externalPath.split('_').pop();
+      const j = { source_id: src.id, ats: 'workday', employer: emp.employer, ext_id: ext, req_id: (p.bulletFields || [])[0] || null,
         title: p.title, url: `https://${src.host}/${src.site}${p.externalPath}`, locations: [p.locationsText].filter(Boolean),
         posted_at: approx ? approx + 'T12:00:00.000Z' : null, posted_kind: approx ? 'relative_approx' : 'unknown', posted_text: p.postedOn || null, desc_text: '' };
-      const wantDetail = relevantTitle(p.title) && (usText(p.locationsText) || /locations/i.test(p.locationsText || '')) && details < (opt.workdayDetailCap || opt.detailCap);
-      if (wantDetail) {
+      const pj = prev.get(ext);
+      const relevant = relevantTitle(p.title) && (usText(p.locationsText) || /locations/i.test(p.locationsText || ''));
+      if (relevant && pj && (pj.posted_kind === 'start_date' || pj.excerpt) && pj.title === p.title) { j.reuse = pj; reused++; } // already read: don't fetch again
+      else if (relevant && !detailRefused && details < (opt.workdayDetailCap || opt.detailCap)) {
         details++;
         const d = await http.json(`${base}${p.externalPath}`);
+        if (!d.ok && refused(d)) detailRefused = true; // stop detail reads; list data still counts
         const info = d.ok ? d.data?.jobPostingInfo : null;
         if (info) {
           j.desc_text = htmlToText(info.jobDescription || '');
@@ -159,7 +358,13 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings across ${src.queries?.length || 1} keyword searches; ${details} detail pages`,
+    const partial = stoppedAt !== null;
+    const note = [fullScan ? `${seen.size} postings from a full scan (${scanned} pages${resumeOffset !== null ? `, stopped at listing ${resumeOffset}; next run resumes there` : ''})`
+        : `${seen.size} postings from ${partial ? `${stoppedAt} of ` : ''}${queries.length} searches` + (nRot > 1 ? ` (rotation ${slot + 1}/${nRot} of ${allQ.length} total)` : ''),
+      `${details} detail pages read, ${reused} reused from earlier runs`,
+      partial ? `refused (${lastFail.status}) part-way: results so far kept, unreached roles kept and marked not refreshed` : '',
+      detailRefused ? 'detail reads stopped after a refusal' : ''].filter(Boolean).join('; ');
+    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: nRot > 1, resume_offset: resumeOffset, note,
              fields: { posted_date: 'list: relative ("Posted 3 Days Ago"); detail: startDate', salary: 'detail description text', location: 'yes', remote: 'detail remoteType (if tenant sets it)', req_id: 'yes' } };
   },
 
