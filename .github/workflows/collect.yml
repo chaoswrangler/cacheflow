@@ -16,6 +16,10 @@ on:
         description: 'Send email digest after collecting'
         type: boolean
         default: true
+      digest_only:
+        description: 'Skip collecting; just email matches from the current data (quick test)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -39,6 +43,7 @@ jobs:
         run: node collector/test/run-tests.mjs
 
       - name: Collect
+        if: ${{ !inputs.digest_only }}
         env:
           ARGS: ${{ inputs.args }}
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
@@ -55,6 +60,7 @@ jobs:
           SUBSCRIBERS: ${{ secrets.SUBSCRIBERS }}
           DIGEST_SALT: ${{ secrets.DIGEST_SALT }}
           SITE_URL: ${{ secrets.SITE_URL }}
+          DIGEST_FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
         run: node collector/digest.mjs
 
       - name: Commit data
