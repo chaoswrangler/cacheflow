@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120x';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120x';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120x';
+import * as C from './shared/core.mjs?v=20261120y';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120y';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120y';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -684,7 +684,7 @@ function jobRow(m) {
 const APPLY = {
   quick: { label: 'Quick apply', hint: "Link opens the hiring system's own short form, no account (Greenhouse, Ashby, Lever, SmartRecruiters, Comeet, Workable)", ats: ['greenhouse', 'ashby', 'lever', 'smartrecruiters', 'comeet', 'workable', 'jazzhr', 'rippling', 'recruitee', 'breezy'] },
   site: { label: 'Via company careers site', hint: "Uses a quick-apply system behind the scenes, but the link goes to the company's own careers site, which may add its own steps (Dropbox, for example). Not verified" },
-  account: { label: 'Account required', hint: 'Sign-up or multi-step portal (Workday, Oracle, Eightfold, Phenom, Amazon, Google…)', ats: ['workday', 'oracle_hcm', 'eightfold', 'phenom', 'amazon', 'google', 'successfactors', 'icims', 'taleo', 'dayforce', 'radancy', 'cisco'] },
+  account: { label: 'Account required', hint: 'Sign-up or multi-step portal (Workday, Oracle, Eightfold, Phenom, Amazon, Google, IBM…)', ats: ['workday', 'oracle_hcm', 'eightfold', 'phenom', 'amazon', 'google', 'avature', 'successfactors', 'icims', 'taleo', 'dayforce', 'radancy', 'cisco'] },
   other: { label: 'Other', hint: 'Careers page or another site' },
 };
 // Quick apply only when the link itself is on the hiring system's hosted page; company-hosted pages vary.
@@ -829,7 +829,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120x');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120y');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

@@ -317,6 +317,70 @@ export const ADAPTERS = {
       fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'JSON-LD identifier' } };
   },
 
+  // Avature-hosted careers sites (e.g. careers.ibm.com). Nothing is guessed: starting from a real job page (seed_url),
+  // the search page is the link that page itself contains, the keyword field is read from the search form, and
+  // paging follows the site's own next-page links. Job pages are read for JobPosting JSON-LD (title/location/date/pay).
+  async avature(src, emp, http, opt) {
+    const seed = new URL(src.seed_url), origin = seed.origin, refused = r => r.status === 429 || r.status === 403;
+    const abs = h => { try { return new URL(h.replace(/&amp;/g, '&'), seed).href; } catch { return null; } };
+    const rb = await http.text(`${origin}/robots.txt`);
+    const rules = rb.ok ? robotsRules(rb.data) : { disallow: [], sitemaps: [] };
+    const blocked = u => { const pth = new URL(u).pathname; return rules.disallow.some(d => d && pth.startsWith(d)); };
+    if (blocked(seed.href)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows ${seed.pathname}; not collected` };
+    const r0 = await http.text(seed.href);
+    if (!r0.ok) return fail(r0, { note: `Avature ${origin}: the starting job page did not load (${r0.status || r0.error}). Replace seed_url with any live job link.` });
+    const searchHref = [...r0.data.matchAll(/href="([^"]*SearchJobs[^"]*)"/gi)].map(m => abs(m[1])).find(Boolean);
+    if (!searchHref) return { result: 'not_fetchable', status: 200, jobs: [], note: `Avature ${origin}: no link to the job search on the starting page; nothing guessed, not collected` };
+    if (blocked(searchHref)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows the job search page; not collected` };
+    // keyword field from the search form on the search page itself
+    const rs = await http.text(searchHref);
+    if (!rs.ok) return fail(rs, { note: `Avature ${origin}: search page refused (${rs.status || rs.error})` });
+    const form = (rs.data.match(/<form[^>]*SearchJobs[\s\S]*?<\/form>/i) || [''])[0];
+    const kw = (form.match(/<input[^>]*type="(?:text|search)"[^>]*name="([^"]+)"/i) || form.match(/<input[^>]*name="([^"]+)"[^>]*type="(?:text|search)"/i) || [])[1];
+    const action = abs((form.match(/action="([^"]+)"/i) || [])[1] || searchHref);
+    const found = new Map(); let pages = 0, lastFail = null, stopped = false;
+    const harvest = html => { const before = found.size;
+      for (const m of html.matchAll(/<a[^>]+href="([^"]*JobDetail[^"]*?jobId=(\d+)[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2]) || (t && !found.get(m[2]).title)) found.set(m[2], { url: abs(m[1]), title: t || found.get(m[2])?.title || '' }); }
+      for (const m of html.matchAll(/<a[^>]+href="([^"]*\/JobDetail\/[^"]*?\/(\d+))"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2])) found.set(m[2], { url: abs(m[1]), title: t }); }
+      return found.size - before; };
+    const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")/i); return m ? abs(m[1]) : null; };
+    const crawl = async start => { let url = start, seen = new Set();
+      while (url && !seen.has(url) && pages < (src.max_pages || 40)) { seen.add(url); if (blocked(url)) break;
+        const r = url === searchHref ? rs : await http.text(url); pages++;
+        if (!r.ok) { lastFail = r; if (refused(r)) stopped = true; break; }
+        harvest(r.data); url = nextOf(r.data); } };
+    const queries = kw && src.queries?.length ? src.queries : [null];
+    for (const q of queries) { if (stopped) break; if (q === null) await crawl(searchHref); else { const u = new URL(action); u.searchParams.set(kw, q); await crawl(u.href); } }
+    if (!found.size) return lastFail ? fail(lastFail, { note: `Avature ${origin}: no job links found (${lastFail.status || lastFail.error})` }) : { result: 'empty', status: 200, jobs: [], note: `Avature ${origin}: search pages had no job links` };
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    const jobs = []; let details = 0, reused = 0, detailRefused = false;
+    for (const [id, f] of found) {
+      const j = { source_id: src.id, ats: 'avature', employer: emp.employer, ext_id: id, title: f.title, url: f.url, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '' };
+      const pj = prev.get(id);
+      if (pj && pj.title === f.title && (pj.excerpt || pj.posted_kind !== 'unknown')) { j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (relevantTitle(f.title) && !detailRefused && details < (src.detail_cap || opt.detailCap)) {
+        details++;
+        const r = await http.text(f.url);
+        if (!r.ok) { if (refused(r)) detailRefused = true; jobs.push(j); continue; }
+        const jp = jsonLdJob(r.data);
+        if (jp) {
+          j.title = htmlToText(jp.title || '') || j.title; j.desc_text = htmlToText(jp.description || '');
+          const locs = [].concat(jp.jobLocation || []).map(l => [l?.address?.addressLocality, l?.address?.addressRegion, l?.address?.addressCountry?.name || l?.address?.addressCountry].filter(Boolean).join(', ')).filter(Boolean);
+          if (locs.length) j.locations = locs;
+          if (/telecommute/i.test(JSON.stringify(jp.jobLocationType || ''))) j.remote_hint = true;
+          if (jp.datePosted) { j.posted_at = iso(jp.datePosted); j.posted_kind = 'json_ld_date_posted'; }
+          const bs = jp.baseSalary?.value; const unit = String(jp.baseSalary?.value?.unitText || '').toLowerCase();
+          if (bs && Number(bs.minValue) > 0 && (!unit || unit === 'year')) j.salary_struct = { min: Number(bs.minValue), max: Number(bs.maxValue) || Number(bs.minValue), period: 'year', kind: 'base_likely', src: 'structured', snippet: 'JSON-LD baseSalary' };
+        } else { j.desc_text = htmlToText(r.data).slice(0, 6000); }
+      }
+      jobs.push(j);
+    }
+    const partial = stopped || detailRefused;
+    return { result: partial ? 'partial' : 'ok', status: partial ? (lastFail?.status || 429) : 200, jobs,
+      note: `${found.size} postings from ${pages} search pages${kw ? ` (keyword field "${kw}", ${queries.length} searches)` : ' (no keyword field found: browsed all)'}; ${details} job pages read, ${reused} reused` + (partial ? '; refused part-way, the rest are read next run' : ''),
+      fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'job id in the URL' } };
+  },
+
   // Employer's own careers page (no ATS feed): robots check → links matching link_pattern on list_url → each job page.
   // Uses JobPosting JSON-LD when present, otherwise <h1> + page text. The URL is the stable id. Dates stay unknown
   // unless the page states them.
@@ -327,19 +391,28 @@ export const ADAPTERS = {
     if (rules.disallow.some(dp => u.pathname.startsWith(dp))) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows ${u.pathname}` };
     const r = await http.text(src.list_url);
     if (!r.ok) return fail(r, { note: `careers page ${src.list_url}: ${r.status || r.error}` });
+    // Follow the site's own next-page links (rel=next, aria-label/class "next"), up to max_pages. Never constructed.
+    let pages = 1;
+    { const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")/i); if (!m) return null; try { const n = new URL(m[1].replace(/&amp;/g, '&'), src.list_url); return n.origin === origin ? n.href : null; } catch { return null; } };
+      const seenP = new Set([src.list_url]); let nx = nextOf(r.data);
+      while (nx && !seenP.has(nx) && pages < (src.max_pages || 10) && !rules.disallow.some(dp => dp && new URL(nx).pathname.startsWith(dp))) {
+        seenP.add(nx); const rn = await http.text(nx); if (!rn.ok) break; pages++; r.data += '\n' + rn.data; nx = nextOf(rn.data); } }
     const pat = new RegExp(src.link_pattern || '/careers/[^/?#"]+/?$');
     const links = new Map();
-    for (const m of r.data.matchAll(/<a\b[^>]*href="([^"#?]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
-      const href = new URL(m[1], src.list_url).href.replace(/\/$/, '');
-      const path = new URL(href).pathname;
-      if (href.startsWith(origin) && pat.test(path) && href !== src.list_url.replace(/\/$/, '') && !links.has(href)) links.set(href, htmlToText(m[2]).split('\n')[0].trim());
+    // Query strings are kept (many sites identify a posting as ?jid=12345); the pattern may match the path or path+query.
+    for (const m of r.data.matchAll(/<a\b[^>]*href="([^"#]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+      let U; try { U = new URL(m[1].replace(/&amp;/g, '&'), src.list_url); } catch { continue; }
+      const href = U.href.replace(/\/$/, '');
+      if (href.startsWith(origin) && (pat.test(U.pathname) || pat.test(U.pathname + U.search)) && href !== src.list_url.replace(/\/$/, '') && !links.has(href)) links.set(href, htmlToText(m[2]).split('\n')[0].trim());
     }
     // No matching links is not evidence of zero jobs: the listing may be built by JavaScript or the link format may have changed.
     if (!links.size) return { result: 'no_links_found', status: 200, jobs: [], note: `page read, but no links matching ${pat} on ${src.list_url}; the listing may be rendered by JavaScript` };
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0;
     for (const [href, linkText] of links) {
-      const id = new URL(href).pathname.replace(/^\/|\/$/g, '').split('/').pop();
+      const HU = new URL(href), qid = [...HU.searchParams.values()].find(v => /^\d{3,}$/.test(v));
+      const segs = HU.pathname.replace(/^\/|\/$/g, '').split('/');
+      const id = qid || segs.find(x => /^\d{3,}$/.test(x)) || segs.pop();
       const j = { source_id: src.id, ats: 'company_html', employer: emp.employer, ext_id: id, title: linkText || titleCase(id.replace(/-/g, ' ')), url: href, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '' };
       const pj = prev.get(id);
       if (pj && pj.title) { j.title = pj.title; j.reuse = pj; reused++; jobs.push(j); continue; }

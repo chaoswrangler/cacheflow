@@ -1840,16 +1840,19 @@
    "sector": "Cybersecurity",
    "vertical": "Network, SASE & zero trust",
    "tier": "named",
-   "careers_url": "https://careers.checkpoint.com/",
+   "careers_url": "https://careers.checkpoint.com/jobs?country=United+States",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "link:check-point",
-     "ats": "link_only",
+     "id": "html:checkpoint",
+     "ats": "company_html",
+     "list_url": "https://careers.checkpoint.com/jobs?country=United+States",
+     "link_pattern": "^/jobs/\\d{5,9}(?:/[^/]*)?/?$",
      "verification": {
-      "status": "link_only",
-      "method": "Not collected yet: Check Point runs its own careers site and no supported job feed has been confirmed. Browse it directly."
+      "status": "unverified_config",
+      "method": "US listing page and job link format (/jobs/7118273/area-manager-federal-sales) supplied by the user, 2026-11-20. If the listing is built by JavaScript the run reports no_links_found rather than zero jobs.",
+      "date": "2026-11-20"
      }
     }
    ],
@@ -4742,16 +4745,33 @@
    "sector": "Hyperscaler & big tech",
    "vertical": "Cloud & platforms",
    "tier": "named",
-   "careers_url": "https://www.ibm.com/careers/search",
+   "careers_url": "https://careers.ibm.com/en_US/careers/JobDetail?jobId=141344",
    "careers_url_verified": false,
    "notes": [],
    "sources": [
     {
-     "id": "link:ibm",
-     "ats": "link_only",
+     "id": "avature:ibm",
+     "ats": "avature",
+     "seed_url": "https://careers.ibm.com/en_US/careers/JobDetail?jobId=141344",
+     "max_pages": 40,
+     "detail_cap": 60,
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "threat intelligence",
+      "security",
+      "solutions engineer",
+      "account executive",
+      "marketing"
+     ],
      "verification": {
-      "status": "link_only",
-      "method": "Not collected yet: IBM runs its own careers search. Browse it directly."
+      "status": "unverified_config",
+      "method": "IBM job pages are on careers.ibm.com (Avature), seen in a live posting link supplied by the user on 2026-11-20. The search page and keyword field are read from IBM's own pages at run time; nothing is guessed. The first run confirms.",
+      "date": "2026-11-20"
      }
     }
    ],

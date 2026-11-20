@@ -295,6 +295,46 @@ try {
   t('workday: next run uses the saved filter from the first request and resumes where it stopped', () => { assert.deepEqual(bodies[0].appliedFacets, { locationCountry: ['us9'] }); assert.equal(bodies[0].offset, 20); assert.equal(c.statusOut.sources.find(x => x.id === 'wd:golf').result, 'ok'); });
 }
 
+/* ---------- Avature (IBM-style): search link, keyword field and paging all discovered from the site's own pages */
+{
+  const dir = await mkdtemp(join(tmpdir(), 'cf-av-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Hotel', tier: 'heavy', sources: [{ id: 'avature:hotel', ats: 'avature', seed_url: 'https://careers.hotel.test/en_US/careers/JobDetail?jobId=900', queries: ['product marketing'] }] }] }));
+  const ld = (t, loc, d, min, max) => `<script type="application/ld+json">${JSON.stringify({ '@type': 'JobPosting', title: t, datePosted: d, jobLocation: [{ address: { addressLocality: loc, addressRegion: 'NY', addressCountry: 'US' } }], baseSalary: { value: { minValue: min, maxValue: max, unitText: 'YEAR' } }, description: '<p>Lead launches.</p>' })}</script>`;
+  const urls = [];
+  const f = async url => { urls.push(url);
+    const H = (b, st = 200) => new Response(b, { status: st, headers: { 'content-type': 'text/html' } });
+    if (url.endsWith('/robots.txt')) return H('User-agent: *\nDisallow: /en_US/careers/Login');
+    if (url.includes('JobDetail?jobId=900')) return H('<a href="/en_US/careers/SearchJobs/?listFilterMode=1">Back to search</a>');
+    if (url.includes('/SearchJobs/') && !url.includes('kw=')) return H('<form action="/en_US/careers/SearchJobs/" method="get"><input type="text" name="kw"></form>');
+    if (url.includes('kw=product+marketing') && !url.includes('jobOffset')) return H('<a href="/en_US/careers/JobDetail?jobId=101">Senior Product Marketing Manager, Security</a><a href="/en_US/careers/JobDetail?jobId=102">Backend Developer</a><a class="paginationNextLink" href="/en_US/careers/SearchJobs/?kw=product+marketing&amp;jobOffset=10">Next</a>');
+    if (url.includes('jobOffset=10')) return H('<a href="/en_US/careers/JobDetail?jobId=103">Director, Product Marketing</a>');
+    if (url.includes('jobId=101')) return H(ld('Senior Product Marketing Manager, Security', 'New York', '2026-11-18', 180000, 260000));
+    if (url.includes('jobId=103')) return H(ld('Director, Product Marketing', 'Armonk', '2026-11-17', 220000, 300000));
+    return H('nope', 404); };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const st = r.statusOut.sources.find(x => x.id === 'avature:hotel'), J = Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j]));
+  t('avature: search link + keyword field + next page discovered; jobs read from JSON-LD', () => { assert.equal(st.result, 'ok'); assert.match(st.message, /keyword field "kw"/); assert.equal(r.jobsOut.jobs.length, 3); assert.equal(J['avature:hotel:101'].salary.min, 180000); assert.equal(J['avature:hotel:103'].posted_kind, 'json_ld_date_posted'); });
+  t('avature: irrelevant titles are not opened', () => assert.ok(!urls.some(u => u.includes('jobId=102'))));
+}
+
+/* ---------- Company careers page with query-string job links (Check Point style) */
+{
+  const dir = await mkdtemp(join(tmpdir(), 'cf-cp-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'India', tier: 'named', sources: [{ id: 'html:india', ats: 'company_html', list_url: 'https://careers.india.test/jobs?country=United+States', link_pattern: '(?:job|jid|position|opening)\\D{0,25}\\d{4,7}' }] }] }));
+  const f = async url => { const H = (b, st = 200) => new Response(b, { status: st, headers: { 'content-type': 'text/html' } });
+    if (url.endsWith('/robots.txt')) return H('User-agent: *\nDisallow:');
+    if (url.includes('/jobs?country=') && !url.includes('page=2')) return H('<a href="/jobs?country=Israel">Israel</a><a href="/index.php?m=cpcareers&amp;a=show&amp;jid=25973">Territory Account Manager - New York</a><a href="/job/25925/advanced-support-engineer">Advanced Support Engineer</a><a href="/jobs/7118273/area-manager-federal-sales">Area Manager, Federal Sales</a><a rel="next" href="/jobs?country=United+States&amp;page=2">Next</a>');
+    if (url.includes('page=2')) return H('<a href="/jobs/7120001/product-marketing-manager">Product Marketing Manager</a>');
+    if (url.includes('/jobs/7120001')) return H('<h1>Product Marketing Manager</h1>');
+    if (url.includes('jid=25973')) return H('<h1>Territory Account Manager - New York</h1><p>United States: New York NY</p>');
+    if (url.includes('/job/25925')) return H('<h1>Advanced Support Engineer</h1>');
+    if (url.includes('/jobs/7118273')) return H('<h1>Area Manager, Federal Sales</h1>');
+    return H('nope', 404); };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const ids = r.jobsOut.jobs.map(j => j.uid).sort();
+  t('company page: query-string and path job links found across next pages, numeric ids kept', () => assert.deepEqual(ids, ['html:india:25925', 'html:india:25973', 'html:india:7118273', 'html:india:7120001']));
+}
+
 /* ---------- Google Careers (experimental, shape-matched) and Radancy (robots → sitemap → JSON-LD) */
 {
   const gJob = (id, title, loc, ts) => [id, title, `https://www.google.com/about/careers/applications/signin?jobId=${id}`, [null, '<ul><li>Lead launches</li></ul>'], [null, '<p>Minimum qualifications: 10 years.</p>'], null, null, 'Google', 'en-US', [[loc, [loc], loc.split(',')[0], null, 'NY', 'US']], [null, '<p>The US base salary range for this full-time position is $197,000-$291,000 + bonus + equity + benefits.</p>'], [ts, 0]];
