@@ -648,3 +648,30 @@ body.on-matches main{max-width:1640px}
 .find .sub2{font-family:var(--mono);font-size:11px;color:var(--t3);line-height:1.4}
 .more-loc{font:500 10px var(--mono);color:var(--t3);margin-left:4px}
 .dgrid b.inl{display:inline;font:inherit;color:var(--ice);letter-spacing:0;text-transform:none;margin:0}
+/* criteria sidebar: no inner scroll box; it is a normal column that scrolls with the page */
+.mlayout.side-open .critside{position:static}
+.mlayout.side-open .critbox{max-height:none;overflow:visible}
+.mlayout.side-open .critbox>summary{position:static;border-bottom:1px solid var(--line)}
+.critsec{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}
+.critsec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:6px 0}
+.critsec>summary::-webkit-details-marker{display:none}
+.critsec>summary .f{margin:0}
+.critsec>summary::after{content:'▾';margin-left:auto;color:var(--t3);font-size:11px}
+.critsec[open]>summary::after{content:'▴'}
+.critsec-sum{font-size:12.5px;color:var(--t2)}
+details.typehelp>summary{cursor:pointer;color:var(--cy);font:500 11px var(--mono);letter-spacing:.06em;list-style:none;margin:6px 0 4px}
+details.typehelp>summary::-webkit-details-marker{display:none}
+
+/* ---------- match tiles: always even rows (8 across, else 4 + 4, else 2 per row), compact ---------- */
+.mresults{container-type:inline-size}
+#matchTiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+#matchTiles .tile{padding:12px 14px;border-radius:14px;min-width:0}
+#matchTiles .tile .n{font-size:clamp(22px,2.2vw,32px)}
+#matchTiles .tile .l{font-size:12px;margin-top:8px;padding-top:8px;line-height:1.35}
+@container (min-width:520px){#matchTiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@container (min-width:1080px){#matchTiles{grid-template-columns:repeat(8,minmax(0,1fr))}#matchTiles .tile .n{font-size:28px}}
+.mlayout.side-open #matchTiles .tile .n{font-size:clamp(22px,2vw,30px)}
+#covTiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:640px){#covTiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1180px){#covTiles{grid-template-columns:repeat(6,minmax(0,1fr))}}
+#covTiles .tile{min-width:0}

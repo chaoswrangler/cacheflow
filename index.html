@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261119y">
+<link rel="stylesheet" href="assets/styles.css?v=20261119z">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -87,7 +87,7 @@
         </svg>
       </div>
     </div>
-    <div class="sec-head"><div class="sec-idx"><i>01</i>Profile</div><h2>Profile &amp; Criteria</h2><span class="rule"></span>
+    <div class="sec-head"><div class="sec-idx"><i>01</i>Profile</div><h2>Profile</h2><span class="rule"></span>
       <div class="sub">Upload a resume or LinkedIn PDF export. The app extracts skills, titles and credentials in your browser; nothing is uploaded to a server.</div></div>
     <div class="grid g-side">
       <div class="grid">
@@ -122,13 +122,10 @@
             <div id="pSkills"></div>
             <div class="row" style="margin-top:8px"><input type="text" id="addSkill" placeholder="add keyword, press Enter" style="max-width:280px"></div>
           </details>
+          <div class="row end" style="margin-top:16px"><button class="btn pri" id="btnGo">Find my matches →</button></div>
         </div>
 
-        <div class="panel">
-          <h3>Search criteria <small>auto-saved in this browser</small></h3>
-          <p class="hint">Job categories, base pay, posting window, location, company types and industries now sit right next to your results, and the list updates as you change them.</p>
-          <div class="row end" style="margin-top:14px"><button class="btn pri" id="btnGo">Open matches &amp; criteria →</button></div>
-        </div>
+
 
 
 
@@ -198,8 +195,9 @@
               <div class="chips" id="cBlocked"></div>
             </div>
             <div>
-              <label class="f">Industries &amp; subcategories</label>
-              <div id="cSectors" class="indpick"></div>
+              <details class="critsec" id="indBox"><summary><span class="f">Industries &amp; subcategories</span><span class="critsec-sum" id="indSum"></span></summary>
+                <div id="cSectors" class="indpick"></div>
+              </details>
             </div>
           </div>
           <div class="row end crit-actions"><button class="btn sec sm" id="btnReset">Reset criteria</button><button class="btn pri sm" id="btnCritDone">Show results</button></div>
@@ -355,7 +353,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261119y" defer></script>
-<script type="module" src="assets/app.js?v=20261119y"></script>
+<script src="assets/fx.js?v=20261119z" defer></script>
+<script type="module" src="assets/app.js?v=20261119z"></script>
 </body>
 </html>

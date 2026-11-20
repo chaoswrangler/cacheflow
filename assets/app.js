@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119y';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119y';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119y';
+import * as C from './shared/core.mjs?v=20261119z';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119z';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119z';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -33,7 +33,7 @@ const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: []
 const S = {
   registry: { employers: [], unresolved_identifiers: [] }, jobs: [], jobsMeta: null, status: { sources: [] },
   crit: { ...DEFAULT_CRIT(), ...store.get('crit', {}) }, profile: { ...DEFAULT_PROFILE(), ...store.get('profile', {}) },
-  track: store.get('track', null), live: new Map(), empByName: new Map(), open: new Set(),
+  track: store.get('track', null), fnOpen: new Set(store.get('fnOpen', [])), live: new Map(), empByName: new Map(), open: new Set(),
 };
 /* Application tracker: one status per role, kept in this browser only (never sent anywhere).
    todo = interested / to do, applied, no = not interested. The old star and hide map onto todo and no. */
@@ -186,7 +186,7 @@ function applyProfile(p, how) {
   save(); renderProfile(); renderCriteria(); renderHud(); renderDiscover();
   logIngest(`<span class="g">✓</span> ${how}: ${p.skillsOn.length} skills · ${p.titles.length} titles · ${p.creds.length} credentials · ${p.employers.length} employers` +
     (p.location ? ` · home <span class="c">${esc(p.location)}</span>` : ' · <span class="y">no home location found; set it below</span>') +
-    (p.suggestedFns.length ? `<br><span class="p">cacheflow&gt;</span> job categories pre-selected from your résumé: <span class="c">${p.suggestedFns.map(f => C.FUNCTIONS[f].label).join(', ')}</span> (marked ◆; change them any time under Search criteria)` : '<br><span class="y">No job categories recognized; the defaults stay selected.</span>'));
+    (p.suggestedFns.length ? `<br><span class="p">cacheflow&gt;</span> job categories pre-selected from your résumé: <span class="c">${p.suggestedFns.map(f => C.FUNCTIONS[f].label).join(', ')}</span> (marked ◆; change them any time in Search criteria on the Matches page)` : '<br><span class="y">No job categories recognized; the defaults stay selected.</span>'));
 }
 const SAMPLE = `Definitely Ahuman
 Senior Product Marketing Manager | Security GTM
@@ -285,7 +285,7 @@ function renderCriteria() {
   const fnRow = k => `<label class="check" title="${esc(C.FUNCTIONS[k].hint)}"><input type="checkbox" data-fn="${k}" ${c.functions.includes(k) ? 'checked' : ''}> <span>${esc(C.FUNCTIONS[k].label)}${sug.has(k) ? ' <span class="fn-sug" title="Suggested from your résumé">◆</span>' : ''}<small>${esc(C.FUNCTIONS[k].hint)}</small></span></label>`;
   $('#cFunctions').innerHTML = `<div class="fn-tools"><span>${c.functions.length} of ${FN_KEYS.length} selected</span>${sug.size ? '<button class="linkbtn" data-fnset="sug">◆ From résumé</button>' : ''}<button class="linkbtn" data-fnset="def">Defaults</button><button class="linkbtn" data-fnset="all">All</button><button class="linkbtn" data-fnset="none">None</button></div>` +
     C.FUNCTION_GROUPS.map(g => { const ks = FN_KEYS.filter(k => C.FUNCTIONS[k].group === g), on = ks.filter(k => c.functions.includes(k)).length;
-      return `<details class="fn-group" ${on || ks.some(k => sug.has(k)) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
+      return `<details class="fn-group" data-grp="${esc(g)}" ${S.fnOpen.has(g) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
   const levels = [...new Set([...PAY_LEVELS, +c.minBase || 0])].sort((a, b) => a - b);
   $('#cMinBase').innerHTML = levels.map(v => `<option value="${v}">${v ? money(v) + '+' : 'No minimum'}${v && !PAY_LEVELS.includes(v) ? ' (from your profile)' : ''}</option>`).join('');
   $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
@@ -299,13 +299,16 @@ function renderCriteria() {
   const tierN = {}; for (const e of S.registry.employers) { const k = C.companyType({}, e); tierN[k] = (tierN[k] || 0) + 1; }
   c.types ||= {};
   $('#cTiers').innerHTML = Object.entries(EMP_TYPE).map(([k, v]) => `<button class="chip ${c.types[k] !== false ? 'on' : ''}" data-tier="${k}" title="${esc(v.hint)}" aria-pressed="${c.types[k] !== false}">${esc(v.label)}${tierN[k] ? ' · ' + tierN[k] : ''}</button>`).join('') +
-    `<div class="typehelp">${Object.values(EMP_TYPE).map(v => `<div><b>${esc(v.label)}</b> ${esc(v.hint)}</div>`).join('')}</div>`;
+    `<details class="typehelp"><summary>What do these mean?</summary>${Object.values(EMP_TYPE).map(v => `<div><b>${esc(v.label)}</b> ${esc(v.hint)}</div>`).join('')}</details>`;
   c.blockEmp ||= [];
   $('#cBlocked').innerHTML = c.blockEmp.length ? c.blockEmp.map(n => `<button class="chip on r" data-unblock="${esc(n)}" title="Show this employer again">${esc(n)} ✕</button>`).join('') : '<span class="sub2">None. Use “Hide this employer” in a role’s details to stop seeing a company.</span>';
   const { sec, ver } = sectorsAndVerticals();
   const { tree } = sectorsAndVerticals();
   c.vertSectors = {}; for (const [sc, vs] of tree) for (const v of vs.keys()) c.vertSectors[v] = sc;
   const anyInd = c.sectors.length || c.verticals.length;
+  { const n = new Set([...c.sectors, ...c.verticals.map(v => c.vertSectors[v])]).size;
+    $('#indSum').textContent = anyInd ? `${n} industr${n === 1 ? 'y' : 'ies'}${c.verticals.length ? ` · ${c.verticals.length} subcategor${c.verticals.length === 1 ? 'y' : 'ies'}` : ''}` : 'All industries';
+    if (!renderCriteria.indInit) { $('#indBox').open = !!anyInd; renderCriteria.indInit = true; } }
   $('#cSectors').innerHTML = `<div class="fn-tools"><span>${anyInd ? (n => `Showing ${n} industr${n === 1 ? 'y' : 'ies'} · tap to change`)(new Set([...c.sectors, ...c.verticals.map(v => c.vertSectors[v])]).size) : 'All industries included. Pick an industry, or open one and pick subcategories, to narrow.'}</span>${anyInd ? '<button class="linkbtn" id="indAll">Include all</button>' : ''}</div>` +
     sec.map(([sc, n]) => {
       const vs = [...(tree.get(sc) || new Map())].sort((a, b) => b[1] - a[1]), picked = vs.filter(([v]) => c.verticals.includes(v)).length, on = c.sectors.includes(sc) || picked;
@@ -313,6 +316,8 @@ function renderCriteria() {
         (vs.length > 1 ? `<div class="chips">${vs.map(([v, k]) => `<button class="chip ${c.verticals.includes(v) ? 'on m' : ''}" data-vert="${esc(v)}" aria-pressed="${c.verticals.includes(v)}">${esc(v)} · ${k}</button>`).join('')}</div>` : '') + `</details>`;
     }).join('');
   const upd = () => { save(); renderHud(); queueMatches(); };
+  // category groups start collapsed (their header shows how many are on); remember the ones opened
+  $$('#cFunctions details[data-grp]').forEach(d => d.ontoggle = () => { d.open ? S.fnOpen.add(d.dataset.grp) : S.fnOpen.delete(d.dataset.grp); store.set('fnOpen', [...S.fnOpen]); });
   $$('#cFunctions [data-fn]').forEach(i => i.onchange = () => { c.functions = $$('#cFunctions [data-fn]:checked').map(x => x.dataset.fn); upd(); renderCriteria(); });
   $$('#cFunctions [data-fnset]').forEach(b => b.onclick = e => { e.preventDefault();
     c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
@@ -332,7 +337,7 @@ function renderCriteria() {
   $$('#cSectors [data-vert]').forEach(b => b.onclick = () => { const s = b.dataset.vert; c.verticals = c.verticals.includes(s) ? c.verticals.filter(x => x !== s) : [...c.verticals, s]; upd(); renderCriteria(); });
   $('#indAll') && ($('#indAll').onclick = () => { c.sectors = []; c.verticals = []; upd(); renderCriteria(); });
   $('#btnReset').onclick = () => { S.crit = DEFAULT_CRIT(); if (S.profile.location) applyProfile({ ...S.profile }, 'Criteria reset'); save(); renderCriteria(); renderHud(); queueMatches(); };
-  $('#btnGo').onclick = () => { setCritOpen(true); show('matches'); scrollTo({ top: 0 }); };
+  $('#btnGo').onclick = () => { setCritOpen(wideLayout()); show('matches'); scrollTo({ top: 0 }); };
   $('#btnCritDone').onclick = () => { if (!wideLayout()) setCritOpen(false); $('#mResults').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 }
 
@@ -385,7 +390,7 @@ function jobRow(m) {
       ${m.skillHits.length || m.customHits.length ? `<div class="wide"><b>Matched</b>${esc([...m.skillHits, ...m.customHits].join(' · '))}</div>` : ''}
       ${j.excerpt ? `<div class="wide ex2">${esc(j.excerpt)}${j.excerpt.length >= 900 ? '…' : ''}</div>` : ''}
       <div class="wide row"><a class="btn pri sm" href="${esc(j.url)}" target="_blank" rel="noopener">Open posting ↗</a><a class="btn sec sm" href="${li}" target="_blank" rel="noopener">LinkedIn ↗</a>
-        <button class="btn sec sm" data-act="blockemp" title="Stop showing roles from ${esc(j.employer)}. Undo under Profile → Search criteria → Hidden employers.">Hide this employer</button>
+        <button class="btn sec sm" data-act="blockemp" title="Stop showing roles from ${esc(j.employer)}. Undo under Search criteria → Hidden employers.">Hide this employer</button>
         <span class="stseg" role="group" aria-label="Status">${Object.entries(STATUS).map(([k, v]) => `<button class="${v.cls} ${st === k ? 'on' : ''}" data-act="st" data-st="${k}" aria-pressed="${st === k}">${v.icon} ${esc(v.label)}</button>`).join('')}</span></div>
       ${st ? `<div class="wide sub2">Status saved in this browser only${tr.applied ? ` · applied ${esc(new Date(tr.applied).toLocaleDateString())}` : ''} · last changed ${esc(new Date(tr.t).toLocaleString())}</div>` : ''}
     </div></td></tr>` : '';
@@ -458,7 +463,7 @@ function renderMatches() {
     ['c', all.length, 'matches in window'], ['g', count('starts'), `base starts ≥ ${money(S.crit.minBase)}`], ['a', count('reaches'), `base reaches ≥ ${money(S.crit.minBase)}`],
     ['', count('unknown') + count('ote_only') + count('predicted'), 'no base stated'], ['m', new Set(all.map(m => m.j.employer)).size, 'employers'],
     ['', all.filter(m => m.loc === 'remote_yes').length, 'remote · home state OK'], ['', S.jobs.filter(j => j.status !== 'closed').length, 'open roles in dataset'], ['g', Object.values(S.track).filter(x => x.s === 'applied').length, 'applied'],
-  ].map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${n}</div><div class="l">${esc(l)}</div></div>`).join('');
+  ].map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${Number(n).toLocaleString('en-US')}</div><div class="l">${esc(l)}</div></div>`).join('');
   if (!S.jobs.length) {
     $('#jobGroups').innerHTML = OWNER
       ? `<div class="empty-state"><b>NO JOB DATA YET</b>The collector hasn't saved a run yet. In GitHub, open <b>Actions → Collect jobs → Run workflow</b>, or click <b>Refresh boards now</b> on <a href="#sources">Sources</a> to pull Greenhouse, Lever and Ashby boards into this tab.</div>`
@@ -691,7 +696,7 @@ function coverage(rows) {
 function renderSources() {
   const rows = sourceRows(), cov = coverage(rows);
   $('#covTiles').innerHTML = [['c', cov.emps, 'unique employers'], ['g', cov.verifiedEmp, 'employers w/ verified source'], ['c', cov.feeds, 'verified feeds / APIs'], ['m', cov.cross, 'cross-employer sources'], ['r', cov.failed, 'failed / unresolved'], ['a', cov.checked, 'employers checked for vacancies']]
-    .map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+    .map(([c, n, l]) => `<div class="tile ${c}"><i class="cn tl"></i><i class="cn tr"></i><i class="cn bl"></i><i class="cn br"></i><div class="n">${Number(n).toLocaleString('en-US')}</div><div class="l">${l}</div></div>`).join('');
   const fill = (sel, label, vals) => { const cur = $(sel).value; $(sel).innerHTML = `<option value="">${label}</option>` + vals.map(v => `<option ${v === cur ? 'selected' : ''}>${esc(v)}</option>`).join(''); };
   fill('#sAts', 'All ATS', [...new Set(rows.map(r => r.s.ats))].sort());
   fill('#sStatus', 'All results', [...new Set(rows.map(r => r.result))].sort());
