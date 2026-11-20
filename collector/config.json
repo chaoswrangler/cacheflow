@@ -60,10 +60,27 @@
       "maxDelayMs": 3000,
       "retries": 4,
       "backoffMs": 5000
+    },
+    {
+      "suffix": "google.com",
+      "minDelayMs": 3000,
+      "maxDelayMs": 6000,
+      "retries": 2,
+      "backoffMs": 20000
+    },
+    {
+      "suffix": "jobs.paloaltonetworks.com",
+      "minDelayMs": 3000,
+      "maxDelayMs": 6000,
+      "retries": 2,
+      "backoffMs": 30000
     }
   ],
   "workday_max_per_query": 60,
   "eightfold_max_per_query": 30,
   "phenom_max_per_query": 30,
-  "workday_detail_cap": 40
+  "workday_detail_cap": 40,
+  "workday_query_rotation": 3,
+  "workday_rotate_min_queries": 7,
+  "rotation_close_hours": 74
 }

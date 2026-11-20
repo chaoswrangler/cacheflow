@@ -29,6 +29,13 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const startedAt = now.toISOString();
   const opt = { workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
 
+  // run counter (drives search rotation) and prior jobs per source (lets adapters skip re-fetching known details)
+  const runSeq = (prevStatus.run?.seq || 0) + 1;
+  opt.runSeq = runSeq; opt.queryRotation = cfg.workday_query_rotation || 1; opt.rotateMinQueries = cfg.workday_rotate_min_queries || 7;
+  opt.prevStatusById = new Map(prevStatus.sources.map(x => [x.id, x]));
+  opt.prevBySource = new Map();
+  for (const j of prevJobs.jobs) { if (j.status === 'closed') continue; (opt.prevBySource.get(j.source_id) || opt.prevBySource.set(j.source_id, new Map()).get(j.source_id)).set(String(j.uid).slice(j.source_id.length + 1), j); }
+
   if (argv.probe) return probe(registry, http, dataDir);
 
   // ----- choose sources
@@ -49,6 +56,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const prevStatusById = new Map(prevStatus.sources.map(s => [s.id, s]));
   const statuses = [];
   const fresh = new Map(); // source_id -> enriched jobs
+  const partialIds = new Set(), rotatedIds = new Set(); // refused part-way / searched a rotating subset
   await Promise.all(tasks.map(async ({ e, s }) => {
     const base = { id: s.id, employer: e.employer, ats: s.ats, tier: e.tier, verification: s.verification?.status, checked_at: new Date().toISOString() };
     const adapter = ADAPTERS[s.ats];
@@ -60,16 +68,24 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     let out;
     try { out = await adapter(s, e, http, opt); }
     catch (err) { out = { result: 'adapter_error', jobs: [], note: String(err?.message || err) }; }
+    const REUSE = ['locations', 'workplace', 'us', 'remote_us', 'elig_text', 'posted_at', 'posted_kind', 'salary', 'kw', 'excerpt', 'req_id', 'url', 'functions', 'eng_review', 'seniority'];
     const enriched = (out.jobs || []).map(j => {
       if (!j.posted_at && j.posted_text) { const d = relativePosted(j.posted_text, now); if (d) { j.posted_at = d + 'T12:00:00.000Z'; j.posted_kind = 'relative_approx'; } }
-      return enrichJob(j);
+      const e2 = enrichJob(j);
+      if (j.reuse) { // details were read on an earlier run: carry them forward instead of fetching again
+        const pj = j.reuse; for (const k of REUSE) if (pj[k] !== undefined && k !== 'functions' && k !== 'eng_review' && k !== 'seniority') e2[k] = pj[k];
+        e2.details_from = pj.details_from || pj.last_seen || null;
+      }
+      return e2;
     });
     const stored = enriched.filter(j => cfg.store_non_us || j.us !== false);
-    const ok = out.result === 'ok' || out.result === 'empty';
+    const ok = out.result === 'ok' || out.result === 'empty' || out.result === 'partial';
     if (ok) fresh.set(s.id, stored);
+    if (out.result === 'partial') partialIds.add(s.id);
+    if (out.rotated) rotatedIds.add(s.id);
     const prev = prevStatusById.get(s.id);
     statuses.push({ ...base, result: out.result, http_status: out.status ?? null, message: out.note || '', fields: out.fields || prev?.fields || null,
-      jobs_total: (out.jobs || []).length, jobs_stored: stored.length,
+      jobs_total: (out.jobs || []).length, jobs_stored: stored.length, resume_offset: out.resume_offset ?? null,
       last_success_at: ok ? base.checked_at : (prev?.last_success_at || null),
       consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1 });
     log(`${out.result.padEnd(14)} ${s.id} → ${(out.jobs || []).length} jobs`);
@@ -103,7 +119,13 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   }
   const cutoff = Date.now() - (cfg.history_days || 21) * 864e5;
   for (const p of prevByUid.values()) {
-    if (!ranIds.has(p.source_id) || !fresh.has(p.source_id)) {
+    if (fresh.has(p.source_id) && (partialIds.has(p.source_id) || rotatedIds.has(p.source_id)) && p.status !== 'closed') {
+      // only part of this source was searched: unseen roles stay open. Refused runs flag them; rotation closes
+      // a role only once it has gone unseen for longer than a full rotation.
+      const unseenH = (Date.now() - new Date(p.last_seen).getTime()) / 36e5;
+      if (!partialIds.has(p.source_id) && unseenH > (cfg.rotation_close_hours || 30)) merged.push({ ...p, status: 'closed', closed_at: nowIso });
+      else merged.push(partialIds.has(p.source_id) ? { ...p, stale: true, stale_since: p.stale_since || nowIso } : p);
+    } else if (!ranIds.has(p.source_id) || !fresh.has(p.source_id)) {
       // source not run this time, or failed: keep the role, flag it as unrefreshed
       merged.push({ ...p, stale: ranIds.has(p.source_id) ? true : p.stale || false, stale_since: ranIds.has(p.source_id) ? (p.stale_since || nowIso) : p.stale_since });
     } else if (p.status !== 'closed') merged.push({ ...p, status: 'closed', closed_at: nowIso });
@@ -131,7 +153,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const summary = allStatus.reduce((acc, s) => { acc[s.result] = (acc[s.result] || 0) + 1; return acc; }, {});
   const finishedAt = new Date().toISOString();
   const jobsOut = { schema: 1, generated_at: finishedAt, window: win, counts: { open: merged.filter(j => j.status === 'open').length, closed_recent: merged.filter(j => j.status === 'closed').length, stale: merged.filter(j => j.stale).length }, jobs: merged };
-  const statusOut = { schema: 1, generated_at: finishedAt, run: { started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats, partial: !!(only || atsOnly || argv.tier || argv.limit) }, summary, sources: allStatus };
+  const statusOut = { schema: 1, generated_at: finishedAt, run: { seq: runSeq, started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats, partial: !!(only || atsOnly || argv.tier || argv.limit) }, summary, sources: allStatus };
   await mkdir(dataDir, { recursive: true });
   await writeFile(join(dataDir, 'jobs.json'), JSON.stringify(jobsOut));
   await writeFile(join(dataDir, 'status.json'), JSON.stringify(statusOut, null, 1));
@@ -141,7 +163,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
 
 // ----- discovery probe: suggests boards, a human approves them into sources.json
 async function probe(registry, http, dataDir) {
-  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
+  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet', 'radancy', 'google_careers'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
   const results = [];
   for (const e of targets) {
     const base = e.employer.toLowerCase().replace(/\.ai$/, 'ai').replace(/&/g, 'and');
