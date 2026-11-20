@@ -1829,29 +1829,14 @@
      "tenant": "crowdstrike",
      "site": "crowdstrikecareers",
      "queries": [
-      "product manager",
-      "product marketing",
-      "partner",
-      "alliances",
-      "go-to-market",
-      "strategy",
-      "business operations",
-      "chief of staff",
-      "enablement",
-      "competitive",
-      "security specialist",
-      "program manager",
-      "channel",
-      "customer success",
-      "threat intelligence",
-      "threat research",
-      "security researcher"
+      ""
      ],
      "verification": {
-      "status": "exists_rate_limited",
-      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
-      "date": "2026-11-19 collector run"
-     }
+      "status": "verified_feed_rate_limited",
+      "method": "Workday CXS POST /wday/cxs/crowdstrike/crowdstrikecareers/jobs (blank search, paged by 20) plus detail GET per posting. Rate-limited from GitHub runners: refused runs keep results so far and resume at the same page next run.",
+      "date": "2026-11-19"
+     },
+     "max_results": 2000
     }
    ],
    "id": "crowdstrike",
@@ -3114,16 +3099,32 @@
    "careers_url": "https://www.google.com/about/careers/applications/jobs/results",
    "careers_url_verified": true,
    "notes": [
-    "Wiz: Google announced the acquisition in 2025. Check whether Wiz hiring still runs on its own Greenhouse board."
+    "Wiz: Google announced the acquisition in 2025. Check whether Wiz hiring still runs on its own Greenhouse board.",
+    "Mandiant (Google's threat-intel unit) hires through Google Careers; the 'Mandiant' and threat-intelligence searches cover it."
    ],
    "sources": [
     {
-     "id": "google:link",
-     "ats": "link_only",
-     "search_url_template": "https://www.google.com/about/careers/applications/jobs/results?q={q}&location=New%20York%2C%20NY%2C%20USA&sort_by=date",
+     "id": "google:careers",
+     "ats": "google_careers",
+     "queries": [
+      "threat intelligence",
+      "security researcher",
+      "Mandiant",
+      "product marketing manager",
+      "product manager security",
+      "go-to-market",
+      "strategy and operations",
+      "partner manager",
+      "chief of staff",
+      "program manager security",
+      "competitive intelligence",
+      "customer engineer"
+     ],
+     "max_pages": 5,
+     "board_url": "https://www.google.com/about/careers/applications/jobs/results",
      "verification": {
-      "status": "link_only",
-      "method": "No public JSON feed. Postings list base salary separately (e.g. \"US: $192000-$278000 + bonus + equity\"), so base is readable on each page.",
+      "status": "experimental",
+      "method": "Public results page; job list read from the embedded AF_initDataCallback ds:1 block (20 per page). Field positions are undocumented, so records are matched by shape. First live run confirms the format.",
       "date": "2026-11-19"
      }
     }
@@ -5354,12 +5355,16 @@
    ],
    "sources": [
     {
-     "id": "panw:link",
-     "ats": "link_only",
+     "id": "radancy:panw",
+     "ats": "radancy",
+     "base": "https://jobs.paloaltonetworks.com",
+     "lang": "en",
+     "detail_cap": 60,
+     "max_pages": 100,
      "search_url_template": "https://jobs.paloaltonetworks.com/en/search-jobs/{q}",
      "verification": {
-      "status": "link_only",
-      "method": "Radancy/TalentBrew front end with Workday requisitions (JR- IDs). No public JSON feed.",
+      "status": "experimental",
+      "method": "Radancy/TalentBrew site. Each run checks robots.txt first, discovers job URLs from the sitemap (fallback /en/search-jobs?p=N), then reads JobPosting JSON-LD on relevant job pages. Not live-tested from this environment; the first run confirms.",
       "date": "2026-11-19"
      }
     }
