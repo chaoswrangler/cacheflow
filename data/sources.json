@@ -764,18 +764,20 @@
    "tier": "core",
    "careers_url": null,
    "careers_url_verified": false,
-   "notes": [],
+   "notes": [
+    "Moved from Ashby (404) to Greenhouse board 'atbayjobs' on 2026-11-19."
+   ],
    "sources": [
     {
-     "id": "ashby:atbay",
-     "ats": "ashby",
-     "slug": "atbay",
-     "board_url": "https://jobs.ashbyhq.com/atbay",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/atbay?includeCompensation=true",
+     "id": "gh:atbayjobs",
+     "ats": "greenhouse",
+     "slug": "atbayjobs",
+     "board_url": "https://job-boards.greenhouse.io/atbayjobs",
+     "feed_url": "https://boards-api.greenhouse.io/v1/boards/atbayjobs/jobs?content=true",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
+      "status": "unverified_config",
+      "method": "Public Greenhouse board found by the user's research on 2026-11-19; the next collector run confirms the JSON feed (404 = wrong board, 'empty' = valid board with no jobs). Replaced Ashby identifier that returned 404.",
+      "date": "2026-11-19"
      }
     }
    ],
@@ -1467,18 +1469,20 @@
    "tier": "core",
    "careers_url": null,
    "careers_url_verified": false,
-   "notes": [],
+   "notes": [
+    "Moved from Ashby (404) to Greenhouse board 'coalition' on 2026-11-19."
+   ],
    "sources": [
     {
-     "id": "ashby:coalition",
-     "ats": "ashby",
+     "id": "gh:coalition",
+     "ats": "greenhouse",
      "slug": "coalition",
-     "board_url": "https://jobs.ashbyhq.com/coalition",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/coalition?includeCompensation=true",
+     "board_url": "https://job-boards.greenhouse.io/coalition",
+     "feed_url": "https://boards-api.greenhouse.io/v1/boards/coalition/jobs?content=true",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
+      "status": "verified_feed_external",
+      "method": "Live JSON retrieved by the user's research on 2026-11-19 (req IDs, descriptions, dates, locations). Replaced Ashby identifier that returned 404.",
+      "date": "2026-11-19"
      }
     }
    ],
@@ -2339,18 +2343,21 @@
    "tier": "core",
    "careers_url": null,
    "careers_url_verified": false,
-   "notes": [],
+   "notes": [
+    "Moved from Ashby (404) to Greenhouse board 'dropzoneai' on 2026-11-19.",
+    "An older Rippling board exists but lists no openings; Greenhouse is the active board."
+   ],
    "sources": [
     {
-     "id": "ashby:dropzoneai",
-     "ats": "ashby",
+     "id": "gh:dropzoneai",
+     "ats": "greenhouse",
      "slug": "dropzoneai",
-     "board_url": "https://jobs.ashbyhq.com/dropzoneai",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/dropzoneai?includeCompensation=true",
+     "board_url": "https://job-boards.greenhouse.io/dropzoneai",
+     "feed_url": "https://boards-api.greenhouse.io/v1/boards/dropzoneai/jobs?content=true",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
+      "status": "unverified_config",
+      "method": "Public Greenhouse board found by the user's research on 2026-11-19; the next collector run confirms the JSON feed (404 = wrong board, 'empty' = valid board with no jobs). Replaced Ashby identifier that returned 404.",
+      "date": "2026-11-19"
      }
     }
    ],
@@ -2583,30 +2590,21 @@
    "sector": "Cybersecurity",
    "vertical": "SecOps, SIEM & AI SOC",
    "tier": "core",
-   "careers_url": null,
-   "careers_url_verified": false,
-   "notes": [],
+   "careers_url": "https://www.exaforce.com/careers/",
+   "careers_url_verified": true,
+   "notes": [
+    "Ashby and Greenhouse identifiers both returned 404; jobs are on exaforce.com/careers."
+   ],
    "sources": [
     {
-     "id": "ashby:exaforce",
-     "ats": "ashby",
-     "slug": "exaforce",
-     "board_url": "https://jobs.ashbyhq.com/exaforce",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/exaforce?includeCompensation=true",
+     "id": "html:exaforce",
+     "ats": "company_html",
+     "list_url": "https://www.exaforce.com/careers/",
+     "link_pattern": "/careers/[a-z0-9][a-z0-9-]+/?$",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
-     }
-    },
-    {
-     "id": "gh404:exaforce",
-     "ats": "unresolved",
-     "slug": "exaforce",
-     "verification": {
-      "status": "unresolved_404",
-      "method": "Greenhouse identifier \"exaforce\" returned 404: this employer likely uses another ATS. Run the collector with --probe to search Lever/Ashby/SmartRecruiters/Workable and review the suggestions.",
-      "date": "prior scan"
+      "status": "experimental",
+      "method": "No ATS API found; openings are published on the company's own careers page with one /careers/{slug} page each. Collector reads the listing links and each job page (JSON-LD if present, otherwise the page heading and text). Dates stay unknown unless the page states them.",
+      "date": "2026-11-19"
      }
     }
    ],
@@ -2670,18 +2668,20 @@
    "tier": "core",
    "careers_url": null,
    "careers_url_verified": false,
-   "notes": [],
+   "notes": [
+    "Moved from Ashby (404) to Greenhouse board 'federato' on 2026-11-19."
+   ],
    "sources": [
     {
-     "id": "ashby:federato",
-     "ats": "ashby",
+     "id": "gh:federato",
+     "ats": "greenhouse",
      "slug": "federato",
-     "board_url": "https://jobs.ashbyhq.com/federato",
-     "feed_url": "https://api.ashbyhq.com/posting-api/job-board/federato?includeCompensation=true",
+     "board_url": "https://job-boards.greenhouse.io/federato",
+     "feed_url": "https://boards-api.greenhouse.io/v1/boards/federato/jobs?content=true",
      "verification": {
-      "status": "unresolved_404",
-      "method": "404 from GitHub Actions: no board under this identifier. Find the ATS from an Apply link on the careers page.",
-      "date": "2026-11-19 collector run"
+      "status": "unverified_config",
+      "method": "Public Greenhouse board found by the user's research on 2026-11-19; the next collector run confirms the JSON feed (404 = wrong board, 'empty' = valid board with no jobs). Replaced Ashby identifier that returned 404.",
+      "date": "2026-11-19"
      }
     }
    ],
