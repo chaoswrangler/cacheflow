@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120h';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120h';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120h';
+import * as C from './shared/core.mjs?v=20261120f';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120f';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120f';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -26,7 +26,7 @@ if (QS.has('owner')) store.set('owner', QS.get('owner') !== 'off');
 const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
   functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
-  lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', remoteState: '', places: null, sen: 2,
+  lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', sen: 2,
   include: '', exclude: 'intern, new grad, apprentice', types: { big: true, security: true, growth: true, aggregator: true }, sectors: [], verticals: [], blockEmp: [],
 });
 const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'empty' });
@@ -88,7 +88,6 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   if (stored.tiers && !stored.types) { S.crit.types = { big: true, security: true, growth: true, aggregator: true, ...C.companyTypeFilter({ tiers: stored.tiers }) }; delete S.crit.tiers; store.set('crit', S.crit); }
   delete S.crit.tiers;
 }
-try { syncPlaces(); } catch (err) { console.error('search locations migration', err); S.crit.places = []; }
 const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); S.track = mergeTrack(store.get('track', {}), S.track); store.set('track', S.track); };
 
 /* Phones show data tables as stacked cards; each cell carries its column name. */
@@ -121,7 +120,7 @@ async function boot() {
     for (const j of S.jobs) if (j.dup_of) { if (!gs.has(j.dup_of)) gs.set(j.dup_of, [j.dup_of]); gs.get(j.dup_of).push(j.uid); }
     for (const g of gs.values()) for (const u of g) S.dupGroup.set(u, g); }
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
-  applyOwnerMode(); wireNav(); wireProfile(); wirePlaces(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
+  applyOwnerMode(); wireNav(); wireProfile(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
   renderMatches(); renderSources(); renderDiscover(); renderSetup();
   show(location.hash.slice(1) || (S.profile.source === 'empty' ? 'profile' : 'matches'));
 }
@@ -218,7 +217,7 @@ function applyProfile(p, how) {
     const { city, state } = splitHome(p.location);
     S.profile.city = city; S.profile.state = state; S.profile.location = joinHome(city, state);
     if (state) S.crit.state = state;
-    if (city) setHomePlace(city);
+    if (city && (!S.crit.metro || S.crit.metroAuto)) { S.crit.metro = C.metroFor(city); S.crit.metroAuto = true; }
   }
   if (p.maxSen) S.crit.sen = Math.max(2, Math.min(5, p.maxSen - 1));
   if (p.suggestedFns?.length) S.crit.functions = [...p.suggestedFns];
@@ -252,7 +251,7 @@ function wireProfile() {
   file.onchange = () => file.files[0] && ingestFile(file.files[0]);
   $('#btnExtract').onclick = () => { const v = $('#paste').value.trim(); if (!v) return toast('Paste text or drop a file first'); S.lastText = v; applyProfile(extractProfile(v), 'Pasted text'); };
   $('#btnPreset').onclick = () => { $('#paste').value = SAMPLE; S.lastText = SAMPLE; applyProfile(extractProfile(SAMPLE), 'Sample resume (fictional)'); };
-  $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); syncPlaces(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); $('#ingestLog').style.display = 'none'; };
+  $('#btnClear').onclick = () => { S.profile = DEFAULT_PROFILE(); S.crit = DEFAULT_CRIT(); $('#paste').value = ''; save(); renderProfile(); renderCriteria(); renderHud(); $('#ingestLog').style.display = 'none'; };
   $('#heroUpload').onclick = e => { e.preventDefault(); $('#drop').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => $('#file').click(), 450); };
   for (const [id, key] of [['#pName', 'name'], ['#pHead', 'headline']]) $(id).onchange = e => { S.profile[key] = e.target.value.trim(); save(); renderHud(); };
   $('#pState').innerHTML = '<option value="">Choose your state…</option>' + Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('');
@@ -272,23 +271,6 @@ async function ingestFile(f) {
   } catch (e) { logIngest(`<span class="r">✗</span> ${esc(e.message)}. Paste the text instead.`); }
 }
 // Grow a textarea to show its whole value (no hidden overflow, no inner scrollbar).
-/* Search locations: places the viewer searches in (metro areas, towns, whole states), separate from home.
-   Derived for the matcher: crit.metro (towns, | separated) and crit.placeStates (whole states). */
-function presetName(terms) { return Object.keys(C.METRO_PRESETS).find(k => C.METRO_PRESETS[k] === terms) || ''; }
-function syncPlaces() {
-  const c = S.crit;
-  if (!Array.isArray(c.places)) c.places = c.metro ? [{ kind: 'metro', label: presetName(c.metro) || 'Commute area', terms: c.metro, on: true, home: true }] : [];
-  const on = (c.places || []).filter(p => p.on);
-  c.metro = [...new Set(on.filter(p => p.kind !== 'state').flatMap(p => String(p.terms || '').split('|').map(x => x.trim()).filter(Boolean)))].join('|');
-  c.placeStates = on.filter(p => p.kind === 'state').map(p => p.st);
-}
-function setHomePlace(city) {
-  const c = S.crit, terms = C.metroFor(city), label = presetName(terms) || city.replace(/\b\w/g, m => m.toUpperCase());
-  c.places ||= [];
-  const h = c.places.find(p => p.home);
-  if (h) Object.assign(h, { kind: 'metro', label, terms, on: true }); else c.places.unshift({ kind: 'metro', label, terms, on: true, home: true });
-  syncPlaces();
-}
 const metroShow = m => String(m || '').split('|').join(' | ');
 function fitArea(t) {
   if (!t) return;
@@ -348,7 +330,7 @@ function critSummary() {
   const c = S.crit, n = (c.functions || []).length;
   const rule = { starts: 'starts ≥', starts_reaches: 'starts or reaches', plus_unknown: '≥ (or unstated)', any: 'any' }[c.salMode] || '';
   const win = { week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', all: 'any date' }[c.window] || c.window;
-  const locs = [c.lMetro && ((c.places || []).filter(p => p.on).map(p => p.label).join(', ') || 'no places'), (c.lRemoteYes || c.lRemoteUnknown) && 'remote', c.lOther && 'other US'].filter(Boolean).join(' + ') || 'no locations';
+  const locs = [c.lMetro && 'commute area', (c.lRemoteYes || c.lRemoteUnknown) && 'remote', c.lOther && 'other US'].filter(Boolean).join(' + ') || 'no locations';
   return `${n} categor${n === 1 ? 'y' : 'ies'} · base ${c.salMode === 'any' ? 'any' : rule + ' ' + money(c.minBase)} · ${win} · ${locs}`;
 }
 function wireCritLayout() {
@@ -358,55 +340,6 @@ function wireCritLayout() {
   d.addEventListener('toggle', () => { store.set('critOpen', d.open); syncLayout(); });
   addEventListener('resize', () => { clearTimeout(wireCritLayout.t); wireCritLayout.t = setTimeout(syncLayout, 120); });
   syncLayout();
-}
-function renderPlaces() {
-  const c = S.crit, home = S.profile.state || c.state;
-  $('#placeList').innerHTML = (c.places || []).map((p, i) => `<div class="place ${p.on ? '' : 'off'}">
-      <label class="check"><input type="checkbox" data-pon="${i}" ${p.on ? 'checked' : ''}> <span><b>${esc(p.label)}</b>${p.home ? ' <span class="pk">home</span>' : ''}${p.kind === 'state' ? ' <span class="pk">whole state</span>' : ''}</span></label>
-      ${p.kind !== 'state' ? `<button type="button" class="linkbtn" data-pedit="${i}" aria-expanded="${S.pEdit === i}">${S.pEdit === i ? 'done' : 'towns'}</button>` : ''}
-      <button type="button" class="linkbtn" data-pdel="${i}" aria-label="Remove ${esc(p.label)}">✕</button>
-      ${S.pEdit === i ? `<textarea class="pterms" data-pterms="${i}" rows="2" spellcheck="false" aria-label="Towns in ${esc(p.label)}, separated by |">${esc(metroShow(p.terms))}</textarea>` : ''}
-    </div>`).join('') || '<p class="hint">No places yet. Add one below, or use Anywhere in US.</p>';
-  $$('#placeList .pterms').forEach(fitArea);
-  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : 'm:' + p.terms));
-  $('#addPlace').innerHTML = '<option value="">+ Add a search location…</option><option value="__city">A city or town…</option>' +
-    '<optgroup label="Metro areas">' + Object.entries(C.METRO_PRESETS).filter(([, t]) => !have.has('m:' + t)).map(([k]) => `<option value="m:${esc(k)}">${esc(k)}</option>`).join('') + '</optgroup>' +
-    '<optgroup label="Whole state">' + Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>';
-  $('#cRemoteState').innerHTML = Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).map(([k, v]) => `<option value="${k}">${esc(v)}${k === home ? ' (home)' : ''}</option>`).join('');
-  $('#cRemoteState').value = c.remoteState || home || 'NY';
-}
-function wirePlaces() {
-  const c = () => S.crit, upd = () => { syncPlaces(); save(); renderHud(); queueMatches(); renderDiscover(); };
-  $('#placeList').addEventListener('change', e => {
-    const t = e.target;
-    if (t.dataset.pon != null) { c().places[+t.dataset.pon].on = t.checked; upd(); renderPlaces(); }
-    if (t.dataset.pterms != null) { const p = c().places[+t.dataset.pterms]; p.terms = t.value.replace(/\s*[\n|,]\s*/g, '|').replace(/^\||\|$/g, '').trim().toLowerCase(); upd(); }
-  });
-  $('#placeList').addEventListener('input', e => { if (e.target.classList.contains('pterms')) fitArea(e.target); });
-  $('#placeList').addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.pdel != null) { c().places.splice(+b.dataset.pdel, 1); S.pEdit = null; upd(); renderPlaces(); }
-    if (b.dataset.pedit != null) { S.pEdit = S.pEdit === +b.dataset.pedit ? null : +b.dataset.pedit; renderPlaces(); }
-  });
-  const add = p => { c().places.push({ on: true, ...p }); c().lMetro = true; $('#lMetro').checked = true; upd(); renderPlaces(); };
-  $('#addPlace').onchange = e => {
-    const v = e.target.value; e.target.value = '';
-    if (v === '__city') { $('#addCityRow').hidden = false; $('#addCity').focus(); return; }
-    if (v.startsWith('m:')) { const k = v.slice(2); add({ kind: 'metro', label: k, terms: C.METRO_PRESETS[k] }); }
-    if (v.startsWith('st:')) { const k = v.slice(3); add({ kind: 'state', label: C.STATES[k], st: k }); }
-  };
-  const addCity = () => { const v = $('#addCity').value.trim(); if (!v) return; const terms = C.metroFor(v); add({ kind: 'metro', label: presetName(terms) || v.replace(/\b\w/g, m => m.toUpperCase()), terms }); $('#addCity').value = ''; $('#addCityRow').hidden = true; };
-  $('#addCityBtn').onclick = addCity;
-  $('#addCity').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } if (e.key === 'Escape') $('#addCityRow').hidden = true; };
-  $('#cRemoteState').onchange = e => { const home = S.profile.state || c().state; c().remoteState = e.target.value === home ? '' : e.target.value; upd(); };
-  $('.qloc').addEventListener('click', e => {
-    const q = e.target.closest('[data-qloc]')?.dataset.qloc; if (!q) return;
-    const cr = c(), homeP = (cr.places || []).find(p => p.home);
-    if (q === 'home' || q === 'remote') { for (const p of cr.places || []) p.on = !!p.home || (!homeP && p === cr.places[0]); cr.remoteState = ''; }
-    Object.assign(cr, { lMetro: true, lRemoteYes: q !== 'home', lRemoteUnknown: q !== 'home', lOther: q === 'us' });
-    for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = cr[k];
-    upd(); renderPlaces();
-  });
 }
 function renderCriteria() {
   const c = S.crit, sug = new Set(S.profile.suggestedFns || []);
@@ -419,7 +352,9 @@ function renderCriteria() {
   $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
-  renderPlaces();
+  $('#cMetro').value = metroShow(c.metro); fitArea($('#cMetro')); $('#cMetro').placeholder = 'set a home location, or type cities separated by |';
+  $('#cMetroPreset').innerHTML = '<option value="">Metro preset…</option>' + Object.keys(C.METRO_PRESETS).map(k => `<option>${esc(k)}</option>`).join('');
+  $('#cMetroPreset').onchange = e => { if (e.target.value) { c.metroAuto = false; c.metro = C.METRO_PRESETS[e.target.value]; $('#cMetro').value = metroShow(c.metro); fitArea($('#cMetro')); upd(); } };
   $('#cSen').innerHTML = Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
   $('#cInclude').value = c.include; $('#cExclude').value = c.exclude;
   const tierN = {}; for (const e of S.registry.employers) { const k = C.companyType({}, e); tierN[k] = (tierN[k] || 0) + 1; }
@@ -453,6 +388,9 @@ function renderCriteria() {
   $('#cFirstSeen').onchange = e => { c.firstSeen = e.target.checked; upd(); };
   $('#cUpdated').onchange = e => { c.updated = e.target.checked; upd(); };
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).onchange = e => { c[k] = e.target.checked; upd(); };
+  $('#cMetro').onchange = e => { c.metroAuto = false; c.metro = e.target.value.replace(/\s*[\n|]\s*/g, '|').replace(/^\||\|$/g, '').trim().toLowerCase(); e.target.value = metroShow(c.metro); upd(); };
+  $('#cMetro').oninput = e => fitArea(e.target);
+  $('#cMetro').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } };
   $('#cSen').onchange = e => { c.sen = +e.target.value; upd(); };
   $('#cInclude').onchange = $('#cInclude').oninput = e => { c.include = e.target.value; upd(); };
   $('#cExclude').onchange = $('#cExclude').oninput = e => { c.exclude = e.target.value; upd(); };
@@ -461,7 +399,7 @@ function renderCriteria() {
   $$('#cSectors [data-sector]').forEach(b => b.onclick = e => { e.preventDefault(); const s = b.dataset.sector; c.sectors = c.sectors.includes(s) ? c.sectors.filter(x => x !== s) : [...c.sectors, s]; upd(); renderCriteria(); });
   $$('#cSectors [data-vert]').forEach(b => b.onclick = () => { const s = b.dataset.vert; c.verticals = c.verticals.includes(s) ? c.verticals.filter(x => x !== s) : [...c.verticals, s]; upd(); renderCriteria(); });
   $('#indAll') && ($('#indAll').onclick = () => { c.sectors = []; c.verticals = []; upd(); renderCriteria(); });
-  $('#btnReset').onclick = () => { S.crit = DEFAULT_CRIT(); syncPlaces(); if (S.profile.location) applyProfile({ ...S.profile }, 'Criteria reset'); save(); renderCriteria(); renderHud(); queueMatches(); };
+  $('#btnReset').onclick = () => { S.crit = DEFAULT_CRIT(); if (S.profile.location) applyProfile({ ...S.profile }, 'Criteria reset'); save(); renderCriteria(); renderHud(); queueMatches(); };
   $('#btnGo').onclick = () => { setCritOpen(wideLayout()); show('matches'); scrollTo({ top: 0 }); };
   $('#btnCritDone').onclick = () => { if (!wideLayout()) setCritOpen(false); $('#mResults').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 }
@@ -487,9 +425,9 @@ const money = n => n == null ? '?' : '$' + (n >= 1000 ? Math.round(n / 1000) + '
 const KIND_LABEL = { base: 'BASE', base_likely: 'SALARY (base implied)', unlabeled: 'RANGE (type not stated)' };
 const DATE_LABEL = { first_published: 'first published', published: 'published', created: 'created', posted_date: 'posted', start_date: 'posting start date', released: 'released', feed_pubdate: 'feed date',
   relative_approx: 'approx. from "posted N days ago"', updated: 'UPDATED date — may be a refresh', first_observed: 'first observed by collector (no posting date)', aggregator_created: 'aggregator date', none: 'no date' };
-const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['IN YOUR SEARCH AREA', 'g'], remote_yes: ['REMOTE · YOUR STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
+const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['IN COMMUTE AREA', 'g'], remote_yes: ['REMOTE · HOME STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
 
-const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['In search area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
+const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['Commute area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
 const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
   relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
 function jobRow(m) {
@@ -668,7 +606,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120h');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120f');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -699,7 +637,7 @@ function scoreParts(m) {
   const p = m.parts || {}, c = S.crit, j = m.j;
   const fnNames = (m.fnHit || []).map(f => C.FUNCTIONS[f]?.label || f);
   const hits = [...(m.skillHits || []), ...(m.customHits || [])];
-  const LOCTXT = m.hf?.tied ? { other: 'listed as remote, but tied to a city or territory outside your search locations (only specific places are listed and nothing says anywhere in the US)' } : { metro: `in one of your search locations${m.hf?.metro_loc ? ' (' + m.hf.metro_loc + ')' : ''}`, remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your chosen state is listed as eligible' : 'remote, and your chosen state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
+  const LOCTXT = m.hf?.tied ? { other: 'listed as remote, but tied to a city or territory outside your home state (only specific places are listed and nothing says anywhere in the US)' } : { metro: 'in your commute area', remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your home state is listed as eligible' : 'remote, and your home state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
   const BASETXT = { starts: `base pay starts at or above your ${money(c.minBase)} minimum`, reaches: `base pay range reaches your ${money(c.minBase)} minimum but starts below it`, unknown: 'no base pay stated', ote_only: 'only on-target earnings (base + commission) stated, which is not counted as base', predicted: 'only a predicted range from an aggregator, not the employer', below: `base pay tops out below your ${money(c.minBase)} minimum` };
   return [
     ['Job category', p.fn, 30, fnNames.length ? 'matches ' + fnNames.join(', ') : 'flagged for review; not in your selected categories'],
@@ -987,7 +925,7 @@ async function liveCheck(ids) {
 /* ============================================================ discover */
 const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', marketing: 'marketing manager', demand: 'demand generation', sales: 'account executive', se: 'solutions engineer', partner: 'partnerships alliances', cs: 'customer success manager', enable: 'sales enablement', gtm: 'go-to-market strategy', strategy: 'strategy business operations', cos: 'chief of staff', ci: 'competitive intelligence', threat: 'threat intelligence researcher', secops: 'security operations incident response', seceng: 'security engineer', grc: 'governance risk compliance', ai: 'machine learning AI', eng: 'software engineer', data: 'data scientist analytics', design: 'product designer', support: 'professional services consultant', finance: 'finance', people: 'recruiter', legal: 'counsel' };
 function renderDiscover() {
-  const c = S.crit, p0 = (c.places || []).find(p => p.on), home = (p0 ? (p0.kind === 'state' ? p0.label : (p0.terms || '').split('|')[0].replace(/\b\w/g, m => m.toUpperCase())) : '') || S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
+  const c = S.crit, home = S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
   const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || (c.verticals.length && c.verticals.every(v => (c.vertSectors?.[v] || 'Cybersecurity') === 'Cybersecurity')) ? ' security' : '';
   const enc = encodeURIComponent;
   // LinkedIn experience filter from the seniority setting (4 mid-senior, 5 director, 6 executive)

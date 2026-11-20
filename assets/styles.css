@@ -703,15 +703,3 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 @media (max-width:600px){.pdin{padding:14px}#pdText{height:50vh}}
 .pdsel{display:inline-flex;align-items:center;gap:8px;font-size:.85rem}
 .usnote{margin:8px 0 4px;padding:8px 10px;border-left:2px solid var(--cyan);background:rgba(95,208,255,.05);font-size:.78rem;line-height:1.5}
-
-/* search locations */
-.qloc{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
-.chipbtn{font:inherit;font-size:.75rem;padding:4px 10px;border-radius:999px;border:1px solid var(--line2);background:rgba(3,9,21,.5);color:var(--text);cursor:pointer}
-.chipbtn:hover,.chipbtn:focus-visible{border-color:var(--cyan);color:var(--cyan)}
-.places{display:grid;gap:4px;margin-bottom:6px}
-.place{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:6px;padding:4px 6px;border:1px solid var(--line);border-radius:8px;min-width:0}
-.place.off{opacity:.55}
-.place .check{min-width:0;margin:0}.place .check span{overflow-wrap:anywhere}
-.place .pk{font-size:.68rem;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
-.place .pterms{grid-column:1/-1;resize:none;overflow:hidden;min-height:0;line-height:1.45;overflow-wrap:anywhere;field-sizing:content}
-.rstate{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.rstate label{display:inline-flex;align-items:center;gap:6px}.rstate select{width:auto;flex:1;min-width:120px;padding:3px 6px}
