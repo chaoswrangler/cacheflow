@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120g';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120g';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120g';
+import * as C from './shared/core.mjs?v=20261120h';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120h';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120h';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -88,7 +88,7 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   if (stored.tiers && !stored.types) { S.crit.types = { big: true, security: true, growth: true, aggregator: true, ...C.companyTypeFilter({ tiers: stored.tiers }) }; delete S.crit.tiers; store.set('crit', S.crit); }
   delete S.crit.tiers;
 }
-syncPlaces();
+try { syncPlaces(); } catch (err) { console.error('search locations migration', err); S.crit.places = []; }
 const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); S.track = mergeTrack(store.get('track', {}), S.track); store.set('track', S.track); };
 
 /* Phones show data tables as stacked cards; each cell carries its column name. */
@@ -274,7 +274,7 @@ async function ingestFile(f) {
 // Grow a textarea to show its whole value (no hidden overflow, no inner scrollbar).
 /* Search locations: places the viewer searches in (metro areas, towns, whole states), separate from home.
    Derived for the matcher: crit.metro (towns, | separated) and crit.placeStates (whole states). */
-const presetName = terms => Object.keys(C.METRO_PRESETS).find(k => C.METRO_PRESETS[k] === terms) || '';
+function presetName(terms) { return Object.keys(C.METRO_PRESETS).find(k => C.METRO_PRESETS[k] === terms) || ''; }
 function syncPlaces() {
   const c = S.crit;
   if (!Array.isArray(c.places)) c.places = c.metro ? [{ kind: 'metro', label: presetName(c.metro) || 'Commute area', terms: c.metro, on: true, home: true }] : [];
@@ -668,7 +668,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120g');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120h');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
