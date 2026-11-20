@@ -264,6 +264,7 @@ try {
   offsets.length = 0; refuseAt = -1;
   const b = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
   t('next run resumes at the refused page, then wraps to the start', () => { assert.deepEqual(offsets.slice(0, 3), [20, 40, 0]); assert.equal(b.statusOut.sources.find(x => x.id === 'wd:fox').result, 'ok'); assert.equal(b.jobsOut.jobs.filter(j => j.status === 'open').length, 50); });
+  t('full scan under 2,000 listings: no cap warning', () => assert.doesNotMatch(b.statusOut.sources.find(x => x.id === 'wd:fox').message, /2,000/));
   t('completed full scan clears the resume point', () => assert.equal(b.statusOut.sources.find(x => x.id === 'wd:fox').resume_offset, null));
 }
 
@@ -293,5 +294,29 @@ try {
   t('radancy: sitemap → JSON-LD title, date, req id, base pay', () => { const p = J['radancy:panw:9001']; assert.equal(p.title, 'Senior Product Marketing Manager, Cortex'); assert.equal(p.posted_kind, 'json_ld_date_posted'); assert.equal(p.req_id, 'JR-123'); assert.equal(p.salary.min, 180000); });
   t('radancy: irrelevant posting listed from sitemap without a page fetch', () => { assert.ok(J['radancy:panw:9002']); assert.equal(calls.filter(u => u.includes('staff-software-engineer')).length, 0); });
   t('radancy: robots.txt disallow is honored', () => { assert.equal(S['radancy:blocked'].result, 'blocked_by_robots'); assert.equal(calls.filter(u => u.includes('blocked-radancy') && !u.endsWith('robots.txt')).length, 0); });
+}
+
+/* ---------- company careers page (Exaforce-style) and Apply-link discovery */
+{
+  const { atsLinks } = await import('../lib/adapters-server.mjs');
+  t('atsLinks finds boards on a careers page', () => {
+    const found = atsLinks('<a href="https://job-boards.greenhouse.io/atbayjobs/jobs/123">Apply</a><iframe src="https://boards.greenhouse.io/embed/job_board?for=Federato"></iframe><a href="https://jobs.lever.co/acme/abc">x</a><a href="https://acme.wd5.myworkdayjobs.com/en-US/AcmeCareers/job/x">y</a>');
+    const k = found.map(f => `${f.ats}:${f.slug}`);
+    for (const want of ['greenhouse:atbayjobs', 'greenhouse:federato', 'lever:acme', 'workday:acme/AcmeCareers']) assert.ok(k.includes(want), `${want} in ${k}`);
+  });
+  const dir = await mkdtemp(join(tmpdir(), 'cf-html-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Exaforce', tier: 'core', sources: [{ id: 'html:exaforce', ats: 'company_html', list_url: 'https://www.exa.example/careers/', link_pattern: '/careers/[a-z0-9][a-z0-9-]+/?$' }] }] }));
+  const calls = [];
+  const f = async url => { calls.push(url);
+    if (url.endsWith('/robots.txt')) return new Response('User-agent: *\nDisallow: /admin/\n', { status: 200 });
+    if (url === 'https://www.exa.example/careers/') return new Response('<nav><a href="/careers/">Careers</a><a href="/about">About</a></nav><a href="/careers/founding-product-marketing-manager">Founding Product Marketing Manager</a><a href="https://www.exa.example/careers/security-researcher/">Security Researcher</a>', { status: 200 });
+    if (url.includes('founding-product-marketing')) return new Response('<html><body><h1>Founding Product Marketing Manager</h1><main><p>Location: New York, NY (Hybrid)</p><p>The base salary range for this role is $190,000 - $230,000.</p></main></body></html>', { status: 200 });
+    if (url.includes('security-researcher')) return new Response(`<script type="application/ld+json">${JSON.stringify({ '@type': 'JobPosting', title: 'Senior Security Researcher', description: '<p>Hunt threats.</p>', jobLocationType: 'TELECOMMUTE', jobLocation: { address: { addressCountry: 'US' } } })}</script>`, { status: 200 });
+    return new Response('nf', { status: 404 }); };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
+  const J = Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j]));
+  t('company page: job links found, nav/self links skipped', () => assert.equal(r.jobsOut.jobs.length, 2));
+  t('company page: heading + text when no JSON-LD (title, location, base pay)', () => { const j = J['html:exaforce:founding-product-marketing-manager']; assert.equal(j.title, 'Founding Product Marketing Manager'); assert.match(j.locations[0], /New York/); assert.equal(j.salary.min, 190000); assert.equal(j.posted_kind, 'unknown'); });
+  t('company page: JSON-LD used when present', () => { const j = J['html:exaforce:security-researcher']; assert.equal(j.title, 'Senior Security Researcher'); assert.ok(j.functions.includes('threat')); });
 }
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
