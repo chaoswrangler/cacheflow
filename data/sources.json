@@ -2715,6 +2715,34 @@
    "type": "security"
   },
   {
+   "employer": "Darktrace",
+   "sector": "Cybersecurity",
+   "vertical": "SecOps, SIEM & AI SOC",
+   "tier": "core",
+   "type": "security",
+   "careers_url": "https://darktrace.com/careers",
+   "careers_url_verified": false,
+   "notes": [
+    "Added 2026-11-19 at the user's request. Darktrace posts on Greenhouse's EU-hosted boards; US roles are on the same board."
+   ],
+   "sources": [
+    {
+     "id": "gh:darktracelimited",
+     "ats": "greenhouse",
+     "slug": "darktracelimited",
+     "region": "eu",
+     "board_url": "https://job-boards.eu.greenhouse.io/darktracelimited",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Found by web search on 2026-11-19: https://job-boards.eu.greenhouse.io/darktracelimited/jobs/4528898101 (EU-region Greenhouse board). The next collector run confirms the feed.",
+      "date": "2026-11-19"
+     }
+    }
+   ],
+   "id": "darktrace",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Darktrace"
+  },
+  {
    "employer": "Databricks",
    "sector": "Cloud, data & dev tools",
    "vertical": "Data & observability",
