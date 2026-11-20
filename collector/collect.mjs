@@ -11,7 +11,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Http } from './lib/http.mjs';
-import { ADAPTERS, AGGREGATORS } from './lib/adapters-server.mjs';
+import { ADAPTERS, AGGREGATORS, atsLinks } from './lib/adapters-server.mjs';
 import { enrichJob, weekWindow, relativePosted, norm } from '../assets/shared/core.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -163,9 +163,15 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
 
 // ----- discovery probe: suggests boards, a human approves them into sources.json
 async function probe(registry, http, dataDir) {
-  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet', 'radancy', 'google_careers'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
+  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet', 'radancy', 'google_careers', 'company_html'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
   const results = [];
   for (const e of targets) {
+    // Strongest evidence: ATS links on the employer's own careers page.
+    const fromPage = [];
+    if (e.careers_url) {
+      const r = await http.text(e.careers_url);
+      if (r.ok) fromPage.push(...atsLinks(r.data).map(x => ({ ...x, evidence: `linked from ${e.careers_url}` })));
+    }
     const base = e.employer.toLowerCase().replace(/\.ai$/, 'ai').replace(/&/g, 'and');
     const cands = [...new Set([base.replace(/[^a-z0-9]/g, ''), base.replace(/[^a-z0-9]+/g, '-'), base.replace(/\s+(security|inc|labs|ai|health)$/, '').replace(/[^a-z0-9]/g, '')])];
     const found = [];
@@ -183,8 +189,9 @@ async function probe(registry, http, dataDir) {
         if (sig) found.push({ ats, slug: c, evidence: String(sig), url });
       }
     }
-    results.push({ employer: e.employer, candidates_tried: cands, found, note: found.length ? 'Confirm the board name matches the employer before adding to sources.json (slug collisions happen).' : 'No public board found under guessed names. Find the ATS from an Apply link on the careers page.' });
-    log(`probe ${e.employer}: ${found.map(f => f.ats + ':' + f.slug).join(', ') || 'none'}`);
+    results.push({ employer: e.employer, careers_url: e.careers_url || null, from_careers_page: fromPage, candidates_tried: cands, found, note: found.length ? 'Confirm the board name matches the employer before adding to sources.json (slug collisions happen).' : 'No public board found under guessed names. Find the ATS from an Apply link on the careers page.' });
+    if (!e.careers_url) results[results.length - 1].next_step = 'Add careers_url for this employer (its official careers page) so the probe can read real Apply links.';
+    log(`probe ${e.employer}: page ${fromPage.map(f => f.ats + ':' + f.slug).join(', ') || '-'} | guesses ${found.map(f => f.ats + ':' + f.slug).join(', ') || 'none'}`);
   }
   await writeFile(join(dataDir, 'probe-results.json'), JSON.stringify({ generated_at: new Date().toISOString(), results }, null, 1));
   return { results };
