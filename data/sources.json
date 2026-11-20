@@ -452,7 +452,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "country": "USA",
      "feed_url": "https://www.amazon.jobs/en/search.json",
@@ -1367,7 +1370,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "feed_url_template": "https://jobs.cisco.com/jobs/SearchJobs/{q}/feed",
      "verification": {
@@ -1836,7 +1842,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "exists_rate_limited",
@@ -3878,7 +3887,10 @@
       "cybersecurity",
       "strategy",
       "chief of staff",
-      "partnerships"
+      "partnerships",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "verified_feed",
@@ -4456,7 +4468,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "search_verified; details_verified; pagination_rate_limited",
@@ -5214,7 +5229,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "verified_feed",
@@ -5714,7 +5732,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "exists_rate_limited",
@@ -6305,7 +6326,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "verification": {
       "status": "exists_rate_limited",
@@ -6733,7 +6757,10 @@
       "security specialist",
       "program manager",
       "channel",
-      "customer success"
+      "customer success",
+      "threat intelligence",
+      "threat research",
+      "security researcher"
      ],
      "country": "us",
      "verification": {
@@ -7064,7 +7091,8 @@
       "splunk program manager",
       "splunk sales",
       "splunk solutions",
-      "splunk security"
+      "splunk security",
+      "splunk threat research"
      ],
      "verification": {
       "status": "verified_parent_board",
