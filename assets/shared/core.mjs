@@ -265,15 +265,19 @@ export function remoteTied(job, home = '') {
 }
 // metro: towns/cities (| separated) the viewer searches in; states: whole states they search in;
 // state: the state remote roles must be open to (usually home, but the viewer can change it).
-export function homeFit(job, { metro = '', state = '', states = [] } = {}) {
+export function homeFit(job, { metro = '', state = '', states = [], tieOk = [] } = {}) {
   const locText = (job.locations || []).join(' | ');
   const abbr = (state || '').toUpperCase();
   const name = STATES[abbr] || '';
   const metroParts = metro.split('|').map(x => x.trim()).filter(Boolean);
-  const stAlts = (states || []).map(x => String(x).toUpperCase()).filter(x => STATES[x]).flatMap(x => [`\\b${esc(STATES[x])}\\b(?!,? d\\.?c)`, `,\\s*${x}\\b`]);
-  const metroRe = metroParts.length || stAlts.length ? new RegExp([metroParts.length && `\\b(${metroParts.map(esc).join('|')})\\b`, ...stAlts].filter(Boolean).join('|'), 'i') : null;
-  const inMetro = !!(metroRe && (job.locations || []).some(l => placeKind(l) !== 'foreign' && metroRe.test(l)));
-  const metroLoc = inMetro ? (job.locations || []).find(l => metroRe.test(l)) || null : null;
+  const townRe = metroParts.length ? new RegExp(`\\b(${metroParts.map(esc).join('|')})\\b`, 'i') : null;
+  const stCodes = (states || []).map(x => String(x).toUpperCase()).filter(x => STATES[x]);
+  const stateRe = stCodes.length ? new RegExp(stCodes.flatMap(x => [`\\b${esc(STATES[x])}\\b(?!,? d\\.?c)`, `,\\s*${x}\\b`]).join('|'), 'i') : null;
+  // Towns match anywhere in a listed location; whole-state matches skip foreign places ("Georgia" the country, "London, Ontario").
+  const hit = l => !!(townRe && townRe.test(l)) || !!(stateRe && stateRe.test(l) && placeKind(l) !== 'foreign');
+  const parts = splitLocs(job.locations);
+  const inMetro = parts.some(hit);
+  const metroLoc = inMetro ? parts.find(hit) || null : null;
   let elig = 'n/a';
   if (inMetro) elig = 'yes';
   else if (job.remote_us && name) {
@@ -284,13 +288,14 @@ export function homeFit(job, { metro = '', state = '', states = [] } = {}) {
     else if (new RegExp(`\\b${esc(name)}\\b|,\\s*${abbr}\\b`, 'i').test(locText)) elig = 'yes';
     else if (/\b(all|any) (50 )?(u\.?s\.?|us|united states)? ?states\b|anywhere in the (u\.?s|united states)/i.test(d)) elig = 'yes';
     else if (/(eligible|hire|located|reside)[^.]{0,60}\bin (the following|these|select) states/i.test(d)) elig = new RegExp(esc(name), 'i').test(d) ? 'yes' : 'no';
+    else if ((m => m && !/\b(not|unable|cannot|can't|won't|no longer)\b[^.]{0,30}$/i.test(d.slice(Math.max(0, m.index - 40), m.index)) && STATE_NAME_RE.test(m[1]) && (elig = new RegExp(`\\b${esc(name)}\\b`, 'i').test(m[1]) ? 'yes' : 'no'))(d.match(/\b(?:open to|hiring|hire)\s+(?:candidates|applicants|residents|people|employees)?\s*(?:who (?:live|reside|are located) |located |based |residing )?in\s+([^.]{0,200})/i))) { /* explicit list of states */ }
     else if (new RegExp(`${esc(name)}[^.]{0,60}(pay|salary|range|\\$)|(pay|salary|range)[^.]{0,80}${esc(name)}`, 'i').test(d)) elig = 'likely';
     else elig = 'unknown';
   } else if (job.remote_us) elig = 'unknown';
   // "Remote" but every listed place is a specific city/region outside the home state, and nothing says
   // anywhere-in-the-US: a territory or office-tied role (ServiceNow work personas, regional AEs).
   const foreign = !inMetro && foreignRemote(job);
-  const tied = !foreign && !!job.remote_us && !inMetro && remoteTied(job, [abbr, ...(states || [])]) && !(elig === 'yes' && !territoryStates(job).size);
+  const tied = !foreign && !!job.remote_us && !inMetro && remoteTied(job, [abbr, ...(states || []), ...(tieOk || [])]) && !(elig === 'yes' && !territoryStates(job).size);
   return { in_metro: inMetro, eligibility: foreign ? 'no' : tied ? 'tied' : elig, metro_loc: metroLoc, tied, foreign };
 }
 // The location to show for a role: the one that made it match (commute area, then remote, then a US place),
@@ -686,7 +691,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const engOnly = !fnHit.length && c.engReview && j.eng_review;
   if (!fnHit.length && !engOnly) if (!force) return null;
   if (excl && excl.test(j.title)) if (!force) return null;
-  if (j.seniority < (c.sen || 1)) if (!force) return null;
+  if (+c.sen > 0 && j.seniority < +c.sen) if (!force) return null; // sen 0 = any level
   const dt = dateFor(j, c);
   if (win) {
     if (!dt.d) if (!force) return null;
@@ -700,15 +705,23 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
     j = { ...j, salary: null };
   }
   const tier = salaryTier(j.salary, c.minBase || 0);
-  const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
+  const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], starts_unknown: ['starts', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
   if (salOk && !salOk.includes(tier)) if (!force) return null;
   // Top of the stated base range must reach crit.maxBase (separates a $200-220K role from a $200-420K one).
   // Roles with no stated base pass only when the salary rule already lets them in.
   if (+c.maxBase > 0 && !force) {
     const top = baseTop(j.salary);
-    if (top == null ? !['plus_unknown', 'any'].includes(c.salMode) : top < +c.maxBase) return null;
+    if (top == null ? !['plus_unknown', 'starts_unknown', 'any'].includes(c.salMode) : top < +c.maxBase) return null;
   }
-  const hf = homeFit(j, { metro: c.metro || '', state: c.remoteState || c.state || '', states: c.placeStates || [] });
+  // Remote eligibility is checked against every state the viewer wants remote work in; the best fit wins.
+  const rsl = Array.isArray(c.remoteStates) ? c.remoteStates : [c.remoteState || c.state || ''];
+  const rank = h => h.in_metro ? 5 : h.tied ? 0 : ({ yes: 4, likely: 3, unknown: 2, no: 1 }[h.eligibility] ?? 2);
+  let hf = null;
+  for (const st of rsl.length ? rsl : ['']) {
+    const h = homeFit(j, { metro: c.metro || '', state: st, states: c.placeStates || [], tieOk: rsl });
+    if (!hf || rank(h) > rank(hf)) hf = h;
+    if (rank(hf) >= 4) break;
+  }
   let loc;
   if (hf.in_metro) loc = 'metro';
   else if (hf.tied) loc = 'other';
@@ -724,9 +737,11 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const customHits = [...custom, ...csvList(c.include)].filter(k => hay.includes(k.toLowerCase()));
   const sFn = fnHit.length ? 30 : 15;
   const sSkill = Math.min(25, skillHits.length * 4 + customHits.length * 4);
-  const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[tier] || 0;
+  // Score pay against the bars the viewer set: full marks when the range clears both, partial when it only clears one.
+  const scoreTier = +c.minBase > 0 ? tier : salaryTier(j.salary, +c.maxBase || 0);
+  const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[scoreTier] || 0;
   const sLoc = { remote_no: 0, metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, other: 4 }[loc];
-  const sSen = j.seniority > (c.sen || 1) ? 10 : 7;
+  const sSen = !(+c.sen > 0) || j.seniority > +c.sen ? 10 : 7;
   return { j, e, sector, vertical, tier, loc, hf, dt, fnHit, skillHits, customHits, score: sFn + sSkill + sSal + (sLoc || 0) + sSen, parts: { fn: sFn, skills: sSkill, base: sSal, loc: sLoc || 0, level: sSen },
            why: `fn ${sFn} · skills ${sSkill} · base ${sSal} · loc ${sLoc} · level ${sSen}` };
 }

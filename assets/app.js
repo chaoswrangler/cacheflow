@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120k';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120k';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120k';
+import * as C from './shared/core.mjs?v=20261120r';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120r';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120r';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -12,7 +12,7 @@ const store = {
   set(k, v) { try { localStorage.setItem('rr:' + k, JSON.stringify(v)); } catch { /* storage unavailable: keep in memory */ } },
 };
 const FN_KEYS = Object.keys(C.FUNCTIONS);
-const TOP_LEVELS = [0, 175000, 200000, 225000, 250000, 275000, 300000, 325000, 350000, 400000, 450000, 500000, 600000];
+const TOP_LEVELS = [0, 150000, 175000, 200000, 225000, 250000, 275000, 300000, 325000, 350000, 400000, 450000, 500000, 600000];
 const PAY_LEVELS = [0, 80000, 100000, 120000, 140000, 150000, 160000, 175000, 180000, 200000, 220000, 225000, 250000, 275000, 300000, 350000, 400000];
 /* Company types, so you can tell what kind of employer a role is at. */
 const EMP_TYPE = {
@@ -26,7 +26,7 @@ const QS = new URLSearchParams(location.search);
 if (QS.has('owner')) store.set('owner', QS.get('owner') !== 'off');
 const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
-  functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
+  functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 0, maxBase: 150000, salMode: 'starts', window: 'week', firstSeen: true, updated: true,
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', remoteState: '', places: null, sen: 2,
   include: '', exclude: 'intern, new grad, apprentice', types: { big: true, security: true, growth: true, aggregator: true }, sectors: [], verticals: [], blockEmp: [],
 });
@@ -279,10 +279,22 @@ function presetName(terms) { return Object.keys(C.METRO_PRESETS).find(k => C.MET
 function syncPlaces() {
   const c = S.crit;
   if (!Array.isArray(c.places)) c.places = c.metro ? [{ kind: 'metro', label: presetName(c.metro) || 'Commute area', terms: c.metro, on: true, home: true }] : [];
-  const on = (c.places || []).filter(p => p.on);
-  c.metro = [...new Set(on.filter(p => p.kind !== 'state').flatMap(p => String(p.terms || '').split('|').map(x => x.trim()).filter(Boolean)))].join('|');
+  if (!c.locV2) { // remote options used to be checkboxes; they're now entries in the same list
+    const rs = c.remoteState || c.state;
+    if (c.lMetro === false) c.places.forEach(p => { p.on = false; });
+    if (c.lRemoteYes !== false && rs) c.places.push({ kind: 'remote_state', st: rs, on: true });
+    if (c.lRemoteUnknown) c.places.push({ kind: 'remote_any', on: true });
+    c.locV2 = true;
+  }
+  const on = c.places.filter(p => p.on);
+  c.metro = [...new Set(on.filter(p => p.kind === 'metro').flatMap(p => String(p.terms || '').split('|').map(x => x.trim()).filter(Boolean)))].join('|');
   c.placeStates = on.filter(p => p.kind === 'state').map(p => p.st);
+  c.remoteStates = on.filter(p => p.kind === 'remote_state').map(p => p.st);
+  c.lMetro = on.some(p => p.kind === 'metro' || p.kind === 'state');
+  c.lRemoteYes = c.remoteStates.length > 0;
+  c.lRemoteUnknown = on.some(p => p.kind === 'remote_any');
 }
+const placeLabel = p => p.kind === 'remote_any' ? 'Remote · anywhere in the US' : p.kind === 'remote_state' ? `Remote · open to ${C.STATES[p.st] || p.st}` : p.label;
 function setHomePlace(city) {
   const c = S.crit, terms = C.metroFor(city), label = presetName(terms) || city.replace(/\b\w/g, m => m.toUpperCase());
   c.places ||= [];
@@ -347,10 +359,10 @@ function setCritOpen(open) { const d = $('#critBox'); if (!d) return; d.open = o
 function syncLayout() { const d = $('#critBox'); $('#mLayout')?.classList.toggle('side-open', !!d?.open && wideLayout()); }
 function critSummary() {
   const c = S.crit, n = (c.functions || []).length;
-  const rule = { starts: 'starts ≥', starts_reaches: 'starts or reaches', plus_unknown: '≥ (or unstated)', any: 'any' }[c.salMode] || '';
+  const rule = { starts: 'whole range ≥', starts_reaches: 'reaches', plus_unknown: 'reaches (or unstated)', starts_unknown: 'whole range ≥ (or unstated)', any: 'any' }[c.salMode] || '';
   const win = { week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', all: 'any date' }[c.window] || c.window;
-  const locs = [c.lMetro && ((c.places || []).filter(p => p.on).map(p => p.label).join(', ') || 'no places'), (c.lRemoteYes || c.lRemoteUnknown) && 'remote', c.lOther && 'other US'].filter(Boolean).join(' + ') || 'no locations';
-  return `${n} categor${n === 1 ? 'y' : 'ies'} · base ${c.salMode === 'any' ? 'any' : rule + ' ' + money(c.minBase)}${+c.maxBase ? ', tops ≥ ' + money(c.maxBase) : ''} · ${win} · ${locs}`;
+  const locs = [...(c.places || []).filter(p => p.on).map(placeLabel), c.lOther && 'anywhere else in the US'].filter(Boolean).join(' + ') || 'no locations';
+  return `${n} categor${n === 1 ? 'y' : 'ies'} · ${[+c.minBase && 'base starts ≥ ' + money(c.minBase), +c.maxBase && 'upper range ≥ ' + money(c.maxBase)].filter(Boolean).join(', ') || 'any pay'}${c.salMode === 'starts_unknown' ? ' (or unstated)' : ''} · ${win} · ${locs}`;
 }
 function wireCritLayout() {
   const d = $('#critBox'); if (!d) return;
@@ -362,19 +374,22 @@ function wireCritLayout() {
 }
 function renderPlaces() {
   const c = S.crit, home = S.profile.state || c.state;
-  $('#placeList').innerHTML = (c.places || []).map((p, i) => `<div class="place ${p.on ? '' : 'off'}">
-      <label class="check"><input type="checkbox" data-pon="${i}" ${p.on ? 'checked' : ''}> <span><b>${esc(p.label)}</b>${p.home ? ' <span class="pk">home</span>' : ''}${p.kind === 'state' ? ' <span class="pk">whole state</span>' : ''}</span></label>
-      ${p.kind !== 'state' ? `<button type="button" class="linkbtn" data-pedit="${i}" aria-expanded="${S.pEdit === i}">${S.pEdit === i ? 'done' : 'towns'}</button>` : ''}
-      <button type="button" class="linkbtn" data-pdel="${i}" aria-label="Remove ${esc(p.label)}">✕</button>
+  const kindTag = p => p.home ? 'home' : p.kind === 'state' ? 'in person · whole state' : p.kind === 'metro' ? 'in person' : '';
+  $('#placeList').innerHTML = (c.places || []).map((p, i) => `<div class="place ${p.on ? '' : 'off'} ${p.kind.startsWith('remote') ? 'rem' : ''}">
+      <label class="check"><input type="checkbox" data-pon="${i}" ${p.on ? 'checked' : ''}> <span><b>${esc(placeLabel(p))}</b>${kindTag(p) ? ` <span class="pk">${kindTag(p)}</span>` : ''}</span></label>
+      ${p.kind === 'metro' ? `<button type="button" class="linkbtn" data-pedit="${i}" aria-expanded="${S.pEdit === i}">${S.pEdit === i ? 'done' : 'towns'}</button>` : '<span></span>'}
+      <button type="button" class="linkbtn" data-pdel="${i}" aria-label="Remove ${esc(placeLabel(p))}">✕</button>
       ${S.pEdit === i ? `<textarea class="pterms" data-pterms="${i}" rows="2" spellcheck="false" aria-label="Towns in ${esc(p.label)}, separated by |">${esc(metroShow(p.terms))}</textarea>` : ''}
-    </div>`).join('') || '<p class="hint">No places yet. Add one below, or use Anywhere in US.</p>';
+    </div>`).join('') || '<p class="hint">No locations yet. Add one below, or tick Anywhere else in the US.</p>';
   $$('#placeList .pterms').forEach(fitArea);
-  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : 'm:' + p.terms));
-  $('#addPlace').innerHTML = '<option value="">+ Add a search location…</option><option value="__city">A city or town…</option>' +
-    '<optgroup label="Metro areas">' + Object.entries(C.METRO_PRESETS).filter(([, t]) => !have.has('m:' + t)).map(([k]) => `<option value="m:${esc(k)}">${esc(k)}</option>`).join('') + '</optgroup>' +
-    '<optgroup label="Whole state">' + Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>';
-  $('#cRemoteState').innerHTML = Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1])).map(([k, v]) => `<option value="${k}">${esc(v)}${k === home ? ' (home)' : ''}</option>`).join('');
-  $('#cRemoteState').value = c.remoteState || home || 'NY';
+  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : p.kind === 'remote_state' ? 'rs:' + p.st : p.kind === 'remote_any' ? 'ra' : 'm:' + p.terms));
+  const states = Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1]));
+  $('#addPlace').innerHTML = '<option value="">+ Add a location…</option>' +
+    '<optgroup label="Remote">' + (have.has('ra') ? '' : '<option value="ra">Remote · anywhere in the US</option>') +
+      states.filter(([k]) => !have.has('rs:' + k)).map(([k, v]) => `<option value="rs:${k}">Remote · open to ${esc(v)}${k === home ? ' (home)' : ''}</option>`).join('') + '</optgroup>' +
+    '<optgroup label="In person: metro area or town"><option value="__city">A city or town…</option>' + Object.entries(C.METRO_PRESETS).filter(([, t]) => !have.has('m:' + t)).map(([k]) => `<option value="m:${esc(k)}">${esc(k)}</option>`).join('') + '</optgroup>' +
+    '<optgroup label="In person: whole state">' + states.filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>';
+  $('#lOther').checked = !!c.lOther;
 }
 function wirePlaces() {
   const c = () => S.crit, upd = () => { syncPlaces(); save(); renderHud(); queueMatches(); renderDiscover(); };
@@ -389,25 +404,53 @@ function wirePlaces() {
     if (b.dataset.pdel != null) { c().places.splice(+b.dataset.pdel, 1); S.pEdit = null; upd(); renderPlaces(); }
     if (b.dataset.pedit != null) { S.pEdit = S.pEdit === +b.dataset.pedit ? null : +b.dataset.pedit; renderPlaces(); }
   });
-  const add = p => { c().places.push({ on: true, ...p }); c().lMetro = true; $('#lMetro').checked = true; upd(); renderPlaces(); };
+  const add = p => { c().places.push({ on: true, ...p }); upd(); renderPlaces(); };
   $('#addPlace').onchange = e => {
     const v = e.target.value; e.target.value = '';
     if (v === '__city') { $('#addCityRow').hidden = false; $('#addCity').focus(); return; }
     if (v.startsWith('m:')) { const k = v.slice(2); add({ kind: 'metro', label: k, terms: C.METRO_PRESETS[k] }); }
     if (v.startsWith('st:')) { const k = v.slice(3); add({ kind: 'state', label: C.STATES[k], st: k }); }
+    if (v === 'ra') add({ kind: 'remote_any' });
+    if (v.startsWith('rs:')) add({ kind: 'remote_state', st: v.slice(3) });
   };
   const addCity = () => { const v = $('#addCity').value.trim(); if (!v) return; const terms = C.metroFor(v); add({ kind: 'metro', label: presetName(terms) || v.replace(/\b\w/g, m => m.toUpperCase()), terms }); $('#addCity').value = ''; $('#addCityRow').hidden = true; };
   $('#addCityBtn').onclick = addCity;
   $('#addCity').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } if (e.key === 'Escape') $('#addCityRow').hidden = true; };
-  $('#cRemoteState').onchange = e => { const home = S.profile.state || c().state; c().remoteState = e.target.value === home ? '' : e.target.value; upd(); };
+  $('#lOther').onchange = e => { c().lOther = e.target.checked; upd(); };
   $('.qloc').addEventListener('click', e => {
     const q = e.target.closest('[data-qloc]')?.dataset.qloc; if (!q) return;
-    const cr = c(), homeP = (cr.places || []).find(p => p.home);
-    if (q === 'home' || q === 'remote') { for (const p of cr.places || []) p.on = !!p.home || (!homeP && p === cr.places[0]); cr.remoteState = ''; }
-    Object.assign(cr, { lMetro: true, lRemoteYes: q !== 'home', lRemoteUnknown: q !== 'home', lOther: q === 'us' });
-    for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = cr[k];
+    const cr = c(), home = S.profile.state || cr.state, pl = cr.places ||= [];
+    const ensure = (kind, extra = {}) => { let p = pl.find(x => x.kind === kind && (!extra.st || x.st === extra.st)); if (!p) pl.push(p = { kind, ...extra }); p.on = true; };
+    if (q === 'home' || q === 'remote') { const h = pl.find(p => p.home); pl.forEach(p => { p.on = p === h || (!h && p.kind === 'metro' && p === pl.find(x => x.kind === 'metro')); }); cr.lOther = false; }
+    if (q === 'remote') { if (home) ensure('remote_state', { st: home }); ensure('remote_any'); }
+    if (q === 'us') { ensure('remote_any'); cr.lOther = true; pl.forEach(p => { if (p.kind !== 'remote_state') p.on = true; }); }
     upd(); renderPlaces();
   });
+}
+/* Pay: two optional bars on the stated base range, "starts at" (low end) and "upper range" (high end).
+   Older rules are translated so results don't change: "reaches X" is the same as "upper range at least X". */
+function payParts(c) {
+  if (['starts_reaches', 'plus_unknown'].includes(c.salMode) && +c.minBase > 0) { c.maxBase = Math.max(+c.maxBase || 0, +c.minBase); c.minBase = 0; }
+  if (['starts_reaches', 'plus_unknown', 'any'].includes(c.salMode)) c.salMode = c.salMode === 'starts_reaches' ? 'starts' : 'starts_unknown';
+  const unknown = c.salMode === 'starts_unknown';
+  if (!(+c.minBase > 0) && !(+c.maxBase > 0)) c.salMode = 'any'; // no pay bars: show everything
+  else c.salMode = unknown || c.payUnknown ? 'starts_unknown' : 'starts';
+  return { unknown: c.salMode !== 'starts' };
+}
+// Worked examples so the bars are visible: ranges around each bar, marked shown or hidden.
+function renderPayEx() {
+  const c = S.crit, min = +c.minBase || 0, top = +c.maxBase || 0, f = payParts(c), k = v => Math.round(v / 5000) * 5000;
+  $('#payUnkRow').hidden = !min && !top;
+  if (!min && !top) { $('#payEx').innerHTML = '<span class="pex ok">✓ every role, with or without stated pay</span>'; return; }
+  const ex = [];
+  if (min) ex.push([k(min), k(Math.max(min * 1.3, top))], [k(min * 0.85), k(Math.max(min * 1.15, top))]);
+  if (top) ex.push([k(Math.max(min, top * 0.7)), k(top * 0.85)], [k(Math.max(min, top * 0.75)), k(top * 1.2)]);
+  const okLo = lo => lo >= min, okHi = hi => !top || hi >= top;
+  const seen = new Set();
+  $('#payEx').innerHTML = ex.filter(r => r[1] > r[0] && !seen.has(r.join()) && seen.add(r.join())).map(([lo, hi]) => {
+    const ok = okLo(lo) && okHi(hi), why = !okLo(lo) ? 'starts below ' + money(min) : 'tops out below ' + money(top);
+    return `<span class="pex ${ok ? 'ok' : 'no'}">${ok ? '✓' : '✗'} ${money(lo)}–${money(hi)}${ok ? '' : ' <i>' + why + '</i>'}</span>`;
+  }).join('') + `<span class="pex ${f.unknown ? 'ok' : 'no'}">${f.unknown ? '✓' : '✗'} no pay stated</span>`;
 }
 function renderCriteria() {
   const c = S.crit, sug = new Set(S.profile.suggestedFns || []);
@@ -415,16 +458,17 @@ function renderCriteria() {
   $('#cFunctions').innerHTML = `<div class="fn-tools"><span>${c.functions.length} of ${FN_KEYS.length} selected</span>${sug.size ? '<button class="linkbtn" data-fnset="sug">◆ From résumé</button>' : ''}<button class="linkbtn" data-fnset="def">Defaults</button><button class="linkbtn" data-fnset="all">All</button><button class="linkbtn" data-fnset="none">None</button></div>` +
     C.FUNCTION_GROUPS.map(g => { const ks = FN_KEYS.filter(k => C.FUNCTIONS[k].group === g), on = ks.filter(k => c.functions.includes(k)).length;
       return `<details class="fn-group" data-grp="${esc(g)}" ${S.fnOpen.has(g) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
+  payParts(c); // migrate the old "any pay" rule before filling the dropdowns
   const levels = [...new Set([...PAY_LEVELS, +c.minBase || 0])].sort((a, b) => a - b);
-  $('#cMinBase').innerHTML = levels.map(v => `<option value="${v}">${v ? money(v) + '+' : 'No minimum'}${v && !PAY_LEVELS.includes(v) ? ' (from your profile)' : ''}</option>`).join('');
+  $('#cMinBase').innerHTML = levels.map(v => `<option value="${v}">${v ? money(v) + ' or more' : 'Any'}${v && !PAY_LEVELS.includes(v) ? ' (from your profile)' : ''}</option>`).join('');
   const tops = [...new Set([...TOP_LEVELS, +c.maxBase || 0])].sort((a, b) => a - b);
-  $('#cMaxBase').innerHTML = tops.map(v => `<option value="${v}">${v ? 'Reaches ' + money(v) + '+' : 'Any top of range'}</option>`).join('');
+  $('#cMaxBase').innerHTML = tops.map(v => `<option value="${v}">${v ? money(v) + ' or more' : 'Any'}</option>`).join('');
   $('#cMaxBase').value = String(+c.maxBase || 0);
-  $('#cMinBase').value = String(+c.minBase || 0); $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
+  $('#cMinBase').value = String(+c.minBase || 0); $('#cWindow').value = c.window;
+  $('#cPayUnknown').checked = c.salMode === 'starts_unknown' || !!c.payUnknown; renderPayEx();
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
-  for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
   renderPlaces();
-  $('#cSen').innerHTML = Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
+  $('#cSen').innerHTML = `<option value="0" ${!(+c.sen > 0) ? 'selected' : ''}>Any level (no filter)</option>` + Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === +c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
   $('#cInclude').value = c.include; $('#cExclude').value = c.exclude;
   const tierN = {}; for (const e of S.registry.employers) { const k = C.companyType({}, e); tierN[k] = (tierN[k] || 0) + 1; }
   c.types ||= {};
@@ -451,13 +495,12 @@ function renderCriteria() {
   $$('#cFunctions [data-fn]').forEach(i => i.onchange = () => { c.functions = $$('#cFunctions [data-fn]:checked').map(x => x.dataset.fn); upd(); renderCriteria(); });
   $$('#cFunctions [data-fnset]').forEach(b => b.onclick = e => { e.preventDefault();
     c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
-  $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); upd(); };
-  $('#cMaxBase').onchange = e => { c.maxBase = Math.max(0, +e.target.value || 0); upd(); };
-  $('#cSalMode').onchange = e => { c.salMode = e.target.value; upd(); };
+  $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
+  $('#cMaxBase').onchange = e => { c.maxBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
+  $('#cPayUnknown').onchange = e => { c.payUnknown = e.target.checked; c.salMode = e.target.checked ? 'starts_unknown' : 'starts'; renderPayEx(); upd(); };
   $('#cWindow').onchange = e => { c.window = e.target.value; upd(); };
   $('#cFirstSeen').onchange = e => { c.firstSeen = e.target.checked; upd(); };
   $('#cUpdated').onchange = e => { c.updated = e.target.checked; upd(); };
-  for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).onchange = e => { c[k] = e.target.checked; upd(); };
   $('#cSen').onchange = e => { c.sen = +e.target.value; upd(); };
   $('#cInclude').onchange = $('#cInclude').oninput = e => { c.include = e.target.value; upd(); };
   $('#cExclude').onchange = $('#cExclude').oninput = e => { c.exclude = e.target.value; upd(); };
@@ -681,7 +724,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120k');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120r');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -719,7 +762,7 @@ function scoreParts(m) {
     ['Skills & keywords', p.skills, 25, hits.length ? `${hits.length} found in the posting (4 points each): ${hits.slice(0, 8).join(', ')}${hits.length > 8 ? '…' : ''}` : 'none of your résumé skills or extra keywords appear in the title or excerpt'],
     ['Base pay', p.base, 20, BASETXT[m.tier] || m.tier],
     ['Location', p.loc, 15, LOCTXT[m.loc] || m.loc],
-    ['Level', p.level, 10, j.seniority > (c.sen || 1) ? 'above your minimum seniority' : 'at your minimum seniority'],
+    ['Level', p.level, 10, !(+c.sen > 0) ? 'no seniority filter set' : j.seniority > +c.sen ? 'above your minimum seniority' : 'at your minimum seniority'],
   ];
 }
 const scoreTitle = m => `Match score ${m.score}/100: ` + scoreParts(m).map(([l, v, mx]) => `${l} ${v}/${mx}`).join(' · ');

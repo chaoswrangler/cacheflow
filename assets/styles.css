@@ -715,3 +715,23 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .place .pk{font-size:.68rem;opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-left:4px}
 .place .pterms{grid-column:1/-1;resize:none;overflow:hidden;min-height:0;line-height:1.45;overflow-wrap:anywhere;field-sizing:content}
 .rstate{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.rstate label{display:inline-flex;align-items:center;gap:6px}.rstate select{width:auto;flex:1;min-width:120px;padding:3px 6px}
+
+/* base pay block */
+.paybox{border:1px solid var(--line);border-radius:10px;padding:10px 12px 12px;margin:0 0 12px;min-width:0}
+.paybox legend{padding:0 6px;margin-left:-4px}
+.paybox .pl{display:block;font-size:.78rem;margin:10px 0 4px;color:var(--muted)}
+.paybox .pl:first-of-type{margin-top:2px}
+.payfit{display:grid;gap:2px;margin:8px 0 2px}
+.payfit .check{margin:0}
+.payex{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pex{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line2);white-space:nowrap}
+.pex i{font-style:normal;opacity:.75;margin-left:4px}
+.pex.ok{border-color:rgba(70,220,150,.45);color:#8ff0c0;background:rgba(70,220,150,.06)}
+.pex.no{border-color:rgba(255,107,107,.35);color:#ffb3b3;background:rgba(255,107,107,.05);text-decoration:none}
+
+.paybox legend.f{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);margin:0;padding:0 6px}
+.paybox .pl{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--t3)}
+.check input[type=radio]{border-radius:50%}
+.check input[type=radio]:checked::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--cy);border:0;transform:none;width:auto;height:auto}
+.paybox .opt{font-size:9.5px;letter-spacing:.08em;opacity:.65;margin-left:6px;text-transform:uppercase}
+[hidden]{display:none!important}

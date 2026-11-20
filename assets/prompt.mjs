@@ -1,10 +1,11 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120k';
+import * as C from './shared/core.mjs?v=20261120r';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
   starts: min => `the stated base range STARTS at or above ${min}`,
+  starts_unknown: min => `the stated base range STARTS at or above ${min}; also include postings with no stated base, flagged "no base stated"`,
   starts_reaches: min => `the stated base range starts at or above ${min}, or reaches ${min} (report these two groups separately)`,
   plus_unknown: min => `the stated base range starts at or reaches ${min}; also include postings with no stated base, flagged "no base stated"`,
   any: () => 'any pay (do not filter on salary, but still report the stated base)',
@@ -17,7 +18,8 @@ export function buildPrompt({ crit: c, profile: p, registry, track = {}, jobs = 
   const min = money(+c.minBase || 0);
   const fns = (c.functions || []).filter(k => C.FUNCTIONS[k]);
   const metro = String(c.metro || '').split('|').map(s => s.trim()).filter(Boolean);
-  const rs = c.remoteState || c.state, state = rs ? (C.STATES?.[rs] || rs) : '';
+  const rsl = Array.isArray(c.remoteStates) ? c.remoteStates : (c.lRemoteYes !== false && (c.remoteState || c.state) ? [c.remoteState || c.state] : []);
+  const remNames = rsl.map(x => C.STATES?.[x] || x), state = remNames.join(' or ');
   const wholeStates = (c.placeStates || []).map(x => C.STATES?.[x] || x);
   const types = Object.entries(c.types || {}).filter(([, v]) => v !== false).map(([k]) => typeLabels[k] || k);
   const off = Object.entries(c.types || {}).filter(([, v]) => v === false).map(([k]) => k);
@@ -75,17 +77,17 @@ ${bullets(cats.length ? cats : ['Any category'])}
 - The noun decides: "Product Counsel" is a legal role, "Senior Product Designer" is design, "Partner Recruiter" is recruiting, so none of these are product or partner roles.
 - Machine-learning engineers and research scientists are an engineering category, not "AI product, strategy & GTM"${fns.includes('mleng') ? ' (the candidate does want them)' : ' (the candidate does not want them)'}.
 
-**Seniority:** ${C.SENIORITY_LABEL[c.sen] || 'Mid'} and above, judged from the title (Senior, Staff, Principal, Lead, Manager, Director, Head, VP). Skip titles containing: ${c.exclude || 'none'}.
+**Seniority:** ${+c.sen > 0 ? (C.SENIORITY_LABEL[c.sen] + ' and above, judged from the title (Senior, Staff, Principal, Lead, Manager, Director, Head, VP).') : 'any level.'} Skip titles containing: ${c.exclude || 'none'}.
 
-**Base pay:** include a role only if ${SAL_TXT[c.salMode]?.(min) || SAL_TXT.starts_reaches(min)}.
-${+c.maxBase ? `- Also require the TOP of the stated base range to be at least ${money(+c.maxBase)} (a $200K-$220K range and a $200K-$420K range are different roles).\n` : ''}- Count base salary only. On-target earnings (OTE), commission, bonus, equity and "total compensation" never count as base. If only OTE is given, say "OTE only".
+**Base pay:** ${[+c.minBase > 0 && `the stated base range must START at ${min} or more`, +c.maxBase > 0 && `its upper end must be ${money(+c.maxBase)} or more (a $200K-$220K range and a $200K-$420K range are different roles)`].filter(Boolean).join('; and ') || 'no pay bar (report the stated base when there is one)'}.${c.salMode === 'starts_unknown' || c.salMode === 'any' ? ' Also include postings with no stated base, flagged "no base stated".' : (+c.minBase > 0 || +c.maxBase > 0 ? ' Skip postings with no stated base.' : '')}
+- Count base salary only. On-target earnings (OTE), commission, bonus, equity and "total compensation" never count as base. If only OTE is given, say "OTE only".
 - Use the range the posting states (pay-transparency sections, "The base salary range for this role is…"). If several ranges are given by location, use the one for the candidate's location; otherwise the lowest.
 - Only US-dollar ranges count. Ignore ranges in other currencies, and ignore third-party salary estimates.
 
 **Location:** ${[
   c.lMetro !== false && (metro.length || wholeStates.length) && `in-office or hybrid roles count only in these search locations: ${[...wholeStates.map(x => x + ' (anywhere in the state)'), ...metro].join(', ')}`,
-  c.lRemoteYes !== false && `remote roles that are open to ${state || 'the candidate\'s state'}`,
-  c.lRemoteUnknown && 'remote US roles that do not say which states are eligible (flag "state eligibility unclear")',
+  remNames.length && `remote roles open to ${remNames.join(' or ')}`,
+  c.lRemoteUnknown && 'remote roles open anywhere in the US, including ones that do not say which states are eligible (flag "state eligibility unclear")',
   c.lOther && 'roles elsewhere in the US (flag them)',
 ].filter(Boolean).join('; ') || 'anywhere in the US'}.
 - A remote role is excluded if it names the eligible states and ${state || 'the candidate\'s state'} is not among them, or says it excludes ${state || 'that state'}.
@@ -110,9 +112,9 @@ ${+c.maxBase ? `- Also require the TOP of the stated base range to be at least $
 ## Scoring (0–100, for ranking only)
 - Category: 30 if the title fits a category above, 15 if adjacent.
 - Skills: 4 points per candidate skill or keyword found in the title or description, up to 25.
-- Base pay: 20 if the range starts at or above ${min}, 12 if it only reaches ${min}, 6 if no base is stated, 3 for OTE only.
+- Base pay: 20 if the range clears the pay bar, 12 if its upper end reaches the bar but it starts below it, 6 if no base is stated, 3 for OTE only.
 - Location: 15 in the commute area or remote with the state listed as eligible; 12 remote with the state likely eligible; 8 remote with eligibility unclear; 4 elsewhere.
-- Seniority: 10 if above the minimum level, 7 if at it.
+- Seniority: ${+c.sen > 0 ? '10 if above the minimum level, 7 if at it' : '10 (no seniority filter)'}.
 
 ## Output
 1. A table sorted by score, with columns: Score | Title | Employer | Location (and how it qualifies) | Base range as stated | Posted | Apply type ("quick" only if the apply link itself is a Greenhouse, Ashby or Lever-hosted form; "company site" if it goes through the employer's own careers site, which may add steps; "account" for portals such as Workday) | Why it fits (one line) | Link

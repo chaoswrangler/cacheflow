@@ -477,4 +477,18 @@ try {
   t('pay: top-of-range filter keeps 200-420K, drops 200-220K', () => { assert.ok(Q.evaluateJob(job(200000, 420000), { crit })); assert.equal(Q.evaluateJob(job(200000, 220000), { crit }), null); });
   t('pay: baseTop ignores OTE-only', () => { assert.equal(Q.baseTop({ min: 150000, max: 300000, kind: 'ote_only' }), null); assert.equal(Q.baseTop({ min: 210000, max: null, kind: 'base' }), 210000); });
 }
+{
+  const S0 = await import('../../assets/shared/core.mjs');
+  const jb = sen => ({ uid: 'y', status: 'open', us: true, title: 'Product Marketing Manager', employer: 'Acme', locations: ['New York, NY'], salary: null, functions: ['pmm'], seniority: sen, posted_at: new Date().toISOString(), posted_kind: 'first_published' });
+  const cr = sen => ({ functions: ['pmm'], minBase: 0, salMode: 'any', window: 'all', metro: 'new york', state: 'NY', lMetro: true, types: {}, sectors: [], verticals: [], blockEmp: [], sen });
+  t('seniority: optional (0 = any level)', () => { assert.equal(S0.evaluateJob(jb(2), { crit: cr(4) }), null); assert.ok(S0.evaluateJob(jb(2), { crit: cr(0) })); assert.equal(S0.evaluateJob(jb(2), { crit: cr(0) }).parts.level ?? 10, 10); });
+}
+{
+  const M = await import('../../assets/shared/core.mjs');
+  const rj = { uid: 'r', status: 'open', us: true, remote_us: true, title: 'Director, Product Marketing', employer: 'Acme', locations: ['Remote - New Jersey', 'Remote - Texas'], elig_text: null, salary: null, functions: ['pmm'], seniority: 5, posted_at: new Date().toISOString(), posted_kind: 'first_published' };
+  const cr = rs => ({ functions: ['pmm'], minBase: 0, maxBase: 0, salMode: 'any', window: 'all', metro: '', state: 'NY', remoteStates: rs, lMetro: false, lRemoteYes: rs.length > 0, lRemoteUnknown: false, lOther: false, types: {}, sectors: [], verticals: [], blockEmp: [], sen: 0 });
+  t('location: "open to candidates in <states>" is a state list', () => { const f = st => M.homeFit({ remote_us: true, title: 'PM', locations: ['Remote - US'], elig_text: 'This role is open to candidates in New Jersey, Texas and California.' }, { state: st }).eligibility; assert.equal(f('NJ'), 'yes'); assert.equal(f('NY'), 'no'); });
+  t('location: combined entry with a foreign city still matches the metro', () => assert.equal(M.homeFit({ title: 'PM', locations: ['Denver, CO - Hybrid; New York, NY - Hybrid; Toronto, Ontario - Remote'] }, { metro: 'new york|nyc', state: 'NY' }).in_metro, true));
+  t('location: remote eligibility checks every chosen state', () => { assert.equal(M.evaluateJob(rj, { crit: cr(['NY']) }), null); assert.equal(M.evaluateJob(rj, { crit: cr(['NY', 'NJ']) })?.loc, 'remote_yes'); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

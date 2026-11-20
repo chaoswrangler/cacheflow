@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120k">
+<link rel="stylesheet" href="assets/styles.css?v=20261120r">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -151,18 +151,16 @@
           <div class="critbody">
           <div class="grid g2">
             <div>
-              <label class="f" for="cMinBase">Minimum annual BASE salary (USD)</label>
-              <select id="cMinBase" aria-label="Minimum annual base salary"></select>
-              <label class="f" for="cMaxBase">Range tops out at <span class="hint" style="text-transform:none;letter-spacing:0">top of the stated base range</span></label>
-              <select id="cMaxBase" aria-label="Top of base range at least"></select>
-              <label class="f" for="cSalMode">Salary rule</label>
-              <select id="cSalMode">
-                <option value="starts" title="Range starts at or above your minimum">Starts at my minimum</option>
-                <option value="starts_reaches" title="Range starts at, or reaches, your minimum (shown separately)">Starts at or reaches it</option>
-                <option value="plus_unknown" title="Starts at or reaches your minimum, plus postings with no stated base">…plus no stated base</option>
-                <option value="any">Any pay (ignore salary)</option>
-              </select>
-              <p class="hint" style="margin-top:6px">OTE, bonus, equity, total comp and predicted salaries never count as base.</p>
+              <fieldset class="paybox">
+                <legend class="f">Base pay <span class="hint" style="text-transform:none;letter-spacing:0">USD per year · base salary only</span></legend>
+                <label class="pl" for="cMinBase">Base pay starts at <span class="opt">optional</span></label>
+                <select id="cMinBase" aria-label="Base pay starts at"></select>
+                <label class="pl" for="cMaxBase">Base pay upper range is <span class="opt">optional</span></label>
+                <select id="cMaxBase" aria-label="Base pay upper range is"></select>
+                <label class="check" id="payUnkRow" style="margin-top:10px"><input type="checkbox" id="cPayUnknown"> Also show roles that don't state pay</label>
+                <div class="payex" id="payEx" aria-live="polite"></div>
+                <p class="hint" style="margin-top:6px">OTE, bonus, equity, total comp and predicted salaries never count as base.</p>
+              </fieldset>
               <label class="f" for="cWindow">Posting window</label>
               <select id="cWindow">
                 <option value="week">Monday of this week → today</option>
@@ -172,17 +170,12 @@
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
             <div>
-              <label class="f">Search locations <span class="hint" style="text-transform:none;letter-spacing:0">US only · independent of your home</span></label>
+              <label class="f">Locations <span class="hint" style="text-transform:none;letter-spacing:0">US only · add as many as you like</span></label>
               <div class="qloc" role="group" aria-label="Location shortcuts"><button type="button" class="chipbtn" data-qloc="home">Home area</button><button type="button" class="chipbtn" data-qloc="remote">Home + remote</button><button type="button" class="chipbtn" data-qloc="us">Anywhere in US</button></div>
               <div id="placeList" class="places"></div>
-              <select id="addPlace" aria-label="Add a search location"></select>
+              <select id="addPlace" aria-label="Add a location"></select>
               <div id="addCityRow" class="row" hidden style="gap:6px;margin-top:6px"><input type="text" id="addCity" placeholder="City or town, e.g. Austin" aria-label="City or town"><button type="button" class="btn sec sm" id="addCityBtn">Add</button></div>
-              <div class="checks" style="margin-top:10px">
-                <label class="check"><input type="checkbox" id="lMetro"> In-office or hybrid roles in these places</label>
-                <div class="check rstate"><label><input type="checkbox" id="lRemoteYes"> Remote roles open to</label><select id="cRemoteState" aria-label="State remote roles must be open to"></select></div>
-                <label class="check"><input type="checkbox" id="lRemoteUnknown"> Remote roles that don't say which states</label>
-                <label class="check"><input type="checkbox" id="lOther"> Anywhere else in the US</label>
-              </div>
+              <label class="check" style="margin-top:10px"><input type="checkbox" id="lOther"> Anywhere else in the US (in person)</label>
             </div>
           </div>
           <div class="crit-cats">
@@ -193,7 +186,7 @@
           </div>
           <div class="grid g2">
             <div>
-              <label class="f" for="cSen">Minimum seniority</label>
+              <label class="f" for="cSen">Minimum seniority <span class="hint" style="text-transform:none;letter-spacing:0">optional</span></label>
               <select id="cSen"></select>
               <label class="f" for="cInclude">Boost keywords (comma separated)</label>
               <input type="text" id="cInclude">
@@ -381,7 +374,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120k" defer></script>
+<script src="assets/fx.js?v=20261120r" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -399,6 +392,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261120k"></script>
+<script type="module" src="assets/app.js?v=20261120r"></script>
 </body>
 </html>
