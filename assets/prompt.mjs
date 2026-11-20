@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120j';
+import * as C from './shared/core.mjs?v=20261120k';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
@@ -115,7 +115,7 @@ ${+c.maxBase ? `- Also require the TOP of the stated base range to be at least $
 - Seniority: 10 if above the minimum level, 7 if at it.
 
 ## Output
-1. A table sorted by score, with columns: Score | Title | Employer | Location (and how it qualifies) | Base range as stated | Posted | Apply type (quick form such as Greenhouse, Ashby or Lever, vs account-based portal such as Workday) | Why it fits (one line) | Link
+1. A table sorted by score, with columns: Score | Title | Employer | Location (and how it qualifies) | Base range as stated | Posted | Apply type ("quick" only if the apply link itself is a Greenhouse, Ashby or Lever-hosted form; "company site" if it goes through the employer's own careers site, which may add steps; "account" for portals such as Workday) | Why it fits (one line) | Link
 2. "Couldn't check": boards or pages you could not read, and why.
 3. "Worth a look": up to 5 employers not on the list that pay at this level for these categories, each with a verified careers or board link.
 4. One line on coverage: how many boards and searches you actually checked.

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120j';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120j';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120j';
+import * as C from './shared/core.mjs?v=20261120k';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120k';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120k';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -537,11 +537,19 @@ function jobRow(m) {
 // group rows by employer, keeping the current sort: groups are ordered by their best-placed role
 /* How much work applying takes, from the hiring system behind the posting. */
 const APPLY = {
-  quick: { label: 'Quick apply', hint: 'One form, no account (Greenhouse, Ashby, Lever, SmartRecruiters, Comeet, Workable…)', ats: ['greenhouse', 'ashby', 'lever', 'smartrecruiters', 'comeet', 'workable', 'jazzhr', 'rippling', 'recruitee', 'breezy'] },
+  quick: { label: 'Quick apply', hint: "Link opens the hiring system's own short form, no account (Greenhouse, Ashby, Lever, SmartRecruiters, Comeet, Workable)", ats: ['greenhouse', 'ashby', 'lever', 'smartrecruiters', 'comeet', 'workable', 'jazzhr', 'rippling', 'recruitee', 'breezy'] },
+  site: { label: 'Via company careers site', hint: "Uses a quick-apply system behind the scenes, but the link goes to the company's own careers site, which may add its own steps (Dropbox, for example). Not verified" },
   account: { label: 'Account required', hint: 'Sign-up or multi-step portal (Workday, Oracle, Eightfold, Phenom, Amazon, Google…)', ats: ['workday', 'oracle_hcm', 'eightfold', 'phenom', 'amazon', 'google', 'successfactors', 'icims', 'taleo', 'dayforce', 'radancy', 'cisco'] },
-  other: { label: 'Company site or other', hint: 'Applies on a careers page or through another site' },
+  other: { label: 'Other', hint: 'Careers page or another site' },
 };
-const applyOf = m => Object.keys(APPLY).find(k => APPLY[k].ats?.includes(m.j.ats)) || 'other';
+// Quick apply only when the link itself is on the hiring system's hosted page; company-hosted pages vary.
+const ATS_HOST = /(^|\.)(greenhouse\.io|ashbyhq\.com|lever\.co|smartrecruiters\.com|comeet\.com|comeet\.co|workable\.com|jazz\.co|applytojob\.com|rippling\.com|recruitee\.com|breezy\.hr)$/i;
+const applyOf = m => {
+  const k = Object.keys(APPLY).find(x => APPLY[x].ats?.includes(m.j.ats)) || 'other';
+  if (k !== 'quick') return k;
+  let host = ''; try { host = new URL(m.j.url).hostname; } catch {}
+  return ATS_HOST.test(host) ? 'quick' : 'site';
+};
 const GROUP_BY = {
   apply: { key: applyOf, label: k => APPLY[k].label, order: Object.keys(APPLY) },
   employer: { key: m => m.j.employer, label: k => k },
@@ -673,7 +681,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120j');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120k');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
