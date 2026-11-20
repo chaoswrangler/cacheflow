@@ -9,6 +9,8 @@
 //   DIGEST_SALT      any random string; used to hash emails in the public state file
 //   SITE_URL         your GitHub Pages URL (for links back to the app)
 //   ALERT_REPLY_TO   optional reply-to / unsubscribe contact
+// Env:     DIGEST_MIN_HOURS  minimum hours between emails per subscriber (default 20 = one email a day;
+//                            unsent matches roll into the next email). DIGEST_FORCE=1 ignores it (manual runs).
 // Flags: --dry  build emails into collector/out/ without sending
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -42,6 +44,8 @@ export async function runDigest({ env = process.env, fetchImpl = globalThis.fetc
     const win = windowFor(crit.window, now, tz);
     const excl = reFromList(csvList(crit.exclude));
     const sent = new Set(state.subscribers[id]?.sent || []);
+    const minH = Number(env.DIGEST_MIN_HOURS ?? 20), last = state.subscribers[id]?.last_sent;
+    if (!env.DIGEST_FORCE && last && (now - new Date(last)) / 36e5 < minH) { results.push({ id, sent: false, count: 0, throttled: true }); continue; }
     const fresh = jobs.map(j => evaluateJob(j, { crit, emp: empOf(j), skillsOn: sub.skillsOn || [], custom: sub.custom || [], win, excl, tz }))
       .filter(m => m && !m.j.dup_of && !sent.has(m.j.uid))
       .sort((a, b) => (a.tier === 'starts' ? 0 : 1) - (b.tier === 'starts' ? 0 : 1) || b.score - a.score);
