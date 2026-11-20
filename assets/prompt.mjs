@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120f';
+import * as C from './shared/core.mjs?v=20261120i';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
@@ -17,7 +17,8 @@ export function buildPrompt({ crit: c, profile: p, registry, track = {}, jobs = 
   const min = money(+c.minBase || 0);
   const fns = (c.functions || []).filter(k => C.FUNCTIONS[k]);
   const metro = String(c.metro || '').split('|').map(s => s.trim()).filter(Boolean);
-  const state = c.state ? (C.STATES?.[c.state] || c.state) : '';
+  const rs = c.remoteState || c.state, state = rs ? (C.STATES?.[rs] || rs) : '';
+  const wholeStates = (c.placeStates || []).map(x => C.STATES?.[x] || x);
   const types = Object.entries(c.types || {}).filter(([, v]) => v !== false).map(([k]) => typeLabels[k] || k);
   const off = Object.entries(c.types || {}).filter(([, v]) => v === false).map(([k]) => k);
   const block = c.blockEmp || [];
@@ -52,7 +53,7 @@ export function buildPrompt({ crit: c, profile: p, registry, track = {}, jobs = 
   const done = o.exclude ? Object.entries(track).filter(([, v]) => v.s === 'applied' || v.s === 'no').map(([u]) => jobs.find(j => j.uid === u)?.url).filter(Boolean).slice(0, 150) : [];
 
   /* ---- search queries (same shapes as the Discover panel) */
-  const city = metro[0] || state || '';
+  const city = metro[0] || wholeStates[0] || state || '';
   const loc = city ? `("${city}" OR remote)` : 'remote';
   const ats = ['job-boards.greenhouse.io', 'jobs.lever.co', 'jobs.ashbyhq.com', 'myworkdayjobs.com', 'jobs.smartrecruiters.com'];
   const queries = fns.slice(0, 12).map(k => (C.FN_TERMS?.[k] || []).slice(0, 4)).filter(t => t.length)
@@ -82,7 +83,7 @@ ${bullets(cats.length ? cats : ['Any category'])}
 - Only US-dollar ranges count. Ignore ranges in other currencies, and ignore third-party salary estimates.
 
 **Location:** ${[
-  metro.length && `in-office or hybrid roles count only in the commute area: ${metro.join(', ')}`,
+  c.lMetro !== false && (metro.length || wholeStates.length) && `in-office or hybrid roles count only in these search locations: ${[...wholeStates.map(x => x + ' (anywhere in the state)'), ...metro].join(', ')}`,
   c.lRemoteYes !== false && `remote roles that are open to ${state || 'the candidate\'s state'}`,
   c.lRemoteUnknown && 'remote US roles that do not say which states are eligible (flag "state eligibility unclear")',
   c.lOther && 'roles elsewhere in the US (flag them)',

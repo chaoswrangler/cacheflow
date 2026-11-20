@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120f">
+<link rel="stylesheet" href="assets/styles.css?v=20261120i">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -170,15 +170,17 @@
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
             <div>
-              <label class="f">Location eligibility <span class="hint" style="text-transform:none;letter-spacing:0">US roles only</span></label>
-              <div class="checks">
-                <label class="check"><input type="checkbox" id="lMetro"> NY-compatible office / hybrid (metro list below)</label>
-                <label class="check"><input type="checkbox" id="lRemoteYes"> US remote, NY eligible (stated or likely)</label>
-                <label class="check"><input type="checkbox" id="lRemoteUnknown"> US remote, NY eligibility not stated</label>
-                <label class="check"><input type="checkbox" id="lOther"> Other US locations</label>
+              <label class="f">Search locations <span class="hint" style="text-transform:none;letter-spacing:0">US only · independent of your home</span></label>
+              <div class="qloc" role="group" aria-label="Location shortcuts"><button type="button" class="chipbtn" data-qloc="home">Home area</button><button type="button" class="chipbtn" data-qloc="remote">Home + remote</button><button type="button" class="chipbtn" data-qloc="us">Anywhere in US</button></div>
+              <div id="placeList" class="places"></div>
+              <select id="addPlace" aria-label="Add a search location"></select>
+              <div id="addCityRow" class="row" hidden style="gap:6px;margin-top:6px"><input type="text" id="addCity" placeholder="City or town, e.g. Austin" aria-label="City or town"><button type="button" class="btn sec sm" id="addCityBtn">Add</button></div>
+              <div class="checks" style="margin-top:10px">
+                <label class="check"><input type="checkbox" id="lMetro"> In-office or hybrid roles in these places</label>
+                <div class="check rstate"><label><input type="checkbox" id="lRemoteYes"> Remote roles open to</label><select id="cRemoteState" aria-label="State remote roles must be open to"></select></div>
+                <label class="check"><input type="checkbox" id="lRemoteUnknown"> Remote roles that don't say which states</label>
+                <label class="check"><input type="checkbox" id="lOther"> Anywhere else in the US</label>
               </div>
-              <label class="f" for="cMetro">Commute area <span class="hint" style="text-transform:none;letter-spacing:0">cities or towns, separated by |</span></label>
-              <div class="stack2"><select id="cMetroPreset" aria-label="Metro preset"></select><textarea id="cMetro" rows="2" spellcheck="false" autocapitalize="off"></textarea></div>
             </div>
           </div>
           <div class="crit-cats">
@@ -377,7 +379,24 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120f" defer></script>
-<script type="module" src="assets/app.js?v=20261120f"></script>
+<script src="assets/fx.js?v=20261120i" defer></script>
+<script>
+/* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
+(function () {
+  var shown = false;
+  function show(msg) {
+    if (shown || window.__cfReady) return; shown = true;
+    var d = document.createElement('div');
+    d.setAttribute('role', 'alert');
+    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;padding:12px 14px;border:1px solid #ff6b6b;border-radius:10px;background:#1a0b10;color:#ffd7d7;font:13px/1.5 ui-monospace,monospace';
+    d.textContent = 'Cache Flow could not start: ' + msg + ' - Try a hard refresh (Ctrl+Shift+R). If it persists, send this message to whoever maintains the site.';
+    document.body.appendChild(d);
+  }
+  window.addEventListener('error', function (e) { if (!(e instanceof ErrorEvent) || !e.message || /^script error\.?$/i.test(e.message)) return; show((e.message || 'script error') + (e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ')' : '')); }, true);
+  window.addEventListener('unhandledrejection', function (e) { show(String(e.reason && e.reason.message || e.reason)); });
+  setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
+})();
+</script>
+<script type="module" src="assets/app.js?v=20261120i"></script>
 </body>
 </html>
