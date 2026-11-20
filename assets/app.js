@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119r';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119r';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119r';
+import * as C from './shared/core.mjs?v=20261119s';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119s';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119s';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -398,8 +398,8 @@ function downloadCSV(rows, name) {
 
 /* ============================================================ sources */
 const VERIFIED = new Set(['verified_feed', 'verified_pattern', 'documented_public_json']);
-const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network'].includes(r) ? 'warn' : 'bad';
-const RESULT_HELP = { ok: 'Fetched; jobs returned', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
+const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots'].includes(r) ? 'warn' : 'bad';
+const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
   http_429: 'Rate limited after retries', timeout: 'Timed out after retries', network_error: 'Network failure', parse_error: 'Response not in the expected shape', link_only: 'No public feed; open the careers link',
   not_fetchable: 'Needs ATS discovery (see verification note)', blocked_or_network: 'Browser blocked the request (CORS) or network failed; the collector can still read it', experimental_failed: 'Experimental adapter did not get data', never_run: 'Not collected yet', adapter_error: 'Adapter crashed; see message' };
 function sourceRows() {
