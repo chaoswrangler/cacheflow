@@ -11,7 +11,7 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | Collector runtime | Node.js 22 (built-in `fetch`, `node:fs`, `node:crypto`). No npm dependencies. |
 | Browser libraries | pdf.js 4.10 and mammoth 1.13, vendored in `assets/vendor/` (no CDN), used only to read uploaded résumés |
 | Hosting | GitHub Pages (static files) |
-| Scheduling | GitHub Actions cron (`.github/workflows/collect.yml`) |
+| Scheduling | GitHub Actions, woken hourly; `collector/gate.mjs` collects when a slot is due (weekdays 6am, 10am, 2pm, 6pm ET; weekends 10am ET) |
 | Storage | JSON files in `data/`, committed by the workflow. `git log data/` is the audit trail. |
 | Email (optional) | Resend HTTP API |
 
@@ -56,7 +56,7 @@ For maintainers: fork the repo, then edit data files and repo settings. Nothing 
 1. Push the repo. Public repos get free Actions minutes.
 2. **Settings → Pages:** deploy from branch `main`, root.
 3. **Settings → Actions → General → Workflow permissions:** Read and write.
-4. **Actions → Collect jobs → Run workflow.** Scheduled runs follow the cron in `collect.yml`.
+4. **Actions → Collect jobs → Run workflow.** GitHub drops and delays cron runs, so the workflow wakes hourly and `collector/gate.mjs` collects only when the latest slot hasn't been collected. A missed wake-up is made up within the hour, and slots stay on New York time across daylight saving.
 
 Collector flags (workflow input, or `node collector/collect.mjs …` locally):
 
