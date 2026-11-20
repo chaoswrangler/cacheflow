@@ -491,4 +491,12 @@ try {
   t('location: combined entry with a foreign city still matches the metro', () => assert.equal(M.homeFit({ title: 'PM', locations: ['Denver, CO - Hybrid; New York, NY - Hybrid; Toronto, Ontario - Remote'] }, { metro: 'new york|nyc', state: 'NY' }).in_metro, true));
   t('location: remote eligibility checks every chosen state', () => { assert.equal(M.evaluateJob(rj, { crit: cr(['NY']) }), null); assert.equal(M.evaluateJob(rj, { crit: cr(['NY', 'NJ']) })?.loc, 'remote_yes'); });
 }
+{
+  const U = await import('../../assets/shared/core.mjs');
+  const uj = (title, locs) => ({ uid: 'u', status: 'open', us: true, remote_us: false, workplace: 'onsite', title, employer: 'Acme', locations: locs, salary: null, functions: ['sales'], seniority: 4, posted_at: new Date().toISOString(), posted_kind: 'first_published' });
+  const ucr = extra => ({ functions: ['sales'], minBase: 0, maxBase: 0, salMode: 'any', window: 'all', metro: 'new york|nyc', state: 'NY', remoteStates: ['NY'], lMetro: true, lRemoteYes: true, lRemoteUnknown: false, lOther: false, types: {}, sectors: [], verticals: [], blockEmp: [], sen: 0, ...extra });
+  t('location: bare "United States" is its own bucket', () => { assert.equal(U.evaluateJob(uj('Enterprise Account Executive', ['United States']), { crit: ucr() }), null); assert.equal(U.evaluateJob(uj('Enterprise Account Executive', ['United States']), { crit: ucr({ lUnlisted: true }) })?.loc, 'unlisted'); });
+  t('location: bare US with a city in the title matches the metro', () => assert.equal(U.evaluateJob(uj('Account Executive (San Francisco, Chicago, New York)', ['United States']), { crit: ucr() })?.loc, 'metro'));
+  t('location: bare US with (Remote) in the title is remote', () => assert.equal(U.evaluateJob(uj('Enterprise Account Executive (Remote)', ['USA']), { crit: ucr({ lRemoteUnknown: true }) })?.loc, 'remote_unknown'));
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

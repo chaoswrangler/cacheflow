@@ -222,6 +222,9 @@ export function placeKind(l = '') {
 }
 // Remote roles that only open to non-US places.
 const splitLocs = L => (L || []).flatMap(l => String(l).split(/\s*[;|]\s*/)).filter(Boolean);
+// Roles whose only location is the country (or nothing): "United States", "USA", "Americas".
+const BARE_COUNTRY = /^\s*(us|usa|u\.s\.a?\.?|united states( of america)?|north america|americas|anywhere)\s*$/i;
+export function bareLocation(job) { const L = splitLocs(job.locations); return !L.length || L.every(l => BARE_COUNTRY.test(l)); }
 export function foreignRemote(job) {
   const L = splitLocs(job.locations);
   return !!job.remote_us && L.length > 0 && L.every(l => placeKind(l) === 'foreign');
@@ -276,8 +279,10 @@ export function homeFit(job, { metro = '', state = '', states = [], tieOk = [] }
   // Towns match anywhere in a listed location; whole-state matches skip foreign places ("Georgia" the country, "London, Ontario").
   const hit = l => !!(townRe && townRe.test(l)) || !!(stateRe && stateRe.test(l) && placeKind(l) !== 'foreign');
   const parts = splitLocs(job.locations);
-  const inMetro = parts.some(hit);
-  const metroLoc = inMetro ? parts.find(hit) || null : null;
+  let inMetro = parts.some(hit);
+  let metroLoc = inMetro ? parts.find(hit) || null : null;
+  // Location is just "United States": a place named in the title ("AE (San Francisco, Chicago, New York)") counts.
+  if (!inMetro && bareLocation(job) && job.title) { const ts = String(job.title).split(/\s[-–—|]\s|[(),/]|:\s/).slice(1).join(' | '); if (ts && hit(ts)) { inMetro = true; metroLoc = 'From the title: ' + job.title; } }
   let elig = 'n/a';
   if (inMetro) elig = 'yes';
   else if (job.remote_us && name) {
@@ -723,13 +728,16 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
     if (rank(hf) >= 4) break;
   }
   let loc;
+  const bare = bareLocation(j), remoteTitle = /\bremote\b/i.test(j.title || '');
   if (hf.in_metro) loc = 'metro';
+  else if (bare && !j.remote_us && remoteTitle) loc = 'remote_unknown'; // "AE (Remote)" listed only as "United States"
+  else if (bare && !j.remote_us) loc = 'unlisted';
   else if (hf.tied) loc = 'other';
   else if (j.remote_us && ['yes', 'likely'].includes(hf.eligibility)) loc = 'remote_yes';
   else if (j.remote_us && hf.eligibility === 'no') loc = 'remote_no';
   else if (j.remote_us) loc = 'remote_unknown';
   else loc = 'other';
-  if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, remote_no: true }[loc]) if (!force) return null;
+  if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, unlisted: !c.lUnlisted && !c.lOther, remote_no: true }[loc]) if (!force) return null;
   // stored kw comes from the collector; re-tag from title + excerpt so skills added since the last run still match
   const kw = j._kw || (j._kw = new Set([...(j.kw || []), ...jobSkills(j.employer, j.title + '\n' + (j.excerpt || ''))]));
   const skillHits = skillsOn.filter(s => kw.has(s));
@@ -740,7 +748,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   // Score pay against the bars the viewer set: full marks when the range clears both, partial when it only clears one.
   const scoreTier = +c.minBase > 0 ? tier : salaryTier(j.salary, +c.maxBase || 0);
   const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[scoreTier] || 0;
-  const sLoc = { remote_no: 0, metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, other: 4 }[loc];
+  const sLoc = { remote_no: 0, metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, unlisted: 8, other: 4 }[loc];
   const sSen = !(+c.sen > 0) || j.seniority > +c.sen ? 10 : 7;
   return { j, e, sector, vertical, tier, loc, hf, dt, fnHit, skillHits, customHits, score: sFn + sSkill + sSal + (sLoc || 0) + sSen, parts: { fn: sFn, skills: sSkill, base: sSal, loc: sLoc || 0, level: sSen },
            why: `fn ${sFn} · skills ${sSkill} · base ${sSal} · loc ${sLoc} · level ${sSen}` };

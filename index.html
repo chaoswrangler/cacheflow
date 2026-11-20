@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120s">
+<link rel="stylesheet" href="assets/styles.css?v=20261120u">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -210,6 +210,10 @@
       <div class="mresults" id="mResults">
     <div class="window" id="windowBanner"></div>
     <div class="tiles" id="matchTiles"></div>
+    <details class="panel funnel" id="funnelBox">
+      <summary><span class="ft" id="funnelSum">Why only these roles? See what each filter removes</span><span class="ctog" aria-hidden="true"></span></summary>
+      <div id="funnelBody" class="funnelbody"><p class="hint">Working it out…</p></div>
+    </details>
     <div class="panel" style="padding:14px 18px;margin-bottom:6px">
       <div class="row">
         <input type="search" id="q" placeholder="Search roles…" aria-label="Search titles, employers and keywords" style="max-width:360px">
@@ -374,7 +378,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120s" defer></script>
+<script src="assets/fx.js?v=20261120u" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -392,6 +396,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261120s"></script>
+<script type="module" src="assets/app.js?v=20261120u"></script>
 </body>
 </html>

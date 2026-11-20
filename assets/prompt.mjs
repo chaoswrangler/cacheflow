@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120s';
+import * as C from './shared/core.mjs?v=20261120u';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
@@ -88,6 +88,7 @@ ${bullets(cats.length ? cats : ['Any category'])}
   c.lMetro !== false && (metro.length || wholeStates.length) && `in-office or hybrid roles count only in these search locations: ${[...wholeStates.map(x => x + ' (anywhere in the state)'), ...metro].join(', ')}`,
   remNames.length && `remote roles open to ${remNames.join(' or ')}`,
   c.lRemoteUnknown && 'remote roles open anywhere in the US, including ones that do not say which states are eligible (flag "state eligibility unclear")',
+  c.lUnlisted && !c.lOther && 'roles whose location is only "United States" with no city (flag "location not listed"; if the title names a city in the search locations, treat it as located there)',
   c.lOther && 'roles elsewhere in the US (flag them)',
 ].filter(Boolean).join('; ') || 'anywhere in the US'}.
 - A remote role is excluded if it names the eligible states and ${state || 'the candidate\'s state'} is not among them, or says it excludes ${state || 'that state'}.

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120s';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120s';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120s';
+import * as C from './shared/core.mjs?v=20261120u';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120u';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120u';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -286,6 +286,7 @@ function syncPlaces() {
     if (c.lRemoteUnknown) c.places.push({ kind: 'remote_any', on: true });
     c.locV2 = true;
   }
+  if (!c.locV3) { if (c.places.some(p => p.kind === 'remote_any' && p.on)) c.places.push({ kind: 'unlisted', on: true }); c.locV3 = true; }
   const on = c.places.filter(p => p.on);
   c.metro = [...new Set(on.filter(p => p.kind === 'metro').flatMap(p => String(p.terms || '').split('|').map(x => x.trim()).filter(Boolean)))].join('|');
   c.placeStates = on.filter(p => p.kind === 'state').map(p => p.st);
@@ -293,8 +294,9 @@ function syncPlaces() {
   c.lMetro = on.some(p => p.kind === 'metro' || p.kind === 'state');
   c.lRemoteYes = c.remoteStates.length > 0;
   c.lRemoteUnknown = on.some(p => p.kind === 'remote_any');
+  c.lUnlisted = on.some(p => p.kind === 'unlisted');
 }
-const placeLabel = p => p.kind === 'remote_any' ? 'Remote · anywhere in the US' : p.kind === 'remote_state' ? `Remote · open to ${C.STATES[p.st] || p.st}` : p.label;
+const placeLabel = p => p.kind === 'unlisted' ? 'US · location not listed' : p.kind === 'remote_any' ? 'Remote · anywhere in the US' : p.kind === 'remote_state' ? `Remote · open to ${C.STATES[p.st] || p.st}` : p.label;
 function setHomePlace(city) {
   const c = S.crit, terms = C.metroFor(city), label = presetName(terms) || city.replace(/\b\w/g, m => m.toUpperCase());
   c.places ||= [];
@@ -382,10 +384,10 @@ function renderPlaces() {
       ${S.pEdit === i ? `<textarea class="pterms" data-pterms="${i}" rows="2" spellcheck="false" aria-label="Towns in ${esc(p.label)}, separated by |">${esc(metroShow(p.terms))}</textarea>` : ''}
     </div>`).join('') || '<p class="hint">No locations yet. Add one below, or tick Anywhere else in the US.</p>';
   $$('#placeList .pterms').forEach(fitArea);
-  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : p.kind === 'remote_state' ? 'rs:' + p.st : p.kind === 'remote_any' ? 'ra' : 'm:' + p.terms));
+  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : p.kind === 'remote_state' ? 'rs:' + p.st : p.kind === 'remote_any' ? 'ra' : p.kind === 'unlisted' ? 'ul' : 'm:' + p.terms));
   const states = Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1]));
   $('#addPlace').innerHTML = '<option value="">+ Add a location…</option>' +
-    '<optgroup label="Remote">' + (have.has('ra') ? '' : '<option value="ra">Remote · anywhere in the US</option>') +
+    '<optgroup label="Remote">' + (have.has('ra') ? '' : '<option value="ra">Remote · anywhere in the US</option>') + (have.has('ul') ? '' : '<option value="ul">US · location not listed (only “United States”)</option>') +
       states.filter(([k]) => !have.has('rs:' + k)).map(([k, v]) => `<option value="rs:${k}">Remote · open to ${esc(v)}${k === home ? ' (home)' : ''}</option>`).join('') + '</optgroup>' +
     '<optgroup label="In person: metro area or town"><option value="__city">A city or town…</option>' + Object.entries(C.METRO_PRESETS).filter(([, t]) => !have.has('m:' + t)).map(([k]) => `<option value="m:${esc(k)}">${esc(k)}</option>`).join('') + '</optgroup>' +
     '<optgroup label="In person: whole state">' + states.filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>';
@@ -411,6 +413,7 @@ function wirePlaces() {
     if (v.startsWith('m:')) { const k = v.slice(2); add({ kind: 'metro', label: k, terms: C.METRO_PRESETS[k] }); }
     if (v.startsWith('st:')) { const k = v.slice(3); add({ kind: 'state', label: C.STATES[k], st: k }); }
     if (v === 'ra') add({ kind: 'remote_any' });
+    if (v === 'ul') add({ kind: 'unlisted' });
     if (v.startsWith('rs:')) add({ kind: 'remote_state', st: v.slice(3) });
   };
   const addCity = () => { const v = $('#addCity').value.trim(); if (!v) return; const terms = C.metroFor(v); add({ kind: 'metro', label: presetName(terms) || v.replace(/\b\w/g, m => m.toUpperCase()), terms }); $('#addCity').value = ''; $('#addCityRow').hidden = true; };
@@ -422,8 +425,8 @@ function wirePlaces() {
     const cr = c(), home = S.profile.state || cr.state, pl = cr.places ||= [];
     const ensure = (kind, extra = {}) => { let p = pl.find(x => x.kind === kind && (!extra.st || x.st === extra.st)); if (!p) pl.push(p = { kind, ...extra }); p.on = true; };
     if (q === 'home' || q === 'remote') { const h = pl.find(p => p.home); pl.forEach(p => { p.on = p === h || (!h && p.kind === 'metro' && p === pl.find(x => x.kind === 'metro')); }); cr.lOther = false; }
-    if (q === 'remote') { if (home) ensure('remote_state', { st: home }); ensure('remote_any'); }
-    if (q === 'us') { ensure('remote_any'); cr.lOther = true; pl.forEach(p => { if (p.kind !== 'remote_state') p.on = true; }); }
+    if (q === 'remote') { if (home) ensure('remote_state', { st: home }); ensure('remote_any'); ensure('unlisted'); }
+    if (q === 'us') { ensure('remote_any'); ensure('unlisted'); cr.lOther = true; pl.forEach(p => { if (p.kind !== 'remote_state') p.on = true; }); }
     upd(); renderPlaces();
   });
 }
@@ -515,6 +518,52 @@ const { csvList, reFromList } = C;
 function evaluate(j, ctx) {
   return C.evaluateJob(j, { crit: S.crit, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win: ctx.win, excl: ctx.excl, tz: LOCAL_TZ });
 }
+/* "Why only N roles?": count matches with one filter loosened at a time, so the biggest cut is obvious. */
+function countWith(patch) {
+  const c = { ...S.crit, ...patch };
+  const win = c.window === 'all' ? null : C.windowFor(c.window, new Date(), LOCAL_TZ), excl = reFromList(csvList(c.exclude));
+  let n = 0;
+  for (const j of S.jobs) { if (c.blockEmp?.includes(j.employer) || j.dup_of) continue; if (C.evaluateJob(j, { crit: c, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win, excl, tz: LOCAL_TZ })) n++; }
+  return n;
+}
+function funnelRows() {
+  const c = S.crit, WIN = { week: 'this week (Monday to today)', d7: 'last 7 days', d14: 'last 14 days', d30: 'last 30 days', all: 'any date' };
+  const rows = [];
+  if (c.window !== 'all') rows.push({ k: 'Posting date', now: WIN[c.window] || c.window, to: c.window === 'week' || c.window === 'd7' ? 'last 30 days' : 'any date', patch: c.window === 'week' || c.window === 'd7' ? { window: 'd30' } : { window: 'all' } });
+  if (c.window !== 'all' && (c.window === 'week' || c.window === 'd7')) rows.push({ k: 'Posting date', now: WIN[c.window], to: 'any date', patch: { window: 'all' } });
+  if (+c.minBase || +c.maxBase) rows.push({ k: 'Base pay', now: [+c.minBase && 'starts ≥ ' + money(c.minBase), +c.maxBase && 'upper ≥ ' + money(c.maxBase)].filter(Boolean).join(', '), to: 'any pay', patch: { minBase: 0, maxBase: 0, salMode: 'any' } });
+  if ((+c.minBase || +c.maxBase) && c.salMode === 'starts') rows.push({ k: 'Base pay', now: 'stated pay only', to: 'also roles without stated pay', patch: { salMode: 'starts_unknown', payUnknown: true } });
+  if (+c.sen > 0) rows.push({ k: 'Seniority', now: (C.SENIORITY_LABEL[c.sen] || '') + ' and above', to: 'any level', patch: { sen: 0 } });
+  if (!c.lOther) rows.push({ k: 'Location', now: 'your locations', to: 'anywhere in the US', patch: { lOther: true, lUnlisted: true, lRemoteUnknown: true } });
+  const nAll = Object.keys(C.FUNCTIONS).length;
+  if ((c.functions || []).length < nAll) rows.push({ k: 'Job categories', now: `${c.functions.length} of ${nAll}`, to: 'all categories', patch: { functions: Object.keys(C.FUNCTIONS) }, noApply: true });
+  return rows;
+}
+function renderFunnel() {
+  const box = $('#funnelBox'); if (!box) return;
+  const cur = S.lastMatches?.length ?? 0, open = S.jobs.filter(j => j.status !== 'closed' && !j.dup_of).length;
+  $('#funnelSum').textContent = `Why ${cur.toLocaleString()} of ${open.toLocaleString()} open roles? See what each filter removes`;
+  if (!box.open) return;
+  const token = (renderFunnel.t = (renderFunnel.t || 0) + 1), rows = funnelRows();
+  $('#funnelBody').innerHTML = '<p class="hint">Working it out…</p>';
+  const out = []; let i = 0, base = null;
+  const step = () => {
+    if (token !== renderFunnel.t) return; // criteria changed; a newer run will finish
+    if (base == null) { base = countWith({}); return setTimeout(step, 0); }
+    if (i < rows.length) { const r = rows[i++]; out.push({ ...r, n: countWith(r.patch) }); return setTimeout(step, 0); }
+    out.sort((a, b) => b.n - a.n);
+    $('#funnelBody').innerHTML = `<p class="hint">Your search criteria match <b>${base.toLocaleString()}</b> roles. Each row loosens one filter, with everything else unchanged:</p>
+      <table class="ftab"><thead><tr><th>Filter</th><th>Now</th><th>If loosened to</th><th class="num">Roles</th><th></th></tr></thead><tbody>` +
+      out.map((r, k) => `<tr><td>${esc(r.k)}</td><td>${esc(r.now)}</td><td>${esc(r.to)}</td><td class="num"><b>${r.n.toLocaleString()}</b> <span class="delta">${r.n > base ? '+' + (r.n - base).toLocaleString() : '±0'}</span></td>
+        <td>${r.noApply ? '<span class="hint">edit in Job categories</span>' : `<button type="button" class="linkbtn" data-loosen="${k}">Loosen</button>`}</td></tr>`).join('') + '</tbody></table>';
+    $('#funnelBody').querySelectorAll('[data-loosen]').forEach(b => b.onclick = () => {
+      const r = out[+b.dataset.loosen]; Object.assign(S.crit, r.patch);
+      if (r.patch.lOther) { const pl = S.crit.places ||= []; for (const kind of ['remote_any', 'unlisted']) if (!pl.some(p => p.kind === kind)) pl.push({ kind, on: true }); else pl.find(p => p.kind === kind).on = true; syncPlaces(); }
+      save(); renderCriteria(); renderHud(); queueMatches();
+    });
+  };
+  setTimeout(step, 30);
+}
 function computeMatches() {
   const c = S.crit;
   const ctx = { win: currentWindow(), excl: reFromList(csvList(c.exclude)) };
@@ -531,9 +580,9 @@ const money = n => n == null ? '?' : '$' + (n >= 1000 ? Math.round(n / 1000) + '
 const KIND_LABEL = { base: 'BASE', base_likely: 'SALARY (base implied)', unlabeled: 'RANGE (type not stated)' };
 const DATE_LABEL = { first_published: 'first published', published: 'published', created: 'created', posted_date: 'posted', start_date: 'posting start date', released: 'released', feed_pubdate: 'feed date',
   relative_approx: 'approx. from "posted N days ago"', updated: 'UPDATED date — may be a refresh', first_observed: 'first observed by collector (no posting date)', aggregator_created: 'aggregator date', none: 'no date' };
-const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['IN YOUR SEARCH AREA', 'g'], remote_yes: ['REMOTE · YOUR STATE OK', 'g'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
+const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['IN YOUR SEARCH AREA', 'g'], remote_yes: ['REMOTE · YOUR STATE OK', 'g'], unlisted: ['US · LOCATION NOT LISTED', 'a'], remote_unknown: ['REMOTE · STATE ELIGIBILITY NOT STATED', 'a'], other: ['OTHER US LOCATION', 'f'] };
 
-const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['In search area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], other: ['Other US', 'f'] };
+const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['In search area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], unlisted: ['US · location not listed', 'a'], other: ['Other US', 'f'] };
 const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
   relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
 function jobRow(m) {
@@ -668,7 +717,7 @@ function renderMatches() {
   if (tierSel !== 'all') ms = ms.filter(m => tierSel === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === tierSel);
   const { key, dir } = S.sort || { key: 'score', dir: -1 };
   if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
-  const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, other: 1 };
+  const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, unlisted: 2, other: 1 };
   const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0), top: m => C.baseTop(m.j.salary) ?? -1,
     loc: m => LOCR[m.loc] || 0, posted: m => m.dt.d || '', source: m => (m.j.source_class === 'official' ? '0' : '1') + m.j.ats }[key];
   ms.sort((x, y) => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; });
@@ -680,9 +729,11 @@ function renderMatches() {
     : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`;
   S.lastMatches = ms;
   updatePayCount();
+  renderFunnel();
   renderFinds();
 }
 function wireMatches() {
+  $('#funnelBox')?.addEventListener('toggle', () => { if ($('#funnelBox').open) renderFunnel(); });
   $('#stFilter').value = store.get('stFilter', 'active');
   $('#stFilter').addEventListener('change', e => store.set('stFilter', e.target.value));
   wireStatusMenu();
@@ -721,7 +772,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120s');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120u');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -752,7 +803,7 @@ function scoreParts(m) {
   const p = m.parts || {}, c = S.crit, j = m.j;
   const fnNames = (m.fnHit || []).map(f => C.FUNCTIONS[f]?.label || f);
   const hits = [...(m.skillHits || []), ...(m.customHits || [])];
-  const LOCTXT = m.hf?.tied ? { other: 'listed as remote, but tied to a city or territory outside your search locations (only specific places are listed and nothing says anywhere in the US)' } : { metro: `in one of your search locations${m.hf?.metro_loc ? ' (' + m.hf.metro_loc + ')' : ''}`, remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your chosen state is listed as eligible' : 'remote, and your chosen state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
+  const LOCTXT = m.hf?.tied ? { other: 'listed as remote, but tied to a city or territory outside your search locations (only specific places are listed and nothing says anywhere in the US)' } : { metro: `in one of your search locations${m.hf?.metro_loc ? ' (' + m.hf.metro_loc + ')' : ''}`, remote_yes: m.hf?.eligibility === 'yes' ? 'remote, and your chosen state is listed as eligible' : 'remote, and your chosen state is likely eligible', remote_unknown: "remote, but the posting doesn't say which states can apply", unlisted: 'the posting lists only "United States", with no city or remote policy', other: 'outside your commute area and not remote', remote_no: 'remote, but your home state is excluded' };
   const BASETXT = { starts: `base pay starts at or above your ${money(c.minBase)} minimum`, reaches: `base pay range reaches your ${money(c.minBase)} minimum but starts below it`, unknown: 'no base pay stated', ote_only: 'only on-target earnings (base + commission) stated, which is not counted as base', predicted: 'only a predicted range from an aggregator, not the employer', below: `base pay tops out below your ${money(c.minBase)} minimum` };
   return [
     ['Job category', p.fn, 30, fnNames.length ? 'matches ' + fnNames.join(', ') : 'flagged for review; not in your selected categories'],

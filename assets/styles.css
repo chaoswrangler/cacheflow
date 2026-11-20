@@ -736,3 +736,13 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .paybox .opt{font-size:9.5px;letter-spacing:.08em;opacity:.65;margin-left:6px;text-transform:uppercase}
 [hidden]{display:none!important}
 .paysum{margin:0;font-size:12.5px;line-height:1.5;color:var(--t2)}.paysum b{color:var(--ice,#e6f4ff);font-weight:600}#payCount{color:var(--cy);font-family:var(--mono);font-size:11.5px}
+
+/* why-only-N funnel */
+.funnel{margin:12px 0}.funnel>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px}
+.funnel>summary::-webkit-details-marker{display:none}
+.funnelbody{padding-top:10px;overflow-x:auto}
+.ftab{width:100%;border-collapse:collapse;font-size:12.5px}
+.ftab th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line)}
+.ftab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ftab .num{text-align:right;white-space:nowrap}.ftab .delta{color:var(--cy);font-family:var(--mono);font-size:11px;margin-left:4px}
+@media (max-width:600px){.ftab thead{display:none}.ftab tr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-bottom:1px solid var(--line)}.ftab td{border:0;padding:0}.ftab td:nth-child(2),.ftab td:nth-child(3){grid-column:1;font-size:11.5px;color:var(--t2)}.ftab td:nth-child(2)::before{content:'Now: '}.ftab td:nth-child(3)::before{content:'Loosen to: '}.ftab td.num{grid-column:2;grid-row:1}.ftab td:last-child{grid-column:2}}
