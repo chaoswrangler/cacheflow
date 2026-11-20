@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261119p';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119p';
-import { extractResume } from './shared/resume.mjs?v=20261119p';
+import * as C from './shared/core.mjs?v=20261119r';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261119r';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261119r';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -16,7 +16,7 @@ const QS = new URLSearchParams(location.search);
 if (QS.has('owner')) store.set('owner', QS.get('owner') !== 'off');
 const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
-  functions: [...FN_KEYS], engReview: true, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
+  functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 150000, salMode: 'starts_reaches', window: 'week', firstSeen: true, updated: true,
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', sen: 2,
   include: '', exclude: 'intern, new grad, apprentice', tiers: { heavy: true, named: true, core: true, aggregator: true }, sectors: [], verticals: [],
 });
@@ -26,6 +26,17 @@ const S = {
   crit: { ...DEFAULT_CRIT(), ...store.get('crit', {}) }, profile: { ...DEFAULT_PROFILE(), ...store.get('profile', {}) },
   saved: new Set(store.get('saved', [])), hidden: new Set(store.get('hidden', [])), live: new Map(), empByName: new Map(), open: new Set(),
 };
+// Category set changed since these criteria were saved: re-suggest from the stored profile (or use the
+// defaults) once, then leave the user's toggles alone.
+if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
+  const known = new Set(S.crit.fnKnown || []);
+  const sug = S.profile.source !== 'empty' ? suggestFunctions(S.profile) : [];
+  if (S.profile.source !== 'empty') S.profile.suggestedFns = sug;
+  if (!S.crit.fnKnown) S.crit.functions = sug.length ? sug : [...C.DEFAULT_FUNCTIONS];
+  else for (const k of FN_KEYS) if (!known.has(k) && sug.includes(k) && !S.crit.functions.includes(k)) S.crit.functions.push(k);
+  S.crit.functions = S.crit.functions.filter(k => FN_KEYS.includes(k));
+  S.crit.fnKnown = [...FN_KEYS]; S.crit.engReview = false;
+}
 const save = () => { store.set('crit', S.crit); store.set('profile', S.profile); store.set('saved', [...S.saved]); store.set('hidden', [...S.hidden]); };
 
 /* ============================================================ boot */
@@ -128,10 +139,11 @@ function applyProfile(p, how) {
     if (!S.crit.metro && city) S.crit.metro = C.metroFor(city);
   }
   if (p.maxSen) S.crit.sen = Math.max(2, Math.min(5, p.maxSen - 1));
+  if (p.suggestedFns?.length) S.crit.functions = [...p.suggestedFns];
   save(); renderProfile(); renderCriteria(); renderHud(); renderDiscover();
   logIngest(`<span class="g">✓</span> ${how}: ${p.skillsOn.length} skills · ${p.titles.length} titles · ${p.creds.length} credentials · ${p.employers.length} employers` +
     (p.location ? ` · home <span class="c">${esc(p.location)}</span>` : ' · <span class="y">no home location found; set it below</span>') +
-    (p.suggestedFns.length ? `<br><span class="p">cacheflow&gt;</span> suggested functions: <span class="c">${p.suggestedFns.map(f => C.FUNCTIONS[f].label).join(', ')}</span> (marked ◆; all stay selectable)` : ''));
+    (p.suggestedFns.length ? `<br><span class="p">cacheflow&gt;</span> job categories pre-selected from your résumé: <span class="c">${p.suggestedFns.map(f => C.FUNCTIONS[f].label).join(', ')}</span> (marked ◆; change them any time under Search criteria)` : '<br><span class="y">No job categories recognized; the defaults stay selected.</span>'));
 }
 const SAMPLE = `Definitely Ahuman
 Senior Product Marketing Manager | Security GTM
@@ -203,8 +215,11 @@ function sectorsAndVerticals() {
 }
 function renderCriteria() {
   const c = S.crit, sug = new Set(S.profile.suggestedFns || []);
-  $('#cFunctions').innerHTML = FN_KEYS.map(k => `<label class="check"><input type="checkbox" data-fn="${k}" ${c.functions.includes(k) ? 'checked' : ''}> ${esc(C.FUNCTIONS[k].label)}${sug.has(k) ? ' <span style="color:var(--magenta)">◆</span>' : ''}</label>`).join('');
-  $('#cEngReview').checked = c.engReview; $('#cMinBase').value = c.minBase; $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
+  const fnRow = k => `<label class="check" title="${esc(C.FUNCTIONS[k].hint)}"><input type="checkbox" data-fn="${k}" ${c.functions.includes(k) ? 'checked' : ''}> <span>${esc(C.FUNCTIONS[k].label)}${sug.has(k) ? ' <span class="fn-sug" title="Suggested from your résumé">◆</span>' : ''}<small>${esc(C.FUNCTIONS[k].hint)}</small></span></label>`;
+  $('#cFunctions').innerHTML = `<div class="fn-tools"><span>${c.functions.length} of ${FN_KEYS.length} selected</span>${sug.size ? '<button class="linkbtn" data-fnset="sug">◆ From résumé</button>' : ''}<button class="linkbtn" data-fnset="def">Defaults</button><button class="linkbtn" data-fnset="all">All</button><button class="linkbtn" data-fnset="none">None</button></div>` +
+    C.FUNCTION_GROUPS.map(g => { const ks = FN_KEYS.filter(k => C.FUNCTIONS[k].group === g), on = ks.filter(k => c.functions.includes(k)).length;
+      return `<details class="fn-group" ${on || ks.some(k => sug.has(k)) ? 'open' : ''}><summary>${esc(g)} <em>${on}/${ks.length}</em></summary>${ks.map(fnRow).join('')}</details>`; }).join('');
+  $('#cMinBase').value = c.minBase; $('#cSalMode').value = c.salMode; $('#cWindow').value = c.window;
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   for (const k of ['lMetro', 'lRemoteYes', 'lRemoteUnknown', 'lOther']) $('#' + k).checked = c[k];
   $('#cMetro').value = c.metro; $('#cMetro').placeholder = 'set a home location, or type cities separated by |';
@@ -218,8 +233,9 @@ function renderCriteria() {
   $('#cSectors').innerHTML = sec.map(([s, n]) => `<button class="chip ${c.sectors.includes(s) ? 'on' : ''}" data-sector="${esc(s)}">${esc(s)} · ${n}</button>`).join('');
   $('#cVerticals').innerHTML = ver.map(([s, n]) => `<button class="chip ${c.verticals.includes(s) ? 'on m' : ''}" data-vert="${esc(s)}">${esc(s)} · ${n}</button>`).join('');
   const upd = () => { save(); renderHud(); };
-  $$('#cFunctions [data-fn]').forEach(i => i.onchange = () => { c.functions = $$('#cFunctions [data-fn]:checked').map(x => x.dataset.fn); upd(); });
-  $('#cEngReview').onchange = e => { c.engReview = e.target.checked; upd(); };
+  $$('#cFunctions [data-fn]').forEach(i => i.onchange = () => { c.functions = $$('#cFunctions [data-fn]:checked').map(x => x.dataset.fn); upd(); renderCriteria(); });
+  $$('#cFunctions [data-fnset]').forEach(b => b.onclick = e => { e.preventDefault();
+    c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
   $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); upd(); };
   $('#cSalMode').onchange = e => { c.salMode = e.target.value; upd(); };
   $('#cWindow').onchange = e => { c.window = e.target.value; upd(); };
@@ -503,7 +519,7 @@ async function liveCheck(ids) {
 }
 
 /* ============================================================ discover */
-const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', sales: 'go-to-market strategy', partner: 'partnerships alliances', ci: 'competitive intelligence enablement', strategy: 'chief of staff strategy' };
+const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', marketing: 'marketing manager', demand: 'demand generation', sales: 'account executive', se: 'solutions engineer', partner: 'partnerships alliances', cs: 'customer success manager', enable: 'sales enablement', gtm: 'go-to-market strategy', strategy: 'strategy business operations', cos: 'chief of staff', ci: 'competitive intelligence', threat: 'threat intelligence researcher', secops: 'security operations incident response', seceng: 'security engineer', grc: 'governance risk compliance', ai: 'machine learning AI', eng: 'software engineer', data: 'data scientist analytics', design: 'product designer', support: 'professional services consultant', finance: 'finance', people: 'recruiter', legal: 'counsel' };
 function renderDiscover() {
   const c = S.crit, home = S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
   const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || c.verticals.length ? ' security' : '';
@@ -544,7 +560,23 @@ function renderSetup() {
     <pre>{ "id": "wd:acme", "ats": "workday", "host": "acme.wd5.myworkdayjobs.com",
   "tenant": "acme", "site": "AcmeCareers", "queries": ["product manager"] }</pre>
     <p>Run <code>node collector/collect.mjs --probe</code> to get suggested boards for unresolved employers. Suggestions go to <code>data/probe-results.json</code> for you to review; nothing is auto-added.</p>
+    <h4>Email me my matches</h4>
+    <p>The Action can email new matches for <b>your current criteria and skills</b> after each run, at most once a day. Your criteria live in an encrypted GitHub secret, never in the public repo.</p>
+    <div class="row" style="gap:8px;flex-wrap:wrap"><input id="alertEmail" type="email" placeholder="you@example.com" style="flex:1;min-width:200px">
+    <button class="btn pri" id="btnAlertCopy">Copy alert settings</button></div>
+    <p class="hint">Paste the copied text into the <code>SUBSCRIBERS</code> secret. To add someone, put their entry in the same list: <code>[ {...}, {...} ]</code>.</p>
 `;
+  $('#alertEmail').value = store.get('alertEmail', '');
+  $('#btnAlertCopy').onclick = async () => {
+    const email = $('#alertEmail').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast('Enter the email address to send alerts to');
+    store.set('alertEmail', email);
+    const { window: _w, ...crit } = S.crit;
+    const entry = [{ email, tz: LOCAL_TZ, crit: { ...crit, window: 'd7' }, skillsOn: S.profile.skillsOn || [], custom: S.profile.custom || [] }];
+    const txt = JSON.stringify(entry);
+    try { await navigator.clipboard.writeText(txt); toast('Alert settings copied. Paste into the SUBSCRIBERS secret.'); }
+    catch { prompt('Copy this into the SUBSCRIBERS secret:', txt); }
+  };
   $('#setupRight').innerHTML = `<div class="kicker">Method &amp; limits</div>
     <h4>Salary</h4><ul><li>Only base salary counts. OTE, on-target earnings, total comp, bonus, equity and aggregator-predicted figures are shown but never used as base.</li>
     <li><b>Starts</b> = the range minimum meets your threshold. <b>Reaches</b> = only the maximum does. They're listed separately.</li>
