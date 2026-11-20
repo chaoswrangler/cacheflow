@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120z">
+<link rel="stylesheet" href="assets/styles.css?v=20261121a">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -164,8 +164,13 @@
               <label class="f" for="cWindow">Posting window</label>
               <select id="cWindow">
                 <option value="week">Monday of this week → today</option>
-                <option value="d7">Last 7 days</option><option value="d14">Last 14 days</option><option value="d30">Last 30 days</option><option value="all">Any date</option>
+                <option value="d7">Last 7 days</option><option value="d14">Last 14 days</option><option value="d30">Last 30 days</option><option value="d60">Last 60 days</option><option value="d90">Last 90 days</option><option value="all">Any date</option><option value="custom">Custom dates…</option>
               </select>
+              <div class="daterange" id="winCustom" hidden>
+                <label>From <input type="date" id="cWinFrom" aria-label="Posted on or after"></label>
+                <label>To <input type="date" id="cWinTo" aria-label="Posted on or before"></label>
+                <span class="hint">Leave either blank for open-ended.</span>
+              </div>
               <label class="check" style="margin-top:8px"><input type="checkbox" id="cFirstSeen"> When no posting date exists, use first-observed date (flagged)</label>
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
@@ -378,7 +383,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120z" defer></script>
+<script src="assets/fx.js?v=20261121a" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -396,6 +401,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261120z"></script>
+<script type="module" src="assets/app.js?v=20261121a"></script>
 </body>
 </html>

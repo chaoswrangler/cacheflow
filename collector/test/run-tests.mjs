@@ -592,4 +592,14 @@ try {
   const H = await import('../../assets/shared/core.mjs');
   t('functions: HR partner roles for GTM/security orgs are People only', () => { for (const x of ['HRBP, GTM', 'People Partner, Sales', 'Talent Acquisition Partner, GTM', 'Sr HR Business Partner, Agentic AI']) assert.deepEqual(H.classifyFunctions(x).functions, ['people'], x); assert.ok(H.classifyFunctions('Principal Product Manager, HR Experiences').functions.includes('product')); assert.ok(H.classifyFunctions('Sales Compensation Analyst').functions.includes('sales')); });
 }
+{
+  const W = await import('../../assets/shared/core.mjs'); const now = new Date('2026-11-20T15:00:00Z');
+  t('window: custom range, open ends and swapped dates', () => {
+    assert.deepEqual([W.windowFor('custom', now, 'America/New_York', '2026-10-01', '2026-10-31').start, W.windowFor('custom', now, 'America/New_York', '2026-10-01', '2026-10-31').end], ['2026-10-01', '2026-10-31']);
+    assert.equal(W.windowFor('custom', now, 'America/New_York', '2026-11-01', '').end, '2026-11-20');
+    assert.equal(W.windowFor('custom', now, 'America/New_York', '', '2026-11-01').start, '2000-01-01');
+    assert.equal(W.windowFor('custom', now, 'America/New_York', '2026-11-10', '2026-11-01').start, '2026-11-01');
+    assert.equal(W.windowFor('d90', now).start, '2026-08-23');
+  });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

@@ -1,8 +1,8 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261120z';
+import * as C from './shared/core.mjs?v=20261121a';
 
-const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', all: 'any posting date (still open)' };
+const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', d60: 'posted in the last 60 days', d90: 'posted in the last 90 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
   starts: min => `the stated base range STARTS at or above ${min}`,
   starts_unknown: min => `the stated base range STARTS at or above ${min}; also include postings with no stated base, flagged "no base stated"`,
@@ -95,7 +95,7 @@ ${bullets(cats.length ? cats : ['Any category'])}
 - "Remote" tied to a city or territory is not open-remote: if every listed location is a specific city or region outside ${state || 'the home state'} and the posting never says "anywhere in the US", treat it as located there (common for regional sales territories and companies whose remote work is tied to an office).
 - A role whose first listed location is outside the US, with only a bare "United States" listed and only non-USD pay, is not a US role.
 
-**Posting date:** ${WINDOW_TXT[c.window] || WINDOW_TXT.week}. Use the date on the posting or its ATS data. If there's no date, include the role only if it is clearly open, and flag "date unknown". Exclude anything closed or no longer accepting applications.
+**Posting date:** ${c.window === 'custom' ? (() => { const w = C.windowFor('custom', new Date(), undefined, c.winFrom, c.winTo); return `posted between ${w.start === '2000-01-01' ? 'any date' : w.start} and ${w.end}`; })() : (WINDOW_TXT[c.window] || WINDOW_TXT.week)}. Use the date on the posting or its ATS data. If there's no date, include the role only if it is clearly open, and flag "date unknown". Exclude anything closed or no longer accepting applications.
 
 **Employers:** ${types.length ? 'company types ' + types.join(', ') : 'any'}${c.sectors?.length ? '; industries: ' + c.sectors.join(', ') : ''}${block.length ? '. Never include: ' + block.join(', ') : ''}.`,
 

@@ -756,3 +756,4 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .place .pscope{grid-column:1/-1;display:grid;gap:4px;padding:6px 0 2px;border-top:1px dashed var(--line)}
 .place .pscope .check{margin:0;font-size:12.5px}
 .place .pscope select{padding:4px 6px}
+.daterange{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:8px}.daterange label{display:flex;align-items:center;gap:6px;font-size:12.5px}.daterange input[type=date]{width:auto;padding:4px 6px;color-scheme:dark}

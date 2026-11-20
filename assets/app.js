@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120z';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120z';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120z';
+import * as C from './shared/core.mjs?v=20261121a';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121a';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121a';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -170,7 +170,7 @@ function renderHud() {
   $('#heroRoles').textContent = S.jobsMeta?.generated_at ? `${open.toLocaleString()} open roles` : 'awaiting first collection';
   $('#heroLive').textContent = S.jobsMeta?.generated_at ? 'Feeds live' : 'Feeds idle';
 }
-const currentWindow = () => S.crit.window === 'all' ? null : C.windowFor(S.crit.window, new Date(), LOCAL_TZ);
+const currentWindow = () => S.crit.window === 'all' ? null : C.windowFor(S.crit.window, new Date(), LOCAL_TZ, S.crit.winFrom, S.crit.winTo);
 
 /* ============================================================ resume ingest */
 function logIngest(html, reset = false) { const el = $('#ingestLog'); el.style.display = 'block'; el.innerHTML = (reset ? '' : el.innerHTML + '<br>') + html; el.scrollTop = 1e6; }
@@ -386,7 +386,7 @@ function syncLayout() { const d = $('#critBox'); $('#mLayout')?.classList.toggle
 function critSummary() {
   const c = S.crit, n = (c.functions || []).length;
   const rule = { starts: 'whole range ≥', starts_reaches: 'reaches', plus_unknown: 'reaches (or unstated)', starts_unknown: 'whole range ≥ (or unstated)', any: 'any' }[c.salMode] || '';
-  const win = { week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', all: 'any date' }[c.window] || c.window;
+  const win = c.window === 'custom' ? (currentWindow()?.label || 'any date').toLowerCase() : ({ week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', d60: '60 days', d90: '90 days', all: 'any date' }[c.window] || c.window);
   const locs = [...(c.places || []).filter(p => p.on).map(placeLabel), c.lOther && 'anywhere else in the US'].filter(Boolean).join(' + ') || 'no locations';
   return `${n} categor${n === 1 ? 'y' : 'ies'} · ${[+c.minBase && 'base starts ≥ ' + money(c.minBase), +c.maxBase && 'upper range ≥ ' + money(c.maxBase)].filter(Boolean).join(', ') || 'any pay'}${c.salMode === 'starts_unknown' ? ' (or unstated)' : ''} · ${win} · ${locs}`;
 }
@@ -521,6 +521,7 @@ function renderCriteria() {
   $('#cMaxBase').innerHTML = tops.map(v => `<option value="${v}">${v ? money(v) + ' or more' : 'Any'}</option>`).join('');
   $('#cMaxBase').value = String(+c.maxBase || 0);
   $('#cMinBase').value = String(+c.minBase || 0); $('#cWindow').value = c.window;
+  $('#winCustom').hidden = c.window !== 'custom'; $('#cWinFrom').value = c.winFrom || ''; $('#cWinTo').value = c.winTo || ''; $('#cWinTo').max = C.nyDate(new Date(), LOCAL_TZ);
   $('#cPayUnknown').checked = c.salMode === 'starts_unknown' || !!c.payUnknown; renderPayEx();
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   renderPlaces();
@@ -554,7 +555,9 @@ function renderCriteria() {
   $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
   $('#cMaxBase').onchange = e => { c.maxBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
   $('#cPayUnknown').onchange = e => { c.payUnknown = e.target.checked; c.salMode = e.target.checked ? 'starts_unknown' : 'starts'; renderPayEx(); upd(); };
-  $('#cWindow').onchange = e => { c.window = e.target.value; upd(); };
+  $('#cWindow').onchange = e => { c.window = e.target.value; $('#winCustom').hidden = c.window !== 'custom'; if (c.window === 'custom' && !c.winFrom && !c.winTo) { c.winFrom = C.addDays(C.nyDate(new Date(), LOCAL_TZ), -13); $('#cWinFrom').value = c.winFrom; } upd(); };
+  $('#cWinFrom').onchange = e => { c.winFrom = e.target.value; upd(); };
+  $('#cWinTo').onchange = e => { c.winTo = e.target.value; upd(); };
   $('#cFirstSeen').onchange = e => { c.firstSeen = e.target.checked; upd(); };
   $('#cUpdated').onchange = e => { c.updated = e.target.checked; upd(); };
   $('#cSen').onchange = e => { c.sen = +e.target.value; upd(); };
@@ -578,13 +581,13 @@ function evaluate(j, ctx) {
 /* "Why only N roles?": count matches with one filter loosened at a time, so the biggest cut is obvious. */
 function countWith(patch) {
   const c = { ...S.crit, ...patch };
-  const win = c.window === 'all' ? null : C.windowFor(c.window, new Date(), LOCAL_TZ), excl = reFromList(csvList(c.exclude));
+  const win = c.window === 'all' ? null : C.windowFor(c.window, new Date(), LOCAL_TZ, c.winFrom, c.winTo), excl = reFromList(csvList(c.exclude));
   let n = 0;
   for (const j of S.jobs) { if (c.blockEmp?.includes(j.employer) || j.dup_of) continue; if (C.evaluateJob(j, { crit: c, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win, excl, tz: LOCAL_TZ })) n++; }
   return n;
 }
 function funnelRows() {
-  const c = S.crit, WIN = { week: 'this week (Monday to today)', d7: 'last 7 days', d14: 'last 14 days', d30: 'last 30 days', all: 'any date' };
+  const c = S.crit, WIN = { week: 'this week (Monday to today)', d7: 'last 7 days', d14: 'last 14 days', d30: 'last 30 days', d60: 'last 60 days', d90: 'last 90 days', all: 'any date', custom: (currentWindow()?.label || 'custom dates') };
   const rows = [];
   if (c.window !== 'all') rows.push({ k: 'Posting date', now: WIN[c.window] || c.window, to: c.window === 'week' || c.window === 'd7' ? 'last 30 days' : 'any date', patch: c.window === 'week' || c.window === 'd7' ? { window: 'd30' } : { window: 'all' } });
   if (c.window !== 'all' && (c.window === 'week' || c.window === 'd7')) rows.push({ k: 'Posting date', now: WIN[c.window], to: 'any date', patch: { window: 'all' } });
@@ -829,7 +832,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120z');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121a');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

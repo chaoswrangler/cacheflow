@@ -21,9 +21,16 @@ export function weekWindow(now = new Date(), tz = TZ) {
   const back = dow === 0 ? 6 : dow - 1;
   return { start: addDays(end, -back), end, tz, label: 'Monday of current week through today' };
 }
-export function windowFor(mode, now = new Date(), tz = TZ) {
+// Posting window. Presets count back from today; 'custom' takes from/to (YYYY-MM-DD, either may be blank).
+export function windowFor(mode, now = new Date(), tz = TZ, from = '', to = '') {
   if (mode === 'week') return weekWindow(now, tz);
-  const days = { d7: 7, d14: 14, d30: 30 }[mode] || 7;
+  if (mode === 'custom') {
+    const today = nyDate(now, tz), ok = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+    let start = ok(from) ? from : '2000-01-01', end = ok(to) ? to : today;
+    if (start > end) [start, end] = [end, start];
+    return { start, end, tz, label: ok(from) && ok(to) ? `${start} to ${end}` : ok(from) ? `Since ${start}` : ok(to) ? `Up to ${end}` : 'Any date' };
+  }
+  const days = { d7: 7, d14: 14, d30: 30, d60: 60, d90: 90 }[mode] || 7;
   const end = nyDate(now, tz);
   return { start: addDays(end, -(days - 1)), end, tz, label: `Last ${days} days` };
 }
