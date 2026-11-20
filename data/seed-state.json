@@ -1,5 +1,5 @@
 {
- "next": 120,
+ "next": 160,
  "checked": {
   "rescale": {
    "at": "2026-11-20T04:21:49.368Z",
@@ -1040,12 +1040,362 @@
    "tried": [
     "greenhouse:nabis=18 jobs"
    ]
+  },
+  "swadesh": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:swadesh=404",
+    "greenhouse:swadesh=404",
+    "lever:swadesh=404"
+   ]
+  },
+  "okteto": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:okteto=404",
+    "greenhouse:okteto=404",
+    "lever:okteto=404"
+   ]
+  },
+  "probablygenetic": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:probablygenetic",
+   "tried": [
+    "ashby:probablygenetic=5 jobs"
+   ]
+  },
+  "bunkerhillhealth": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:bunkerhillhealth",
+   "tried": [
+    "ashby:bunkerhillhealth=8 jobs"
+   ]
+  },
+  "landed": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:landed=404",
+    "greenhouse:landed=404",
+    "lever:landed=404",
+    "ashby:gotlanded=404",
+    "greenhouse:gotlanded=404",
+    "lever:gotlanded=404"
+   ]
+  },
+  "deel": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:deel=0 jobs",
+    "greenhouse:deel=404",
+    "lever:deel=404"
+   ]
+  },
+  "pno": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:pno=404",
+    "greenhouse:pno=404",
+    "lever:pno=404"
+   ]
+  },
+  "voltalabsinc": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "lever:voltalabs",
+   "tried": [
+    "lever:voltalabs=3 jobs"
+   ]
+  },
+  "upsolve": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:upsolve=404",
+    "greenhouse:upsolve=404",
+    "lever:upsolve=404"
+   ]
+  },
+  "alpaca": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:alpaca",
+   "tried": [
+    "ashby:alpaca=404",
+    "greenhouse:alpaca=67 jobs"
+   ]
+  },
+  "dover": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:dover=404",
+    "greenhouse:dover=404",
+    "lever:dover=404"
+   ]
+  },
+  "first": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:first=404",
+    "greenhouse:first=404",
+    "lever:first=404",
+    "ashby:firstdelivery=404",
+    "greenhouse:firstdelivery=404",
+    "lever:firstdelivery=404"
+   ]
+  },
+  "atlas": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:atlas",
+   "tried": [
+    "ashby:atlas=8 jobs"
+   ]
+  },
+  "vouch": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:vouch=404",
+    "greenhouse:vouch=404",
+    "lever:vouch=404"
+   ]
+  },
+  "aperohealth": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:aperohealth=404",
+    "greenhouse:aperohealth=404",
+    "lever:aperohealth=404",
+    "ashby:apero-health=404",
+    "greenhouse:apero-health=404",
+    "lever:apero-health=404"
+   ]
+  },
+  "methodfinancial": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:method",
+   "tried": [
+    "ashby:method=11 jobs"
+   ]
+  },
+  "odeko": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:odeko=404",
+    "greenhouse:odeko=29 jobs (rejected: postings don't name the company or its domain)",
+    "lever:odeko=404"
+   ]
+  },
+  "pairteam": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:pairteam",
+   "tried": [
+    "greenhouse:pairteam=2 jobs"
+   ]
+  },
+  "trmlabs": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:trm-labs",
+   "tried": [
+    "ashby:trmlabs=404",
+    "greenhouse:trmlabs=404",
+    "lever:trmlabs=404",
+    "ashby:trm-labs=115 jobs"
+   ]
+  },
+  "yummyfuture": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:yummyfuture=404",
+    "greenhouse:yummyfuture=404",
+    "lever:yummyfuture=404",
+    "ashby:yummy-future=404",
+    "greenhouse:yummy-future=404",
+    "lever:yummy-future=404"
+   ]
+  },
+  "rutter": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:rutter",
+   "tried": [
+    "ashby:rutter=0 jobs"
+   ]
+  },
+  "directshifts": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:directshifts=404",
+    "greenhouse:directshifts=404",
+    "lever:directshifts=404"
+   ]
+  },
+  "wasmer": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:wasmer=404",
+    "greenhouse:wasmer=404",
+    "lever:wasmer=404"
+   ]
+  },
+  "recidiviz": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:recidiviz",
+   "tried": [
+    "greenhouse:recidiviz=13 jobs"
+   ]
+  },
+  "inevent": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:inevent=404",
+    "greenhouse:inevent=404",
+    "lever:inevent=404"
+   ]
+  },
+  "freshpaint": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:freshpaint",
+   "tried": [
+    "ashby:freshpaint=4 jobs"
+   ]
+  },
+  "taskade": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:taskade=404",
+    "greenhouse:taskade=404",
+    "lever:taskade=404"
+   ]
+  },
+  "vorticity": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:vorticity",
+   "tried": [
+    "ashby:vorticity=1 jobs"
+   ]
+  },
+  "wonderly": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:wonderly",
+   "tried": [
+    "ashby:wonderly=9 jobs"
+   ]
+  },
+  "karatfinancial": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:karatfinancial=404",
+    "greenhouse:karatfinancial=404",
+    "lever:karatfinancial=404",
+    "ashby:karat-financial=404",
+    "greenhouse:karat-financial=404",
+    "lever:karat-financial=404",
+    "ashby:trykarat=404",
+    "greenhouse:trykarat=404"
+   ]
+  },
+  "accord": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:accord",
+   "tried": [
+    "ashby:accord=3 jobs"
+   ]
+  },
+  "paragon": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "ashby:Paragon",
+   "tried": [
+    "ashby:Paragon=0 jobs"
+   ]
+  },
+  "porter": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:porter",
+   "tried": [
+    "ashby:porter=404",
+    "greenhouse:porter=5 jobs"
+   ]
+  },
+  "pulley": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:pulley",
+   "tried": [
+    "greenhouse:pulley=0 jobs"
+   ]
+  },
+  "ophelia": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "greenhouse:ophelia",
+   "tried": [
+    "greenhouse:ophelia=13 jobs"
+   ]
+  },
+  "taiv": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:taiv=404",
+    "greenhouse:taiv=404",
+    "lever:taiv=404"
+   ]
+  },
+  "openunit": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:openunit=404",
+    "greenhouse:openunit=404",
+    "lever:openunit=404"
+   ]
+  },
+  "ditto": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:ditto=6 jobs (rejected: postings don't name the company or its domain)",
+    "greenhouse:ditto=404",
+    "lever:ditto=404",
+    "ashby:dittowords=404",
+    "greenhouse:dittowords=404",
+    "lever:dittowords=404"
+   ]
+  },
+  "haven": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:haven=404",
+    "greenhouse:haven=3 jobs (rejected: postings don't name the company or its domain)",
+    "lever:haven=404",
+    "ashby:havenservicing=404",
+    "greenhouse:havenservicing=404",
+    "lever:havenservicing=404"
+   ]
+  },
+  "farcast": {
+   "at": "2026-11-20T19:05:34.427Z",
+   "result": "lever:Farcast",
+   "tried": [
+    "lever:Farcast=3 jobs"
+   ]
   }
  },
- "updated_at": "2026-11-20T17:08:15.775Z",
+ "updated_at": "2026-11-20T19:05:34.427Z",
  "progress": {
   "seeds": 792,
-  "checked": 120,
-  "found": 21
+  "checked": 160,
+  "found": 40
  }
 }
