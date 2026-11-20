@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261120u';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120u';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120u';
+import * as C from './shared/core.mjs?v=20261120w';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261120w';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261120w';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -273,13 +273,19 @@ async function ingestFile(f) {
   } catch (e) { logIngest(`<span class="r">✗</span> ${esc(e.message)}. Paste the text instead.`); }
 }
 // Grow a textarea to show its whole value (no hidden overflow, no inner scrollbar).
-/* Search locations: places the viewer searches in (metro areas, towns, whole states), separate from home.
-   Derived for the matcher: crit.metro (towns, | separated) and crit.placeStates (whole states). */
+/* Locations, state-first. Each state row has two independent switches: Remote (remote roles open to that state)
+   and In person (roles located there; whole state, or narrowed to towns). Extra rows: Remote anywhere, US with no
+   city listed, and standalone towns. Everything is OR'd: a role shows if it fits any switch that's on.
+   Derived for the matcher: crit.metro (towns), crit.placeStates (whole states), crit.remoteStates, lMetro/lRemote*. */
 function presetName(terms) { return Object.keys(C.METRO_PRESETS).find(k => C.METRO_PRESETS[k] === terms) || ''; }
+// Function declarations (not const) so the boot-time migration above can call them before this line runs.
+function presetStates() { return { 'New York metro': 'NY', 'SF Bay Area': 'CA', 'Seattle': 'WA', 'Boston': 'MA', 'Washington DC': 'DC', 'Chicago': 'IL', 'Los Angeles': 'CA', 'Austin': 'TX', 'Denver': 'CO', 'Atlanta': 'GA', 'Dallas': 'TX', 'Research Triangle': 'NC' }; }
+function splitTerms(t) { return String(t || '').split('|').map(x => x.trim()).filter(Boolean); }
+function stRow(c, st) { let r = c.places.find(p => p.kind === 'st' && p.st === st); if (!r) { r = { kind: 'st', st, remote: false, inPerson: false }; c.places.push(r); } return r; }
 function syncPlaces() {
   const c = S.crit;
   if (!Array.isArray(c.places)) c.places = c.metro ? [{ kind: 'metro', label: presetName(c.metro) || 'Commute area', terms: c.metro, on: true, home: true }] : [];
-  if (!c.locV2) { // remote options used to be checkboxes; they're now entries in the same list
+  if (!c.locV2) {
     const rs = c.remoteState || c.state;
     if (c.lMetro === false) c.places.forEach(p => { p.on = false; });
     if (c.lRemoteYes !== false && rs) c.places.push({ kind: 'remote_state', st: rs, on: true });
@@ -287,21 +293,39 @@ function syncPlaces() {
     c.locV2 = true;
   }
   if (!c.locV3) { if (c.places.some(p => p.kind === 'remote_any' && p.on)) c.places.push({ kind: 'unlisted', on: true }); c.locV3 = true; }
-  const on = c.places.filter(p => p.on);
-  c.metro = [...new Set(on.filter(p => p.kind === 'metro').flatMap(p => String(p.terms || '').split('|').map(x => x.trim()).filter(Boolean)))].join('|');
-  c.placeStates = on.filter(p => p.kind === 'state').map(p => p.st);
-  c.remoteStates = on.filter(p => p.kind === 'remote_state').map(p => p.st);
-  c.lMetro = on.some(p => p.kind === 'metro' || p.kind === 'state');
+  if (!c.locV4) { // fold remote/state/metro entries into one row per state
+    const old = c.places; c.places = [];
+    const home = S.profile?.state || c.state;
+    for (const p of old) {
+      if (p.kind === 'remote_state') { if (p.on) stRow(c, p.st).remote = true; else stRow(c, p.st); }
+      else if (p.kind === 'state') { const r = stRow(c, p.st); if (p.on) { r.inPerson = true; r.terms = ''; } }
+      else if (p.kind === 'metro') {
+        const st = p.home ? home : presetStates()[p.label];
+        if (st && C.STATES[st]) { const r = stRow(c, st); if (p.on) { r.inPerson = true; r.terms = [...new Set([...splitTerms(r.terms), ...splitTerms(p.terms)])].join('|'); r.townsLabel = r.townsLabel || p.label; } if (p.home) r.home = true; }
+        else c.places.push(p);
+      } else c.places.push(p);
+    }
+    c.places.sort((x, y) => (y.home ? 1 : 0) - (x.home ? 1 : 0) || (x.kind === 'st' ? 0 : 1) - (y.kind === 'st' ? 0 : 1));
+    c.locV4 = true;
+  }
+  const P = c.places, st = P.filter(p => p.kind === 'st');
+  c.metro = [...new Set([...st.filter(p => p.inPerson && p.terms).flatMap(p => splitTerms(p.terms)), ...P.filter(p => p.kind === 'metro' && p.on).flatMap(p => splitTerms(p.terms))])].join('|');
+  c.placeStates = st.filter(p => p.inPerson && !p.terms).map(p => p.st);
+  c.remoteStates = st.filter(p => p.remote).map(p => p.st);
+  c.lMetro = !!c.metro || c.placeStates.length > 0;
   c.lRemoteYes = c.remoteStates.length > 0;
-  c.lRemoteUnknown = on.some(p => p.kind === 'remote_any');
-  c.lUnlisted = on.some(p => p.kind === 'unlisted');
+  c.lRemoteUnknown = P.some(p => p.kind === 'remote_any' && p.on);
+  c.lUnlisted = P.some(p => p.kind === 'unlisted' && p.on);
 }
-const placeLabel = p => p.kind === 'unlisted' ? 'US · location not listed' : p.kind === 'remote_any' ? 'Remote · anywhere in the US' : p.kind === 'remote_state' ? `Remote · open to ${C.STATES[p.st] || p.st}` : p.label;
+const placeLabel = p => p.kind === 'st' ? `${C.STATES[p.st] || p.st}: ${[p.remote && 'remote', p.inPerson && (p.terms ? 'in person (' + (p.townsLabel || splitTerms(p.terms).length + ' towns') + ')' : 'in person')].filter(Boolean).join(' + ') || 'off'}`
+  : p.kind === 'unlisted' ? 'US · location not listed' : p.kind === 'remote_any' ? 'Remote · anywhere in the US' : p.label;
 function setHomePlace(city) {
-  const c = S.crit, terms = C.metroFor(city), label = presetName(terms) || city.replace(/\b\w/g, m => m.toUpperCase());
-  c.places ||= [];
-  const h = c.places.find(p => p.home);
-  if (h) Object.assign(h, { kind: 'metro', label, terms, on: true }); else c.places.unshift({ kind: 'metro', label, terms, on: true, home: true });
+  const c = S.crit; c.places ||= []; syncPlaces();
+  const st = S.profile?.state || c.state; if (!st) return;
+  const terms = C.metroFor(city), r = stRow(c, st);
+  c.places.forEach(p => { if (p !== r) delete p.home; });
+  Object.assign(r, { home: true, inPerson: true, terms, townsLabel: presetName(terms) || city.replace(/\b\w/g, m => m.toUpperCase()) + ' area' });
+  c.places.sort((x, y) => (y.home ? 1 : 0) - (x.home ? 1 : 0));
   syncPlaces();
 }
 const metroShow = m => String(m || '').split('|').join(' | ');
@@ -375,30 +399,54 @@ function wireCritLayout() {
   syncLayout();
 }
 function renderPlaces() {
-  const c = S.crit, home = S.profile.state || c.state;
-  const kindTag = p => p.home ? 'home' : p.kind === 'state' ? 'in person · whole state' : p.kind === 'metro' ? 'in person' : '';
-  $('#placeList').innerHTML = (c.places || []).map((p, i) => `<div class="place ${p.on ? '' : 'off'} ${p.kind.startsWith('remote') ? 'rem' : ''}">
-      <label class="check"><input type="checkbox" data-pon="${i}" ${p.on ? 'checked' : ''}> <span><b>${esc(placeLabel(p))}</b>${kindTag(p) ? ` <span class="pk">${kindTag(p)}</span>` : ''}</span></label>
-      ${p.kind === 'metro' ? `<button type="button" class="linkbtn" data-pedit="${i}" aria-expanded="${S.pEdit === i}">${S.pEdit === i ? 'done' : 'towns'}</button>` : '<span></span>'}
-      <button type="button" class="linkbtn" data-pdel="${i}" aria-label="Remove ${esc(placeLabel(p))}">✕</button>
-      ${S.pEdit === i ? `<textarea class="pterms" data-pterms="${i}" rows="2" spellcheck="false" aria-label="Towns in ${esc(p.label)}, separated by |">${esc(metroShow(p.terms))}</textarea>` : ''}
-    </div>`).join('') || '<p class="hint">No locations yet. Add one below, or tick Anywhere else in the US.</p>';
+  const c = S.crit;
+  const row = (p, i) => {
+    if (p.kind === 'st') {
+      const scope = p.terms ? (p.townsLabel || splitTerms(p.terms).length + ' towns') : 'whole state';
+      return `<div class="place st ${p.remote || p.inPerson ? '' : 'off'}">
+        <div class="pn"><b>${esc(C.STATES[p.st] || p.st)}</b>${p.home ? ' <span class="pk">home</span>' : ''}</div>
+        <div class="ptogs">
+          <label class="check tog"><input type="checkbox" data-prem="${i}" ${p.remote ? 'checked' : ''}> Remote</label>
+          <label class="check tog"><input type="checkbox" data-pinp="${i}" ${p.inPerson ? 'checked' : ''}> In person</label>
+          ${p.inPerson ? `<button type="button" class="linkbtn" data-pedit="${i}" aria-expanded="${S.pEdit === i}" title="Where in ${esc(C.STATES[p.st])} counts for in-person roles">${esc(scope)} ▾</button>` : ''}
+        </div>
+        <button type="button" class="linkbtn px" data-pdel="${i}" aria-label="Remove ${esc(C.STATES[p.st])}">✕</button>
+        ${S.pEdit === i && p.inPerson ? `<div class="pscope">
+            <label class="check"><input type="radio" name="scope${i}" data-pscope="${i}" value="state" ${!p.terms ? 'checked' : ''}> Anywhere in ${esc(C.STATES[p.st])}</label>
+            <label class="check"><input type="radio" name="scope${i}" data-pscope="${i}" value="towns" ${p.terms ? 'checked' : ''}> Only these towns</label>
+            ${p.terms ? `<select data-ppreset="${i}" aria-label="Fill towns from a metro preset"><option value="">Fill from a metro area…</option>${Object.entries(presetStates()).filter(([, s2]) => s2 === p.st).map(([k]) => `<option>${esc(k)}</option>`).join('')}</select>
+            <textarea class="pterms" data-pterms="${i}" rows="2" spellcheck="false" aria-label="Towns, separated by |">${esc(metroShow(p.terms))}</textarea>` : ''}
+          </div>` : ''}
+      </div>`;
+    }
+    return `<div class="place ${p.on ? '' : 'off'}">
+      <label class="check pn"><input type="checkbox" data-pon="${i}" ${p.on ? 'checked' : ''}> <span><b>${esc(placeLabel(p))}</b>${p.kind === 'metro' ? ' <span class="pk">in person</span>' : ''}</span></label>
+      <span></span>
+      <button type="button" class="linkbtn px" data-pdel="${i}" aria-label="Remove ${esc(placeLabel(p))}">✕</button>
+    </div>`;
+  };
+  $('#placeList').innerHTML = (c.places || []).map(row).join('') || '<p class="hint">No locations yet. Add a state below.</p>';
   $$('#placeList .pterms').forEach(fitArea);
-  const have = new Set((c.places || []).map(p => p.kind === 'state' ? 'st:' + p.st : p.kind === 'remote_state' ? 'rs:' + p.st : p.kind === 'remote_any' ? 'ra' : p.kind === 'unlisted' ? 'ul' : 'm:' + p.terms));
+  const have = new Set((c.places || []).map(p => p.kind === 'st' ? 'st:' + p.st : p.kind));
   const states = Object.entries(C.STATES).sort((a, b) => a[1].localeCompare(b[1]));
-  $('#addPlace').innerHTML = '<option value="">+ Add a location…</option>' +
-    '<optgroup label="Remote">' + (have.has('ra') ? '' : '<option value="ra">Remote · anywhere in the US</option>') + (have.has('ul') ? '' : '<option value="ul">US · location not listed (only “United States”)</option>') +
-      states.filter(([k]) => !have.has('rs:' + k)).map(([k, v]) => `<option value="rs:${k}">Remote · open to ${esc(v)}${k === home ? ' (home)' : ''}</option>`).join('') + '</optgroup>' +
-    '<optgroup label="In person: metro area or town"><option value="__city">A city or town…</option>' + Object.entries(C.METRO_PRESETS).filter(([, t]) => !have.has('m:' + t)).map(([k]) => `<option value="m:${esc(k)}">${esc(k)}</option>`).join('') + '</optgroup>' +
-    '<optgroup label="In person: whole state">' + states.filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>';
+  $('#addPlace').innerHTML = '<option value="">+ Add a state, or another option…</option>' +
+    '<optgroup label="States">' + states.filter(([k]) => !have.has('st:' + k)).map(([k, v]) => `<option value="st:${k}">${esc(v)}</option>`).join('') + '</optgroup>' +
+    '<optgroup label="Other">' + (have.has('remote_any') ? '' : '<option value="ra">Remote · anywhere in the US</option>') + (have.has('unlisted') ? '' : '<option value="ul">US · location not listed (only “United States”)</option>') + '<option value="__city">A town or city (in person)…</option></optgroup>';
   $('#lOther').checked = !!c.lOther;
 }
 function wirePlaces() {
   const c = () => S.crit, upd = () => { syncPlaces(); save(); renderHud(); queueMatches(); renderDiscover(); };
+  const P = i => c().places[+i];
   $('#placeList').addEventListener('change', e => {
-    const t = e.target;
-    if (t.dataset.pon != null) { c().places[+t.dataset.pon].on = t.checked; upd(); renderPlaces(); }
-    if (t.dataset.pterms != null) { const p = c().places[+t.dataset.pterms]; p.terms = t.value.replace(/\s*[\n|,]\s*/g, '|').replace(/^\||\|$/g, '').trim().toLowerCase(); upd(); }
+    const t = e.target, d = t.dataset;
+    if (d.pon != null) { P(d.pon).on = t.checked; }
+    else if (d.prem != null) { P(d.prem).remote = t.checked; }
+    else if (d.pinp != null) { P(d.pinp).inPerson = t.checked; if (!t.checked && S.pEdit === +d.pinp) S.pEdit = null; }
+    else if (d.pscope != null) { const p = P(d.pscope); if (t.value === 'state') p.terms = ''; else if (!p.terms) { const k = Object.keys(presetStates()).find(x => presetStates()[x] === p.st); p.terms = k ? C.METRO_PRESETS[k] : ''; p.townsLabel = k || ''; if (!p.terms) { p.terms = ' '; } } }
+    else if (d.ppreset != null) { if (!t.value) return; const p = P(d.ppreset); p.terms = C.METRO_PRESETS[t.value]; p.townsLabel = t.value; }
+    else if (d.pterms != null) { const p = P(d.pterms); p.terms = t.value.replace(/\s*[\n|,]\s*/g, '|').replace(/^\||\|$/g, '').trim().toLowerCase(); p.townsLabel = presetName(p.terms) || ''; }
+    else return;
+    upd(); renderPlaces();
   });
   $('#placeList').addEventListener('input', e => { if (e.target.classList.contains('pterms')) fitArea(e.target); });
   $('#placeList').addEventListener('click', e => {
@@ -406,27 +454,36 @@ function wirePlaces() {
     if (b.dataset.pdel != null) { c().places.splice(+b.dataset.pdel, 1); S.pEdit = null; upd(); renderPlaces(); }
     if (b.dataset.pedit != null) { S.pEdit = S.pEdit === +b.dataset.pedit ? null : +b.dataset.pedit; renderPlaces(); }
   });
-  const add = p => { c().places.push({ on: true, ...p }); upd(); renderPlaces(); };
   $('#addPlace').onchange = e => {
     const v = e.target.value; e.target.value = '';
     if (v === '__city') { $('#addCityRow').hidden = false; $('#addCity').focus(); return; }
-    if (v.startsWith('m:')) { const k = v.slice(2); add({ kind: 'metro', label: k, terms: C.METRO_PRESETS[k] }); }
-    if (v.startsWith('st:')) { const k = v.slice(3); add({ kind: 'state', label: C.STATES[k], st: k }); }
-    if (v === 'ra') add({ kind: 'remote_any' });
-    if (v === 'ul') add({ kind: 'unlisted' });
-    if (v.startsWith('rs:')) add({ kind: 'remote_state', st: v.slice(3) });
+    if (v.startsWith('st:')) { const r = stRow(c(), v.slice(3)); r.remote = true; }
+    if (v === 'ra') c().places.push({ kind: 'remote_any', on: true });
+    if (v === 'ul') c().places.push({ kind: 'unlisted', on: true });
+    upd(); renderPlaces();
   };
-  const addCity = () => { const v = $('#addCity').value.trim(); if (!v) return; const terms = C.metroFor(v); add({ kind: 'metro', label: presetName(terms) || v.replace(/\b\w/g, m => m.toUpperCase()), terms }); $('#addCity').value = ''; $('#addCityRow').hidden = true; };
+  const addCity = () => {
+    const v = $('#addCity').value.trim(); if (!v) return;
+    const terms = C.metroFor(v), preset = presetName(terms), st = (v.match(/,\s*([A-Za-z]{2})\s*$/) || [])[1]?.toUpperCase() || presetStates()[preset];
+    if (st && C.STATES[st]) { const r = stRow(c(), st); r.inPerson = true; r.terms = [...new Set([...splitTerms(r.terms), ...splitTerms(terms.replace(/,\s*[a-z]{2}$/i, ''))])].join('|'); r.townsLabel = preset || ''; }
+    else c().places.push({ kind: 'metro', label: preset || v.replace(/\b\w/g, m => m.toUpperCase()), terms, on: true });
+    $('#addCity').value = ''; $('#addCityRow').hidden = true; upd(); renderPlaces();
+  };
   $('#addCityBtn').onclick = addCity;
   $('#addCity').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); addCity(); } if (e.key === 'Escape') $('#addCityRow').hidden = true; };
   $('#lOther').onchange = e => { c().lOther = e.target.checked; upd(); };
   $('.qloc').addEventListener('click', e => {
     const q = e.target.closest('[data-qloc]')?.dataset.qloc; if (!q) return;
-    const cr = c(), home = S.profile.state || cr.state, pl = cr.places ||= [];
-    const ensure = (kind, extra = {}) => { let p = pl.find(x => x.kind === kind && (!extra.st || x.st === extra.st)); if (!p) pl.push(p = { kind, ...extra }); p.on = true; };
-    if (q === 'home' || q === 'remote') { const h = pl.find(p => p.home); pl.forEach(p => { p.on = p === h || (!h && p.kind === 'metro' && p === pl.find(x => x.kind === 'metro')); }); cr.lOther = false; }
-    if (q === 'remote') { if (home) ensure('remote_state', { st: home }); ensure('remote_any'); ensure('unlisted'); }
-    if (q === 'us') { ensure('remote_any'); ensure('unlisted'); cr.lOther = true; pl.forEach(p => { if (p.kind !== 'remote_state') p.on = true; }); }
+    const cr = c(), pl = cr.places ||= [], home = S.profile.state || cr.state;
+    const ensure = kind => { let p = pl.find(x => x.kind === kind); if (!p) pl.push(p = { kind }); p.on = true; };
+    const off = kind => pl.filter(x => x.kind === kind).forEach(x => { x.on = false; });
+    if (q === 'home' || q === 'remote') {
+      pl.forEach(p => { if (p.kind === 'st') { p.remote = false; if (!p.home) p.inPerson = false; } else p.on = false; });
+      if (home) { const r = stRow(cr, home); r.inPerson = true; if (q === 'remote') r.remote = true; }
+      cr.lOther = false;
+      if (q === 'remote') { ensure('remote_any'); ensure('unlisted'); } else { off('remote_any'); off('unlisted'); }
+    }
+    if (q === 'us') { ensure('remote_any'); ensure('unlisted'); cr.lOther = true; }
     upd(); renderPlaces();
   });
 }
@@ -772,7 +829,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261120u');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261120w');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

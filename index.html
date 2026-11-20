@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261120u">
+<link rel="stylesheet" href="assets/styles.css?v=20261120w">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -170,7 +170,7 @@
               <label class="check"><input type="checkbox" id="cUpdated"> Accept "updated" dates (Greenhouse without first_published), flagged</label>
             </div>
             <div>
-              <label class="f">Locations <span class="hint" style="text-transform:none;letter-spacing:0">US only · add as many as you like</span></label>
+              <label class="f">Locations <span class="hint" style="text-transform:none;letter-spacing:0">US only · a role shows if it fits any of these</span></label>
               <div class="qloc" role="group" aria-label="Location shortcuts"><button type="button" class="chipbtn" data-qloc="home">Home area</button><button type="button" class="chipbtn" data-qloc="remote">Home + remote</button><button type="button" class="chipbtn" data-qloc="us">Anywhere in US</button></div>
               <div id="placeList" class="places"></div>
               <select id="addPlace" aria-label="Add a location"></select>
@@ -378,7 +378,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261120u" defer></script>
+<script src="assets/fx.js?v=20261120w" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -396,6 +396,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261120u"></script>
+<script type="module" src="assets/app.js?v=20261120w"></script>
 </body>
 </html>

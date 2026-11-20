@@ -499,4 +499,10 @@ try {
   t('location: bare US with a city in the title matches the metro', () => assert.equal(U.evaluateJob(uj('Account Executive (San Francisco, Chicago, New York)', ['United States']), { crit: ucr() })?.loc, 'metro'));
   t('location: bare US with (Remote) in the title is remote', () => assert.equal(U.evaluateJob(uj('Enterprise Account Executive (Remote)', ['USA']), { crit: ucr({ lRemoteUnknown: true }) })?.loc, 'remote_unknown'));
 }
+{
+  const O = await import('../../assets/shared/core.mjs');
+  const oj = (locs, remote) => ({ uid: 'o', status: 'open', us: true, remote_us: remote, title: 'Director, Product Marketing', employer: 'Acme', locations: locs, salary: null, functions: ['pmm'], seniority: 5, posted_at: new Date().toISOString(), posted_kind: 'first_published' });
+  const oc = { functions: ['pmm'], minBase: 0, maxBase: 0, salMode: 'any', window: 'all', metro: 'new york', state: 'NY', remoteStates: ['NY'], lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, types: {}, sectors: [], verticals: [], blockEmp: [], sen: 0 };
+  t('location: every selected location earns the same score (OR, no discount)', () => { const a = O.evaluateJob(oj(['New York, NY'], false), { crit: oc }), b = O.evaluateJob(oj(['Remote - US'], true), { crit: oc }); assert.equal(a.parts.loc, 15); assert.equal(b.parts.loc, 15); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

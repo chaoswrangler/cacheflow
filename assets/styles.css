@@ -746,3 +746,13 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .ftab td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
 .ftab .num{text-align:right;white-space:nowrap}.ftab .delta{color:var(--cy);font-family:var(--mono);font-size:11px;margin-left:4px}
 @media (max-width:600px){.ftab thead{display:none}.ftab tr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-bottom:1px solid var(--line)}.ftab td{border:0;padding:0}.ftab td:nth-child(2),.ftab td:nth-child(3){grid-column:1;font-size:11.5px;color:var(--t2)}.ftab td:nth-child(2)::before{content:'Now: '}.ftab td:nth-child(3)::before{content:'Loosen to: '}.ftab td.num{grid-column:2;grid-row:1}.ftab td:last-child{grid-column:2}}
+
+/* state rows: Remote / In person switches */
+.place.st{grid-template-columns:1fr auto;row-gap:6px}
+.place.st .pn{min-width:0}
+.place .px{grid-column:-2/-1;grid-row:1;justify-self:end}
+.place.st .ptogs{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.place.st .tog{margin:0;font-size:12.5px}
+.place .pscope{grid-column:1/-1;display:grid;gap:4px;padding:6px 0 2px;border-top:1px dashed var(--line)}
+.place .pscope .check{margin:0;font-size:12.5px}
+.place .pscope select{padding:4px 6px}

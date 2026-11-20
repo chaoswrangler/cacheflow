@@ -737,7 +737,9 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   else if (j.remote_us && hf.eligibility === 'no') loc = 'remote_no';
   else if (j.remote_us) loc = 'remote_unknown';
   else loc = 'other';
-  if ({ metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, unlisted: !c.lUnlisted && !c.lOther, remote_no: true }[loc]) if (!force) return null;
+  // Locations are OR'd: a role passes if it fits any selection, and every selection counts the same.
+  const locOut = { metro: !c.lMetro, remote_yes: !c.lRemoteYes, remote_unknown: !c.lRemoteUnknown, other: !c.lOther, unlisted: !c.lUnlisted && !c.lOther, remote_no: true }[loc];
+  if (locOut && !force) return null;
   // stored kw comes from the collector; re-tag from title + excerpt so skills added since the last run still match
   const kw = j._kw || (j._kw = new Set([...(j.kw || []), ...jobSkills(j.employer, j.title + '\n' + (j.excerpt || ''))]));
   const skillHits = skillsOn.filter(s => kw.has(s));
@@ -748,7 +750,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   // Score pay against the bars the viewer set: full marks when the range clears both, partial when it only clears one.
   const scoreTier = +c.minBase > 0 ? tier : salaryTier(j.salary, +c.maxBase || 0);
   const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[scoreTier] || 0;
-  const sLoc = { remote_no: 0, metro: 15, remote_yes: hf.eligibility === 'yes' ? 15 : 12, remote_unknown: 8, unlisted: 8, other: 4 }[loc];
+  const sLoc = locOut ? 0 : 15;
   const sSen = !(+c.sen > 0) || j.seniority > +c.sen ? 10 : 7;
   return { j, e, sector, vertical, tier, loc, hf, dt, fnHit, skillHits, customHits, score: sFn + sSkill + sSal + (sLoc || 0) + sSen, parts: { fn: sFn, skills: sSkill, base: sSal, loc: sLoc || 0, level: sSen },
            why: `fn ${sFn} · skills ${sSkill} · base ${sSal} · loc ${sLoc} · level ${sSen}` };
