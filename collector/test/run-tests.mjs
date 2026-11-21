@@ -132,7 +132,7 @@ const mockFetch = async (url, opts = {}) => {
   if (url.includes('amazon.jobs/en/search.json')) return J(amazon);
   if (url.includes('apply.careers.microsoft.com/api/pcsx/search')) {
     const start = +new URL(url).searchParams.get('start');
-    if (new URL(url).searchParams.get('location') !== '') return new Response('Forbidden', { status: 403 });
+    if (!['', 'United States'].includes(new URL(url).searchParams.get('location'))) return new Response('Forbidden', { status: 403 });
     const all = [{ id: 1970393557041105, displayJobId: '200001', name: 'Principal Product Manager, Security Copilot', standardizedLocations: ['New York, NY, US'], postedTs: Date.parse('2026-11-17T12:00:00Z') / 1000, creationTs: Date.parse('2026-11-10T12:00:00Z') / 1000, workLocationOption: 'onsite', positionUrl: '/careers/job/1970393557041105' },
                  { id: 1970393557041106, displayJobId: '200002', name: 'Software Engineer II', standardizedLocations: ['Redmond, WA, US'], postedTs: Date.parse('2026-11-18T12:00:00Z') / 1000 }];
     return new Response(JSON.stringify({ data: { count: 2, positions: all.slice(start, start + 1) } }), { status: 200 });
@@ -185,7 +185,7 @@ try {
   t('workday irrelevant job not detailed', () => assert.equal(calls.filter(c => c.includes('/job/Ohio')).length, 0));
   t('cisco phenom JSON parsed', () => { const c = J['cisco:rss:CISCUS1450009EXTERNALENUS']; assert.ok(c, 'cisco job missing'); assert.equal(c.salary.min, 230000); assert.equal(c.posted_kind, 'posted_date'); });
   t('microsoft eightfold: pages by returned count, details give base pay + work site', () => { const m = J['ms:eightfold:1970393557041105']; assert.ok(m); assert.equal(m.salary.min, 163600); assert.equal(m.salary.kind, 'base'); assert.equal(m.workplace, 'hybrid'); assert.equal(m.posted_kind, 'posted_ts'); assert.ok(J['ms:eightfold:1970393557041106']); assert.equal(S['ms:eightfold'].result, 'ok'); });
-  t('microsoft request mirrors the tested one (empty location)', () => assert.ok(calls.some(c => c.includes('/api/pcsx/search?domain=microsoft.com&query=product%20manager&location=&start=1'))));
+  t('microsoft: US-filtered full list is read before any keyword search', () => { const ms = calls.filter(c => c.includes('/api/pcsx/search')); assert.ok(ms[0].includes('query=&location=United%20States&start=0'), ms[0]); assert.ok(ms.some(c => c.includes('query=product%20manager&location=United%20States&start=0'))); });
   t('comeet embedded positions parsed (talent pool skipped, base from text, hybrid)', () => { const c = J['comeet:epsilon:A1.001']; assert.ok(c, 'comeet job missing'); assert.equal(c.salary.min, 210000); assert.equal(c.workplace, 'hybrid'); assert.equal(c.posted_kind, 'updated_only'); assert.equal(J['comeet:epsilon:A1.002'], undefined); assert.equal(S['comeet:epsilon'].result, 'ok'); });
   t('amazon AWS tagged + salary', () => { const a = J['amazon:jobs:3100001']; assert.equal(a.employer, 'Amazon / AWS (AWS)'); assert.equal(a.salary.max, 250000); });
 
@@ -427,38 +427,106 @@ try {
   });
 }
 
-{ // Microsoft: full list in chunks, resume, refusal keeps roles, US decided locally, Microsoft AI duplicates grouped
+{ // Microsoft (Eightfold): budgeted, checkpointed reader. Full US list first, then searches breadth-first;
+  // closures only after a complete pass; refusal stops the source and keeps progress; bad location filter falls back.
   const dir = await mkdtemp(join(tmpdir(), 'cf-ms-'));
-  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Microsoft', type: 'big', sources: [
-    { id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: [], full_scan: true, scan_pages_per_run: 2, close_after_hours: 168 },
+  const msSrc = extra => ({ id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: ['product manager', 'strategy', 'partner'], location: 'United States', list_budget: 2, search_budget: 2, detail_budget: 2, close_after_hours: 1, ...extra });
+  const writeSrc = async extra => writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Microsoft', type: 'big', sources: [msSrc(extra),
     { id: 'gh:microsoftcorporation', ats: 'greenhouse', slug: 'microsoftcorporation' }] }] }));
+  await writeSrc();
   const loc = i => i <= 20 ? 'Redmond, WA, US' : i <= 23 ? 'London, United Kingdom' : i === 24 ? 'USA - Remote' : 'Multiple Locations';
-  const pos = i => ({ id: 1000 + i, name: i === 1 ? 'Principal Product Manager' : `Software Engineer ${i}`, displayJobId: `R${i}`, locations: [loc(i)], workLocationOption: 'onsite', postedTs: 1763500000 });
-  let refuseAt = null; const calls = [];
+  const pos = i => ({ id: 1000 + i, name: i === 1 ? 'Principal Product Manager' : i <= 4 ? `Senior Product Manager ${i}` : `Software Engineer ${i}`, displayJobId: `R${i}`, locations: [loc(i)], workLocationOption: 'onsite', postedTs: 1763500000 });
+  let refuseQ = null, gone = new Set(), zeroFilter = false; const calls = [];
+  const pools = { '': Array.from({ length: 25 }, (_, k) => k + 1), 'product manager': Array.from({ length: 15 }, (_, k) => k + 1), strategy: [5], partner: [6] };
   const f = async url => { calls.push(url);
     if (url.includes('/api/pcsx/search')) {
-      const start = +new URL(url).searchParams.get('start');
-      if (refuseAt !== null && start === refuseAt) return new Response('slow down', { status: 429, headers: { 'retry-after': '0' } });
-      const ids = Array.from({ length: 25 }, (_, k) => k + 1).slice(start, start + 10);
-      return new Response(JSON.stringify({ data: { count: 25, positions: ids.map(pos) } }), { status: 200 });
+      const q = new URL(url).searchParams, start = +q.get('start'), query = q.get('query'), location = q.get('location');
+      if (refuseQ !== null && query === refuseQ) return new Response('slow down', { status: 429, headers: { 'retry-after': '0' } });
+      const pool = (pools[query] || []).filter(i => !gone.has(i));
+      if (zeroFilter && location) return new Response(JSON.stringify({ data: { count: 0, positions: [] } }), { status: 200 });
+      return new Response(JSON.stringify({ data: { count: pool.length, positions: pool.slice(start, start + 10).map(pos) } }), { status: 200 });
     }
     if (url.includes('position_details')) return new Response(JSON.stringify({ data: { jobDescription: '<p>Base pay range USD $150,000 - $250,000 per year.</p>', efcustomTextWorkSite: '100% remote' } }), { status: 200 });
     if (url.includes('boards-api.greenhouse.io/v1/boards/microsoftcorporation')) return new Response(JSON.stringify({ jobs: [{ id: 77, title: 'Principal Product Manager', absolute_url: 'https://job-boards.greenhouse.io/microsoftcorporation/jobs/77', location: { name: 'Redmond, WA' }, updated_at: '2026-11-18T00:00:00Z', first_published: '2026-11-18T00:00:00Z', content: '' }] }), { status: 200 });
     return new Response('nf', { status: 404 }); };
-  const r1 = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: FAST });
-  const S1 = Object.fromEntries(r1.statusOut.sources.map(x => [x.id, x])), J1 = Object.fromEntries(r1.jobsOut.jobs.map(j => [j.uid, j]));
-  t('microsoft full list: first chunk of 2 pages, resumes at 20', () => { assert.equal(S1['ms:eightfold'].resume_offset, 20); assert.ok(J1['ms:eightfold:1015']); assert.ok(!J1['ms:eightfold:1022']); });
-  t('microsoft: listing "onsite" ignored, detail work site decides', () => assert.equal(J1['ms:eightfold:1001'].workplace, 'remote'));
-  t('microsoft AI board role grouped with the same Microsoft role', () => { const a = J1['ms:eightfold:1001'], b = J1['gh:microsoftcorporation:77']; assert.ok(a && b); assert.equal(a.dup_count, 2); assert.ok(a.dup_of === null ? b.dup_of === a.uid : a.dup_of === b.uid); });
-  const r2 = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + 4 * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
-  const S2 = Object.fromEntries(r2.statusOut.sources.map(x => [x.id, x])), J2 = Object.fromEntries(r2.jobsOut.jobs.map(j => [j.uid, j]));
-  t('microsoft full list: second run reads 20-25, keeps US + unclear remote, skips UK, wraps to 0', () => { assert.equal(S2['ms:eightfold'].resume_offset, 0); assert.ok(J2['ms:eightfold:1024']); assert.ok(J2['ms:eightfold:1025']); assert.ok(!J2['ms:eightfold:1021']); });
-  t('microsoft: roles from the earlier chunk stay open (not closed by a chunked run)', () => assert.notEqual(J2['ms:eightfold:1015'].status, 'closed'));
-  t('microsoft: known role reused, no second detail read', () => assert.equal(calls.filter(c => c.includes('position_id=1001')).length, 1));
-  refuseAt = 10;
-  const r3 = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + 8 * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
-  const S3 = Object.fromEntries(r3.statusOut.sources.map(x => [x.id, x])), J3 = Object.fromEntries(r3.jobsOut.jobs.map(j => [j.uid, j]));
-  t('microsoft refused part-way: partial, resume at the refused page, roles kept and flagged stale', () => { assert.equal(S3['ms:eightfold'].result, 'partial'); assert.equal(S3['ms:eightfold'].resume_offset, 10); assert.equal(J3['ms:eightfold:1024'].status !== 'closed', true); assert.equal(J3['ms:eightfold:1024'].stale, true); });
+  const go = async h => { const r = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + h * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
+    return { S: Object.fromEntries(r.statusOut.sources.map(x => [x.id, x])), J: Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j])) }; };
+  const msCalls = () => calls.filter(c => c.includes('/api/pcsx/search'));
+  // run A: list pages 0 and 10, then one page each of the two oldest searches
+  let n0 = calls.length; const A = await go(0); const a = msCalls().slice(0);
+  const ck = A.S['ms:eightfold'].checkpoint;
+  t('eightfold A: checkpoint saved (list at 20 of 25, not complete)', () => { assert.equal(ck.units['*'].offset, 20); assert.equal(ck.units['*'].count, 25); assert.equal(ck.units['*'].complete, false); });
+  t('eightfold A: budget respected (2 list + 2 search pages), list read first', () => { assert.equal(a.length, 4); assert.ok(a[0].includes('query=&') && a[1].includes('query=&')); });
+  t('eightfold A: breadth-first: "product manager" page 1 and "strategy" page 1, not "product manager" page 2', () => { assert.ok(a.some(c => c.includes('query=strategy'))); assert.ok(!a.some(c => c.includes('query=product%20manager') && c.includes('start=10'))); });
+  t('eightfold A: detail budget caps detail reads at 2', () => assert.equal(calls.filter(c => c.includes('position_details')).length, 2));
+  t('eightfold A: no complete pass yet, nothing closes', () => assert.match(A.S['ms:eightfold'].message, /no complete US pass yet/));
+  t('eightfold: listing "onsite" ignored, detail work site decides', () => assert.equal(A.J['ms:eightfold:1001'].workplace, 'remote'));
+  t('eightfold: Microsoft AI board role grouped with the same Microsoft role', () => { const x = A.J['ms:eightfold:1001'], y = A.J['gh:microsoftcorporation:77']; assert.ok(x && y); assert.equal(x.dup_count, 2); });
+  // run B: resumes the list with a small overlap, completes the pass; then the never-scanned "partner" search comes first
+  const nb = msCalls().length; const B = await go(4); const b = msCalls().slice(nb);
+  const ckB = B.S['ms:eightfold'].checkpoint;
+  t('eightfold B: list resumes at 18 (2-row overlap) and completes the pass', () => { assert.ok(b[0].includes('query=&') && b[0].includes('start=18'), b[0]); assert.ok(ckB.last_full_cycle_end); assert.equal(ckB.units['*'].offset, 0); });
+  t('eightfold B: oldest search first ("partner" never scanned), then "product manager" page 2', () => { assert.ok(b[1].includes('query=partner'), b[1]); assert.ok(b[2].includes('query=product%20manager') && b[2].includes('start=8'), b[2]); });
+  t('eightfold B: US + unclear remote kept, UK skipped', () => { assert.ok(B.J['ms:eightfold:1024']); assert.ok(B.J['ms:eightfold:1025']); assert.ok(!B.J['ms:eightfold:1021']); });
+  t('eightfold B: remaining relevant detail read; known roles not re-read', () => assert.equal(calls.filter(c => c.includes('position_id=1001')).length, 1));
+  // runs C and D: role 1007 disappears. C starts a new pass (not complete): no closure. D completes it: closed.
+  gone = new Set([7]);
+  const C = await go(8);
+  t('eightfold C: a role missing from an unfinished pass stays open', () => assert.notEqual(C.J['ms:eightfold:1007'].status, 'closed'));
+  const D = await go(12);
+  t('eightfold D: after a complete pass that started after it was last seen, the role is closed', () => assert.equal(D.J['ms:eightfold:1007'].status, 'closed'));
+  t('eightfold D: roles seen in the pass stay open', () => assert.notEqual(D.J['ms:eightfold:1015'].status, 'closed'));
+  // run E: throttled on a search: stops there, keeps progress, makes no more Eightfold requests
+  refuseQ = 'strategy'; const ne = calls.length;
+  const E = await go(16); const e = calls.slice(ne).filter(c => c.includes('apply.careers.microsoft.com'));
+  const ix = e.findIndex(c => c.includes('query=strategy'));
+  t('eightfold E: refusal → partial, nothing after the refused request, checkpoint kept', () => { assert.equal(E.S['ms:eightfold'].result, 'partial'); assert.ok(ix >= 0); assert.equal(e.slice(ix + 1).filter(c => !c.includes('query=strategy')).length, 0); assert.ok(E.S['ms:eightfold'].checkpoint.units['*']); });
+  t('eightfold E: roles not reached are kept (flagged stale, not closed)', () => { assert.notEqual(E.J['ms:eightfold:1024'].status, 'closed'); });
+  // location filter that matches nothing → unfiltered fallback, remembered for later runs
+  refuseQ = null; zeroFilter = true;
+  const dir2 = await mkdtemp(join(tmpdir(), 'cf-ms2-'));
+  await writeFile(join(dir2, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Microsoft', type: 'big', sources: [msSrc({ queries: [] })] }] }));
+  const nf = calls.length;
+  const r1 = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir2, argv: {}, cfgOverride: FAST });
+  const s1 = r1.statusOut.sources.find(x => x.id === 'ms:eightfold');
+  t('eightfold: empty location filter falls back to the unfiltered list and remembers it', () => { assert.equal(s1.checkpoint.location_ok, false); assert.match(s1.message, /matched nothing/); assert.ok(r1.jobsOut.jobs.some(j => j.uid === 'ms:eightfold:1001')); });
+  const r2 = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + 4 * 36e5), dataDir: dir2, argv: {}, cfgOverride: FAST });
+  t('eightfold: next run goes straight to the unfiltered list', () => assert.ok(calls.slice(nf).filter(c => c.includes('pcsx/search')).slice(-2).every(c => c.includes('location=&'))));
+}
+
+{ // roles no category recognizes are stored as "Other roles" (off by default), never silently dropped
+  const C5 = await import('../../assets/shared/core.mjs');
+  t('other: unrecognized title → "other"; recognized title never gets it', () => { assert.deepEqual(C5.classifyFunctions('Executive Business Administrator').functions, ['other']); assert.ok(!C5.classifyFunctions('Strategic Initiatives Lead').functions.includes('other')); });
+  t('other: broad, so off by default and not "relevant" for detail reads', () => { assert.ok(C5.FUNCTIONS.other.broad); assert.ok(!C5.DEFAULT_FUNCTIONS.includes('other')); });
+  t('audit: Business Planner / Initiatives Manager → strategy; Global Black Belt / Industry Executive → sales', () => { assert.ok(C5.classifyFunctions('Senior Business Planner').functions.includes('strategy')); assert.ok(C5.classifyFunctions('Initiatives Manager').functions.includes('strategy')); assert.ok(C5.classifyFunctions('Global Black Belt').functions.includes('sales')); assert.ok(C5.classifyFunctions('Industry Executive').functions.includes('sales')); });
+}
+
+{ // Google: master US list walked from a checkpoint; overlap; schema check; closures only after a complete clean pass
+  const SA = (await import('../lib/adapters-server.mjs')).ADAPTERS;
+  const emp = { employer: 'Google' };
+  const rec = (id, title, loc = 'New York, NY, USA') => [String(id), title, 'u', [null, '<p>Do things.</p>'], null, null, null, 'Google', 'en-US', [[loc, [loc]]], [1763500000, 0]];
+  const pageOf = recs => `<script>AF_initDataCallback({key: 'ds:1', data:[[${recs.map(r => JSON.stringify(r)).join(',')}],null,45]});</script>`;
+  const all = Array.from({ length: 45 }, (_, k) => rec(8000000000 + k, `Role number ${k}`));
+  let broken = false; const calls = [];
+  const http = { text: async u => { calls.push(u); const q = new URL(u).searchParams, pg = +q.get('page');
+    if (q.get('q')) return { ok: true, status: 200, data: pageOf([rec(9000000000, 'Threat Intelligence Lead')]) };
+    let recs = all.slice((pg - 1) * 20, pg * 20);
+    if (broken && pg === 2) recs = recs.map(r => ['x', r[1]]).concat([[ '1234567890123', '<b>bad</b>' ]]);
+    return { ok: true, status: 200, data: pageOf(recs) }; } };
+  const src = { id: 'google:careers', ats: 'google_careers', queries: ['threat'], max_pages: 1, full_scan: true, scan_pages_per_run: 2 };
+  const g1 = await SA.google_careers(src, emp, http, { prevStatusById: new Map() });
+  t('google list: 2 pages, checkpoint at page 3, no closures yet', () => { assert.equal(g1.checkpoint.list.page, 3); assert.equal(g1.close_before, null); assert.equal(g1.jobs.length, 41); });
+  const n2 = calls.length;
+  const g2 = await SA.google_careers(src, emp, http, { prevStatusById: new Map([['google:careers', { checkpoint: g1.checkpoint }]]) });
+  t('google list: resumes one page back (overlap), reaches the end, pass complete → close_before set', () => { assert.ok(/page=2/.test(calls[n2]) && !/q=/.test(calls[n2]), calls[n2]); assert.ok(g2.close_before); assert.equal(g2.checkpoint.list.page, 1); assert.match(g2.note, /pass complete/); });
+  t('google: total from the page block reported', () => assert.match(g2.note, /page reports 45 US roles/));
+  t('google: schema check reported', () => assert.match(g2.note, /parser check: \d+ records, 0 failed/));
+  broken = true;
+  const g3 = await SA.google_careers({ ...src, scan_pages_per_run: 5 }, emp, http, { prevStatusById: new Map([['google:careers', { checkpoint: g2.checkpoint }]]) });
+  t('google: a page that mostly fails the schema taints the pass (no new close_before), result partial', () => { assert.equal(g3.close_before, g2.close_before); assert.equal(g3.result, 'partial'); assert.match(g3.note, /ended early|mostly unreadable/); });
+  t('google: invalid records are not stored', () => assert.ok(!g3.jobs.some(j => /<b>/.test(j.title))));
+  const { googleValid } = await import('../lib/adapters-server.mjs');
+  t('google validator: id, plain title, location strings', () => { assert.ok(googleValid({ id: '1234567890', title: 'Product Lead', locations: ['NY'] }).ok); assert.deepEqual(googleValid({ id: '12', title: '<b>x</b>', locations: [1] }).why, ['id', 'title', 'locations']); });
 }
 
 { // pay in other currencies and non-salary amounts never count as US base pay
@@ -722,7 +790,7 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
   const r3 = await archiveRun({ dataDir: dir, nowIso: '2026-12-01T11:00:00.000Z', registry: reg, jobs: [] });
   const files3 = (await rd(join(dir, 'archive'))).sort();
   t('archive: first run backfills by month (past months compressed), summary skips company boilerplate', () => {
-    assert.equal(r1.backfilled, 3); assert.deepEqual(files1, ['2026-10-postings.csv.gz', '2026-11-closed.csv', '2026-11-postings.csv', 'sources.csv']);
+    assert.equal(r1.backfilled, 3); assert.deepEqual(files1, ['2026-10-postings.csv.gz', '2026-11-closed.csv', '2026-11-postings.csv', 'README.md', 'sources.csv', 'weekly.csv']);
     assert.match(oct, /gh:acme:1/); assert.match(nov, /gh:acme:2/); assert.match(nov, /"PMM, ""Cloud"""/);
     assert.match(nov, /You will own positioning for our cloud detection products/); assert.doesNotMatch(nov, /leading security company/);
     assert.match(nov, /Cybersecurity,security/); assert.match(nov, /siem\|xdr/); assert.match(nov, /,NY,/);
@@ -828,6 +896,35 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
     assert.equal(seen[0].method, 'POST'); assert.equal(seen[0].body, '{"limit":20}'); assert.equal(seen[0].ua, 'cache-flow-collector/test');
     assert.equal(b.ok, true); assert.deepEqual(seen.slice(1, 3).map(x => x.url), ['/old', '/jobs']);
     assert.equal(c.challenge, true); assert.equal(h.stats.transport.node, 3);
+  });
+}
+{ // ledger: changes file and weekly rollup
+  const { archiveRun, weeklyRollup, parseCsv, weekOf } = await import('../archive.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'cf-ledger-'));
+  const reg = { employers: [{ employer: 'Acme', sector: 'Cybersecurity', type: 'security', sources: [{ id: 'gh:acme' }, { id: 'gh:new' }] }] };
+  const J = (uid, first, extra = {}) => ({ uid, source_id: uid.split(':').slice(0, 2).join(':'), ats: 'greenhouse', employer: 'Acme', title: 'Partner Manager', locations: ['Remote, US'], functions: ['partner'],
+    salary: { min: 150000, max: 190000, kind: 'base' }, remote_us: true, first_observed: first, status: 'open', url: 'u', ...extra });
+  const t0 = '2026-11-02T12:00:00.000Z', t1 = '2026-11-10T12:00:00.000Z';
+  await archiveRun({ dataDir: dir, nowIso: t0, registry: reg, jobs: [J('gh:acme:1', t0), J('gh:acme:2', t0)] });
+  const prev = new Map([J('gh:acme:1', t0), J('gh:acme:2', t0)].map(j => [j.uid, j]));
+  const r = await archiveRun({ dataDir: dir, nowIso: t1, registry: reg, prevById: prev, jobs: [
+    J('gh:acme:1', t0, { salary: { min: 170000, max: 210000, kind: 'base' }, title: 'Senior Partner Manager', posted_at: '2026-11-09T00:00:00.000Z', date_history: [{ was: '2026-10-30T00:00:00.000Z', seen: t1 }] }),
+    J('gh:acme:2', t0, { status: 'closed', closed_at: t1 }), J('gh:acme:3', t1), J('gh:new:9', t1, { functions: ['pmm'], salary: { kind: 'ote_only', ote: { min: 1, max: 2 } } }) ] });
+  const ch = parseCsv(await readFile(join(dir, 'archive', '2026-11-changes.csv'), 'utf8'));
+  const wk = parseCsv(await readFile(join(dir, 'archive', 'weekly.csv'), 'utf8'));
+  const row = (w, sec, cat) => wk.find(x => x.week === w && x.sector === sec && x.category === cat);
+  t('ledger: pay, title and repost changes are recorded with before/after', () => {
+    assert.equal(r.changes, 3);
+    assert.deepEqual(ch.map(c => c.change).sort(), ['pay', 'reposted', 'title']);
+    assert.equal(ch.find(c => c.change === 'pay').was, '150000-190000'); assert.equal(ch.find(c => c.change === 'pay').now, '170000-210000');
+  });
+  t('ledger: weekly rollup counts new/closed, same-store excludes newly covered sources, pay medians and OTE share', () => {
+    assert.equal(weekOf('2026-11-10T12:00:00Z'), '2026-11-09');
+    const w2 = row('2026-11-09', 'all', 'all');
+    assert.equal(w2.new_postings, '2'); assert.equal(w2.new_same_store, '1'); assert.equal(w2.closed, '1'); assert.equal(w2.median_days_open, '8');
+    assert.equal(w2.ote_only, '1'); assert.equal(w2.with_base_pay, '1'); assert.equal(w2.remote_us, '2');
+    assert.equal(row('2026-11-02', 'all', 'all').new_same_store, '0');
+    assert.equal(row('2026-11-09', 'Cybersecurity', 'pmm').new_postings, '1');
   });
 }
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
