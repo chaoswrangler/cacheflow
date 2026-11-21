@@ -572,6 +572,30 @@ export function foreignOnly(locations = [], text = '', usdSalary = null) {
   if (!abroadFirst(locations)) return false;
   return new RegExp(String.raw`\d[\d,.]*\s*(?:${NON_USD})\b|\b(?:CA|C|A|AU|MX)\$\s?\d|£\s?\d|€\s?\d`).test(text);
 }
+/* A brief role summary for the market archive: the first lines of the role section, not the company
+   boilerplate, benefits or legal text. Capped at ~280 characters and cut at a word. */
+const ROLE_HEAD = /^(about the (role|position|job|opportunity|team)|the role|role (overview|summary|description)|position (summary|overview)|job (summary|description|overview)|the opportunity|overview|what you('|’)ll do|what you will do|your role|in this role|the position|summary)\s*:?\s*$/i;
+const BOILER = /^(about (us|the company|[A-Z][\w&.\- ]{1,40})$|who we are|our (mission|story|company)|at [A-Z][\w&.\- ]{1,40},|[A-Z][\w&.\- ]{1,40} is (a|an|the) |founded in|we('|’)re (a|an|the|on a mission)|we are (a|an|the|on a mission)|join (us|our)|company overview|life at )/i;
+const LEGAL = /equal opportunity|eeo|accommodation|e-verify|pay transparency|benefits include|we offer|compensation|salary range|privacy (notice|policy)|background check|visa sponsorship|open to hiring|following locations|this (role|position) (is|can be|will be) (based|located)|^locations?\s*:|^(job )?(req(uisition)?|id|location|department|team|type)\s*[:#]/i;
+export function roleBlurb(text = '', max = 280) {
+  const paras = String(text).replace(/\r/g, '').split(/\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  if (!paras.length) return '';
+  let start = paras.findIndex(x => ROLE_HEAD.test(x.replace(/[*#:]+/g, ' ').trim()));
+  let pick = start >= 0 ? paras.slice(start + 1) : paras;
+  if (start < 0) { const i = pick.findIndex(x => x.length > 60 && !BOILER.test(x) && !LEGAL.test(x)); pick = i >= 0 ? pick.slice(i) : pick; }
+  pick = pick.filter(x => x.length > 25 && !LEGAL.test(x) && !ROLE_HEAD.test(x));
+  let out = '';
+  for (const para of pick) {
+    for (const sent of para.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [para]) {
+      const t = sent.trim(); if (!t) continue;
+      if ((out + ' ' + t).trim().length > max) { if (!out) out = t; break; }
+      out = (out + ' ' + t).trim();
+    }
+    if (out.length > max * 0.5) break;
+  }
+  if (out.length > max) out = out.slice(0, max).replace(/\s+\S*$/, '') + '…';
+  return out;
+}
 export function enrichJob(raw) {
   const text = raw.desc_text || '';
   const loc0 = classifyWorkplace(raw);
@@ -601,8 +625,12 @@ const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r
 
 export const ADAPTERS = {
   async greenhouse(src, emp, http, opt = {}) {
-    const r = await http.json(`https://boards-api${src.region === 'eu' ? '.eu' : ''}.greenhouse.io/v1/boards/${src.slug}/jobs?content=true`);
+    // Greenhouse hosts boards in a US and an EU region and the slug doesn't say which: try the expected one, then the other.
+    const hosts = src.region === 'eu' ? ['boards-api.eu.greenhouse.io', 'boards-api.greenhouse.io'] : ['boards-api.greenhouse.io', 'boards-api.eu.greenhouse.io'];
+    let r, host;
+    for (host of hosts) { r = await http.json(`https://${host}/v1/boards/${src.slug}/jobs?content=true`); if (r.ok || (r.status && ![404].includes(r.status))) break; }
     if (!r.ok) return fail(r);
+    src._ghHost = host;
     const list = r.data?.jobs;
     if (!Array.isArray(list)) return { result: 'parse_error', status: r.status, jobs: [], note: 'No jobs array in response' };
     const jobs = list.map(j => ({
@@ -613,7 +641,7 @@ export const ADAPTERS = {
       posted_at: iso(j.first_published), posted_kind: j.first_published ? 'first_published' : 'updated_only',
       updated_at: iso(j.updated_at), desc_text: htmlToText(j.content || ''),
     }));
-    return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs,
+    return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs, note: host !== hosts[0] ? `board is in Greenhouse's ${host.includes('.eu.') ? 'EU' : 'US'} region (${host}); set region accordingly` : '',
              fields: { posted_date: list.some(j => j.first_published) ? 'first_published' : 'updated_at only', salary: 'description text (+ optional pay_transparency detail)', location: 'yes', remote: 'from location text', req_id: list.some(j => j.requisition_id) ? 'yes' : 'no' } };
   },
   async lever(src, emp, http) {
