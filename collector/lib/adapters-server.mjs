@@ -139,7 +139,7 @@ export const ADAPTERS = {
       if (n >= opt.ghPayCap) break;
       if (!relevantTitle(j.title) || parseSalaries(j.desc_text).length) continue;
       n++;
-      const r = await http.json(`https://boards-api${src.region === 'eu' ? '.eu' : ''}.greenhouse.io/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
+      const r = await http.json(`https://${src._ghHost || (src.region === 'eu' ? 'boards-api.eu.greenhouse.io' : 'boards-api.greenhouse.io')}/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
       const pr = r.ok && (r.data?.pay_input_ranges || []).find(p => !p.currency_type || /^usd$/i.test(p.currency_type)); // US-dollar range only
       if (pr && pr.min_cents) j.salary_struct = { min: pr.min_cents / 100, max: pr.max_cents / 100, period: 'year', kind: /base|salary/i.test((pr.title || '') + (pr.blurb || '')) ? 'base' : 'base_likely', src: 'structured', currency: pr.currency_type || null, snippet: `Greenhouse pay range: ${pr.title || ''}` };
     }
@@ -194,6 +194,40 @@ export const ADAPTERS = {
       remote_hint: j.telecommuting === true, workplace_hint: j.telecommuting ? 'remote' : null,
       posted_at: iso(j.published_on || j.created_at), posted_kind: 'published', desc_text: htmlToText(j.description || '') }));
     return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs, fields: { posted_date: 'published_on', salary: 'text', location: 'yes', remote: 'telecommuting', req_id: 'no' } };
+  },
+
+  // BambooHR: a company's hosted careers page ({slug}.bamboohr.com/careers) loads its list from /careers/list
+  // (JSON, no key). Description, posting date and pay sit on /careers/{id}/detail: read only for roles in a job
+  // category, capped per run, and reused from earlier runs.
+  async bamboohr(src, emp, http, opt = {}) {
+    const base = `https://${src.slug}.bamboohr.com/careers`;
+    const r = await http.json(`${base}/list`);
+    if (!r.ok) return fail(r);
+    const list = Array.isArray(r.data?.result) ? r.data.result : Array.isArray(r.data) ? r.data : null;
+    if (!list) return { result: 'parse_error', status: r.status, jobs: [], note: 'No result array in /careers/list' };
+    const prev = opt.prevBySource?.get(src.id) || new Map();
+    let details = 0, reused = 0;
+    const jobs = [];
+    for (const p of list) {
+      const L = p.location || p.atsLocation || {};
+      const place = [L.city, L.state || L.province, L.country].map(x => String(x || '').trim()).filter(Boolean).join(', ');
+      const remote = p.isRemote === true || /remote/i.test(p.locationType || '');
+      const j = { source_id: src.id, ats: 'bamboohr', employer: emp.employer, ext_id: String(p.id), title: String(p.jobOpeningName || p.title || '').trim(), url: `${base}/${p.id}`,
+        department: p.departmentLabel || null, locations: [place || (remote ? 'Remote' : '')].filter(Boolean), country: L.country || null,
+        remote_hint: remote, workplace_hint: remote ? 'remote' : null, posted_kind: 'unknown', desc_text: '' };
+      const pj = prev.get(j.ext_id);
+      if (pj && pj.title === j.title) { j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (relevantTitle(j.title) && details < (src.detail_cap || opt.detailCap || 40)) {
+        details++;
+        const d = await http.json(`${base}/${p.id}/detail`);
+        const o = d.ok ? (d.data?.result?.jobOpening || d.data?.result || d.data || {}) : {};
+        j.desc_text = htmlToText([o.description, o.compensation && `Compensation: ${o.compensation}`].filter(Boolean).join('\n'));
+        if (o.datePosted) { j.posted_at = iso(o.datePosted); j.posted_kind = 'published'; }
+      }
+      jobs.push(j);
+    }
+    return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs, note: `${jobs.length} postings; ${details} detail pages read, ${reused} reused from earlier runs`,
+      fields: { posted_date: 'detail datePosted (else first observed)', salary: 'detail compensation + text', location: 'yes', remote: 'isRemote', req_id: 'no' } };
   },
 
   // Comeet (Spark Hire Recruit): the public hosted board www.comeet.com/jobs/{slug}/{uid} embeds every
