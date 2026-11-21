@@ -1379,10 +1379,10 @@
    "sector": "Cybersecurity",
    "vertical": "Endpoint & XDR",
    "tier": "core",
-   "careers_url": null,
-   "careers_url_verified": false,
+   "careers_url": "https://www.bitdefender.com/en-us/company/careers/jobs",
+   "careers_url_verified": true,
    "notes": [
-    "Job board found by web search 2026-11-19 (greenhouse); replaced the 404 identifier."
+    "Bitdefender's own careers page loads its list from Greenhouse board scbitdefendersrl."
    ],
    "sources": [
     {
@@ -1392,9 +1392,9 @@
      "region": "eu",
      "board_url": "https://job-boards.eu.greenhouse.io/scbitdefendersrl",
      "verification": {
-      "status": "unverified_config",
-      "method": "Found by web search on 2026-11-19: https://job-boards.eu.greenhouse.io/scbitdefendersrl. The next collector run confirms the feed (404 = wrong id, 'empty' = valid board with no jobs).",
-      "date": "2026-11-19"
+      "status": "verified_from_posting_url",
+      "method": "Bitdefender's careers page (bitdefender.com/en-us/company/careers/jobs, supplied by the user 2026-11-21) links job alerts to Greenhouse board token scbitdefendersrl. Listed as EU region; the reader falls back to the US region if the EU address fails.",
+      "date": "2026-11-21"
      }
     }
    ],
@@ -1516,26 +1516,38 @@
    "vertical": "Mobility, IoT & gov",
    "tier": "core",
    "type": "big",
-   "careers_url": null,
-   "careers_url_verified": false,
+   "careers_url": "https://jobs.smartrecruiters.com/BoschGroup",
+   "careers_url_verified": true,
    "notes": [
-    "Added 2026-11-19 from the researched ATS roster as a candidate only."
+    "Bosch Group posts worldwide on SmartRecruiters; Cache Flow reads US postings matching its keyword searches."
    ],
    "sources": [
     {
-     "id": "roster:bosch",
-     "ats": "unresolved",
-     "candidates": [
-      {
-       "ats": "smartrecruiters",
-       "slug": "BoschGroup",
-       "source": "roster 2026-11-19"
-      }
+     "id": "sr:boschgroup",
+     "ats": "smartrecruiters",
+     "slug": "BoschGroup",
+     "country": "us",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "cyber",
+      "security",
+      "solutions",
+      "account executive",
+      "marketing",
+      "customer success",
+      "sales"
      ],
+     "board_url": "https://jobs.smartrecruiters.com/BoschGroup",
      "verification": {
-      "status": "needs_confirmation",
-      "method": "The researched roster lists smartrecruiters 'BoschGroup', marked as needing confirmation; not confirmed in indexed pages. Not collected until a probe run (Actions → Collect jobs → args --probe) shows the board is reachable and belongs to this employer.",
-      "date": "2026-11-19"
+      "status": "verified_from_posting_url",
+      "method": "Company id BoschGroup read from a live jobs.smartrecruiters.com/BoschGroup posting (Workshop Sales Representative, New York / New Jersey) supplied by the user 2026-11-21. Bosch posts worldwide; US postings only, keyword searches.",
+      "date": "2026-11-21"
      }
     }
    ],
@@ -1845,7 +1857,9 @@
    "tier": "named",
    "careers_url": "https://careers.checkpoint.com/jobs?country=United+States",
    "careers_url_verified": false,
-   "notes": [],
+   "notes": [
+    "Check Point's careers site (careers.checkpoint.com) builds its job list with JavaScript and refuses requests from GitHub's servers (403 on every run since Nov 20). No public hiring-system board was found behind it. After 3 refusals in a row the source pauses and retries weekly; open the careers site directly in the meantime."
+   ],
    "sources": [
     {
      "id": "html:checkpoint",
@@ -11974,6 +11988,152 @@
    "id": "workday-inc",
    "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Workday",
    "type": "big",
+   "priority": true
+  },
+  {
+   "employer": "Security Risk Advisors (SRA)",
+   "sector": "Cybersecurity",
+   "vertical": "MDR, MSSP & services",
+   "tier": "core",
+   "careers_url": "https://sra.io/careers",
+   "careers_url_verified": false,
+   "notes": [
+    "Microsoft Intelligent Security Association (MISA) partner. Philadelphia-based; offices in the US, Ireland and Australia."
+   ],
+   "sources": [
+    {
+     "id": "workable:securityriskadvisors",
+     "ats": "workable",
+     "slug": "securityriskadvisors",
+     "board_url": "https://apply.workable.com/securityriskadvisors/",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Account read from live apply.workable.com/securityriskadvisors postings (web search 2026-11-21); SRA's site says to apply through Workable.",
+      "date": "2026-11-21"
+     }
+    }
+   ],
+   "id": "sra",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Security%20Risk%20Advisors%20(SRA)",
+   "type": "security",
+   "priority": true
+  },
+  {
+   "employer": "Pax8",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "Cloud marketplace & distribution",
+   "tier": "core",
+   "careers_url": "https://www.pax8.com/en-us/careers/",
+   "careers_url_verified": true,
+   "notes": [
+    "Microsoft cloud marketplace and distributor; large Microsoft security go-to-market practice."
+   ],
+   "sources": [
+    {
+     "id": "gh:pax8",
+     "ats": "greenhouse",
+     "slug": "pax8",
+     "board_url": "https://job-boards.greenhouse.io/pax8",
+     "feed_url": "https://boards-api.greenhouse.io/v1/boards/pax8/jobs?content=true",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Greenhouse board pax8 seen live (boards.greenhouse.io/pax8 and its embedded job board) in web search 2026-11-21.",
+      "date": "2026-11-21"
+     }
+    }
+   ],
+   "id": "pax8",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Pax8",
+   "type": "growth",
+   "priority": true
+  },
+  {
+   "employer": "Critical Start",
+   "sector": "Cybersecurity",
+   "vertical": "MDR, MSSP & services",
+   "tier": "core",
+   "careers_url": "https://www.criticalstart.com/careers",
+   "careers_url_verified": true,
+   "notes": [
+    "Microsoft Intelligent Security Association (MISA) partner. MDR provider (Plano, TX)."
+   ],
+   "sources": [
+    {
+     "id": "html:criticalstart",
+     "ats": "company_html",
+     "list_url": "https://careers-criticalstart.icims.com/jobs/search",
+     "link_pattern": "^/jobs/\\d+/[a-z0-9.-]+/job$",
+     "max_pages": 5,
+     "verification": {
+      "status": "unverified_config",
+      "method": "Critical Start's iCIMS job site careers-criticalstart.icims.com: search page and job pages (/jobs/<id>/<title>/job) seen in web search 2026-11-21. iCIMS sometimes builds the list in a frame; if so the run reports 'no links found' rather than zero jobs.",
+      "date": "2026-11-21"
+     }
+    }
+   ],
+   "id": "critical-start",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Critical%20Start",
+   "type": "security",
+   "priority": true
+  },
+  {
+   "employer": "Ontinue",
+   "sector": "Cybersecurity",
+   "vertical": "MDR, MSSP & services",
+   "tier": "core",
+   "careers_url": "https://ontinue.bamboohr.com/careers",
+   "careers_url_verified": true,
+   "notes": [
+    "Microsoft Intelligent Security Association (MISA) partner. Microsoft-focused MXDR provider; hires in the US, Switzerland, Germany, Austria, UK, Canada and India."
+   ],
+   "sources": [
+    {
+     "id": "bamboohr:ontinue",
+     "ats": "bamboohr",
+     "slug": "ontinue",
+     "board_url": "https://ontinue.bamboohr.com/careers",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Account read from a live ontinue.bamboohr.com/careers/846 posting supplied by the user 2026-11-21. Read from the careers page's own job list (/careers/list).",
+      "date": "2026-11-21"
+     }
+    }
+   ],
+   "id": "ontinue",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Ontinue",
+   "type": "security",
+   "priority": true
+  },
+  {
+   "employer": "Ascent Solutions",
+   "sector": "Cybersecurity",
+   "vertical": "MDR, MSSP & services",
+   "tier": "core",
+   "careers_url": null,
+   "careers_url_verified": false,
+   "notes": [
+    "Microsoft Intelligent Security Association (MISA) partner. Microsoft security consultancy and managed services (Minneapolis). Its job board wasn't confirmed by web search, so roles aren't collected yet; a link to any live Ascent posting is enough to add it."
+   ],
+   "sources": [],
+   "id": "ascent-solutions",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Ascent%20Solutions",
+   "type": "security",
+   "priority": true
+  },
+  {
+   "employer": "Quorum Cyber",
+   "sector": "Cybersecurity",
+   "vertical": "MDR, MSSP & services",
+   "tier": "core",
+   "careers_url": null,
+   "careers_url_verified": false,
+   "notes": [
+    "Microsoft Intelligent Security Association (MISA) partner. Microsoft-only security services provider (Edinburgh; North America via Difenda and Kivu). Posts on Cezanne HR (recruitment.cezannehr.com shared job links, e.g. Senior Incident Response Consultant – North America, seen 2026-11-21), but Cezanne's shared links don't reveal a company job list, so roles aren't collected; open Quorum Cyber's postings from its site or LinkedIn."
+   ],
+   "sources": [],
+   "id": "quorum-cyber",
+   "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Quorum%20Cyber",
+   "type": "security",
    "priority": true
   }
  ],
