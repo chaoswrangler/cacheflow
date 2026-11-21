@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121g';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121g';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121g';
+import * as C from './shared/core.mjs?v=20261121i';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121i';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121i';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -83,7 +83,8 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   if (!S.crit.fnKnown) S.crit.functions = sug.length ? sug : [...C.DEFAULT_FUNCTIONS];
   else for (const k of FN_KEYS) if (!known.has(k) && sug.includes(k) && !S.crit.functions.includes(k)) S.crit.functions.push(k);
   S.crit.functions = S.crit.functions.filter(k => FN_KEYS.includes(k));
-  S.crit.fnKnown = [...FN_KEYS]; S.crit.engReview = false;
+  if (!S.crit.fnKnown) S.crit.engReview = false;
+  S.crit.fnKnown = [...FN_KEYS];
 }
 { // criteria saved before company types: carry over any tier the user had switched off
   const stored = store.get('crit', {});
@@ -842,7 +843,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121g');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121i');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -1098,6 +1099,7 @@ function renderSources() {
         <td>${links}</td><td>${C.BROWSER_ATS.has(s.ats) ? `<button class="btn sec sm" data-live="${esc(s.id)}">Live</button>` : ''}</td></tr>`;
     }).join('') + '</tbody>';
   $('#unresolved').innerHTML = (S.registry.unresolved_identifiers || []).map(u => `<div class="hint" style="margin-bottom:8px"><span class="tag r">${esc(u.ats)}:${esc(u.identifier)}</span> ${esc(u.note)}</div>`).join('') +
+    `<p class="hint"><b>Market archive</b> (for trend analysis): <a href="data/archive/weekly.csv" download>weekly rollup</a> · <a href="data/archive/${new Date().toISOString().slice(0, 7)}-postings.csv" download>this month's postings</a> · <a href="data/archive/sources.csv" download>coverage</a> · <a href="data/archive/README.md" target="_blank" rel="noopener">column guide</a>. Past months are in <code>data/archive/</code> as <code>.csv.gz</code>.</p>` +
     `<p class="hint">Employers whose Greenhouse guess returned 404 are listed in the table as <b>unresolved</b>. Run the collector with <code>--probe</code> to get candidate boards for review.</p>`;
   $('#fieldVis').innerHTML = `<table><thead><tr><th>ATS</th><th>Posting date</th><th>Base salary</th><th>Remote</th><th>Req ID</th></tr></thead><tbody>${[
     ['Greenhouse', 'first_published (else updated_at only)', 'Description text; optional pay_transparency ranges', 'Location text', 'requisition_id when set'],
