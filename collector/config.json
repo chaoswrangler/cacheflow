@@ -35,11 +35,12 @@
   "host_rules": [
     {
       "suffix": "myworkdayjobs.com",
+      "transport": "node",
       "minDelayMs": 8000,
       "maxDelayMs": 12000,
       "retries": 5,
       "backoffMs": 10000,
-      "_note": "Workday answered 429 to most requests at 2.5-5s spacing from GitHub runners; 8-12s spacing"
+      "_note": "Workday-specific client. One active request per Workday tenant (requests queue per host), 8-12s apart. Transport: Node's built-in https.request instead of fetch(), with the same honest user agent and headers (Workday's Cloudflare layer was reported in Nov 2026 to challenge fetch() but not https.request). A Cloudflare challenge (cf-mitigated) is never retried; a plain 429 honors Retry-After with bounded backoff. Failed scans keep previous roles."
     },
     {
       "suffix": "boards-api.greenhouse.io",

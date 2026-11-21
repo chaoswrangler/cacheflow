@@ -13,7 +13,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Http } from './lib/http.mjs';
 import { ADAPTERS, AGGREGATORS, atsLinks } from './lib/adapters-server.mjs';
-import { enrichJob, weekWindow, relativePosted, norm, classifyFunctions } from '../assets/shared/core.mjs';
+import { enrichJob, weekWindow, relativePosted, norm, classifyFunctions, roleBlurb } from '../assets/shared/core.mjs';
+import { archiveRun } from './archive.mjs';
 import { seedProbe } from './lib/seeds.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -86,13 +87,31 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
                       last_success_at: prevStatusById.get(s.id)?.last_success_at || null });
       return;
     }
+    // A source refused outright (403) on 3+ runs in a row is paused and retried weekly: a 403 means this method is
+    // blocked, not that the employer has no jobs, and asking again 4 times a day only adds unwanted traffic.
+    const pv = prevStatusById.get(s.id);
+    const blockedRuns = pv && (pv.http_status === 403 || ['blocked_paused', 'blocked_challenge'].includes(pv.result)) ? (pv.blocked_runs || (pv.consecutive_failures || 0)) : 0;
+    const lastTry = pv?.last_attempt_at || pv?.checked_at;
+    if (!only && blockedRuns >= 3 && lastTry && Date.now() - new Date(lastTry).getTime() < 7 * 864e5) {
+      statuses.push({ ...pv, ...base, result: 'blocked_paused', http_status: 403, checked_at: pv.checked_at, last_attempt_at: lastTry, blocked_runs: blockedRuns,
+        message: `${pv.bot_check || pv.result === 'blocked_challenge' ? 'Bot check (Cloudflare)' : 'Refused (403)'} on ${blockedRuns} runs in a row: this method is blocked from GitHub's servers. Paused; next attempt after ${new Date(new Date(lastTry).getTime() + 7 * 864e5).toISOString().slice(0, 10)}. Previous roles kept.` });
+      return;
+    }
     let out;
     try { out = await adapter(s, e, http, opt); }
     catch (err) { out = { result: 'adapter_error', jobs: [], note: String(err?.message || err) }; }
+    const siteUrl = s.host ? `https://${s.host}/` : (s.list_url || s.seed_url || s.base || s.board_url || null);
+    const chal = siteUrl && http.challengeFor(siteUrl);
+    if (chal && out.result !== 'ok' && out.result !== 'empty') {
+      const got = (out.jobs || []).length;
+      out = { ...out, result: got ? 'partial' : 'blocked_challenge', status: chal.status, bot_check: chal.mitigated,
+        note: `Bot check: the site's Cloudflare protection refused the collector (HTTP ${chal.status}, cf-mitigated: ${chal.mitigated}). Retrying can't fix this, so no further requests were made to it this run. ${got ? `${got} roles fetched before the check are kept; ` : ''}previous roles kept. Not evidence of zero jobs.` };
+    }
     const REUSE = ['locations', 'workplace', 'us', 'remote_us', 'elig_text', 'posted_at', 'posted_kind', 'salary', 'kw', 'excerpt', 'req_id', 'url', 'functions', 'eng_review', 'seniority'];
     const enriched = (out.jobs || []).map(j => {
       if (!j.posted_at && j.posted_text) { const d = relativePosted(j.posted_text, now); if (d) { j.posted_at = d + 'T12:00:00.000Z'; j.posted_kind = 'relative_approx'; } }
       const e2 = enrichJob(j);
+      if (!j.reuse && j.desc_text) e2._blurb = roleBlurb(j.desc_text); // for the market archive only; not written to jobs.json
       if (j.reuse) { // details were read on an earlier run: carry them forward instead of fetching again
         const pj = j.reuse; for (const k of REUSE) if (pj[k] !== undefined && k !== 'functions' && k !== 'eng_review' && k !== 'seniority') e2[k] = pj[k];
         e2.details_from = pj.details_from || pj.last_seen || null;
@@ -116,7 +135,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       // a run refused before any results keeps its place, so the next run continues instead of starting over
       resume_offset: out.resume_offset ?? (ok ? null : prev?.resume_offset ?? null), us_facet: out.us_facet ?? prev?.us_facet ?? null,
       last_success_at: ok ? base.checked_at : (prev?.last_success_at || null),
-      consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1 });
+      consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
+      bot_check: out.bot_check || null,
+      blocked_runs: (out.status === 403 || out.result === 'blocked_challenge') ? (prev?.blocked_runs || (prev?.http_status === 403 || prev?.result === 'blocked_challenge' ? prev?.consecutive_failures || 0 : 0)) + 1 : 0 });
     log(`${out.result.padEnd(14)} ${s.id} → ${(out.jobs || []).length} jobs`);
   }));
 
@@ -204,6 +225,10 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const jobsOut = { schema: 1, generated_at: finishedAt, window: win, counts: { open: merged.filter(j => j.status === 'open').length, closed_recent: merged.filter(j => j.status === 'closed').length, stale: merged.filter(j => j.stale).length }, jobs: merged };
   const statusOut = { schema: 1, generated_at: finishedAt, run: { seq: runSeq, started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats, partial: !!(only || atsOnly || argv.tier || argv.limit) }, summary, sources: allStatus };
   await mkdir(dataDir, { recursive: true });
+  // market archive: one row per posting when first seen, one when it closes (data/archive/, append-only)
+  try { const a = await archiveRun({ dataDir, jobs: merged, nowIso, registry, sources: allStatus }); log(`archive: ${a.added} new, ${a.closed} closed${a.backfilled ? `, backfilled ${a.backfilled}` : ''}${a.rolled ? `, compressed ${a.rolled}` : ''}`); }
+  catch (err) { log(`archive failed (collection still saved): ${err?.message || err}`); }
+  for (const j of merged) delete j._blurb;
   await writeFile(join(dataDir, 'jobs.json'), JSON.stringify(jobsOut));
   await writeFile(join(dataDir, 'status.json'), JSON.stringify(statusOut, null, 1));
   log(`done: ${jobsOut.counts.open} open jobs, summary ${JSON.stringify(summary)}`);
@@ -214,7 +239,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
 
 // ----- discovery probe: suggests boards, a human approves them into sources.json
 async function probe(registry, http, dataDir) {
-  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet', 'radancy', 'google_careers', 'company_html'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
+  const targets = registry.employers.filter(e => e.sources.every(s => !['greenhouse', 'lever', 'ashby', 'smartrecruiters', 'workable', 'workday', 'amazon', 'eightfold', 'oracle_hcm', 'cisco_rss', 'phenom', 'comeet', 'radancy', 'google_careers', 'company_html', 'bamboohr', 'avature'].includes(s.ats) || /unresolved|unverified/.test(s.verification?.status || '')));
   const results = [];
   for (const e of targets) {
     // Strongest evidence: ATS links on the employer's own careers page.
