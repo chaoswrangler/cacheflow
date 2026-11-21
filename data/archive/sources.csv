@@ -1,0 +1,415 @@
+source_id,employer,ats,first_collected
+ashby:1password,1Password,ashby,2026-11-19T19:34:22.449Z
+ashby:adaptivesecurity,Adaptive Security,ashby,2026-11-19T19:34:22.449Z
+ashby:airwallex,Airwallex,ashby,2026-11-19T19:34:22.449Z
+ashby:artemis,Artemis,ashby,2026-11-19T19:34:22.449Z
+gh:appomni,AppOmni,gh,2026-11-19T19:34:22.449Z
+ashby:cloaked,Cloaked,ashby,2026-11-19T19:34:22.449Z
+ashby:cursor,Cursor,ashby,2026-11-19T19:34:22.449Z
+ashby:decagon,Decagon,ashby,2026-11-19T19:34:22.449Z
+ashby:deepgram,Deepgram,ashby,2026-11-19T19:34:22.449Z
+gh:brinqa,Brinqa,gh,2026-11-19T19:34:22.449Z
+ashby:drata,Drata,ashby,2026-11-19T19:34:22.449Z
+ashby:dust,Dust,ashby,2026-11-19T19:34:22.449Z
+gh:calm,Calm,gh,2026-11-19T19:34:22.449Z
+ashby:elevenlabs,ElevenLabs,ashby,2026-11-19T19:34:22.449Z
+gh:checkr,Checkr,gh,2026-11-19T19:34:22.449Z
+gh:chime,Chime,gh,2026-11-19T19:34:22.449Z
+ashby:fieldguide,Fieldguide,ashby,2026-11-19T19:34:22.449Z
+ashby:fireworks,Fireworks AI,ashby,2026-11-19T19:34:22.449Z
+gh:collectivehealth,Collective Health,gh,2026-11-19T19:34:22.449Z
+ashby:harvey,Harvey,ashby,2026-11-19T19:34:22.449Z
+ashby:headway,Headway,ashby,2026-11-19T19:34:22.449Z
+ashby:horizon3ai,Horizon3.ai,ashby,2026-11-19T19:34:22.449Z
+gh:diligent,Diligent,gh,2026-11-19T19:34:22.449Z
+ashby:lambda,Lambda,ashby,2026-11-19T19:34:22.449Z
+gh:expel,Expel,gh,2026-11-19T19:34:22.449Z
+ashby:mercor,Mercor,ashby,2026-11-19T19:34:22.449Z
+ashby:modal,Modal,ashby,2026-11-19T19:34:22.449Z
+gh:flex,Flex,gh,2026-11-19T19:34:22.449Z
+ashby:notion,Notion,ashby,2026-11-19T19:34:22.449Z
+gh:freenome,Freenome,gh,2026-11-19T19:34:22.449Z
+gh:garnerhealth,Garner Health,gh,2026-11-19T19:34:22.449Z
+ashby:openai,OpenAI,ashby,2026-11-19T19:34:22.449Z
+ashby:permitflow,PermitFlow,ashby,2026-11-19T19:34:22.449Z
+ashby:perplexity,Perplexity,ashby,2026-11-19T19:34:22.449Z
+gh:healthie,Healthie,gh,2026-11-19T19:34:22.449Z
+gh:healthverity,HealthVerity,gh,2026-11-19T19:34:22.449Z
+ashby:ramp,Ramp,ashby,2026-11-19T19:34:22.449Z
+gh:jumptrading,Jump Trading,gh,2026-11-19T19:34:22.449Z
+gh:ketch,Ketch,gh,2026-11-19T19:34:22.449Z
+ashby:rogo,Rogo,ashby,2026-11-19T19:34:22.449Z
+ashby:rula,Rula,ashby,2026-11-19T19:34:22.449Z
+ashby:safe,SAFE,ashby,2026-11-19T19:34:22.449Z
+ashby:semgrep,Semgrep,ashby,2026-11-19T19:34:22.449Z
+gh:lithic,Lithic,gh,2026-11-19T19:34:22.449Z
+ashby:sentilink,SentiLink,ashby,2026-11-19T19:34:22.449Z
+ashby:serval,Serval,ashby,2026-11-19T19:34:22.449Z
+ashby:sierra,Sierra,ashby,2026-11-19T19:34:22.449Z
+gh:modernhealth,Modern Health,gh,2026-11-19T19:34:22.449Z
+ashby:siro,Siro,ashby,2026-11-19T19:34:22.449Z
+amazon:jobs,Amazon / AWS,amazon,2026-11-19T19:34:22.449Z
+ashby:snyk,Snyk,ashby,2026-11-19T19:34:22.449Z
+ashby:socket,Socket,ashby,2026-11-19T19:34:22.449Z
+gh:netlify,Netlify,gh,2026-11-19T19:34:22.449Z
+ashby:socure,Socure,ashby,2026-11-19T19:34:22.449Z
+gh:omadahealth,Omada Health,gh,2026-11-19T19:34:22.449Z
+ashby:vanta,Vanta,ashby,2026-11-19T19:34:22.449Z
+orc:jpmc,JPMorgan Chase,orc,2026-11-19T19:34:22.449Z
+ashby:vclusterlabs,vCluster Labs,ashby,2026-11-19T19:34:22.449Z
+gh:securityscorecard,SecurityScorecard,gh,2026-11-19T19:34:22.449Z
+gh:sixfold,Sixfold,gh,2026-11-19T19:34:22.449Z
+gh:smarterdx,SmarterDx,gh,2026-11-19T19:34:22.449Z
+gh:spycloud,SpyCloud,gh,2026-11-19T19:34:22.449Z
+gh:synack,Synack,gh,2026-11-19T19:34:22.449Z
+gh:talkspace,Talkspace,gh,2026-11-19T19:34:22.449Z
+gh:veranahealth,Verana Health,gh,2026-11-19T19:34:22.449Z
+gh:waymark,Waymark,gh,2026-11-19T19:34:22.449Z
+gh:wing,Wing,gh,2026-11-19T19:34:22.449Z
+gh:yieldmo,Yieldmo,gh,2026-11-19T19:34:22.449Z
+gh:corelight,Corelight,gh,2026-11-19T19:34:22.449Z
+sr:servicenow,ServiceNow,sr,2026-11-19T19:34:22.449Z
+gh:descope,Descope,gh,2026-11-19T19:34:22.449Z
+gh:flowtraders,Flow Traders,gh,2026-11-19T19:34:22.449Z
+gh:halcyon,Halcyon,gh,2026-11-19T19:34:22.449Z
+gh:hyperproof,Hyperproof,gh,2026-11-19T19:34:22.449Z
+gh:komodohealth,Komodo Health,gh,2026-11-19T19:34:22.449Z
+gh:lattice,Lattice,gh,2026-11-19T19:34:22.449Z
+gh:natera,Natera,gh,2026-11-19T19:34:22.449Z
+orc:oracle,Oracle,orc,2026-11-19T19:34:22.449Z
+gh:transmitsecurity,Transmit Security,gh,2026-11-19T19:34:22.449Z
+gh:attentive,Attentive,gh,2026-11-19T19:34:22.449Z
+gh:bigid,BigID,gh,2026-11-19T19:34:22.449Z
+gh:cobaltio,Cobalt,gh,2026-11-19T19:34:22.449Z
+gh:truveta,Truveta,gh,2026-11-19T19:34:22.449Z
+gh:alloy,Alloy,gh,2026-11-19T19:34:22.449Z
+gh:mavenclinic,Maven Clinic,gh,2026-11-19T19:34:22.449Z
+gh:motional,Motional,gh,2026-11-19T19:34:22.449Z
+gh:virtu,Virtu Financial,gh,2026-11-19T19:34:22.449Z
+gh:bugcrowd,Bugcrowd,gh,2026-11-19T19:34:22.449Z
+gh:forter,Forter,gh,2026-11-19T19:34:22.449Z
+gh:gusto,Gusto,gh,2026-11-19T19:34:22.449Z
+gh:openzeppelin,OpenZeppelin,gh,2026-11-19T19:34:22.449Z
+gh:sproutsocial,Sprout Social,gh,2026-11-19T19:34:22.449Z
+gh:towerresearchcapital,Tower Research Capital,gh,2026-11-19T19:34:22.449Z
+gh:veracode,Veracode,gh,2026-11-19T19:34:22.449Z
+gh:6sense,6sense,gh,2026-11-19T19:34:22.449Z
+gh:abnormalsecurity,Abnormal AI,gh,2026-11-19T19:34:22.449Z
+gh:adyen,Adyen,gh,2026-11-19T19:34:22.449Z
+gh:affirm,Affirm,gh,2026-11-19T19:34:22.449Z
+gh:airtable,Airtable,gh,2026-11-19T19:34:22.449Z
+gh:alphasense,AlphaSense,gh,2026-11-19T19:34:22.449Z
+gh:anthropic,Anthropic,gh,2026-11-19T19:34:22.449Z
+gh:armorcode,ArmorCode,gh,2026-11-19T19:34:22.449Z
+gh:asana,Asana,gh,2026-11-19T19:34:22.449Z
+gh:axonius,Axonius,gh,2026-11-19T19:34:22.449Z
+gh:beyondtrust,BeyondTrust,gh,2026-11-19T19:34:22.449Z
+gh:bishopfox,Bishop Fox,gh,2026-11-19T19:34:22.449Z
+gh:bitwarden,Bitwarden,gh,2026-11-19T19:34:22.449Z
+gh:blackduck,Black Duck,gh,2026-11-19T19:34:22.449Z
+gh:braze,Braze,gh,2026-11-19T19:34:22.449Z
+gh:brex,Brex,gh,2026-11-19T19:34:22.449Z
+gh:chainguard,Chainguard,gh,2026-11-19T19:34:22.449Z
+gh:cloudflare,Cloudflare,gh,2026-11-19T19:34:22.449Z
+gh:coinbase,Coinbase,gh,2026-11-19T19:34:22.449Z
+gh:collibra,Collibra,gh,2026-11-19T19:34:22.449Z
+gh:commercetools,commercetools,gh,2026-11-19T19:34:22.449Z
+gh:commvault,Commvault,gh,2026-11-19T19:34:22.449Z
+gh:contentful,Contentful,gh,2026-11-19T19:34:22.449Z
+gh:cribl,Cribl,gh,2026-11-19T19:34:22.449Z
+gh:cymulate,Cymulate,gh,2026-11-19T19:34:22.449Z
+gh:databricks,Databricks,gh,2026-11-19T19:34:22.449Z
+gh:datadog,Datadog,gh,2026-11-19T19:34:22.449Z
+gh:dialpad,Dialpad,gh,2026-11-19T19:34:22.449Z
+gh:disco,DISCO,gh,2026-11-19T19:34:22.449Z
+gh:dragos,Dragos,gh,2026-11-19T19:34:22.449Z
+gh:dropbox,Dropbox,gh,2026-11-19T19:34:22.449Z
+gh:duolingo,Duolingo,gh,2026-11-19T19:34:22.449Z
+gh:elastic,Elastic,gh,2026-11-19T19:34:22.449Z
+gh:endorlabs,Endor Labs,gh,2026-11-19T19:34:22.449Z
+gh:everlaw,Everlaw,gh,2026-11-19T19:34:22.449Z
+gh:fastly,Fastly,gh,2026-11-19T19:34:22.449Z
+gh:feedzai,Feedzai,gh,2026-11-19T19:34:22.449Z
+gh:figma,Figma,gh,2026-11-19T19:34:22.449Z
+gh:fivetran,Fivetran,gh,2026-11-19T19:34:22.449Z
+gh:flatironhealth,Flatiron Health,gh,2026-11-19T19:34:22.449Z
+gh:gitlab,GitLab,gh,2026-11-19T19:34:22.449Z
+gh:gongio,Gong,gh,2026-11-19T19:34:22.449Z
+gh:grafanalabs,Grafana Labs,gh,2026-11-19T19:34:22.449Z
+gh:guidepointsecurity,GuidePoint Security,gh,2026-11-19T19:34:22.449Z
+gh:harnessinc,Harness,gh,2026-11-19T19:34:22.449Z
+gh:huntress,Huntress,gh,2026-11-19T19:34:22.449Z
+gh:icapitalnetwork,iCapital,gh,2026-11-19T19:34:22.449Z
+gh:impact,impact.com,gh,2026-11-19T19:34:22.449Z
+gh:instacart,Instacart,gh,2026-11-19T19:34:22.449Z
+gh:intercom,Intercom,gh,2026-11-19T19:34:22.449Z
+gh:island,Island,gh,2026-11-19T19:34:22.449Z
+gh:janestreet,Jane Street,gh,2026-11-19T19:34:22.449Z
+gh:justworks,Justworks,gh,2026-11-19T19:34:22.449Z
+gh:keepersecurity,Keeper Security,gh,2026-11-19T19:34:22.449Z
+gh:klaviyo,Klaviyo,gh,2026-11-19T19:34:22.449Z
+gh:knowbe4,KnowBe4,gh,2026-11-19T19:34:22.449Z
+gh:launchdarkly,LaunchDarkly,gh,2026-11-19T19:34:22.449Z
+gh:lyft,Lyft,gh,2026-11-19T19:34:22.449Z
+gh:mixpanel,Mixpanel,gh,2026-11-19T19:34:22.449Z
+gh:mongodb,MongoDB,gh,2026-11-19T19:34:22.449Z
+gh:gomotive,Motive,gh,2026-11-19T19:34:22.449Z
+gh:mozilla,Mozilla,gh,2026-11-19T19:34:22.449Z
+gh:netcraft,Netcraft,gh,2026-11-19T19:34:22.449Z
+gh:netskope,Netskope,gh,2026-11-19T19:34:22.449Z
+gh:newrelic,New Relic,gh,2026-11-19T19:34:22.449Z
+gh:nice,NICE,gh,2026-11-19T19:34:22.449Z
+gh:nozominetworks,Nozomi Networks,gh,2026-11-19T19:34:22.449Z
+gh:obsidiansecurity,Obsidian Security,gh,2026-11-19T19:34:22.449Z
+gh:okta,Okta,gh,2026-11-19T19:34:22.449Z
+gh:onetrust,OneTrust,gh,2026-11-19T19:34:22.449Z
+gh:orcasecurity,Orca Security,gh,2026-11-19T19:34:22.449Z
+gh:osano,Osano,gh,2026-11-19T19:34:22.449Z
+gh:pagerduty,PagerDuty,gh,2026-11-19T19:34:22.449Z
+gh:pandadoc,PandaDoc,gh,2026-11-19T19:34:22.449Z
+gh:pendo,Pendo,gh,2026-11-19T19:34:22.449Z
+gh:pinterest,Pinterest,gh,2026-11-19T19:34:22.449Z
+gh:point72,Point72,gh,2026-11-19T19:34:22.449Z
+gh:qualtrics,Qualtrics,gh,2026-11-19T19:34:22.449Z
+gh:recordedfuture,Recorded Future,gh,2026-11-19T19:34:22.449Z
+gh:reddit,Reddit,gh,2026-11-19T19:34:22.449Z
+gh:relativity,Relativity,gh,2026-11-19T19:34:22.449Z
+gh:rhymetec,Rhymetec,gh,2026-11-19T19:34:22.449Z
+gh:robinhood,Robinhood,gh,2026-11-19T19:34:22.449Z
+gh:rubrik,Rubrik,gh,2026-11-19T19:34:22.449Z
+gh:salesloft,Salesloft,gh,2026-11-19T19:34:22.449Z
+gh:saltsecurity,Salt Security,gh,2026-11-19T19:34:22.449Z
+gh:samsara,Samsara,gh,2026-11-19T19:34:22.449Z
+gh:scaleai,Scale AI,gh,2026-11-19T19:34:22.449Z
+gh:sentinellabs,SentinelOne,gh,2026-11-19T19:34:22.449Z
+gh:smartsheet,Smartsheet,gh,2026-11-19T19:34:22.449Z
+gh:stripe,Stripe,gh,2026-11-19T19:34:22.449Z
+gh:sumologic,Sumo Logic,gh,2026-11-19T19:34:22.449Z
+gh:tailscale,Tailscale,gh,2026-11-19T19:34:22.449Z
+gh:torq,Torq,gh,2026-11-19T19:34:22.449Z
+gh:trace3,Trace3,gh,2026-11-19T19:34:22.449Z
+gh:twilio,Twilio,gh,2026-11-19T19:34:22.449Z
+gh:vercel,Vercel,gh,2026-11-19T19:34:22.449Z
+gh:verkada,Verkada,gh,2026-11-19T19:34:22.449Z
+gh:wizinc,Wiz,gh,2026-11-19T19:34:22.449Z
+gh:yext,Yext,gh,2026-11-19T19:34:22.449Z
+gh:yotpo,Yotpo,gh,2026-11-19T19:34:22.449Z
+gh:yubico,Yubico,gh,2026-11-19T19:34:22.449Z
+gh:zoominfo,ZoomInfo,gh,2026-11-19T19:34:22.449Z
+gh:zscaler,Zscaler,gh,2026-11-19T19:34:22.449Z
+gh:zuora,Zuora,gh,2026-11-19T19:34:22.449Z
+ms:eightfold,Microsoft,ms,2026-11-19T20:33:44.484Z
+wd:proofpoint,Proofpoint,wd,2026-11-19T20:33:44.484Z
+cisco:rss,Cisco,cisco,2026-11-19T20:33:44.484Z
+wd:crowdstrike,CrowdStrike,wd,2026-11-19T20:33:44.484Z
+wd:salesforce,Salesforce,wd,2026-11-19T20:33:44.484Z
+comeet:cyera,Cyera,comeet,2026-11-19T21:51:17.575Z
+cisco:splunk,Splunk,cisco,2026-11-19T21:51:17.575Z
+google:careers,Google,google,2026-11-20T03:13:07.351Z
+radancy:panw,Palo Alto Networks,radancy,2026-11-20T03:13:07.351Z
+workable:anvilogic-inc,Anvilogic,workable,2026-11-20T04:50:02.629Z
+lever:certik,CertiK,lever,2026-11-20T04:50:02.629Z
+comeet:anecdotes,anecdotes,comeet,2026-11-20T04:50:02.629Z
+html:attackiq,AttackIQ,html,2026-11-20T04:50:02.629Z
+ashby:abacum,Abacum,ashby,2026-11-20T04:50:02.629Z
+html:aembit,Aembit,html,2026-11-20T04:50:02.629Z
+lever:contentsquare,Contentsquare,lever,2026-11-20T04:50:02.629Z
+workable:huggingface,Hugging Face,workable,2026-11-20T04:50:02.629Z
+html:halborn,Halborn,html,2026-11-20T04:50:02.629Z
+html:exaforce,Exaforce,html,2026-11-20T04:50:02.629Z
+comeet:blockaid,Blockaid,comeet,2026-11-20T04:50:02.629Z
+ashby:abridge,Abridge,ashby,2026-11-20T04:50:02.629Z
+workable:trailofbits,Trail of Bits,workable,2026-11-20T04:50:02.629Z
+lever:extremenetworks,Extreme Networks,lever,2026-11-20T04:50:02.629Z
+comeet:cycode,Cycode,comeet,2026-11-20T04:50:02.629Z
+lever:immuta,Immuta,lever,2026-11-20T04:50:02.629Z
+ashby:amplitude,Amplitude,ashby,2026-11-20T04:50:02.629Z
+html:bluevoyant,BlueVoyant,html,2026-11-20T04:50:02.629Z
+comeet:hypernative,Hypernative,comeet,2026-11-20T04:50:02.629Z
+ashby:ashby,Ashby,ashby,2026-11-20T04:50:02.629Z
+lever:lyrahealth,Lyra Health,lever,2026-11-20T04:50:02.629Z
+comeet:legitsecurity,Legit Security,comeet,2026-11-20T04:50:02.629Z
+ashby:attio,Attio,ashby,2026-11-20T04:50:02.629Z
+comeet:pentera,Pentera,comeet,2026-11-20T04:50:02.629Z
+ashby:baseten,Baseten,ashby,2026-11-20T04:50:02.629Z
+lever:palantir,Palantir,lever,2026-11-20T04:50:02.629Z
+comeet:silverfort,Silverfort,comeet,2026-11-20T04:50:02.629Z
+ashby:benchling,Benchling,ashby,2026-11-20T04:50:02.629Z
+lever:spotify,Spotify,lever,2026-11-20T04:50:02.629Z
+ashby:cartesia,Cartesia,ashby,2026-11-20T04:50:02.629Z
+comeet:zenity,Zenity,comeet,2026-11-20T04:50:02.629Z
+lever:zimperium,Zimperium,lever,2026-11-20T04:50:02.629Z
+ashby:cerebras,Cerebras,ashby,2026-11-20T04:50:02.629Z
+lever:zoox,Zoox,lever,2026-11-20T04:50:02.629Z
+ashby:clerk,Clerk,ashby,2026-11-20T04:50:02.629Z
+ashby:clickhouse,ClickHouse,ashby,2026-11-20T04:50:02.629Z
+ashby:cohere,Cohere,ashby,2026-11-20T04:50:02.629Z
+ashby:crusoe,Crusoe,ashby,2026-11-20T04:50:02.629Z
+wd:alation,Alation,wd,2026-11-20T04:50:02.629Z
+ashby:cyberhaven,Cyberhaven,ashby,2026-11-20T04:50:02.629Z
+ashby:delinea,Delinea (incl. StrongDM),ashby,2026-11-20T04:50:02.629Z
+ashby:etched,Etched,ashby,2026-11-20T04:50:02.629Z
+wd:optiv,Optiv,wd,2026-11-20T04:50:02.629Z
+ashby:flashpoint.io,Flashpoint,ashby,2026-11-20T04:50:02.629Z
+ashby:fullstory,Fullstory,ashby,2026-11-20T04:50:02.629Z
+ashby:grow-therapy,Grow Therapy,ashby,2026-11-20T04:50:02.629Z
+ashby:hackerone,HackerOne,ashby,2026-11-20T04:50:02.629Z
+ashby:hex,Hex,ashby,2026-11-20T04:50:02.629Z
+ashby:hims-and-hers,Hims & Hers,ashby,2026-11-20T04:50:02.629Z
+ashby:hoxhunt,Hoxhunt,ashby,2026-11-20T04:50:02.629Z
+gh:deepwatchinc,Deepwatch,gh,2026-11-20T04:50:02.629Z
+ashby:illumio,Illumio,ashby,2026-11-20T04:50:02.629Z
+ashby:ironcladhq,Ironclad,ashby,2026-11-20T04:50:02.629Z
+ashby:iterable,Iterable,ashby,2026-11-20T04:50:02.629Z
+gh:discord,Discord,gh,2026-11-20T04:50:02.629Z
+ashby:kalshi,Kalshi,ashby,2026-11-20T04:50:02.629Z
+ashby:latent-defense,Latent Defense,ashby,2026-11-20T04:50:02.629Z
+gh:dropzoneai,Dropzone AI,gh,2026-11-20T04:50:02.629Z
+ashby:linear,Linear,ashby,2026-11-20T04:50:02.629Z
+ashby:lovable,Lovable,ashby,2026-11-20T04:50:02.629Z
+ashby:lumos,Lumos,ashby,2026-11-20T04:50:02.629Z
+ashby:materialsecurity,Material Security,ashby,2026-11-20T04:50:02.629Z
+ashby:midjourney,Midjourney,ashby,2026-11-20T04:50:02.629Z
+ashby:mistral-ai,Mistral AI,ashby,2026-11-20T04:50:02.629Z
+ashby:n8n,n8n,ashby,2026-11-20T04:50:02.629Z
+ashby:nubank,Nubank,ashby,2026-11-20T04:50:02.629Z
+ashby:pika,Pika,ashby,2026-11-20T04:50:02.629Z
+gh:hs,Headspace,gh,2026-11-20T04:50:02.629Z
+ashby:pinecone,Pinecone,ashby,2026-11-20T04:50:02.629Z
+ashby:plaid,Plaid,ashby,2026-11-20T04:50:02.629Z
+ashby:polymarket,Polymarket,ashby,2026-11-20T04:50:02.629Z
+ashby:pylon-labs,Pylon,ashby,2026-11-20T04:50:02.629Z
+ashby:replit,Replit,ashby,2026-11-20T04:50:02.629Z
+ashby:resend,Resend,ashby,2026-11-20T04:50:02.629Z
+ashby:rillet,Rillet,ashby,2026-11-20T04:50:02.629Z
+ashby:sardine,Sardine,ashby,2026-11-20T04:50:02.629Z
+ashby:skydio,Skydio,ashby,2026-11-20T04:50:02.629Z
+ashby:deaa6ad2-d184-436b-b69e-17f761da1d94,Spring Health,ashby,2026-11-20T04:50:02.629Z
+gh:noomgrowth,Noom,gh,2026-11-20T04:50:02.629Z
+ashby:suno,Suno,ashby,2026-11-20T04:50:02.629Z
+ashby:supabase,Supabase,ashby,2026-11-20T04:50:02.629Z
+ashby:superhuman-platform-inc,Superhuman,ashby,2026-11-20T04:50:02.629Z
+ashby:temporal,Temporal,ashby,2026-11-20T04:50:02.629Z
+ashby:watershed,Watershed,ashby,2026-11-20T04:50:02.629Z
+ashby:wealthsimple,Wealthsimple,ashby,2026-11-20T04:50:02.629Z
+ashby:workos,WorkOS,ashby,2026-11-20T04:50:02.629Z
+ashby:zapier,Zapier,ashby,2026-11-20T04:50:02.629Z
+gh:scanner,Scanner,gh,2026-11-20T04:50:02.629Z
+gh:federato,Federato,gh,2026-11-20T04:50:02.629Z
+gh:atbayjobs,At-Bay,gh,2026-11-20T04:50:02.629Z
+gh:backblaze,Backblaze,gh,2026-11-20T04:50:02.629Z
+gh:airbnb,Airbnb,gh,2026-11-20T04:50:02.629Z
+gh:aircallioinc,Aircall,gh,2026-11-20T04:50:02.629Z
+gh:andurilindustries,Anduril,gh,2026-11-20T04:50:02.629Z
+gh:axon,Axon,gh,2026-11-20T04:50:02.629Z
+gh:coalition,Coalition,gh,2026-11-20T04:50:02.629Z
+gh:doordashusa,DoorDash,gh,2026-11-20T04:50:02.629Z
+gh:keyfactorinc,Keyfactor,gh,2026-11-20T04:50:02.629Z
+gh:microsoftcorporation,Microsoft,gh,2026-11-20T04:50:02.629Z
+gh:saucelabs,Sauce Labs,gh,2026-11-20T04:50:02.629Z
+gh:spacex,SpaceX,gh,2026-11-20T04:50:02.629Z
+gh:tenableinc,Tenable,gh,2026-11-20T04:50:02.629Z
+gh:veeamsoftware,Veeam,gh,2026-11-20T04:50:02.629Z
+ashby:snowflake,Snowflake,ashby,2026-11-20T17:30:27.385Z
+orc:fortinet,Fortinet,orc,2026-11-20T17:30:27.385Z
+gh:catonetworks,Cato Networks,gh,2026-11-20T17:30:27.385Z
+gh:tines,Tines,gh,2026-11-20T17:30:27.385Z
+wd:mymoose,Rapid7,wd,2026-11-20T19:33:40.162Z
+wd:sailpoint,SailPoint,wd,2026-11-20T19:33:40.162Z
+wd:qualys,Qualys,wd,2026-11-20T19:33:40.162Z
+wd:mimecast,Mimecast,wd,2026-11-20T19:33:40.162Z
+wd:cohesity,Cohesity,wd,2026-11-20T19:33:40.162Z
+workable:sortingrobotics,,workable,2026-11-20T19:33:40.162Z
+lever:jitxinc,,lever,2026-11-20T19:33:40.162Z
+lever:canarytechnologies,,lever,2026-11-20T19:33:40.162Z
+ashby:promise,,ashby,2026-11-20T19:33:40.162Z
+ashby:biorenderinc,,ashby,2026-11-20T19:33:40.162Z
+ashby:captivateiq,,ashby,2026-11-20T19:33:40.162Z
+ashby:withinai,,ashby,2026-11-20T19:33:40.162Z
+ashby:moderntreasury,,ashby,2026-11-20T19:33:40.162Z
+ashby:versemedical,,ashby,2026-11-20T19:33:40.162Z
+ashby:titan,,ashby,2026-11-20T19:33:40.162Z
+ashby:inscribeai,,ashby,2026-11-20T19:33:40.162Z
+ashby:mutiny,,ashby,2026-11-20T19:33:40.162Z
+ashby:overview,,ashby,2026-11-20T19:33:40.162Z
+ashby:middesk,,ashby,2026-11-20T19:33:40.162Z
+ashby:golinks,,ashby,2026-11-20T19:33:40.162Z
+gh:treasuryprime,,gh,2026-11-20T19:33:40.162Z
+gh:swayable,,gh,2026-11-20T19:33:40.162Z
+gh:meruhealth,,gh,2026-11-20T19:33:40.162Z
+gh:pelago,,gh,2026-11-20T19:33:40.162Z
+gh:nabis,,gh,2026-11-20T19:33:40.162Z
+gh:prodigal,,gh,2026-11-20T19:33:40.162Z
+lever:voltalabs,,lever,2026-11-21T01:22:16.425Z
+lever:farcast,,lever,2026-11-21T01:22:16.425Z
+ashby:probablygenetic,,ashby,2026-11-21T01:22:16.425Z
+ashby:bunkerhillhealth,,ashby,2026-11-21T01:22:16.425Z
+ashby:atlas,,ashby,2026-11-21T01:22:16.425Z
+ashby:method,,ashby,2026-11-21T01:22:16.425Z
+ashby:trmlabs,,ashby,2026-11-21T01:22:16.425Z
+ashby:freshpaint,,ashby,2026-11-21T01:22:16.425Z
+ashby:vorticity,,ashby,2026-11-21T01:22:16.425Z
+ashby:wonderly,,ashby,2026-11-21T01:22:16.425Z
+ashby:accord,,ashby,2026-11-21T01:22:16.425Z
+gh:pairteam,,gh,2026-11-21T01:22:16.425Z
+gh:ophelia,,gh,2026-11-21T01:22:16.425Z
+gh:porter,,gh,2026-11-21T01:22:16.425Z
+gh:alpaca,,gh,2026-11-21T01:22:16.425Z
+gh:recidiviz,,gh,2026-11-21T01:22:16.425Z
+lever:postera,,lever,2026-11-21T17:51:43.508Z
+lever:doola,,lever,2026-11-21T17:51:43.508Z
+ashby:benepass,,ashby,2026-11-21T17:51:43.508Z
+ashby:vori,,ashby,2026-11-21T17:51:43.508Z
+ashby:candidhealth,,ashby,2026-11-21T17:51:43.508Z
+ashby:aios,,ashby,2026-11-21T17:51:43.508Z
+ashby:nomic,,ashby,2026-11-21T17:51:43.508Z
+ashby:stable,,ashby,2026-11-21T17:51:43.508Z
+ashby:recall,,ashby,2026-11-21T17:51:43.508Z
+ashby:luminai,,ashby,2026-11-21T17:51:43.508Z
+ashby:roboflow,,ashby,2026-11-21T17:51:43.508Z
+ashby:datafold,,ashby,2026-11-21T17:51:43.508Z
+ashby:atob,,ashby,2026-11-21T17:51:43.508Z
+ashby:blissway,,ashby,2026-11-21T17:51:43.508Z
+ashby:atomic,,ashby,2026-11-21T17:51:43.508Z
+ashby:vitable,,ashby,2026-11-21T17:51:43.508Z
+ashby:notabene,,ashby,2026-11-21T17:51:43.508Z
+ashby:kingdom,,ashby,2026-11-21T17:51:43.508Z
+ashby:arketa,,ashby,2026-11-21T17:51:43.508Z
+ashby:ready,,ashby,2026-11-21T17:51:43.508Z
+gh:generalproximity,,gh,2026-11-21T17:51:43.508Z
+gh:paveakatroveinformationtechnologies,,gh,2026-11-21T17:51:43.508Z
+html:atlassian,Atlassian,html,2026-11-21T20:30:03.357Z
+html:apple,Apple,html,2026-11-21T20:30:03.357Z
+wd:forrester,Forrester,wd,2026-11-21T20:30:03.357Z
+ashby:sophos,Sophos,ashby,2026-11-21T20:30:03.357Z
+phenom:bcg,Boston Consulting Group,phenom,2026-11-21T20:30:03.357Z
+phenom:adobe,Adobe,phenom,2026-11-21T20:30:03.357Z
+gh:ians,IANS Research,gh,2026-11-21T20:30:03.357Z
+workable:securityriskadvisors,Security Risk Advisors (SRA),workable,2026-11-21T21:58:58.541Z
+bamboohr:ontinue,Ontinue,bamboohr,2026-11-21T21:58:58.541Z
+lever:epsilon3,Epsilon3,lever,2026-11-21T21:58:58.541Z
+ashby:slashfinancial,Slash,ashby,2026-11-21T21:58:58.541Z
+ashby:flutterflow,FlutterFlow,ashby,2026-11-21T21:58:58.541Z
+ashby:svix,Svix,ashby,2026-11-21T21:58:58.541Z
+ashby:gigs,Gigs,ashby,2026-11-21T21:58:58.541Z
+ashby:triomics,Triomics,ashby,2026-11-21T21:58:58.541Z
+ashby:shepherd,Shepherd,ashby,2026-11-21T21:58:58.541Z
+ashby:slope,Slope,ashby,2026-11-21T21:58:58.541Z
+ashby:legionhealth,Legion Health,ashby,2026-11-21T21:58:58.541Z
+ashby:odysaviation,Odys Aviation,ashby,2026-11-21T21:58:58.541Z
+ashby:serifhealth,Serif Health,ashby,2026-11-21T21:58:58.541Z
+ashby:replo,Replo,ashby,2026-11-21T21:58:58.541Z
+ashby:confido,Confido,ashby,2026-11-21T21:58:58.541Z
+ashby:parallelbio,Parallel Bio,ashby,2026-11-21T21:58:58.541Z
+ashby:double,Double,ashby,2026-11-21T21:58:58.541Z
+ashby:tavus,Tavus,ashby,2026-11-21T21:58:58.541Z
+ashby:kodex,Kodex,ashby,2026-11-21T21:58:58.541Z
+sr:boschgroup,Bosch,sr,2026-11-21T21:58:58.541Z
+wd:trellix,Trellix,wd,2026-11-21T21:58:58.541Z
+wd:protiviti,Protiviti,wd,2026-11-21T21:58:58.541Z
+wd:guidehouse,Guidehouse,wd,2026-11-21T21:58:58.541Z
+wd:accenture,Accenture,wd,2026-11-21T21:58:58.541Z
+wd:broadcom,Broadcom (incl. VMware),wd,2026-11-21T21:58:58.541Z
+gh:aidocmedical,Aidoc,gh,2026-11-21T21:58:58.541Z
+gh:scbitdefendersrl,Bitdefender,gh,2026-11-21T21:58:58.541Z
+wd:nvidia,NVIDIA,wd,2026-11-21T21:58:58.541Z

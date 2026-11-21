@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-21T20:04:02.691Z",
+ "updated_at": "2026-11-21T21:58:58.541Z",
  "employers": [
   {
    "employer": "Slash",
@@ -537,6 +537,336 @@
      "verification": {
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-21: board reachable with 6 postings; ownership: linked from kodexglobal.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "testRigor",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/testrigor",
+   "careers_url": "https://testrigor.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "workable:testrigor",
+     "ats": "workable",
+     "slug": "testrigor",
+     "board_url": "https://apply.workable.com/testrigor/",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 0 postings; ownership: linked from testrigor.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "OneSchema",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/oneschema",
+   "careers_url": "https://www.oneschema.co",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:oneschema",
+     "ats": "ashby",
+     "slug": "oneschema",
+     "board_url": "https://jobs.ashbyhq.com/oneschema",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 2 postings; ownership: linked from oneschema.co.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Aleph",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/aleph",
+   "careers_url": "https://getaleph.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:aleph",
+     "ats": "ashby",
+     "slug": "aleph",
+     "board_url": "https://jobs.ashbyhq.com/aleph",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 15 postings; ownership: linked from getaleph.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Zensors",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/zensors-inc",
+   "careers_url": "https://www.zensors.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:zensors",
+     "ats": "ashby",
+     "slug": "zensors",
+     "board_url": "https://jobs.ashbyhq.com/zensors",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 6 postings; ownership: postings mention zensors.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Mach9",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/mach9",
+   "careers_url": "https://www.mach9.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:mach9",
+     "ats": "ashby",
+     "slug": "mach9",
+     "board_url": "https://jobs.ashbyhq.com/mach9",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 20 postings; ownership: linked from mach9.ai.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Turion Space",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/turion-space",
+   "careers_url": "https://turionspace.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:turionspace",
+     "ats": "ashby",
+     "slug": "turion-space",
+     "board_url": "https://jobs.ashbyhq.com/turion-space",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 18 postings; ownership: postings name Turion Space.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Charge Robotics",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/charge-robotics",
+   "careers_url": "https://chargerobotics.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:chargerobotics",
+     "ats": "ashby",
+     "slug": "charge-robotics",
+     "board_url": "https://jobs.ashbyhq.com/charge-robotics",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 14 postings; ownership: linked from chargerobotics.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Nash",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 40,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/nash",
+   "careers_url": "https://www.usenash.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:nash",
+     "ats": "ashby",
+     "slug": "Nash",
+     "board_url": "https://jobs.ashbyhq.com/Nash",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 26 postings; ownership: linked from usenash.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Agave",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/agave",
+   "careers_url": "https://www.useagave.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:agave",
+     "ats": "ashby",
+     "slug": "Agave",
+     "board_url": "https://jobs.ashbyhq.com/Agave",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 8 postings; ownership: linked from useagave.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Sieve",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 34,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/sieve",
+   "careers_url": "https://sievedata.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:sieve",
+     "ats": "ashby",
+     "slug": "sieve",
+     "board_url": "https://jobs.ashbyhq.com/sieve",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 17 postings; ownership: linked from sievedata.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Invert",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/invert",
+   "careers_url": "http://www.invertbio.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:invert",
+     "ats": "ashby",
+     "slug": "invert",
+     "board_url": "https://jobs.ashbyhq.com/invert",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 6 postings; ownership: linked from invertbio.com.",
       "date": "2026-11-21"
      }
     }
