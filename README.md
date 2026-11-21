@@ -50,14 +50,17 @@ Every collection adds to `data/archive/`, a compact record of every posting Cach
 | `YYYY-MM-closed.csv` | posting that disappeared: when it closed and how many days it was open |
 | `sources.csv` | source, with the date it was first collected, so trends can compare the same employers over time instead of counting new coverage as market growth |
 
-Files are append-only, which keeps git history small. Finished months are compressed to `.csv.gz` (open with any spreadsheet after unzipping, or DuckDB/pandas directly). The first run backfills from the roles already in `jobs.json`. Like the rest of `data/`, the archive is published with the site.
+Also written: `YYYY-MM-changes.csv` (pay, title, repost and reopen events for known postings), `weekly.csv` (rollup by week × sector × job category with new and closed counts, a same-store count, median stated base, OTE-only and remote shares, employers hiring) and `README.md` (column guide). The Sources page links to them. Files are append-only, which keeps git history small. Finished months are compressed to `.csv.gz` (open with any spreadsheet after unzipping, or DuckDB/pandas directly). The first run backfills from the roles already in `jobs.json`. Like the rest of `data/`, the archive is published with the site.
 
 ## Collection rules
 
 - **Workday has its own client.** One active request per Workday tenant, 8–12 s apart, sent with Node's built-in `https.request` (same honest user agent as every other request). Plain 429s honor `Retry-After` with bounded backoff.
 - **Bot checks are access controls.** When a site's Cloudflare protection answers with `cf-mitigated` (a challenge), the collector records the source as `blocked_challenge`, makes no retries and no further requests to that site in the run, and keeps the previous roles. It does not change how it identifies itself to get past the check. A source refused (403 or bot check) three runs in a row pauses and retries weekly.
 - Per-host pacing with randomized delays. `Retry-After` is honored. 429 and 5xx get bounded exponential backoff; 403 and 404 are never retried.
-- A refused or partial run keeps the previous roles and flags them `stale`. Roles are closed only after a complete pass. Chunked scans (Microsoft, CrowdStrike) close a role only after it has gone unseen past a set window.
+- A refused or partial run keeps the previous roles and flags them `stale`. Roles are closed only after a complete pass. Chunked scans (CrowdStrike, AWS, Oracle) close a role only after it has gone unseen past a set window.
+- **Microsoft (Eightfold)** runs on a request budget: each run reads up to 6 pages of the US-filtered full list, then 5 keyword-search pages (breadth-first, the least recently scanned search first), then up to 3 detail records for new or changed relevant roles. Progress is saved per list and per search (offset, count, last scan, complete) in `status.json`, and a resumed list re-reads 2 rows so shifted listings aren't skipped. A 403/429 stops Microsoft for the run and keeps the progress; one retry honors a short Retry-After. If the location filter errors or matches nothing, the reader falls back to the unfiltered list (US decided locally) and remembers it. A role is closed only after a complete US pass that started after it was last seen, and after 14 days unseen.
+- **Google Careers** treats the full US list (location = United States, about 88 pages) as the inventory, walked from a page checkpoint (45 pages a run, one page of overlap on resume). Six priority searches top up between passes. Each record is schema-checked (numeric id, plain-text title, location strings). A pass closes roles only if it reached the end cleanly: a page that mostly fails the check, or a pass that ends well short of the page's own total or the last pass, is not used for closures.
+- Roles that fit no job category are stored as **Other roles** (off by default in the category picker), not dropped. AWS is the exception (`drop_uncategorized`) because of the size of its US list.
 - Only base pay counts. OTE, bonus, equity and estimates are excluded. Ranges in other currencies, and implausible amounts (over $1.5M), are ignored.
 - Dates stay distinct: posted, updated (may be a refresh), relative ("3 days ago"), first observed, last seen, plus a repost flag.
 - Cross-source duplicates are grouped by requisition ID or by title plus a shared city.
@@ -105,7 +108,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-170 offline tests against mocked API responses. The workflow runs them before every collection.
+193 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 
