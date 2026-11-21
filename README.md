@@ -25,7 +25,7 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | `assets/prompt.mjs` | Browser | "Prompt for your AI": turns the current criteria into a self-contained search brief for any web-browsing LLM (no name or contact details) |
 | `collector/gate.mjs` | Actions | Hourly check that collects only when a New York-time slot is due |
 | `collector/collect.mjs` | Actions | Fetches every source, normalizes, merges with history, writes `data/jobs.json` and `data/status.json` |
-| `collector/lib/adapters-server.mjs` | Actions | Server-only adapters: SmartRecruiters, Workable, Workday CXS, Eightfold, Oracle HCM, Phenom, Cisco RSS, Amazon, Comeet, Google Careers, Radancy, Avature (IBM, Deloitte, Booz Allen, Bain; search page and fields discovered from a real job link), company HTML pages |
+| `collector/lib/adapters-server.mjs` | Actions | Server-only adapters: SmartRecruiters, Workable, Workday CXS, Eightfold, Oracle HCM, Phenom, Cisco RSS, Amazon, Comeet, Google Careers, Radancy, BambooHR (company careers list), Avature (IBM, Deloitte, Booz Allen, Bain; search page and fields discovered from a real job link), company HTML pages |
 | `collector/lib/seeds.mjs` | Actions | Finds job boards for seed companies and checks they belong to the company |
 | `collector/lib/http.mjs` | Actions | Per-host pacing, retries, backoff |
 | `collector/digest.mjs` | Actions | Emails subscribers their new matches |
@@ -34,14 +34,28 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 
 | File | Contents |
 |---|---|
-| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 432 employers, 429 sources. |
+| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 438 employers, 432 sources. |
 | `data/discovered.json` | Employers the seed probe found and verified. Read alongside `sources.json`. |
 | `data/seeds.json` | 819 candidate companies (YC directory, VC portfolios). Not collected directly. |
 | `data/jobs.json` | Normalized roles with history: posting, updated and first-seen dates, salary with its source text, closed and stale flags |
 | `data/status.json` | Last result per source (ok, empty, partial, http_403, …) and resume offsets for chunked scans |
 
+## Market archive
+
+Every collection adds to `data/archive/`, a compact record of every posting Cache Flow has seen, for trend analysis (hiring by employer and category, time to close, pay ranges, remote share, skills):
+
+| File | One row per |
+|---|---|
+| `YYYY-MM-postings.csv` | posting, written when it is first seen: employer, sector, company type, title, job categories, seniority, location, remote, stated base range (or OTE only), skills, link and a brief role summary (≤280 characters from the role section, never the full description) |
+| `YYYY-MM-closed.csv` | posting that disappeared: when it closed and how many days it was open |
+| `sources.csv` | source, with the date it was first collected, so trends can compare the same employers over time instead of counting new coverage as market growth |
+
+Files are append-only, which keeps git history small. Finished months are compressed to `.csv.gz` (open with any spreadsheet after unzipping, or DuckDB/pandas directly). The first run backfills from the roles already in `jobs.json`. Like the rest of `data/`, the archive is published with the site.
+
 ## Collection rules
 
+- **Workday has its own client.** One active request per Workday tenant, 8–12 s apart, sent with Node's built-in `https.request` (same honest user agent as every other request). Plain 429s honor `Retry-After` with bounded backoff.
+- **Bot checks are access controls.** When a site's Cloudflare protection answers with `cf-mitigated` (a challenge), the collector records the source as `blocked_challenge`, makes no retries and no further requests to that site in the run, and keeps the previous roles. It does not change how it identifies itself to get past the check. A source refused (403 or bot check) three runs in a row pauses and retries weekly.
 - Per-host pacing with randomized delays. `Retry-After` is honored. 429 and 5xx get bounded exponential backoff; 403 and 404 are never retried.
 - A refused or partial run keeps the previous roles and flags them `stale`. Roles are closed only after a complete pass. Chunked scans (Microsoft, CrowdStrike) close a role only after it has gone unseen past a set window.
 - Only base pay counts. OTE, bonus, equity and estimates are excluded. Ranges in other currencies, and implausible amounts (over $1.5M), are ignored.
@@ -91,7 +105,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-160 offline tests against mocked API responses. The workflow runs them before every collection.
+170 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 
