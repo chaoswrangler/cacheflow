@@ -34,7 +34,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const prevStatus = await readJSON(join(dataDir, 'status.json'), { sources: [] });
   const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log, hostRules: cfg.host_rules || [] });
   const startedAt = now.toISOString();
-  const opt = { workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, eightfoldScanPages: cfg.eightfold_scan_pages_per_run || 40, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
+  const opt = { now, workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, eightfoldScanPages: cfg.eightfold_scan_pages_per_run || 40, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
 
   // run counter (drives search rotation) and prior jobs per source (lets adapters skip re-fetching known details)
   const runSeq = (prevStatus.run?.seq || 0) + 1;
@@ -79,8 +79,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const fresh = new Map(); // source_id -> enriched jobs
   const closeHours = new Map(); // per-source wait before an unseen role in a chunked scan is closed
   const partialIds = new Set(), rotatedIds = new Set(); // refused part-way / searched a rotating subset
+  const closeBefore = new Map(); // rotated sources that know when their last complete pass began: close only roles unseen since then
   await Promise.all(tasks.map(async ({ e, s }) => {
-    const base = { id: s.id, employer: e.employer, ats: s.ats, tier: e.tier, verification: s.verification?.status, checked_at: new Date().toISOString() };
+    const base = { id: s.id, employer: e.employer, ats: s.ats, tier: e.tier, verification: s.verification?.status, checked_at: now.toISOString() };
     const adapter = ADAPTERS[s.ats];
     if (!adapter) {
       statuses.push({ ...base, result: s.ats === 'link_only' ? 'link_only' : 'not_fetchable', message: s.verification?.method || '', jobs_total: 0, jobs_stored: 0,
@@ -92,7 +93,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     const pv = prevStatusById.get(s.id);
     const blockedRuns = pv && (pv.http_status === 403 || ['blocked_paused', 'blocked_challenge'].includes(pv.result)) ? (pv.blocked_runs || (pv.consecutive_failures || 0)) : 0;
     const lastTry = pv?.last_attempt_at || pv?.checked_at;
-    if (!only && blockedRuns >= 3 && lastTry && Date.now() - new Date(lastTry).getTime() < 7 * 864e5) {
+    if (!only && blockedRuns >= 3 && lastTry && now.getTime() - new Date(lastTry).getTime() < 7 * 864e5) {
       statuses.push({ ...pv, ...base, result: 'blocked_paused', http_status: 403, checked_at: pv.checked_at, last_attempt_at: lastTry, blocked_runs: blockedRuns,
         message: `${pv.bot_check || pv.result === 'blocked_challenge' ? 'Bot check (Cloudflare)' : 'Refused (403)'} on ${blockedRuns} runs in a row: this method is blocked from GitHub's servers. Paused; next attempt after ${new Date(new Date(lastTry).getTime() + 7 * 864e5).toISOString().slice(0, 10)}. Previous roles kept.` });
       return;
@@ -120,20 +121,26 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     });
     // Full-list sweeps (AWS, Google, Microsoft, Oracle) return every posting. Roles whose title fits no job category can
     // never appear in results (the page re-checks titles), so they aren't stored; the next sweep picks them up if categories grow.
-    const outOfScope = j => out.rotated && !s.keep_uncategorized && !j.eng_review && !classifyFunctions(j.title).functions.length;
+    // Uncategorized roles are stored as "Other roles" (off in the app by default). A source can opt out with
+    // drop_uncategorized when its volume makes that impractical (AWS).
+    const outOfScope = j => out.rotated && s.drop_uncategorized && !j.eng_review && classifyFunctions(j.title).functions.every(f => f === 'other');
     const skippedScope = enriched.filter(outOfScope).length;
     const stored = enriched.filter(j => (cfg.store_non_us || j.us !== false) && !outOfScope(j));
-    if (skippedScope) out.note = `${out.note || ''}${out.note ? '; ' : ''}${skippedScope} roles outside every job category not stored`;
+    if (skippedScope) out.note = `${out.note || ''}${out.note ? '; ' : ''}${skippedScope} roles outside every job category not stored (drop_uncategorized)`;
+    const otherN = out.rotated ? stored.filter(j => !j.eng_review && classifyFunctions(j.title).functions.every(f => f === 'other')).length : 0;
+    if (otherN) out.note = `${out.note || ''}${out.note ? '; ' : ''}${otherN} roles fit no job category and are stored as "Other roles"`;
     const ok = out.result === 'ok' || out.result === 'empty' || out.result === 'partial';
     if (ok) fresh.set(s.id, stored);
     if (out.result === 'partial') partialIds.add(s.id);
     if (out.rotated) rotatedIds.add(s.id);
     if (out.close_after_hours) closeHours.set(s.id, out.close_after_hours);
+    if (out.close_before !== undefined) closeBefore.set(s.id, out.close_before);
     const prev = prevStatusById.get(s.id);
     statuses.push({ ...base, result: out.result, http_status: out.status ?? null, message: out.note || '', fields: out.fields || prev?.fields || null,
       jobs_total: (out.jobs || []).length, jobs_stored: stored.length,
       // a run refused before any results keeps its place, so the next run continues instead of starting over
       resume_offset: out.resume_offset ?? (ok ? null : prev?.resume_offset ?? null), us_facet: out.us_facet ?? prev?.us_facet ?? null,
+      checkpoint: out.checkpoint ?? prev?.checkpoint ?? null,
       last_success_at: ok ? base.checked_at : (prev?.last_success_at || null),
       consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
       bot_check: out.bot_check || null,
@@ -152,7 +159,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   }
 
   // ----- merge with history
-  const nowIso = new Date().toISOString();
+  const nowIso = now.toISOString();
   const ranIds = new Set([...tasks.map(t => t.s.id), ...aggStatus.map(a => a.id)]);
   const prevByUid = new Map(prevJobs.jobs.map(j => [j.uid, j]));
   const merged = [];
@@ -167,13 +174,19 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     } else if (p?.date_history) { j.date_history = p.date_history; j.reposted = p.reposted; }
     merged.push(j); prevByUid.delete(j.uid);
   }
-  const cutoff = Date.now() - (cfg.history_days || 21) * 864e5;
+  const cutoff = now.getTime() - (cfg.history_days || 21) * 864e5;
   for (const p of prevByUid.values()) {
     if (fresh.has(p.source_id) && (partialIds.has(p.source_id) || rotatedIds.has(p.source_id)) && p.status !== 'closed') {
       // only part of this source was searched: unseen roles stay open. Refused runs flag them; rotation closes
       // a role only once it has gone unseen for longer than a full rotation.
-      const unseenH = (Date.now() - new Date(p.last_seen).getTime()) / 36e5;
-      if (!partialIds.has(p.source_id) && unseenH > (closeHours.get(p.source_id) || cfg.rotation_close_hours || 30)) merged.push({ ...p, status: 'closed', closed_at: nowIso });
+      const unseenH = (now.getTime() - new Date(p.last_seen).getTime()) / 36e5;
+      const cb = closeBefore.get(p.source_id);
+      const hoursOk = unseenH > (closeHours.get(p.source_id) || cfg.rotation_close_hours || 30);
+      // close_before sources: closed only after a complete pass that started after the role was last seen,
+      // and only once it has also gone unseen for the close window (a guard against listings shifting mid-pass)
+      const gone = closeBefore.has(p.source_id) ? !!cb && new Date(p.last_seen) < new Date(cb) && hoursOk
+        : !partialIds.has(p.source_id) && hoursOk;
+      if (gone) merged.push({ ...p, status: 'closed', closed_at: nowIso });
       else merged.push(partialIds.has(p.source_id) ? { ...p, stale: true, stale_since: p.stale_since || nowIso } : p);
     } else if (!ranIds.has(p.source_id) || !fresh.has(p.source_id)) {
       // source not run this time, or failed: keep the role, flag it as unrefreshed
@@ -226,7 +239,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const statusOut = { schema: 1, generated_at: finishedAt, run: { seq: runSeq, started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats, partial: !!(only || atsOnly || argv.tier || argv.limit) }, summary, sources: allStatus };
   await mkdir(dataDir, { recursive: true });
   // market archive: one row per posting when first seen, one when it closes (data/archive/, append-only)
-  try { const a = await archiveRun({ dataDir, jobs: merged, nowIso, registry, sources: allStatus }); log(`archive: ${a.added} new, ${a.closed} closed${a.backfilled ? `, backfilled ${a.backfilled}` : ''}${a.rolled ? `, compressed ${a.rolled}` : ''}`); }
+  try { const a = await archiveRun({ dataDir, jobs: merged, nowIso, registry, sources: allStatus, prevById: new Map(prevJobs.jobs.map(j => [j.uid, j])) }); log(`archive: ${a.added} new, ${a.closed} closed, ${a.changes} changes${a.backfilled ? `, backfilled ${a.backfilled}` : ''}${a.rolled ? `, compressed ${a.rolled}` : ''}; weekly rollup ${a.weeks} week(s)`); }
   catch (err) { log(`archive failed (collection still saved): ${err?.message || err}`); }
   for (const j of merged) delete j._blurb;
   await writeFile(join(dataDir, 'jobs.json'), JSON.stringify(jobsOut));

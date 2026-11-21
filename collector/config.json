@@ -49,11 +49,12 @@
     },
     {
       "suffix": "apply.careers.microsoft.com",
+      "group": "eightfold",
       "minDelayMs": 7000,
       "maxDelayMs": 12000,
-      "retries": 5,
-      "backoffMs": 10000,
-      "_note": "Eightfold PCSX pagination returned 429 in testing; start with 5-10s gaps"
+      "retries": 1,
+      "backoffMs": 15000,
+      "_note": "One queue for all Eightfold hosts (add \"group\": \"eightfold\" to any other Eightfold tenant). Microsoft refused (429) after ~15 requests even at 7-12s spacing, so the reader works under a per-run request budget (sources.json: list_budget, search_budget, detail_budget) and stops at a refusal instead of retrying through it; one retry honors a short Retry-After."
     },
     {
       "suffix": "careers.cisco.com",
