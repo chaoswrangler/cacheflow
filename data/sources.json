@@ -1860,19 +1860,22 @@
    "careers_url": "https://careers.checkpoint.com/jobs?country=United+States",
    "careers_url_verified": false,
    "notes": [
-    "Check Point's careers site (careers.checkpoint.com) builds its job list with JavaScript and refuses requests from GitHub's servers (403 on every run since Nov 20). No public hiring-system board was found behind it. After 3 refusals in a row the source pauses and retries weekly; open the careers site directly in the meantime."
+    "Check Point's own careers site (careers.checkpoint.com) refuses requests from GitHub's servers (403), so it isn't read. Its jobs are published through SmartRecruiters (company CheckPointSoftwareTechnologies2, found from a posting's Apply link), which is the source now; US postings only."
    ],
    "sources": [
     {
-     "id": "html:checkpoint",
-     "ats": "company_html",
-     "list_url": "https://careers.checkpoint.com/jobs?country=United+States",
-     "link_pattern": "^/jobs/\\d{5,9}(?:/[^/]*)?/?$",
+     "id": "sr:checkpoint",
+     "ats": "smartrecruiters",
+     "slug": "CheckPointSoftwareTechnologies2",
+     "company": "CheckPointSoftwareTechnologies2",
+     "country": "us",
      "verification": {
-      "status": "unverified_config",
-      "method": "US listing page and job link format (/jobs/7118273/area-manager-federal-sales) supplied by the user, 2026-11-20. If the listing is built by JavaScript the run reports no_links_found rather than zero jobs.",
-      "date": "2026-11-20"
-     }
+      "status": "verified_from_posting_url",
+      "method": "Apply link on a Check Point US posting (Area Manager, Federal Sales, Reston VA) opens jobs.smartrecruiters.com/oneclick-ui/company/CheckPointSoftwareTechnologies2/publication/c9b86ef8-d9f9-477e-937d-0c676ebb536f, supplied by the user and confirmed to be that Check Point role, 2026-11-21. Company id taken from that URL, not guessed.",
+      "date": "2026-11-21"
+     },
+     "max_results": 500,
+     "board_url": "https://jobs.smartrecruiters.com/CheckPointSoftwareTechnologies2"
     }
    ],
    "id": "check-point",
@@ -11210,19 +11213,40 @@
    "tier": "named",
    "careers_url": "https://jobs.gartner.com/",
    "careers_url_verified": true,
-   "notes": [],
+   "notes": [
+    "Gartner's own job site (jobs.gartner.com) refused requests from GitHub's servers (403). Its jobs are published on Workday (gartner.wd5.myworkdayjobs.com/EXT, from a posting link), which is the source now; US postings only via the board's own country filter."
+   ],
    "sources": [
     {
-     "id": "html:gartner",
-     "ats": "company_html",
-     "list_url": "https://jobs.gartner.com/jobs/",
-     "link_pattern": "^/jobs/job/\\d+-[a-z0-9-]+/?$",
-     "max_pages": 40,
-     "detail_cap": 80,
+     "id": "wd:gartner",
+     "ats": "workday",
+     "host": "gartner.wd5.myworkdayjobs.com",
+     "tenant": "gartner",
+     "site": "EXT",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "cyber",
+      "security strategy",
+      "solutions",
+      "account executive",
+      "marketing",
+      "customer success",
+      "analyst",
+      "research director",
+      "analyst relations"
+     ],
+     "board_url": "https://gartner.wd5.myworkdayjobs.com/EXT",
      "verification": {
-      "status": "unverified_config",
-      "method": "Gartner's own job site; listing page and job URLs (jobs.gartner.com/jobs/job/<id>-<title>/) seen in web search on 2026-11-20. Pages are read with the site's own next-page links; the first run confirms whether the list is in the page HTML.",
-      "date": "2026-11-20"
+      "status": "verified_from_posting_url",
+      "method": "A Gartner posting (Senior Account Executive, req 116239) at gartner.wd5.myworkdayjobs.com/en-US/EXT/job/Senior-Account-Executive--HTI_116239, supplied by the user on 2026-11-21. Host, tenant and site are read from that URL, not guessed.",
+      "date": "2026-11-21"
      }
     }
    ],

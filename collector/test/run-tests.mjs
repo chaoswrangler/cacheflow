@@ -494,6 +494,149 @@ try {
   t('eightfold: next run goes straight to the unfiltered list', () => assert.ok(calls.slice(nf).filter(c => c.includes('pcsx/search')).slice(-2).every(c => c.includes('location=&'))));
 }
 
+{ // collection correctness: completeness states, evidence-based closures, Retry-After deferral, dedupe
+  const dir = await mkdtemp(join(tmpdir(), 'cf-cc-'));
+  const SRC = { employers: [
+    { employer: 'HtmlCo', type: 'security', sources: [{ id: 'html:co', ats: 'company_html', list_url: 'https://careers.htmlco.example/jobs', link_pattern: '/jobs/\\d+$' }] },
+    { employer: 'WdCo', type: 'security', sources: [{ id: 'wd:co', ats: 'workday', host: 'wdco.wd1.myworkdayjobs.com', tenant: 'wdco', site: 'Ext', queries: ['product manager', 'partner'], max_results: 60 }] },
+    { employer: 'SlowCo', type: 'security', sources: [{ id: 'gh:slow', ats: 'greenhouse', slug: 'slowco' }] },
+    { employer: 'DupCo', type: 'security', sources: [{ id: 'gh:dup', ats: 'greenhouse', slug: 'dupco' }] } ] };
+  await writeFile(join(dir, 'sources.json'), JSON.stringify(SRC));
+  let page2 = true, wdRefuseAt = null, wdDrop = new Set(), slow = 'ok'; const calls = [];
+  const wdPool = { 'product manager': Array.from({ length: 50 }, (_, i) => i), partner: Array.from({ length: 70 }, (_, i) => 100 + i) };
+  const H = (b, s = 200, h = {}) => new Response(typeof b === 'string' ? b : JSON.stringify(b), { status: s, headers: h });
+  const f = async (url, o = {}) => { calls.push(url);
+    if (url.endsWith('/robots.txt')) return H('User-agent: *\n');
+    if (url === 'https://careers.htmlco.example/jobs') return H('<a href="/jobs/101">Product Marketing Manager</a><a rel="next" href="/jobs?page=2">Next</a>');
+    if (url === 'https://careers.htmlco.example/jobs?page=2') return page2 ? H('<a href="/jobs/102">Director, Partnerships</a>') : H('down', 503);
+    if (/careers\.htmlco\.example\/jobs\/\d+$/.test(url)) return H('<h1>Role</h1><main>Location: New York, NY</main>');
+    if (url.includes('wdco.wd1.myworkdayjobs.com/wday/cxs/wdco/Ext/jobs')) {
+      const b = JSON.parse(o.body), q = b.searchText, off = b.offset;
+      if (wdRefuseAt && wdRefuseAt.q === q && wdRefuseAt.off === off) return H('slow', 429, { 'retry-after': '0' });
+      const pool = wdPool[q].filter(i => !wdDrop.has(i));
+      return H({ total: pool.length, jobPostings: pool.slice(off, off + 20).map(i => ({ externalPath: `/job/NY/Role_R${i}`, title: `Senior Product Manager ${i}`, locationsText: 'New York, NY', postedOn: 'Posted Today' })) });
+    }
+    if (url.includes('/wday/cxs/') && url.includes('/job/')) return H({ jobPostingInfo: { jobDescription: '<p>x</p>', location: 'New York, NY' } });
+    if (url.includes('boards/slowco')) return slow === 'ok' ? H({ jobs: [{ id: 1, title: 'Product Manager', absolute_url: 'u', location: { name: 'New York, NY' }, updated_at: '2026-11-18T00:00:00Z', content: '' }] }) : H('slow down', 429, { 'retry-after': '7200' });
+    if (url.includes('boards/dupco')) return H({ jobs: [1, 2].map(i => ({ id: i, title: 'Account Executive', absolute_url: 'u' + i, location: { name: 'New York, NY' }, requisition_id: 'REQ-' + i, updated_at: '2026-11-18T00:00:00Z', content: '' })) });
+    return H('nf', 404); };
+  const go = async h => { const r = await run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + h * 36e5), dataDir: dir, argv: {}, cfgOverride: { ...FAST, workday_max_per_query: 60 } });
+    return { r, S: Object.fromEntries(r.statusOut.sources.map(x => [x.id, x])), J: Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j])) }; };
+  const A = await go(0);
+  t('cc: complete runs are "complete" with last_success_at; run reports no incomplete sources', () => { assert.equal(A.S['html:co'].inventory, 'complete'); assert.ok(A.S['gh:slow'].last_success_at); assert.equal(A.r.statusOut.run.incomplete_sources, 0); assert.equal(A.r.statusOut.run.selection_limited, false); });
+  t('cc: workday search capped at max_results is reported and not complete', () => { assert.match(A.S['wd:co'].message, /COVERAGE: partner hit the 60-result limit/); });
+  t('cc: same board, same title + city, different requisition ids = separate openings', () => { assert.ok(!A.J['gh:dup:1'].dup_count && !A.J['gh:dup:2'].dup_count); });
+  // B: html page 2 fails; Workday "product manager" refused at offset 20; greenhouse asks for a 2-hour wait
+  page2 = false; wdRefuseAt = { q: 'product manager', off: 20 }; slow = 'wait';
+  const nB = calls.length;
+  const B = await go(4);
+  t('cc: html listing with a failed later page is partial, its roles stay open (stale), last_success_at unchanged', () => { assert.equal(B.S['html:co'].result, 'partial'); assert.equal(B.S['html:co'].inventory, 'partial'); assert.notEqual(B.J['html:co:102'].status, 'closed'); assert.equal(B.J['html:co:102'].stale, true); assert.equal(B.S['html:co'].last_success_at, A.S['html:co'].last_success_at); assert.ok(B.S['html:co'].last_data_at > A.S['html:co'].last_data_at); });
+  t('cc: workday refusal saves the interrupted search and offset', () => { const pd = B.S['wd:co'].checkpoint.pending; assert.equal(pd.q, 'product manager'); assert.equal(pd.offset, 20); });
+  t('cc: long Retry-After → no retry, next_eligible_at set', () => { assert.ok(B.S['gh:slow'].next_eligible_at > B.S['gh:slow'].checked_at); assert.equal(calls.slice(nB).filter(c => c.includes('boards/slowco')).length, 1); assert.match(B.S['gh:slow'].message, /120-minute wait/); });
+  t('cc: run reports incomplete sources', () => assert.ok(B.r.statusOut.run.incomplete_sources >= 2));
+  // C (+1h): greenhouse still deferred (not asked); Workday resumes "product manager" at 0 (offset 20 less one page) and finishes it
+  wdRefuseAt = null; wdDrop = new Set([5]); const nC = calls.length;
+  const C = await go(5);
+  const cWd = calls.slice(nC).filter(c => c.includes('wdco') && c.includes('/jobs'));
+  t('cc: deferred source is skipped until its time, roles kept', () => { assert.equal(C.S['gh:slow'].result, 'deferred'); assert.equal(calls.slice(nC).filter(c => c.includes('boards/slowco')).length, 0); assert.notEqual(C.J['gh:slow:1'].status, 'closed'); });
+  t('cc: workday resumes the interrupted search first; pending cleared when it completes', () => { assert.ok(cWd.length >= 1); assert.equal(C.S['wd:co'].checkpoint.pending, null); });
+  t('cc: the resumed scan began in the earlier run, where the role was seen, so it is not closed yet', () => assert.notEqual(C.J['wd:co:R5'].status, 'closed'));
+  wdDrop.add(150);
+  const D = await go(9);
+  t('cc: a role missing from a search read to its end (begun after it was last seen) closes with basis complete_search', () => { assert.equal(D.J['wd:co:R5'].status, 'closed'); assert.equal(D.J['wd:co:R5'].closed_basis, 'complete_search'); });
+  t('cc: capped search ("partner") drops a role: kept open', () => assert.notEqual(D.J['wd:co:R150'].status, 'closed'));
+  page2 = true;
+  // E: html back; F after 31 days with greenhouse still asking to wait (deferred) → unverified_expired
+  const E = await go(12);
+  t('cc: html recovered → complete again', () => assert.equal(E.S['html:co'].inventory, 'complete'));
+  slow = 'wait';
+  const F = await go(24 * 32);
+  t('cc: never re-verified for 30+ days → closed as unverified_expired', () => { const j = F.J['gh:slow:1']; assert.equal(j.status, 'closed'); assert.equal(j.closed_basis, 'unverified_expired'); });
+  const closedCsv = await readFile(join(dir, 'archive', '2026-12-closed.csv'), 'utf8').catch(() => '') + await readFile(join(dir, 'archive', '2026-11-closed.csv'), 'utf8').catch(() => '');
+  t('cc: archive closed rows carry the basis', () => { assert.match(closedCsv, /,basis\n/); assert.match(closedCsv, /complete_search|unverified_expired/); });
+}
+
+{ // stored details are refreshed once old (relevant roles only)
+  const { detailStale } = await import('../lib/adapters-server.mjs');
+  const now = new Date('2026-11-21T00:00:00Z');
+  t('details: relevant role read 40 days ago is due a refresh; 10 days ago is not; irrelevant never', () => {
+    assert.equal(detailStale({ title: 'Senior Product Manager', details_from: '2026-10-12T00:00:00Z' }, { now }), true);
+    assert.equal(detailStale({ title: 'Senior Product Manager', details_from: '2026-11-11T00:00:00Z' }, { now }), false);
+    assert.equal(detailStale({ title: 'Software Engineer II', details_from: '2026-01-01T00:00:00Z' }, { now }), false); });
+}
+
+{ // a board that suddenly returns far fewer roles: closures held for one run, then confirmed
+  const dir = await mkdtemp(join(tmpdir(), 'cf-drop-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'DropCo', type: 'security', sources: [{ id: 'gh:drop', ats: 'greenhouse', slug: 'dropco' }] }] }));
+  let n = 30;
+  const f = async url => url.includes('boards/dropco') ? new Response(JSON.stringify({ jobs: Array.from({ length: n }, (_, i) => ({ id: i, title: 'Product Manager ' + i, absolute_url: 'u' + i, location: { name: 'New York, NY' }, updated_at: '2026-11-18T00:00:00Z', content: '' })) }), { status: 200 }) : new Response('nf', { status: 404 });
+  const go = h => run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + h * 36e5), dataDir: dir, argv: {}, cfgOverride: FAST });
+  await go(0); n = 3;
+  const b = await go(4); const jb = b.jobsOut.jobs.find(j => j.uid === 'gh:drop:20');
+  t('drop guard: 30 → 3 roles holds closures and raises an alert', () => { assert.notEqual(jb.status, 'closed'); assert.match(b.statusOut.sources.find(x => x.id === 'gh:drop').message, /ALERT: 3 roles vs 30/); });
+  const c = await go(8); const jc = c.jobsOut.jobs.find(j => j.uid === 'gh:drop:20');
+  t('drop guard: a second scan confirming the drop closes them (complete_scan)', () => { assert.equal(jc.status, 'closed'); assert.equal(jc.closed_basis, 'complete_scan'); });
+}
+
+{ // EU Greenhouse board whose API can't be reached: public board page fallback; real network error cause shown
+  const dir = await mkdtemp(join(tmpdir(), 'cf-gheu-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'EuCo', type: 'security', sources: [{ id: 'gh:euco', ats: 'greenhouse', slug: 'euco', region: 'eu', board_url: 'https://job-boards.eu.greenhouse.io/euco' }] }] }));
+  const f = async url => {
+    if (url.includes('boards-api')) { const e = new TypeError('fetch failed'); e.cause = { code: 'ENOTFOUND', message: 'getaddrinfo ENOTFOUND' }; throw e; }
+    if (url.endsWith('/robots.txt')) return new Response('User-agent: *\n', { status: 200 });
+    if (url === 'https://job-boards.eu.greenhouse.io/euco') return new Response('<table><tr><td><a href="https://job-boards.eu.greenhouse.io/euco/jobs/4952570101"><p>Customer Success Manager</p><p>Remote</p></a></td></tr><tr><td><a href="/euco/jobs/4982982101"><p>Senior Security Analyst</p><p>Bucharest</p></a></td></tr></table>', { status: 200 });
+    if (url.includes('/euco/jobs/4952570101')) return new Response(`<script type="application/ld+json">${JSON.stringify({ '@type': 'JobPosting', title: 'Customer Success Manager', datePosted: '2026-11-18', description: '<p>Base salary $120,000 - $150,000.</p>', jobLocation: [{ address: { addressLocality: 'New York', addressRegion: 'NY', addressCountry: 'US' } }] })}</script>`, { status: 200 });
+    if (url.includes('/euco/jobs/')) return new Response('<h1>Senior Security Analyst</h1><main>Location: Bucharest, Romania</main>', { status: 200 });
+    return new Response('nf', { status: 404 }); };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: { ...FAST, http: { ...FAST.http, retries: 0 } } });
+  const s = r.statusOut.sources.find(x => x.id === 'gh:euco'), J = Object.fromEntries(r.jobsOut.jobs.map(j => [j.uid, j]));
+  t('greenhouse EU: API unreachable → public board page read, same job ids', () => { assert.equal(s.result, 'ok', s.message); assert.ok(J['gh:euco:4952570101']); assert.equal(J['gh:euco:4952570101'].salary.min, 120000); });
+  t('greenhouse EU: the network error cause (ENOTFOUND) is in the note', () => assert.match(s.message, /ENOTFOUND/));
+}
+
+{ // Amazon pay: location-line ranges ("… - 169,000.00 - 228,600.00 USD annually"), NY line preferred; job page read when missing
+  const C6 = await import('../../assets/shared/core.mjs');
+  const aws = 'The base salary range for this position is listed below. Your Amazon package will include sign-on payments.\nUSA, CA, San Francisco - 180,000.00 - 243,300.00 USD annually\nUSA, NY, New York - 169,000.00 - 228,600.00 USD annually\nUSA, WA, Seattle - 152,000.00 - 205,700.00 USD annually';
+  const s = C6.chooseSalary(C6.parseSalaries(aws));
+  t('aws pay: every location line parsed as base; New York chosen', () => { assert.equal(C6.parseSalaries(aws).length, 3); assert.equal(s.min, 169000); assert.equal(s.max, 228600); assert.equal(s.kind, 'base'); });
+  t('aws pay: hourly line read as hourly; dates and "million" figures ignored', () => {
+    const h = C6.chooseSalary(C6.parseSalaries('The base pay range for this position is listed below. USA, TN, Nashville - 61.50 - 85.00 USD hourly')); assert.equal(h.period, 'hour');
+    assert.equal(C6.parseSalaries('Revenue grew from 1,000,000 - 2,000,000 USD million').length, 0); });
+  const { ADAPTERS: SA2 } = await import('../lib/adapters-server.mjs');
+  const pages = [];
+  const http = { json: async () => ({ ok: true, status: 200, data: { jobs: [{ id_icims: '10608735', title: 'Sr Solutions Architect, Media Enablement Team', job_path: '/en/jobs/10608735/sr-solutions-architect', normalized_location: 'New York, New York, USA', country_code: 'USA', posted_date: 'November 18, 2026', description: 'Own publisher integrations.' }] } }),
+    text: async u => { pages.push(u); return { ok: true, status: 200, data: `<div>Preferred qualifications ...</div><p>The base salary range for this position is listed below.<br>USA, NY, New York - 169,000.00 - 228,600.00 USD annually</p>` }; } };
+  const a = await SA2.amazon({ id: 'amazon:jobs', ats: 'amazon', queries: ['solutions architect'] }, { employer: 'Amazon / AWS' }, http, { maxPerQuery: 100, prevStatusById: new Map(), prevBySource: new Map(), now: NOW });
+  const ej = C6.enrichJob(a.jobs[0]);
+  t('aws pay: missing from search data → posting page read, base range found', () => { assert.equal(pages[0], 'https://www.amazon.jobs/en/jobs/10608735/sr-solutions-architect'); assert.equal(ej.salary.min, 169000); assert.ok(a.jobs[0].pay_checked_at); });
+  const a2 = await SA2.amazon({ id: 'amazon:jobs', ats: 'amazon', queries: ['solutions architect'] }, { employer: 'Amazon / AWS' }, http, { maxPerQuery: 100, prevStatusById: new Map(), prevBySource: new Map([['amazon:jobs', new Map([['10608735', { ...ej, details_from: NOW.toISOString() }]])]]), now: NOW });
+  t('aws pay: next run reuses the stored pay without reading the page again', () => { assert.equal(pages.length, 1); assert.equal(C6.enrichJob(a2.jobs[0]).salary.min, 169000); });
+}
+
+{ // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run
+  const { sweepCycle } = await import('../lib/adapters-server.mjs');
+  const a = sweepCycle({}, { nowIso: 'T1', fromStart: false, wrapped: true, rows: 50 });
+  t('sweep: pass that began before tracking is not used for closures', () => { assert.ok(!a.ck.last_full_cycle_start); assert.match(a.early, /before pass tracking/); });
+  const b = sweepCycle(a.ck, { nowIso: 'T2', fromStart: true, wrapped: false, rows: 400 });
+  const c = sweepCycle(b.ck, { nowIso: 'T3', fromStart: false, wrapped: true, rows: 100 });
+  t('sweep: tracked pass from the top completes, start time recorded', () => { assert.equal(c.ck.last_full_cycle_start, 'T2'); assert.equal(c.ck.last_full_cycle_rows, 500); });
+  const d = sweepCycle(sweepCycle(c.ck, { nowIso: 'T4', fromStart: true, wrapped: false, rows: 100 }).ck, { nowIso: 'T5', fromStart: false, wrapped: true, rows: 50 });
+  t('sweep: a pass far shorter than the last one is not trusted', () => { assert.equal(d.ck.last_full_cycle_start, 'T2'); assert.match(d.early, /ended early/); });
+}
+
+{ // HTTP: a long Retry-After isn't waited out; the shared slot is released during backoff
+  const { Http: HttpClient } = await import('../lib/http.mjs');
+  let n = 0;
+  const h = new HttpClient({ minDelay: 1, maxDelay: 2, concurrency: 1, retries: 2, fetchImpl: async u => { n++; return new Response('x', { status: 429, headers: { 'retry-after': u.includes('long') ? '3600' : '0' } }); } });
+  const r = await h.json('https://a.example/long');
+  t('http: Retry-After 3600 → one request, defer flag, retryAfterMs', () => { assert.equal(n, 1); assert.equal(r.defer, true); assert.equal(r.retryAfterMs, 3600000); });
+  const order = [];
+  const h2 = new HttpClient({ minDelay: 1, maxDelay: 2, concurrency: 1, retries: 1, fetchImpl: async u => { order.push(u); return u.includes('slow') && order.filter(x => x.includes('slow')).length === 1 ? new Response('x', { status: 503, headers: { 'retry-after': '0.3' } }) : new Response('{}', { status: 200 }); } });
+  const p1 = h2.json('https://slow.example/a'); await new Promise(r => setTimeout(r, 30)); const p2 = h2.json('https://fast.example/b');
+  await Promise.all([p1, p2]);
+  t('http: another host gets the slot while one host waits to retry', () => assert.deepEqual(order.map(u => new URL(u).host), ['slow.example', 'fast.example', 'slow.example']));
+}
+
 { // roles no category recognizes are stored as "Other roles" (off by default), never silently dropped
   const C5 = await import('../../assets/shared/core.mjs');
   t('other: unrecognized title → "other"; recognized title never gets it', () => { assert.deepEqual(C5.classifyFunctions('Executive Business Administrator').functions, ['other']); assert.ok(!C5.classifyFunctions('Strategic Initiatives Lead').functions.includes('other')); });

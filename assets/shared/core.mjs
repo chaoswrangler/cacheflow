@@ -78,6 +78,10 @@ const NON_USD_AFTER = new RegExp(String.raw`^\s*(?:${NON_USD})\b|^\s*(?:pesos|eu
 const NON_USD_BEFORE = new RegExp(String.raw`(?:\b(?:CA|C|A|AU|NZ|MX|MX\$|SG|S|HK|R|NT|NZ)|£|€|₹|¥|\b(?:${NON_USD}))\s*$`);
 export const MAX_PLAUSIBLE_BASE = 1500000;
 const RANGE_RE = new RegExp(String.raw`(${CUR})\s?${NUM}\s*(?:USD|CAD)?\s*(?:\/\s?(?:yr|year|annum|hr|hour))?\s*(?:-|–|—|to|and)\s*(?:${CUR})?\s?${NUM}`, 'g');
+// Currency after the numbers, one range per location line (Amazon): "USA, NY, New York - 169,000.00 - 228,600.00 USD annually".
+// Comma-grouped figures only, so dates, IDs and counts don't match.
+const NUMC = String.raw`(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d{1,3}\.\d{2})`; // 169,000.00 or (hourly) 21.50
+const TRAIL_RE = new RegExp(String.raw`(?<![\d$.,])${NUMC}\s*(?:-|–|—|to)\s*${NUMC}\s*USD\b`, 'g');
 const UPTO_RE = new RegExp(String.raw`(\$)\s?${NUM}(?:\s?\/\s?(?:year|yr))?[^$]{0,90}?\bup to\s*\$\s?${NUM}`, 'gi');
 
 function toNumber(raw) {
@@ -104,7 +108,7 @@ function classifyKind(before, after) {
 export function parseSalaries(text = '') {
   const t = String(text);
   const out = [];
-  const push = (m, a, b, idx, len) => {
+  const push = (m, a, b, idx, len, trail = false) => {
     let min = toNumber(a), max = toNumber(b);
     if (min == null || max == null) return;
     if (max < min) [min, max] = [max, min];
@@ -120,13 +124,18 @@ export function parseSalaries(text = '') {
     const annMin = period === 'hour' ? min * 2080 : min;
     const annMax = period === 'hour' ? max * 2080 : max;
     if (annMax < 25000 || annMin > MAX_PLAUSIBLE_BASE) return; // grants, funding rounds and the like are not salaries
-    const kind = classifyKind(before, after);
-    const geo = /new york|\bnyc\b|\bny\b|tier ?1|zone ?(1|a)\b|highest/i.test(before.slice(-160) + after.slice(0, 40)) ? 'ny_or_top' : null;
+    // a location list ("…listed below. USA, NY, New York - … USD annually / USA, WA, Seattle - …") shares the header's
+    // label, so every line counts as base when the list is introduced as base pay
+    const kind = trail && /\bbase (salary|pay)\b/i.test(t.slice(Math.max(0, idx - 1500), idx)) ? 'base' : classifyKind(before, after);
+    // the location must be on this range's own line or clause, not the previous one in a list
+    const own = trail ? before.slice(-160).split(/\n|USD (?:annually|hourly|per (?:year|hour))|\b(?:annually|hourly)\b/i).pop() : before.slice(-160);
+    const geo = /new york|\bnyc\b|\bny\b|tier ?1|zone ?(1|a)\b|highest/i.test(own + (trail ? '' : after.slice(0, 40))) ? 'ny_or_top' : null;
     out.push({ min: Math.round(annMin), max: Math.round(annMax), period, kind, geo,
                snippet: (before.slice(-90) + m + after.slice(0, 30)).replace(/\s+/g, ' ').trim() });
   };
   for (const m of t.matchAll(RANGE_RE)) push(m[0], m[2], m[3], m.index, m[0].length);
   for (const m of t.matchAll(UPTO_RE)) push(m[0], m[2], m[3], m.index, m[0].length);
+  for (const m of t.matchAll(TRAIL_RE)) if (!out.some(r => r.snippet && r.snippet.includes(m[0]))) push(m[0], m[1], m[2], m.index, m[0].length, true);
   // de-dup identical ranges
   const seen = new Set();
   return out.filter(r => { const k = `${r.min}-${r.max}-${r.kind}`; if (seen.has(k)) return false; seen.add(k); return true; });
@@ -630,15 +639,16 @@ export function enrichJob(raw) {
    Each adapter receives `http` = { json(url, opts) } that returns {ok, status, data, error}.
    They return { result: 'ok'|'empty'|'http_error'|..., status, jobs: [raw], note, fields } */
 const iso = v => { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
-const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.error || r.statusText || '', ...extra });
+const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.detail || r.error || r.statusText || '', ...extra });
 
 export const ADAPTERS = {
   async greenhouse(src, emp, http, opt = {}) {
     // Greenhouse hosts boards in a US and an EU region and the slug doesn't say which: try the expected one, then the other.
     const hosts = src.region === 'eu' ? ['boards-api.eu.greenhouse.io', 'boards-api.greenhouse.io'] : ['boards-api.greenhouse.io', 'boards-api.eu.greenhouse.io'];
     let r, host;
-    for (host of hosts) { r = await http.json(`https://${host}/v1/boards/${src.slug}/jobs?content=true`); if (r.ok || (r.status && ![404].includes(r.status))) break; }
-    if (!r.ok) return fail(r);
+    const tried = [];
+    for (host of hosts) { r = await http.json(`https://${host}/v1/boards/${src.slug}/jobs?content=true`); if (r.ok || (r.status && ![404].includes(r.status))) break; tried.push(`${host}: ${r.status || r.detail || r.error}`); }
+    if (!r.ok) return fail(r, { note: `Greenhouse job board API: ${tried.join('; ') || (r.status || r.detail || r.error)}` });
     src._ghHost = host;
     const list = r.data?.jobs;
     if (!Array.isArray(list)) return { result: 'parse_error', status: r.status, jobs: [], note: 'No jobs array in response' };

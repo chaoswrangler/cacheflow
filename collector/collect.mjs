@@ -34,7 +34,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const prevStatus = await readJSON(join(dataDir, 'status.json'), { sources: [] });
   const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log, hostRules: cfg.host_rules || [] });
   const startedAt = now.toISOString();
-  const opt = { now, workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, eightfoldScanPages: cfg.eightfold_scan_pages_per_run || 40, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
+  const opt = { now, detailMaxAgeDays: cfg.detail_max_age_days || 30, workdayDetailCap: cfg.workday_detail_cap || 40, eightfoldMaxPerQuery: cfg.eightfold_max_per_query || 30, eightfoldScanPages: cfg.eightfold_scan_pages_per_run || 40, phenomMaxPerQuery: cfg.phenom_max_per_query || 30, workdayMaxPerQuery: cfg.workday_max_per_query || 60, maxPerQuery: cfg.max_per_query || 200, detailCap: cfg.detail_cap_per_source || 80, ghPayTransparency: !!cfg.greenhouse_pay_transparency, ghPayCap: cfg.greenhouse_pay_cap_per_board || 15 };
 
   // run counter (drives search rotation) and prior jobs per source (lets adapters skip re-fetching known details)
   const runSeq = (prevStatus.run?.seq || 0) + 1;
@@ -79,6 +79,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const fresh = new Map(); // source_id -> enriched jobs
   const closeHours = new Map(); // per-source wait before an unseen role in a chunked scan is closed
   const partialIds = new Set(), rotatedIds = new Set(); // refused part-way / searched a rotating subset
+  const unitInfo = new Map(), deferredIds = new Set(), holdIds = new Set(); // sources reporting per-search completeness; sources skipped on Retry-After
   const closeBefore = new Map(); // rotated sources that know when their last complete pass began: close only roles unseen since then
   await Promise.all(tasks.map(async ({ e, s }) => {
     const base = { id: s.id, employer: e.employer, ats: s.ats, tier: e.tier, verification: s.verification?.status, checked_at: now.toISOString() };
@@ -98,9 +99,24 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
         message: `${pv.bot_check || pv.result === 'blocked_challenge' ? 'Bot check (Cloudflare)' : 'Refused (403)'} on ${blockedRuns} runs in a row: this method is blocked from GitHub's servers. Paused; next attempt after ${new Date(new Date(lastTry).getTime() + 7 * 864e5).toISOString().slice(0, 10)}. Previous roles kept.` });
       return;
     }
+    // A server that asked (Retry-After) for a longer wait than one run allows is left alone until that time.
+    if (!only && pv?.next_eligible_at && now < new Date(pv.next_eligible_at)) {
+      statuses.push({ ...pv, ...base, result: 'deferred', checked_at: pv.checked_at, last_attempt_at: lastTry,
+        message: `Deferred: the site asked the collector to wait (Retry-After) until ${pv.next_eligible_at.replace('T', ' ').slice(0, 16)} UTC. Previous roles kept. ${pv.message ? `Last result: ${pv.message}` : ''}`.trim() });
+      deferredIds.add(s.id);
+      return;
+    }
+    // per-source view of the shared client: records this source's own long Retry-After answers
+    let deferMs = 0;
+    const track = r => { if (r?.defer && r.retryAfterMs > deferMs) deferMs = r.retryAfterMs; return r; };
+    const sh = Object.create(http);
+    sh.json = (u, o) => http.json(u, o).then(track);
+    sh.text = (u, o) => http.text(u, o).then(track);
     let out;
-    try { out = await adapter(s, e, http, opt); }
+    try { out = await adapter(s, e, sh, opt); }
     catch (err) { out = { result: 'adapter_error', jobs: [], note: String(err?.message || err) }; }
+    const nextEligible = deferMs ? new Date(now.getTime() + Math.min(deferMs, 7 * 864e5)).toISOString() : null;
+    if (nextEligible) out.note = `${out.note || ''}${out.note ? '; ' : ''}the site asked for a ${Math.round(deferMs / 60000)}-minute wait (Retry-After): no retries this run; next attempt after ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
     const siteUrl = s.host ? `https://${s.host}/` : (s.list_url || s.seed_url || s.base || s.board_url || null);
     const chal = siteUrl && http.challengeFor(siteUrl);
     if (chal && out.result !== 'ok' && out.result !== 'empty') {
@@ -112,7 +128,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     const enriched = (out.jobs || []).map(j => {
       if (!j.posted_at && j.posted_text) { const d = relativePosted(j.posted_text, now); if (d) { j.posted_at = d + 'T12:00:00.000Z'; j.posted_kind = 'relative_approx'; } }
       const e2 = enrichJob(j);
-      if (!j.reuse && j.desc_text) e2._blurb = roleBlurb(j.desc_text); // for the market archive only; not written to jobs.json
+      if (j.pay_checked_at) e2.pay_checked_at = j.pay_checked_at; // job page already checked for a pay statement
+      if (out.units && j._units) e2.seen_units = j._units; // which searches returned it: a completed one may later close it
+      if (!j.reuse && j.desc_text) { e2._blurb = roleBlurb(j.desc_text); e2.details_from = now.toISOString(); } // blurb: archive only, not written to jobs.json
       if (j.reuse) { // details were read on an earlier run: carry them forward instead of fetching again
         const pj = j.reuse; for (const k of REUSE) if (pj[k] !== undefined && k !== 'functions' && k !== 'eng_review' && k !== 'seniority') e2[k] = pj[k];
         e2.details_from = pj.details_from || pj.last_seen || null;
@@ -130,9 +148,20 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     const otherN = out.rotated ? stored.filter(j => !j.eng_review && classifyFunctions(j.title).functions.every(f => f === 'other')).length : 0;
     if (otherN) out.note = `${out.note || ''}${out.note ? '; ' : ''}${otherN} roles fit no job category and are stored as "Other roles"`;
     const ok = out.result === 'ok' || out.result === 'empty' || out.result === 'partial';
+    const complete = out.result === 'ok' || out.result === 'empty';
+    // A board that suddenly returns far fewer roles (a truncated or changed response) would close most of them at
+    // once. Hold those closures for one run: if the next complete scan agrees, they close then.
+    const prevTotal = pv?.jobs_total || 0, nowTotal = (out.jobs || []).length;
+    let dropHold = null;
+    if (complete && !out.rotated && !out.units && prevTotal >= 20 && nowTotal < prevTotal * 0.5) {
+      if (!pv?.drop_hold) { dropHold = { from: prevTotal, to: nowTotal, at: now.toISOString() }; holdIds.add(s.id);
+        out.note = `${out.note || ''}${out.note ? '; ' : ''}ALERT: ${nowTotal} roles vs ${prevTotal} last scan; closures held until the next scan confirms the drop`; }
+      else out.note = `${out.note || ''}${out.note ? '; ' : ''}drop from ${pv.drop_hold.from} confirmed by a second scan; unseen roles closed`;
+    }
     if (ok) fresh.set(s.id, stored);
     if (out.result === 'partial') partialIds.add(s.id);
     if (out.rotated) rotatedIds.add(s.id);
+    if (out.units && ok) unitInfo.set(s.id, out.units);
     if (out.close_after_hours) closeHours.set(s.id, out.close_after_hours);
     if (out.close_before !== undefined) closeBefore.set(s.id, out.close_before);
     const prev = prevStatusById.get(s.id);
@@ -141,8 +170,15 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       // a run refused before any results keeps its place, so the next run continues instead of starting over
       resume_offset: out.resume_offset ?? (ok ? null : prev?.resume_offset ?? null), us_facet: out.us_facet ?? prev?.us_facet ?? null,
       checkpoint: out.checkpoint ?? prev?.checkpoint ?? null,
-      last_success_at: ok ? base.checked_at : (prev?.last_success_at || null),
-      consecutive_failures: ok ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
+      // complete = the run read everything it set out to read. A partial run still returned data (last_data_at)
+      // but is not a successful sync and never closes roles by their absence.
+      inventory: complete ? 'complete' : out.result === 'partial' ? 'partial' : 'failed',
+      can_close: complete && (!out.rotated || closeBefore.get(s.id) != null || !!out.units),
+      last_success_at: complete ? base.checked_at : (prev?.last_success_at || null),
+      last_data_at: ok ? base.checked_at : (prev?.last_data_at || prev?.last_success_at || null),
+      last_complete_scan_at: out.checkpoint?.last_full_cycle_end || (complete && !out.rotated ? base.checked_at : (prev?.last_complete_scan_at || null)),
+      next_eligible_at: nextEligible, drop_hold: dropHold,
+      consecutive_failures: complete ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
       bot_check: out.bot_check || null,
       blocked_runs: (out.status === 403 || out.result === 'blocked_challenge') ? (prev?.blocked_runs || (prev?.http_status === 403 || prev?.result === 'blocked_challenge' ? prev?.consecutive_failures || 0 : 0)) + 1 : 0 });
     log(`${out.result.padEnd(14)} ${s.id} → ${(out.jobs || []).length} jobs`);
@@ -175,23 +211,42 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     merged.push(j); prevByUid.delete(j.uid);
   }
   const cutoff = now.getTime() - (cfg.history_days || 21) * 864e5;
+  // Closing a role means a scan that covered it finished without it. How that was established is recorded
+  // (closed_basis) so the archive can tell verified closures from expiries:
+  //   complete_scan   the whole board was read in one successful run (Greenhouse, Lever, Ashby, ...)
+  //   complete_pass   a multi-run full-list pass that began after the role was last seen finished cleanly
+  //   complete_search a search that had returned the role was later read to its end without it
+  //   unseen_window   older rotation rule (sources without pass tracking): unseen longer than a full rotation
+  //   unverified_expired  not confirmed by any scan for unverified_close_days (default 30): closed, but unverified
+  const expireDays = cfg.unverified_close_days || 30;
+  const closeAs = (p, basis) => ({ ...p, status: 'closed', closed_at: nowIso, closed_basis: basis, stale: false });
   for (const p of prevByUid.values()) {
-    if (fresh.has(p.source_id) && (partialIds.has(p.source_id) || rotatedIds.has(p.source_id)) && p.status !== 'closed') {
-      // only part of this source was searched: unseen roles stay open. Refused runs flag them; rotation closes
-      // a role only once it has gone unseen for longer than a full rotation.
-      const unseenH = (now.getTime() - new Date(p.last_seen).getTime()) / 36e5;
-      const cb = closeBefore.get(p.source_id);
-      const hoursOk = unseenH > (closeHours.get(p.source_id) || cfg.rotation_close_hours || 30);
-      // close_before sources: closed only after a complete pass that started after the role was last seen,
-      // and only once it has also gone unseen for the close window (a guard against listings shifting mid-pass)
-      const gone = closeBefore.has(p.source_id) ? !!cb && new Date(p.last_seen) < new Date(cb) && hoursOk
-        : !partialIds.has(p.source_id) && hoursOk;
-      if (gone) merged.push({ ...p, status: 'closed', closed_at: nowIso });
-      else merged.push(partialIds.has(p.source_id) ? { ...p, stale: true, stale_since: p.stale_since || nowIso } : p);
-    } else if (!ranIds.has(p.source_id) || !fresh.has(p.source_id)) {
-      // source not run this time, or failed: keep the role, flag it as unrefreshed
-      merged.push({ ...p, stale: ranIds.has(p.source_id) ? true : p.stale || false, stale_since: ranIds.has(p.source_id) ? (p.stale_since || nowIso) : p.stale_since });
-    } else if (p.status !== 'closed') merged.push({ ...p, status: 'closed', closed_at: nowIso });
+    const sid = p.source_id, unseenH = (now.getTime() - new Date(p.last_seen).getTime()) / 36e5;
+    const expired = p.status !== 'closed' && unseenH > expireDays * 24;
+    const ui = unitInfo.get(sid);
+    if (fresh.has(sid) && holdIds.has(sid) && p.status !== 'closed') merged.push({ ...p, stale: true, stale_since: p.stale_since || nowIso });
+    else if (fresh.has(sid) && (partialIds.has(sid) || rotatedIds.has(sid) || ui) && p.status !== 'closed') {
+      // only part of this source was read: an unseen role closes only on evidence that covered it
+      const cb = closeBefore.get(sid);
+      const hoursOk = unseenH > (closeHours.get(sid) || cfg.rotation_close_hours || 30);
+      let basis = null;
+      if (closeBefore.has(sid)) { if (cb && new Date(p.last_seen) < new Date(cb) && hoursOk) basis = 'complete_pass'; }
+      else if (ui) {
+        const su = p.seen_units || [];
+        if (su.some(u => ui.done[u] && new Date(p.last_seen) < new Date(ui.done[u]))) basis = 'complete_search';
+        else if (!su.length && !partialIds.has(sid) && hoursOk && rotatedIds.has(sid) && !Object.keys(ui.incomplete).length) basis = 'unseen_window'; // rows saved before searches were tracked
+      } else if (!partialIds.has(sid) && hoursOk) basis = 'unseen_window';
+      if (!basis && expired) basis = 'unverified_expired';
+      if (basis) merged.push(closeAs(p, basis));
+      else {
+        const unverified = partialIds.has(sid) || (ui && (p.seen_units || []).some(u => ui.incomplete[u]));
+        merged.push(unverified ? { ...p, stale: true, stale_since: p.stale_since || nowIso } : p);
+      }
+    } else if (!ranIds.has(sid) || !fresh.has(sid) || deferredIds.has(sid)) {
+      // source not run this time, deferred, or failed: keep the role, flag it as unrefreshed (until it expires)
+      if (expired) merged.push(closeAs(p, 'unverified_expired'));
+      else merged.push({ ...p, stale: ranIds.has(sid) ? true : p.stale || false, stale_since: ranIds.has(sid) ? (p.stale_since || nowIso) : p.stale_since });
+    } else if (p.status !== 'closed') merged.push(closeAs(p, 'complete_scan'));
     else if (new Date(p.closed_at).getTime() > cutoff) merged.push(p);
   }
 
@@ -210,8 +265,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
         for (let i = left.length - 1; i >= 0; i--) {
           const c = left[i];
           const hit = g.some(x => x.source_id === c.source_id
-            // same board: only the exact old rule (same title + same first location)
-            ? norm((x.locations || [])[0] || '') === norm((c.locations || [])[0] || '')
+            // same board, different posting ids: separate openings unless the requisition id says otherwise.
+            // Different req ids = different openings. No req ids on either: same title + same first location still groups.
+            ? (x.req_id && c.req_id ? norm(x.req_id) === norm(c.req_id) : !x.req_id && !c.req_id && norm((x.locations || [])[0] || '') === norm((c.locations || [])[0] || ''))
             // different boards: same requisition ID, or a city in common, or neither lists a location
             : (x.req_id && c.req_id && norm(x.req_id) === norm(c.req_id)) || (!x.locations?.length && !c.locations?.length) ||
               [...cities(x)].some(t => cities(c).has(t)) || norm((x.locations || [])[0] || '') === norm((c.locations || [])[0] || ''));
@@ -223,7 +279,8 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   }
   for (const g of groups) if (g.length > 1) {
     const officialFirst = g.slice().sort((a, b) => (a.source_class === 'official' ? 0 : 1) - (b.source_class === 'official' ? 0 : 1));
-    for (const j of g) { j.dup_count = g.length; j.dup_of = j === officialFirst[0] ? null : officialFirst[0].uid; }
+    const byReq = g.every(x => x.req_id && norm(x.req_id) === norm(g[0].req_id));
+    for (const j of g) { j.dup_count = g.length; j.dup_of = j === officialFirst[0] ? null : officialFirst[0].uid; j.dup_basis = byReq ? 'req_id' : 'title_location'; }
   }
 
   const win = weekWindow(now);
@@ -236,7 +293,11 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const summary = allStatus.reduce((acc, s) => { acc[s.result] = (acc[s.result] || 0) + 1; return acc; }, {});
   const finishedAt = new Date().toISOString();
   const jobsOut = { schema: 1, generated_at: finishedAt, window: win, counts: { open: merged.filter(j => j.status === 'open').length, closed_recent: merged.filter(j => j.status === 'closed').length, stale: merged.filter(j => j.stale).length }, jobs: merged };
-  const statusOut = { schema: 1, generated_at: finishedAt, run: { seq: runSeq, started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats, partial: !!(only || atsOnly || argv.tier || argv.limit) }, summary, sources: allStatus };
+  const statusOut = { schema: 1, generated_at: finishedAt, run: { seq: runSeq, started_at: startedAt, finished_at: finishedAt, sources_run: tasks.length, http: http.stats,
+    // selection_limited: this run was asked to collect only some sources (command-line flags).
+    // incomplete_sources: sources that ran but did not finish (partial, refused, failed, deferred).
+    selection_limited: !!(only || atsOnly || argv.tier || argv.limit),
+    incomplete_sources: allStatus.filter(x => x.inventory && x.inventory !== 'complete' || x.result === 'deferred').length }, summary, sources: allStatus };
   await mkdir(dataDir, { recursive: true });
   // market archive: one row per posting when first seen, one when it closes (data/archive/, append-only)
   try { const a = await archiveRun({ dataDir, jobs: merged, nowIso, registry, sources: allStatus, prevById: new Map(prevJobs.jobs.map(j => [j.uid, j])) }); log(`archive: ${a.added} new, ${a.closed} closed, ${a.changes} changes${a.backfilled ? `, backfilled ${a.backfilled}` : ''}${a.rolled ? `, compressed ${a.rolled}` : ''}; weekly rollup ${a.weeks} week(s)`); }
@@ -246,7 +307,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   await writeFile(join(dataDir, 'status.json'), JSON.stringify(statusOut, null, 1));
   log(`done: ${jobsOut.counts.open} open jobs, summary ${JSON.stringify(summary)}`);
   // a small batch of seed companies each full run; their boards are collected from the next run
-  const seedRes = !statusOut.run.partial ? await runSeeds(cfg.seed_probe_batch ?? 40) : null;
+  const seedRes = !statusOut.run.selection_limited ? await runSeeds(cfg.seed_probe_batch ?? 40) : null;
   return { jobsOut, statusOut, seedRes };
 }
 

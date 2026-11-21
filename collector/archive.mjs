@@ -14,10 +14,11 @@ import { roleBlurb } from '../assets/shared/core.mjs';
 
 export const POSTING_COLS = ['uid', 'first_seen', 'posted_at', 'employer', 'source_id', 'ats', 'sector', 'company_type', 'title', 'categories', 'seniority',
   'workplace', 'us', 'remote_us', 'states', 'locations', 'base_min', 'base_max', 'pay_kind', 'ote_min', 'ote_max', 'skills', 'duplicate_of', 'url', 'summary'];
-export const CLOSED_COLS = ['uid', 'closed_at', 'first_seen', 'days_open', 'employer', 'title'];
+export const CLOSED_COLS = ['uid', 'closed_at', 'first_seen', 'days_open', 'employer', 'title', 'basis'];
+const VERIFIED = new Set(['complete_scan', 'complete_pass', 'complete_search']);
 export const CHANGE_COLS = ['uid', 'changed_at', 'employer', 'title', 'change', 'was', 'now'];
 export const SOURCE_COLS = ['source_id', 'employer', 'ats', 'first_collected'];
-export const WEEKLY_COLS = ['week', 'sector', 'category', 'new_postings', 'new_same_store', 'closed', 'median_days_open', 'with_base_pay', 'median_base_min', 'median_base_max',
+export const WEEKLY_COLS = ['week', 'sector', 'category', 'new_postings', 'new_same_store', 'closed', 'closed_verified', 'median_days_open', 'with_base_pay', 'median_base_min', 'median_base_max',
   'ote_only', 'remote_us', 'employers_hiring'];
 
 const cell = v => {
@@ -107,7 +108,7 @@ export function weeklyRollup(postings, closed, sources) {
   const groups = new Map();
   const g = (week, sector, category) => {
     const k = `${week}\u0000${sector}\u0000${category}`;
-    if (!groups.has(k)) groups.set(k, { week, sector, category, n: 0, same: 0, closed: 0, days: [], base: 0, mins: [], maxs: [], ote: 0, remote: 0, emps: new Set() });
+    if (!groups.has(k)) groups.set(k, { week, sector, category, n: 0, same: 0, closed: 0, closedV: 0, days: [], base: 0, mins: [], maxs: [], ote: 0, remote: 0, emps: new Set() });
     return groups.get(k);
   };
   const cats = p => ['all', ...(p.categories ? p.categories.split('|') : ['uncategorized'])];
@@ -126,10 +127,12 @@ export function weeklyRollup(postings, closed, sources) {
   for (const c of closed) {
     const p = byUid.get(c.uid); if (!p || p.duplicate_of) continue;
     const week = weekOf(c.closed_at); if (!week) continue;
-    for (const sector of ['all', p.sector || 'unknown']) for (const cat of cats(p)) { const x = g(week, sector, cat); x.closed++; if (c.days_open !== '') x.days.push(+c.days_open); }
+    // days open only from verified closures: an expiry says when the collector gave up, not when the posting came down
+    const ver = !c.basis || VERIFIED.has(c.basis);
+    for (const sector of ['all', p.sector || 'unknown']) for (const cat of cats(p)) { const x = g(week, sector, cat); x.closed++; if (ver) { x.closedV++; if (c.days_open !== '') x.days.push(+c.days_open); } }
   }
   return [...groups.values()].sort((a, b) => a.week.localeCompare(b.week) || a.sector.localeCompare(b.sector) || a.category.localeCompare(b.category))
-    .map(x => ({ week: x.week, sector: x.sector, category: x.category, new_postings: x.n, new_same_store: x.same, closed: x.closed, median_days_open: median(x.days),
+    .map(x => ({ week: x.week, sector: x.sector, category: x.category, new_postings: x.n, new_same_store: x.same, closed: x.closed, closed_verified: x.closedV, median_days_open: median(x.days),
       with_base_pay: x.base, median_base_min: median(x.mins), median_base_max: median(x.maxs), ote_only: x.ote, remote_us: x.remote, employers_hiring: x.emps.size }));
 }
 
@@ -149,7 +152,7 @@ export async function archiveRun({ dataDir, jobs, nowIso, registry, sources = []
   const added = jobs.filter(isNew).sort((a, b) => a.first_observed.localeCompare(b.first_observed) || a.uid.localeCompare(b.uid))
     .map(j => postingRow(j, empBySource.get(j.source_id)));
   const closed = jobs.filter(isClosed).map(j => ({ uid: j.uid, closed_at: j.closed_at, first_seen: j.first_observed,
-    days_open: j.first_observed ? Math.round((new Date(j.closed_at) - new Date(j.first_observed)) / 864e5 * 10) / 10 : null, employer: j.employer, title: j.title }));
+    days_open: j.first_observed ? Math.round((new Date(j.closed_at) - new Date(j.first_observed)) / 864e5 * 10) / 10 : null, employer: j.employer, title: j.title, basis: j.closed_basis || '' }));
 
   // changes to postings already in the ledger
   const changes = [];
@@ -215,8 +218,16 @@ gzip-compressed (\`.csv.gz\`). Multi-value cells use \`|\` between values. Times
 | summary | Up to ~280 characters from the role section (not the full description). Postings backfilled from the first snapshot have one only when their description was stored. |
 
 ## YYYY-MM-closed.csv — one row when a posting disappears
-uid, closed_at, first_seen, days_open, employer, title. A posting is closed only after a complete scan of its board no
-longer lists it; failed or partial scans never close anything.
+uid, closed_at, first_seen, days_open, employer, title, basis. A closure means the collector stopped finding the posting;
+it is not evidence that anyone was hired. Failed or partial scans never close anything. basis says how it was established:
+| basis | Meaning |
+|---|---|
+| complete_scan | The whole board was read in one successful run and no longer lists it. |
+| complete_pass | A full-list pass over several runs (Google, Microsoft, AWS, Oracle) began after it was last seen and finished cleanly without it. |
+| complete_search | A search that had returned it was later read to its end without it (Workday, SmartRecruiters, Phenom, Avature, Cisco). |
+| unseen_window | Older rule for rows saved before searches were tracked: unseen for longer than a full rotation. |
+| unverified_expired | No scan could confirm it for 30 days (source blocked or failing). Treat as unknown, not as closed. |
+For time-to-close analysis use the verified bases only (the first three).
 
 ## YYYY-MM-changes.csv — one row when a known posting changes
 change is one of: \`pay\` (stated base range changed; was/now as min-max or pay kind), \`title\`, \`reposted\` (the
@@ -233,7 +244,7 @@ skipped; a posting with several categories counts under each.
 |---|---|
 | new_postings | Postings first seen that week. |
 | new_same_store | The same, counting only sources already collected before that week began. Use this for trends. |
-| closed, median_days_open | Postings that closed that week, and how long they had been open. |
+| closed, closed_verified, median_days_open | Postings that closed that week; those closed on verified evidence; median days open (verified closures only). |
 | with_base_pay, median_base_min, median_base_max | New postings stating a base range, and the medians of those ranges. |
 | ote_only, remote_us | New postings stating only OTE; new postings open to remote work in the US. |
 | employers_hiring | Distinct employers with a new posting that week. |

@@ -1,8 +1,49 @@
 // Adapters that only work server-side (no CORS) or need many paced requests.
-import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, FUNCTIONS, parseSalaries, classifyWorkplace } from '../../assets/shared/core.mjs';
+import { ADAPTERS as BASE, htmlToText, relativePosted, classifyFunctions, FUNCTIONS, parseSalaries, chooseSalary, classifyWorkplace } from '../../assets/shared/core.mjs';
 
 const iso = v => { if (!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
 const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r.status ? `http_${r.status}` : (r.error || 'network_error'), status: r.status || null, jobs: [], note: r.detail || r.statusText || r.error || '', ...extra });
+// Inventory units: each search (or list) an adapter pages through. A unit is "done" only when it was read to its end
+// with no failed page and no result cap. Only a done unit may close a role it no longer returns; a capped, failed or
+// skipped unit leaves its roles open. `done` records when the unit's scan started (a scan resumed from an earlier
+// run started then), so a role seen in that earlier part is not mistaken for missing.
+// Full-list sweeps that take several runs (AWS, Oracle): track when the current pass began and how many rows it read.
+// A pass counts as complete (and may close roles not seen since it began) only if it began at the top in a tracked
+// run, returned rows, and wasn't far shorter than the last complete pass.
+export function sweepCycle(prevCk, { nowIso, fromStart, wrapped, rows }) {
+  const ck = { ...(prevCk || {}) };
+  if (fromStart) { ck.cycle_started = nowIso; ck.cycle_rows = 0; }
+  ck.cycle_rows = (ck.cycle_rows || 0) + rows;
+  let early = null;
+  if (wrapped) {
+    const expected = ck.last_full_cycle_rows || 0;
+    if (!ck.cycle_started) early = 'this pass began before pass tracking, so it is not used for closures';
+    else if (!ck.cycle_rows) early = 'pass returned no rows, not used for closures';
+    else if (expected && ck.cycle_rows < 0.8 * expected) early = `pass ended early (${ck.cycle_rows} rows vs about ${expected}), not used for closures`;
+    else { ck.last_full_cycle_start = ck.cycle_started; ck.last_full_cycle_end = nowIso; ck.last_full_cycle_rows = ck.cycle_rows; }
+    ck.cycle_started = null; ck.cycle_rows = 0;
+  }
+  ck.updated_at = nowIso;
+  return { ck, early };
+}
+// Details read on an earlier run are reused only while recent: employers revise pay, remote rules or requirements
+// without changing a title. Relevant roles older than detail_max_age_days (default 30) are read again, within the
+// same per-run detail budget.
+export const detailStale = (pj, opt = {}) => {
+  const at = pj?.details_from || pj?.first_observed; if (!at) return false;
+  return relevantTitle(pj.title || '') && ((opt.now || new Date()) - new Date(at)) / 864e5 > (opt.detailMaxAgeDays || 30);
+};
+export function inventoryUnits() {
+  const seen = new Map(), done = {}, incomplete = {};
+  return {
+    saw(u, id) { id = String(id); let s = seen.get(id); if (!s) seen.set(id, s = new Set()); s.add(u); },
+    done(u, startedAt) { done[u] = startedAt; delete incomplete[u]; },
+    incomplete(u, why) { incomplete[u] = why; delete done[u]; },
+    of(id) { return [...(seen.get(String(id)) || [])]; },
+    out() { return { done, incomplete }; },
+    get anyIncomplete() { return Object.keys(incomplete).length > 0; },
+  };
+}
 // ATS boards referenced on an employer's own careers page (Apply links, embeds). Evidence for --probe, never auto-added.
 export function atsLinks(html) {
   const out = new Map(); const add = (ats, id, url) => { const k = `${ats}:${id}`; if (!out.has(k)) out.set(k, { ats, slug: id, evidence_url: url }); };
@@ -140,7 +181,18 @@ export const ADAPTERS = {
 
   // Greenhouse plus the optional pay_transparency detail call for relevant jobs with no salary in text
   async greenhouse(src, emp, http, opt) {
-    const out = await BASE.greenhouse(src, emp, http);
+    let out = await BASE.greenhouse(src, emp, http);
+    // EU-hosted boards: if neither job-board API address answers, read the board's own public page
+    // (job-boards.eu.greenhouse.io/<token>, the page job seekers browse) and its job pages instead.
+    if (!['ok', 'empty'].includes(out.result) && src.board_url && /^https:\/\/job-boards(\.eu)?\.greenhouse\.io\/[^/]+\/?$/.test(src.board_url) && !/^http_4/.test(out.result)) {
+      const token = src.board_url.replace(/\/$/, '').split('/').pop();
+      const page = await ADAPTERS.company_html({ ...src, list_url: src.board_url.replace(/\/$/, ''), link_pattern: `^/${token}/jobs/\\d+$`, max_pages: 10, detail_cap: src.detail_cap }, emp, http, opt);
+      if (['ok', 'partial'].includes(page.result)) {
+        page.jobs.forEach(j => { j.ats = 'greenhouse'; });
+        return { ...page, note: `job-board API unreachable (${out.note || out.result}); read the public board page instead: ${page.note}` };
+      }
+      out = { ...out, note: `${out.note}; public board page also failed (${page.result}: ${page.note})` };
+    }
     if (out.result !== 'ok' || !opt.ghPayTransparency) return out;
     let n = 0;
     for (const j of out.jobs) {
@@ -160,23 +212,27 @@ export const ADAPTERS = {
     const seen = new Map();
     const queries = src.queries?.length ? src.queries : [''];
     let anyOk = false, lastFail = null;
+    const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString(), cap = src.max_results || opt.maxPerQuery;
     for (const q of queries) {
-      for (let offset = 0; offset < (src.max_results || opt.maxPerQuery); offset += 100) {
+      let state = 'capped';
+      for (let offset = 0; offset < cap; offset += 100) {
         const u = `https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(company)}/postings?limit=100&offset=${offset}` + (q ? `&q=${encodeURIComponent(q)}` : '') + (src.country ? `&country=${src.country}` : '');
         const r = await http.json(u);
-        if (!r.ok) { lastFail = r; break; }
+        if (!r.ok) { lastFail = r; state = `page at ${offset} failed (${r.status || r.error})`; break; }
         anyOk = true;
         const list = r.data?.content || [];
-        for (const p of list) seen.set(p.id, p);
-        if (list.length < 100) break;
+        for (const p of list) { seen.set(p.id, p); U.saw(q || '*', p.id); }
+        const total = Number(r.data?.totalFound);
+        if (list.length < 100 || (Number.isFinite(total) && offset + 100 >= total)) { state = 'done'; break; }
       }
+      if (state === 'done') U.done(q || '*', startedAt); else U.incomplete(q || '*', state === 'capped' ? `stopped at the ${cap}-result limit` : state);
     }
     if (!anyOk) return fail(lastFail || {});
     const jobs = [];
     let details = 0;
     for (const p of seen.values()) {
       const L = p.location || {};
-      const j = { source_id: src.id, ats: 'smartrecruiters', employer: emp.employer, ext_id: p.id, req_id: p.refNumber || null,
+      const j = { source_id: src.id, ats: 'smartrecruiters', employer: emp.employer, ext_id: p.id, req_id: p.refNumber || null, _units: U.of(p.id),
         title: p.name, url: `https://jobs.smartrecruiters.com/${company}/${p.id}`,
         locations: [L.fullLocation || [L.city, L.region, L.country].filter(Boolean).join(', ')].filter(Boolean),
         country: L.country || null, remote_hint: L.remote === true, workplace_hint: L.remote ? 'remote' : (L.hybrid ? 'hybrid' : null),
@@ -189,7 +245,8 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings via ${queries.length} queries; ${details} detail pages`,
+    const inc = U.out().incomplete;
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, units: U.out(), note: `${seen.size} postings via ${queries.length} queries; ${details} detail pages${Object.keys(inc).length ? `; COVERAGE: ${Object.entries(inc).map(([k, v]) => `"${k === '*' ? 'all' : k}" ${v}`).join(', ')} (roles from those searches are kept, not closed)` : ''}`,
              fields: { posted_date: 'releasedDate', salary: 'detail text only', location: 'yes', remote: 'location.remote', req_id: 'refNumber' } };
   },
 
@@ -224,7 +281,7 @@ export const ADAPTERS = {
         department: p.departmentLabel || null, locations: [place || (remote ? 'Remote' : '')].filter(Boolean), country: L.country || null,
         remote_hint: remote, workplace_hint: remote ? 'remote' : null, posted_kind: 'unknown', desc_text: '' };
       const pj = prev.get(j.ext_id);
-      if (pj && pj.title === j.title) { j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (pj && !detailStale(pj, opt) && pj.title === j.title) { j.reuse = pj; reused++; jobs.push(j); continue; }
       if (relevantTitle(j.title) && details < (src.detail_cap || opt.detailCap || 40)) {
         details++;
         const d = await http.json(`${base}/${p.id}/detail`);
@@ -318,6 +375,8 @@ export const ADAPTERS = {
         if (bad) { diag = `full US list page ${page}: ${bad}`; break; }
         listPages++;
         if (pageBad) L.cycle_bad = true;
+        // page 1 of the whole US list can't be empty: a data block with no records there means the format changed
+        if (page === 1 && !rawN) { diag = 'full US list page 1: data block present but no job records (format changed?)'; L.cycle_bad = true; break; }
         if (total) L.total = total;
         const ids = found.map(g => g.id);
         // some result pages repeat the last page instead of returning nothing: same ids as the previous page = end
@@ -342,14 +401,18 @@ export const ADAPTERS = {
     // 2) a few high-priority searches (first page or two each), skipped once refused
     let searchPages = 0, searchNew = 0;
     if (!cut) search: for (const q of src.queries || []) {
+      let lastIds = null;
       for (let page = 1; page <= (src.max_pages || 1); page++) {
         const { r, found, rawN, bad } = await read(`${base}&q=${encodeURIComponent(q)}&page=${page}`);
         if (!r.ok) { lastFail = r; if (refused(r)) { cut = `search "${q}"`; break search; } break; }
         if (bad) { diag ||= `search "${q}" page ${page}: ${bad}`; break; }
         searchPages++;
+        // a page of already-seen roles doesn't mean later pages hold none; stop only at a short page or a repeated page
         let fresh = 0; for (const g of found) if (!seen.has(g.id)) { seen.set(g.id, g); fresh++; }
         searchNew += fresh;
-        if (rawN < PAGE || !fresh) break;
+        const ids = found.map(g => g.id).join();
+        if (rawN < PAGE || (page > 1 && ids === lastIds)) break;
+        lastIds = ids;
       }
     }
     ck.updated_at = nowIso;
@@ -357,7 +420,8 @@ export const ADAPTERS = {
     const parserNote = `parser check: ${chk.records} records, ${chk.invalid} failed the schema${chk.records ? ` (${Math.round(invalidShare * 100)}%)` : ''}, ${chk.noLoc} without a location, ${chk.noText} without description text${chk.badPages ? `; ${chk.badPages} page(s) mostly unreadable, so this pass can't close roles` : ''}`;
     if (!seen.size) {
       if (lastFail && !pages) return fail(lastFail, { note: `Google Careers refused or failed (${lastFail.status || lastFail.error}); previous roles kept.`, checkpoint: ck });
-      return { result: pages ? 'empty' : 'experimental_failed', status: 200, jobs: [], checkpoint: ck, note: pages ? `${pages} pages read; no valid job records (${parserNote})` : `Google Careers page format not recognized: ${diag || 'no data block found'}` };
+      // Google always has US openings: an HTTP 200 with no valid records is a parser failure, never "no jobs"
+      return { result: pages ? 'parse_error' : 'experimental_failed', status: 200, jobs: [], checkpoint: ck, note: pages ? `${pages} pages read but no valid job records (${parserNote}${diag ? `; ${diag}` : ''}); previous roles kept` : `Google Careers page format not recognized: ${diag || 'no data block found'}; previous roles kept` };
     }
     const jobs = [...seen.values()].map(g => ({ source_id: src.id, ats: 'google_careers', employer: emp.employer, ext_id: g.id, title: g.title,
       url: `https://www.google.com/about/careers/applications/jobs/results/${g.id}-${g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
@@ -387,20 +451,20 @@ export const ADAPTERS = {
     const blocked = path => rules.disallow.some(d => d && path.startsWith(d));
     if (blocked(`/${lang}/job/`)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows /${lang}/job/ pages; not collected` };
     // 1) discover job URLs
-    const found = new Map(); let via = '', lastFail = null;
+    const found = new Map(); let via = '', lastFail = null, listGap = null;
     const addUrl = (u, title) => { const m = u.match(/\/job\/([^/]+)\/([^/]+)\/(\d+)\/(\d+)/); if (m && !found.has(m[4])) found.set(m[4], { url: u.startsWith('http') ? u : base + u, slugTitle: title || m[2].replace(/-/g, ' '), slugCity: m[1].replace(/-/g, ' ') }); };
     for (const sm of (rules.sitemaps.length ? rules.sitemaps : [`${base}/sitemap.xml`]).slice(0, 3)) {
       const r = await http.text(sm); if (!r.ok) { lastFail = r; if (refused(r)) break; continue; }
       const locs = [...r.data.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map(m => m[1]);
       const children = /<sitemapindex/i.test(r.data) ? locs.filter(l => /job/i.test(l)).slice(0, 10) : [];
-      for (const c of children) { const cr = await http.text(c); if (cr.ok) for (const m of cr.data.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)) addUrl(m[1]); else if (refused(cr)) { lastFail = cr; break; } }
+      for (const c of children) { const cr = await http.text(c); if (cr.ok) for (const m of cr.data.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)) addUrl(m[1]); else { listGap = `job sitemap ${c} failed (${cr.status || cr.error})`; if (refused(cr)) { lastFail = cr; break; } } }
       for (const l of locs) addUrl(l);
       if (found.size) { via = 'sitemap'; break; }
     }
     if (!found.size && !blocked(`/${lang}/search-jobs`)) {
       via = 'search pages';
       for (let p = 1; p <= (src.max_pages || 100); p++) {
-        const r = await http.text(`${base}/${lang}/search-jobs?p=${p}`); if (!r.ok) { lastFail = r; break; }
+        const r = await http.text(`${base}/${lang}/search-jobs?p=${p}`); if (!r.ok) { lastFail = r; if (p > 1) listGap = `search page ${p} failed (${r.status || r.error})`; break; }
         const before = found.size;
         for (const m of r.data.matchAll(/<a[^>]+href="([^"]*\/job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/g)) addUrl(m[1], htmlToText(m[2]).split('\n')[0].trim() || null);
         if (found.size === before) break;
@@ -413,7 +477,7 @@ export const ADAPTERS = {
     for (const [id, f] of found) {
       const j = { source_id: src.id, ats: 'radancy', employer: emp.employer, ext_id: id, title: titleCase(f.slugTitle), url: f.url, locations: [titleCase(f.slugCity)], posted_at: null, posted_kind: 'unknown', desc_text: '' };
       const pj = prev.get(id);
-      if (pj && pj.title) { j.title = pj.title; if (pj.excerpt || pj.posted_kind !== 'unknown') { j.reuse = pj; reused++; jobs.push(j); continue; } }
+      if (pj && !detailStale(pj, opt) && pj.title) { j.title = pj.title; if (pj.excerpt || pj.posted_kind !== 'unknown') { j.reuse = pj; reused++; jobs.push(j); continue; } }
       if (relevantTitle(j.title) && !detailRefused && details < (src.detail_cap || opt.detailCap)) {
         details++;
         const r = await http.text(f.url);
@@ -433,9 +497,9 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    const partial = detailRefused;
+    const partial = detailRefused || !!listGap;
     return { result: partial ? 'partial' : 'ok', status: 200, jobs,
-      note: `${found.size} postings via ${via}; ${details} job pages read, ${reused} reused from earlier runs` + (partial ? '; job-page reads refused part-way, the rest are read next run' : '') + (rules.crawlDelay ? `; robots crawl-delay ${rules.crawlDelay}s` : ''),
+      note: `${found.size} postings via ${via}; ${details} job pages read, ${reused} reused from earlier runs` + (detailRefused ? '; job-page reads refused part-way, the rest are read next run' : '') + (listGap ? `; listing incomplete (${listGap}): roles not seen are kept, not closed` : '') + (rules.crawlDelay ? `; robots crawl-delay ${rules.crawlDelay}s` : ''),
       fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'JSON-LD identifier' } };
   },
 
@@ -460,26 +524,30 @@ export const ADAPTERS = {
     const form = (rs.data.match(/<form[^>]*SearchJobs[\s\S]*?<\/form>/i) || [''])[0];
     const kw = (form.match(/<input[^>]*type="(?:text|search)"[^>]*name="([^"]+)"/i) || form.match(/<input[^>]*name="([^"]+)"[^>]*type="(?:text|search)"/i) || [])[1];
     const action = abs((form.match(/action="([^"]+)"/i) || [])[1] || searchHref);
-    const found = new Map(); let pages = 0, lastFail = null, stopped = false;
+    const found = new Map(); let pages = 0, lastFail = null, stopped = false, unit = '*';
+    const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString();
     const harvest = html => { const before = found.size;
-      for (const m of html.matchAll(/<a[^>]+href="([^"]*JobDetail[^"]*?jobId=(\d+)[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2]) || (t && !found.get(m[2]).title)) found.set(m[2], { url: abs(m[1]), title: t || found.get(m[2])?.title || '' }); }
-      for (const m of html.matchAll(/<a[^>]+href="([^"]*\/(?:JobDetail|FolderDetail)\/[^"]*?\/(\d+))"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2])) found.set(m[2], { url: abs(m[1]), title: t }); }
+      for (const m of html.matchAll(/<a[^>]+href="([^"]*JobDetail[^"]*?jobId=(\d+)[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)) { U.saw(unit, m[2]); const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2]) || (t && !found.get(m[2]).title)) found.set(m[2], { url: abs(m[1]), title: t || found.get(m[2])?.title || '' }); }
+      for (const m of html.matchAll(/<a[^>]+href="([^"]*\/(?:JobDetail|FolderDetail)\/[^"]*?\/(\d+))"[^>]*>([\s\S]*?)<\/a>/gi)) { U.saw(unit, m[2]); const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2])) found.set(m[2], { url: abs(m[1]), title: t }); }
       return found.size - before; };
     const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")/i); return m ? abs(m[1]) : null; };
-    const crawl = async start => { let url = start, seen = new Set();
-      while (url && !seen.has(url) && pages < (src.max_pages || 40)) { seen.add(url); if (blocked(url)) break;
+    const crawl = async (start, u0) => { let url = start, seen = new Set(), why = null; unit = u0;
+      while (url && !seen.has(url)) {
+        if (pages >= (src.max_pages || 40)) { why = 'page limit reached'; break; }
+        seen.add(url); if (blocked(url)) { why = 'next page disallowed by robots.txt'; break; }
         const r = url === searchHref ? rs : await http.text(url); pages++;
-        if (!r.ok) { lastFail = r; if (refused(r)) stopped = true; break; }
-        harvest(r.data); url = nextOf(r.data); } };
+        if (!r.ok) { lastFail = r; if (refused(r)) stopped = true; why = `page failed (${r.status || r.error})`; break; }
+        harvest(r.data); url = nextOf(r.data); }
+      if (why) U.incomplete(u0, why); else U.done(u0, startedAt); };
     const queries = kw && src.queries?.length ? src.queries : [null];
-    for (const q of queries) { if (stopped) break; if (q === null) await crawl(searchHref); else { const u = new URL(action); u.searchParams.set(kw, q); await crawl(u.href); } }
+    for (const q of queries) { if (stopped) { U.incomplete(q ?? '*', 'not reached (refused earlier)'); continue; } if (q === null) await crawl(searchHref, '*'); else { const u = new URL(action); u.searchParams.set(kw, q); await crawl(u.href, q); } }
     if (!found.size) return lastFail ? fail(lastFail, { note: `Avature ${origin}: no job links found (${lastFail.status || lastFail.error})` }) : { result: 'empty', status: 200, jobs: [], note: `Avature ${origin}: search pages had no job links` };
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0, detailRefused = false;
     for (const [id, f] of found) {
-      const j = { source_id: src.id, ats: 'avature', employer: emp.employer, ext_id: id, title: f.title, url: f.url, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '' };
+      const j = { source_id: src.id, ats: 'avature', employer: emp.employer, ext_id: id, title: f.title, url: f.url, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '', _units: U.of(id) };
       const pj = prev.get(id);
-      if (pj && pj.title === f.title && (pj.excerpt || pj.posted_kind !== 'unknown')) { j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (pj && !detailStale(pj, opt) && pj.title === f.title && (pj.excerpt || pj.posted_kind !== 'unknown')) { j.reuse = pj; reused++; jobs.push(j); continue; }
       if (relevantTitle(f.title) && !detailRefused && details < (src.detail_cap || opt.detailCap)) {
         details++;
         const r = await http.text(f.url);
@@ -498,7 +566,7 @@ export const ADAPTERS = {
       jobs.push(j);
     }
     const partial = stopped || detailRefused;
-    return { result: partial ? 'partial' : 'ok', status: partial ? (lastFail?.status || 429) : 200, jobs,
+    return { result: partial ? 'partial' : 'ok', status: partial ? (lastFail?.status || 429) : 200, jobs, units: U.out(),
       note: `${found.size} postings from ${pages} search pages${kw ? ` (keyword field "${kw}", ${queries.length} searches)` : ' (no keyword field found: browsed all)'}; ${details} job pages read, ${reused} reused` + (partial ? '; refused part-way, the rest are read next run' : ''),
       fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'job id in the URL' } };
   },
@@ -514,11 +582,15 @@ export const ADAPTERS = {
     const r = await http.text(src.list_url);
     if (!r.ok) return fail(r, { note: `careers page ${src.list_url}: ${r.status || r.error}` });
     // Follow the site's own next-page links (rel=next, aria-label/class "next"), up to max_pages. Never constructed.
-    let pages = 1;
+    let pages = 1, listGap = null;
     { const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")/i); if (!m) return null; try { const n = new URL(m[1].replace(/&amp;/g, '&'), src.list_url); return n.origin === origin ? n.href : null; } catch { return null; } };
       const seenP = new Set([src.list_url]); let nx = nextOf(r.data);
-      while (nx && !seenP.has(nx) && pages < (src.max_pages || 10) && !rules.disallow.some(dp => dp && new URL(nx).pathname.startsWith(dp))) {
-        seenP.add(nx); const rn = await http.text(nx); if (!rn.ok) break; pages++; r.data += '\n' + rn.data; nx = nextOf(rn.data); } }
+      while (nx && !seenP.has(nx)) {
+        if (pages >= (src.max_pages || 10)) { listGap = `stopped at the ${src.max_pages || 10}-page limit with more pages listed`; break; }
+        if (rules.disallow.some(dp => dp && new URL(nx).pathname.startsWith(dp))) { listGap = 'next page disallowed by robots.txt'; break; }
+        seenP.add(nx); const rn = await http.text(nx);
+        if (!rn.ok) { listGap = `page ${pages + 1} failed (${rn.status || rn.error})`; break; } // later pages unread: don't close their roles
+        pages++; r.data += '\n' + rn.data; nx = nextOf(rn.data); } }
     const pat = new RegExp(src.link_pattern || '/careers/[^/?#"]+/?$');
     const links = new Map();
     // Query strings are kept (many sites identify a posting as ?jid=12345); the pattern may match the path or path+query.
@@ -537,7 +609,7 @@ export const ADAPTERS = {
       const id = qid || segs.find(x => /^\d{3,}$/.test(x)) || segs.pop();
       const j = { source_id: src.id, ats: 'company_html', employer: emp.employer, ext_id: id, title: linkText || titleCase(id.replace(/-/g, ' ')), url: href, locations: [], posted_at: null, posted_kind: 'unknown', desc_text: '' };
       const pj = prev.get(id);
-      if (pj && pj.title) { j.title = pj.title; j.reuse = pj; reused++; jobs.push(j); continue; }
+      if (pj && !detailStale(pj, opt) && pj.title) { j.title = pj.title; j.reuse = pj; reused++; jobs.push(j); continue; }
       if (rules.disallow.some(dp => new URL(href).pathname.startsWith(dp)) || details >= (src.detail_cap || opt.detailCap)) { jobs.push(j); continue; }
       details++;
       const d = await http.text(href);
@@ -559,7 +631,7 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: 'ok', status: 200, jobs, note: `${links.size} job links on the careers page; ${details} job pages read, ${reused} reused from earlier runs`,
+    return { result: listGap ? 'partial' : 'ok', status: 200, jobs, note: `${links.size} job links on ${pages} careers page${pages === 1 ? '' : 's'}; ${details} job pages read, ${reused} reused from earlier runs${listGap ? `; listing incomplete (${listGap}): roles not seen are kept, not closed` : ''}`,
              fields: { posted_date: 'JSON-LD datePosted if present, else unknown (first-observed used)', salary: 'page text', location: 'JSON-LD or "Location:" line', remote: 'page text', req_id: 'page URL' } };
   },
 
@@ -570,14 +642,20 @@ export const ADAPTERS = {
     const allQ = src.queries?.length ? src.queries : [''];
     // Rotation: sources with many searches run a different slice each run (full coverage every N runs).
     const nRot = allQ.length >= (opt.rotateMinQueries || 7) ? Math.max(1, opt.queryRotation || 1) : 1;
-    const slot = (opt.runSeq || 0) % nRot;
-    const queries = nRot > 1 ? allQ.filter((_, i) => i % nRot === slot) : allQ;
+    const prevSt = opt.prevStatusById?.get(src.id);
+    const nowIso = (opt.now || new Date()).toISOString();
+    // A search refused part-way is resumed next run (same rotation slot, same search, same offset less one page of
+    // overlap) instead of the rotation simply moving on and leaving that search's later pages unread.
+    const pend = prevSt?.checkpoint?.pending && allQ.includes(prevSt.checkpoint.pending.q) ? prevSt.checkpoint.pending : null;
+    const slot = pend ? pend.slot % nRot : (opt.runSeq || 0) % nRot;
+    let queries = nRot > 1 ? allQ.filter((_, i) => i % nRot === slot) : allQ;
+    if (pend && queries.includes(pend.q)) queries = [...queries.slice(queries.indexOf(pend.q)), ...queries.slice(0, queries.indexOf(pend.q))];
     const refused = r => r.status === 429 || r.status === 403;
-    const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0, capHit = [];
+    const seen = new Map(); let anyOk = false, lastFail = null, stoppedAt = null, resumeOffset = null, scanned = 0, capHit = [], pendingOut = null;
+    let U = inventoryUnits();
     const maxPer = src.max_results || opt.workdayMaxPerQuery || opt.maxPerQuery;
     // US-only listing: the tenant's own "United States" country filter, read from its response (never guessed) and
     // saved in status, so later runs page through US postings only. Far fewer pages means far fewer 429s.
-    const prevSt = opt.prevStatusById?.get(src.id);
     let facets = src.us_only === false ? {} : (prevSt?.us_facet ?? null), usFacetNew = null; // {} = checked, none found
     const page = async (q, offset) => {
       const r = await http.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ appliedFacets: facets || {}, limit: 20, offset, searchText: q }) });
@@ -585,32 +663,42 @@ export const ADAPTERS = {
       anyOk = true; scanned++;
       if (facets === null) { // first page this tenant has ever returned: look for its US filter
         const f = workdayUSFacet(r.data?.facets); facets = f || {};
-        if (f) { usFacetNew = f; seen.clear(); return { r, restart: true }; } // re-ask with the filter applied
+        if (f) { usFacetNew = f; seen.clear(); U = inventoryUnits(); return { r, restart: true }; } // re-ask with the filter applied
       }
       if (offset === 0 && Number(r.data?.total) >= 2000) capHit.push(q || '(all)'); // Workday stops paging at 2,000 results
       const list = r.data?.jobPostings || [];
-      for (const p of list) if (p.externalPath) seen.set(p.externalPath, p);
-      return { r, more: list.length === 20 };
+      for (const p of list) if (p.externalPath) { seen.set(p.externalPath, p); U.saw(q || '*', p.externalPath.split('_').pop()); }
+      const total = Number(r.data?.total);
+      return { r, more: list.length === 20 && !(Number.isFinite(total) && total > 0 && offset + 20 >= total) };
     };
     const fullScan = queries.length === 1 && queries[0] === '';
     if (fullScan) {
       // Every listing, paged by 20. If refused part-way, the next run resumes from that page and wraps around.
       const start = facets === null ? 0 : Math.min(prevSt?.resume_offset || 0, maxPer); // filter not known yet: offsets may change, start at 0
       const ranges = start ? [[start, maxPer], [0, start]] : [[0, maxPer]];
-      scan: for (const [from, to] of ranges) for (let offset = from; offset < to; offset += 20) {
+      let why = null, ended = false;
+      scan: for (const [from, to] of ranges) { for (let offset = from; offset < to; offset += 20) {
         const { r, more, restart } = await page('', offset);
         if (restart) { offset = -20; continue; } // filter found on page 1: start over US-only (offsets changed)
-        if (!r.ok) { lastFail = r; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
-        if (!more) break;
-      }
+        if (!r.ok) { lastFail = r; why = `failed at ${offset} (${r.status || r.error})`; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
+        if (!more) { ended = true; break; }
+      } }
+      if (!why && ended && !start) U.done('*', nowIso); else U.incomplete('*', why || (start ? 'resumed mid-list' : `stopped at the ${maxPer}-result limit`));
     } else {
       search: for (const [qi, q] of queries.entries()) {
-        for (let offset = 0; offset < maxPer; offset += 20) {
+        const resumeHere = pend && pend.q === q && pend.slot % nRot === slot;
+        const startedAt = resumeHere ? pend.started : nowIso;
+        let state = 'capped', from = resumeHere ? Math.max(0, pend.offset - 20) : 0;
+        for (let offset = from; offset < maxPer; offset += 20) {
           const { r, more, restart } = await page(q, offset);
           if (restart) { offset = -20; continue; }
-          if (!r.ok) { lastFail = r; if (refused(r)) { stoppedAt = qi; break search; } break; } // refused: stop, keep what we have
-          if (!more) break;
+          if (!r.ok) { lastFail = r; state = `failed at ${offset} (${r.status || r.error})`;
+            if (refused(r)) { stoppedAt = qi; pendingOut = { slot, q, offset, started: startedAt }; U.incomplete(q || '*', state); for (const q2 of queries.slice(qi + 1)) U.incomplete(q2 || '*', 'not reached'); break search; }
+            break; }
+          if (!more) { state = 'done'; break; }
         }
+        if (state === 'done') U.done(q || '*', startedAt);
+        else U.incomplete(q || '*', state === 'capped' ? `stopped at the ${maxPer}-result limit` : state);
         if (!anyOk && lastFail) break; // first search failed outright: config is wrong or site is refusing
       }
     }
@@ -624,12 +712,12 @@ export const ADAPTERS = {
     for (const p of seen.values()) {
       const approx = relativePosted(p.postedOn);
       const ext = p.externalPath.split('_').pop();
-      const j = { source_id: src.id, ats: 'workday', employer: emp.employer, ext_id: ext, req_id: (p.bulletFields || [])[0] || null,
+      const j = { source_id: src.id, ats: 'workday', employer: emp.employer, ext_id: ext, req_id: (p.bulletFields || [])[0] || null, _units: U.of(ext),
         title: p.title, url: `https://${src.host}/${src.site}${p.externalPath}`, locations: [p.locationsText].filter(Boolean),
         posted_at: approx ? approx + 'T12:00:00.000Z' : null, posted_kind: approx ? 'relative_approx' : 'unknown', posted_text: p.postedOn || null, desc_text: '' };
       const pj = prev.get(ext);
       const relevant = relevantTitle(p.title) && (usText(p.locationsText) || /locations/i.test(p.locationsText || ''));
-      if (relevant && pj && (pj.posted_kind === 'start_date' || pj.excerpt) && pj.title === p.title) { j.reuse = pj; reused++; } // already read: don't fetch again
+      if (relevant && pj && !detailStale(pj, opt) && (pj.posted_kind === 'start_date' || pj.excerpt) && pj.title === p.title) { j.reuse = pj; reused++; } // already read: don't fetch again
       else if (relevant && !detailRefused && details < (opt.workdayDetailCap || opt.detailCap)) {
         details++;
         const d = await http.json(`${base}${p.externalPath}`);
@@ -648,13 +736,17 @@ export const ADAPTERS = {
       jobs.push(j);
     }
     const partial = stoppedAt !== null;
+    const incU = Object.entries(U.out().incomplete).filter(([, v]) => /limit/.test(v)).map(([k]) => k === '*' ? 'all' : k);
     const note = [Object.keys(facets || {}).length ? 'US postings only (site filter)' : '', fullScan ? `${seen.size} postings from a full scan (${scanned} pages${resumeOffset !== null ? `, stopped at listing ${resumeOffset}; next run resumes there` : ''})`
         : `${seen.size} postings from ${partial ? `${stoppedAt} of ` : ''}${queries.length} searches` + (nRot > 1 ? ` (rotation ${slot + 1}/${nRot} of ${allQ.length} total)` : ''),
       `${details} detail pages read, ${reused} reused from earlier runs`,
       partial ? `refused (${lastFail.status}) part-way: results so far kept, unreached roles kept and marked not refreshed` : '',
       detailRefused ? 'detail reads stopped after a refusal' : '',
+      pendingOut ? `next run resumes "${pendingOut.q || 'all'}" at ${pendingOut.offset}` : '',
+      incU.length ? `COVERAGE: ${incU.join(', ')} hit the ${maxPer}-result limit before the end; roles past it are unread and nothing from those searches is closed` : '',
       capHit.length ? `WARNING: ${capHit.join(', ')} matched 2,000+ listings, Workday's paging limit; postings past 2,000 are unreachable. Narrow the search terms or split by location/job-family facets copied from the site` : ''].filter(Boolean).join('; ');
-    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: nRot > 1, resume_offset: resumeOffset, us_facet: facets, note,
+    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, rotated: true, units: U.out(),
+             checkpoint: { ...(prevSt?.checkpoint || {}), pending: pendingOut, updated_at: nowIso }, resume_offset: resumeOffset, us_facet: facets, note,
              fields: { posted_date: 'list: relative ("Posted 3 Days Ago"); detail: startDate', salary: 'detail description text', location: 'yes', remote: 'detail remoteType (if tenant sets it)', req_id: 'yes' } };
   },
 
@@ -673,29 +765,58 @@ export const ADAPTERS = {
       if (!anyOk && lastFail) break;
     }
     // full US list, a chunk per run, resuming where the last run stopped (every posting is covered every few runs)
-    let resume = null, scanned = 0, scanFrom = null, wrapped = false, cut = null;
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false, cut = null, rows = 0, cyc = null;
+    const prevStA = opt.prevStatusById?.get(src.id);
     if (src.full_scan && (anyOk || !lastFail)) {
-      let offset = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
+      scanFrom = Number(prevStA?.resume_offset) || 0;
+      let offset = scanFrom ? Math.max(0, scanFrom - 100) : 0; // one page of overlap when resuming: removals shift rows up
       while (scanned < (src.scan_pages_per_run || 40)) {
         const r = await http.json(`https://www.amazon.jobs/en/search.json?base_query=&normalized_country_code%5B%5D=${src.country || 'USA'}&result_limit=100&offset=${offset}&sort=recent`);
-        if (!r.ok) { lastFail = r; resume = offset; if ([403, 429].includes(r.status)) cut = offset; break; }
+        if (!r.ok) { lastFail = r; resume = Math.max(offset, scanFrom); if ([403, 429].includes(r.status)) cut = offset; break; }
         anyOk = true; scanned++;
         const list = r.data?.jobs || [];
         for (const p of list) seen.set(p.id_icims || p.id, p);
+        if (offset >= scanFrom) rows += list.length;
         if (list.length < 100) { resume = 0; wrapped = true; break; }
         offset += 100; resume = offset;
       }
+      if (scanned) cyc = sweepCycle(prevStA?.checkpoint, { nowIso: (opt.now || new Date()).toISOString(), fromStart: scanFrom === 0, wrapped, rows });
     }
     if (!anyOk) return fail(lastFail || {}, { resume_offset: opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
-    const scanNote = src.full_scan ? (scanned ? `; full US list: ${scanned} pages from ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : '; full US list not read this run') + (cut != null ? ` (refused at ${cut}: ${lastFail?.status})` : '') : '';
+    const ckA = cyc?.ck || prevStA?.checkpoint || {};
+    const scanNote = src.full_scan ? (scanned ? `; full US list: ${scanned} pages from ${scanFrom}${wrapped ? `, reached the end${cyc?.early ? ` (${cyc.early})` : ' — pass complete'}; next run starts over` : `, next run resumes at ${resume}`}` : '; full US list not read this run') + (cut != null ? ` (refused at ${cut}: ${lastFail?.status})` : '')
+      + (ckA.last_full_cycle_end ? `; last complete pass ${ckA.last_full_cycle_end.slice(0, 10)} (${ckA.last_full_cycle_rows} rows)` : '; no complete pass yet, so nothing is closed') : '';
     const jobs = [...seen.values()].map(p => ({ source_id: src.id, ats: 'amazon', employer: /amazon-web-services/i.test(p.business_category || '') ? 'Amazon / AWS (AWS)' : 'Amazon / AWS',
       ext_id: String(p.id_icims || p.id), req_id: String(p.id_icims || ''), title: p.title, url: `https://www.amazon.jobs${p.job_path || ''}`,
       locations: [p.normalized_location || p.location].filter(Boolean), country: p.country_code === 'USA' ? 'US' : p.country_code,
       department: [p.business_category, p.job_category].filter(Boolean).join(' / ') || null,
-      posted_at: iso(p.posted_date), posted_kind: 'posted_date',
+      posted_at: iso(p.posted_date), posted_kind: 'posted_date', _path: p.job_path || null,
       desc_text: htmlToText([p.description, p.basic_qualifications, p.preferred_qualifications].filter(Boolean).join('\n')) }));
-    return { result: cut != null ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut != null ? lastFail.status : 200, jobs, note: `${jobs.length} US postings via keyword searches${scanNote}`,
+    // The pay statement ("The base salary range … is listed below. USA, NY, New York - 169,000.00 - 228,600.00 USD annually")
+    // sits after the qualifications on the job page. When the search data doesn't carry it, read the posting's own page for
+    // relevant roles, a capped number per run, and remember the check so a role without pay isn't re-read every run.
+    const prevA = opt.prevBySource?.get(src.id) || new Map();
+    const nowA = opt.now || new Date();
+    let payPages = 0, payFound = 0, payReused = 0;
+    for (const j of jobs) {
+      const pj = prevA.get(j.ext_id);
+      if (chooseSalary(parseSalaries(j.desc_text))) continue;
+      if (!relevantTitle(j.title)) continue;
+      if (pj?.salary && pj.title === j.title && !detailStale(pj, opt)) { j.salary_struct = { ...pj.salary, src: 'earlier page read' }; payReused++; continue; }
+      if (pj?.pay_checked_at && (nowA - new Date(pj.pay_checked_at)) / 864e5 < 14) { j.pay_checked_at = pj.pay_checked_at; continue; }
+      if (!j._path || payPages >= (src.pay_page_cap ?? 40)) continue;
+      payPages++;
+      const r = await http.text(`https://www.amazon.jobs${j._path}`);
+      if (!r.ok) { if ([403, 429].includes(r.status)) break; continue; }
+      const text = htmlToText(r.data);
+      const at = text.search(/base (salary|pay) (range|for this position)/i);
+      if (at >= 0) { j.desc_text += '\n' + text.slice(at, at + 1500); if (chooseSalary(parseSalaries(j.desc_text))) payFound++; }
+      j.pay_checked_at = nowA.toISOString();
+    }
+    for (const j of jobs) delete j._path;
+    return { result: cut != null ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut != null ? lastFail.status : 200, jobs, note: `${jobs.length} US postings via keyword searches${scanNote}; pay: ${payPages} job pages read for the pay statement (${payFound} found), ${payReused} reused`,
              resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
+             checkpoint: src.full_scan ? ckA : undefined, close_before: src.full_scan ? (ckA.last_full_cycle_start || null) : undefined,
              fields: { posted_date: 'posted_date', salary: 'pay statement in qualification text (geo range)', location: 'yes', remote: 'text only', req_id: 'id_icims' } };
   },
 
@@ -705,11 +826,12 @@ export const ADAPTERS = {
     const phenom = await ADAPTERS.phenom({ ...src, base: src.phenom_base || 'https://careers.cisco.com/global/en' }, emp, http, opt);
     if (phenom.result === 'ok' || phenom.result === 'empty') return phenom;
     const seen = new Map(); let anyOk = false, lastFail = null, shapeMiss = 0;
+    const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString();
     void phenom;
     const cell = h => htmlToText(h).replace(/\s+/g, ' ').trim();
     for (const q of src.queries || []) {
       const r = await http.text(src.feed_url_template.replace('{q}', encodeURIComponent(q)));
-      if (!r.ok) { lastFail = r; if (!anyOk && r.status === 404) break; continue; }
+      if (!r.ok) { lastFail = r; U.incomplete(q, `failed (${r.status || r.error})`); if (!anyOk && r.status === 404) break; continue; }
       const rows = [...r.data.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].map(m => m[1]);
       let got = 0;
       for (const row of rows) {
@@ -721,14 +843,16 @@ export const ADAPTERS = {
         const id = (url.match(/(\d{5,})(?!.*\d{5,})/) || [url])[1] || url;
         const loc = cell(tds[3]), alt = tds[4] ? cell(tds[4]) : '';
         seen.set(id, { id, title: cell(a[2]) || cell(tds[0]), url, area: cell(tds[1]), locs: [loc, ...alt.split(/[;|]/).map(x => x.trim())].filter(Boolean) });
-        got++;
+        U.saw(q, id); got++;
       }
+      // the table shows the first 25 results only: a full table may hide more, so only a shorter one is complete
+      if (got && got < 25) U.done(q, startedAt); else U.incomplete(q, got ? 'first 25 results only' : 'no rows');
       if (got) anyOk = true; else { shapeMiss++; lastFail = { error: 'parse_error', detail: 'No job rows found in the results table: ' + htmlToText(r.data).slice(0, 120) }; }
     }
     if (!anyOk) return fail(lastFail || {});
     const jobs = []; let details = 0;
     for (const p of seen.values()) {
-      const j = { source_id: src.id, ats: 'cisco', employer: emp.employer, ext_id: p.id, req_id: p.id, title: p.title, url: p.url,
+      const j = { source_id: src.id, ats: 'cisco', employer: emp.employer, ext_id: p.id, req_id: p.id, title: p.title, url: p.url, _units: U.of(p.id),
         locations: p.locs, department: p.area || null, posted_at: null, posted_kind: 'unknown', desc_text: '' };
       if (relevantTitle(p.title) && (usText(p.locs.join(' ')) || !p.locs.length) && details < opt.detailCap) {
         details++;
@@ -737,22 +861,26 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings from ${(src.queries || []).length} searches (first 25 results each); ${details} detail pages${shapeMiss ? `; ${shapeMiss} searches returned no rows` : ''}`,
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, units: U.out(), note: `${seen.size} postings from ${(src.queries || []).length} searches (first 25 results each; full tables can't close roles); ${details} detail pages${shapeMiss ? `; ${shapeMiss} searches returned no rows` : ''}`,
              fields: { posted_date: 'not shown (first-observed date used)', salary: 'detail page text', location: 'table column', remote: 'location text', req_id: 'URL id' } };
   },
 
   async phenom(src, emp, http, opt) {
     const seen = new Map(); let anyOk = false, lastFail = null;
+    const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString();
     const grab = html => { const m = html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*phApp\./) || html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*<\/script>/); if (!m) return null; try { return JSON.parse(m[1]); } catch { return null; } };
+    const capN = src.max_per_query || opt.phenomMaxPerQuery || 30;
     for (const q of src.queries || ['']) {
-      for (let from = 0; from < (opt.phenomMaxPerQuery || 30); from += 10) {
+      let state = `stopped at the ${capN}-result limit`;
+      for (let from = 0; from < capN; from += 10) {
         const r = await http.text(`${src.base}/search-results?keywords=${encodeURIComponent(q)}&from=${from}&s=1`);
-        if (!r.ok) { lastFail = r; break; }
+        if (!r.ok) { lastFail = r; state = `page at ${from} failed (${r.status || r.error})`; break; }
         const ddo = grab(r.data); const block = ddo?.eagerLoadRefineSearch; const list = block?.data?.jobs;
-        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'Phenom page without eagerLoadRefineSearch.data.jobs' }; break; }
-        anyOk = true; for (const j of list) seen.set(String(j.jobSeqNo || j.jobId || j.reqId), j);
-        if (list.length < 10 || from + 10 >= (block.totalHits || 0)) break;
+        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'Phenom page without eagerLoadRefineSearch.data.jobs' }; state = 'page not readable'; break; }
+        anyOk = true; for (const j of list) { const id = String(j.jobSeqNo || j.jobId || j.reqId); seen.set(id, j); U.saw(q || '*', id); }
+        if (list.length < 10 || from + 10 >= (block.totalHits || 0)) { state = 'done'; break; }
       }
+      if (state === 'done') U.done(q || '*', startedAt); else U.incomplete(q || '*', state);
       if (!anyOk && lastFail) break;
     }
     if (!anyOk) return fail(lastFail || {});
@@ -760,7 +888,7 @@ export const ADAPTERS = {
     for (const p of seen.values()) {
       const locs = (p.multi_location?.length ? p.multi_location : [p.location || p.cityStateCountry]).filter(Boolean);
       const url = p.applyUrl && !/apply/i.test(p.applyUrl.split('?')[0].split('/').pop() || '') ? p.applyUrl : `${src.base}/job/${p.jobId || p.jobSeqNo}`;
-      const j = { source_id: src.id, ats: 'phenom', employer: emp.employer, ext_id: String(p.jobSeqNo || p.jobId || p.reqId), req_id: p.reqId || p.jobId || null, title: p.title,
+      const j = { source_id: src.id, ats: 'phenom', employer: emp.employer, ext_id: String(p.jobSeqNo || p.jobId || p.reqId), req_id: p.reqId || p.jobId || null, title: p.title, _units: U.of(String(p.jobSeqNo || p.jobId || p.reqId)),
         url, locations: locs, department: p.category || null, workplace_hint: /remote/i.test(p.workSiteFlexibility || p.type || '') ? 'remote' : null,
         posted_at: p.postedDate ? new Date(p.postedDate).toISOString() : null, posted_kind: p.postedDate ? 'posted_date' : 'unknown', desc_text: htmlToText(p.descriptionTeaser || '') };
       if (relevantTitle(p.title) && (usText(locs.join(' ')) || !locs.length) && details < opt.detailCap) {
@@ -771,15 +899,11 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${seen.size} postings via Phenom search; ${details} detail pages`,
+    const capped = Object.keys(U.out().incomplete).length;
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, units: U.out(), note: `${seen.size} postings via Phenom search; ${details} detail pages${capped ? `; ${capped} of ${(src.queries || ['']).length} searches not read to the end (result limit or failed page): their roles are kept, not closed` : ''}`,
       fields: { posted_date: 'postedDate', salary: 'detail description', location: 'location / multi_location', remote: 'work-site flags', req_id: 'reqId' } };
   },
 
-  // Eightfold PCSx (Microsoft): /api/pcsx/search (10 positions per page whatever num says) and /api/pcsx/position_details.
-  // No server-side location filter (location=United States was refused once): US eligibility is decided locally from
-  // every listed location. Each run: the keyword searches (fresh roles), then, with full_scan, the next chunk of the whole
-  // list, resuming where the last run stopped. A refusal (403/429) stops the run and returns 'partial', so roles not
-  // reached are kept, never closed. Details are read once per role and reused afterwards.
   // Eightfold (Microsoft). Microsoft's host starts refusing (429) after roughly 15 requests even at 7-12s spacing, so the
   // reader works incrementally under a per-run request budget instead of trying to cover everything in one run:
   //   - searches are filtered to the US on the server (location=), with a fallback if the filter returns nothing
@@ -860,7 +984,8 @@ export const ADAPTERS = {
     const ts = v => v ? new Date((v > 1e12 ? v : v * 1000)).toISOString() : null;
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0, detailRefused = false, skippedNonUS = 0;
-    for (const p of seen.values()) {
+    // new roles take the detail budget first, then roles whose stored details are due a refresh
+    for (const p of [...seen.values()].sort((a, b) => (prev.has(String(a.id)) ? 1 : 0) - (prev.has(String(b.id)) ? 1 : 0))) {
       const locs = ((p.standardizedLocations?.length ? p.standardizedLocations : p.locations) || []).map(l => typeof l === 'string' ? l : (l.name || l.location || '')).filter(Boolean);
       const allLocs = [...new Set([...locs, ...((p.locations || []).map(l => typeof l === 'string' ? l : (l.name || '')))])].filter(Boolean);
       // keep: any US location, no location, or a remote / multi-location posting that doesn't name a country yet
@@ -875,7 +1000,7 @@ export const ADAPTERS = {
         posted_at: ts(p.postedTs), posted_kind: p.postedTs ? 'posted_ts' : 'unknown', created_at: ts(p.creationTs), desc_text: '' };
       if (!j.posted_at && j.created_at) { j.posted_at = j.created_at; j.posted_kind = 'creation_ts (may predate public posting)'; }
       const pj = prev.get(j.ext_id);
-      if (pj && pj.title === j.title && (!relevantTitle(p.name) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
+      if (pj && !detailStale(pj, opt) && pj.title === j.title && (!relevantTitle(p.name) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
       if (!detailRefused && !cut && relevantTitle(p.name) && details < detailBudget) {
         details++;
         const d = await http.json(`${host}/api/pcsx/position_details?domain=${D}&position_id=${encodeURIComponent(p.id)}&hl=en`);
@@ -926,17 +1051,22 @@ export const ADAPTERS = {
         if (list.length < 50 || offset + 50 >= total) break;
       }
     }
-    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false, rows = 0, cyc = null;
+    const prevStO = opt.prevStatusById?.get(src.id);
     if (src.full_scan && !cut && (anyOk || !lastFail)) {
-      let offset = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
+      scanFrom = Number(prevStO?.resume_offset) || 0;
+      let offset = scanFrom ? Math.max(0, scanFrom - 50) : 0; // one page of overlap when resuming
       while (scanned < (src.scan_pages_per_run || 30)) {
         const { r, list, total } = await page('', offset);
-        if (!r.ok) { lastFail = r; resume = offset; if (refused(r)) cut = `full list at ${offset}`; break; }
+        if (!r.ok) { lastFail = r; resume = Math.max(offset, scanFrom); if (refused(r)) cut = `full list at ${offset}`; break; }
         scanned++;
+        if (offset >= scanFrom) rows += list.length;
         if (list.length < 50 || offset + 50 >= total) { resume = 0; wrapped = true; break; }
         offset += 50; resume = offset;
       }
+      if (scanned) cyc = sweepCycle(prevStO?.checkpoint, { nowIso: (opt.now || new Date()).toISOString(), fromStart: scanFrom === 0, wrapped, rows });
     }
+    const ckO = cyc?.ck || prevStO?.checkpoint || {};
     if (!anyOk) return fail(lastFail || {}, { resume_offset: opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
     const jobs = []; let details = 0, reused = 0, skippedNonUS = 0;
     const prev = opt.prevBySource?.get(src.id) || new Map();
@@ -949,7 +1079,7 @@ export const ADAPTERS = {
         workplace_hint: /remote/i.test(p.WorkplaceType || '') ? 'remote' : /hybrid/i.test(p.WorkplaceType || '') ? 'hybrid' : null,
         posted_at: iso(p.PostedDate), posted_kind: 'posted_date', desc_text: htmlToText(p.ShortDescriptionStr || '') };
       const pj = prev.get(j.ext_id);
-      if (pj && pj.title === j.title && (!relevantTitle(p.Title) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
+      if (pj && !detailStale(pj, opt) && pj.title === j.title && (!relevantTitle(p.Title) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
       if (relevantTitle(p.Title) && details < opt.detailCap) {
         details++;
         const d = await http.json(`https://${src.host}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails?expand=all&onlyData=true&finder=ById;Id=%22${p.Id}%22,siteNumber=${src.site}`);
@@ -958,10 +1088,12 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    const note = [`${seen.size} requisitions listed`, src.full_scan ? (scanned ? `full list: ${scanned} pages from ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : 'full list not read this run') : null,
+    const note = [`${seen.size} requisitions listed`, src.full_scan ? (scanned ? `full list: ${scanned} pages from ${scanFrom}${wrapped ? `, reached the end${cyc?.early ? ` (${cyc.early})` : ' — pass complete'}; next run starts over` : `, next run resumes at ${resume}`}` : 'full list not read this run') : null,
+      src.full_scan ? (ckO.last_full_cycle_end ? `last complete pass ${ckO.last_full_cycle_end.slice(0, 10)}` : 'no complete pass yet, so nothing is closed') : null,
       `${details} detail records read, ${reused} reused`, skippedNonUS ? `${skippedNonUS} outside the US skipped` : null, cut ? `REFUSED part-way (${cut}: ${lastFail?.status}); roles not reached are kept` : null].filter(Boolean).join('; ');
     return { result: cut ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut ? lastFail.status : 200, jobs, note,
       resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
+      checkpoint: src.full_scan ? ckO : undefined, close_before: src.full_scan ? (ckO.last_full_cycle_start || null) : undefined,
       fields: { posted_date: 'PostedDate', salary: 'detail text', location: 'yes', remote: 'WorkplaceType', req_id: 'Id' } };
   },
 };

@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121i';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121i';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121i';
+import * as C from './shared/core.mjs?v=20261121l';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121l';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121l';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -843,7 +843,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121i');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121l');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -1038,8 +1038,8 @@ function downloadCSV(rows, name) {
 
 /* ============================================================ sources */
 const VERIFIED = new Set(['verified_feed', 'verified_pattern', 'documented_public_json']);
-const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots', 'no_links_found', 'blocked_paused', 'blocked_challenge'].includes(r) ? 'warn' : 'bad';
-const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_challenge: "Bot check: the site's Cloudflare protection refused the collector as automated traffic. Retries can't fix it, so none were made. Previous roles kept; not evidence of zero jobs", blocked_paused: 'Refused (403) on 3+ runs in a row, so paused and retried weekly. Previous roles kept; not evidence of zero jobs', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", no_links_found: 'Careers page read, but no job links matched. The list may be built by JavaScript; not evidence of zero jobs', partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
+const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots', 'no_links_found', 'blocked_paused', 'blocked_challenge', 'deferred'].includes(r) ? 'warn' : 'bad';
+const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_challenge: "Bot check: the site's Cloudflare protection refused the collector as automated traffic. Retries can't fix it, so none were made. Previous roles kept; not evidence of zero jobs", blocked_paused: 'Refused (403) on 3+ runs in a row, so paused and retried weekly. Previous roles kept; not evidence of zero jobs', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", no_links_found: 'Careers page read, but no job links matched. The list may be built by JavaScript; not evidence of zero jobs', partial: 'Incomplete scan (refused, a page failed, or a result limit): roles found are kept, roles not reached stay open but unverified, and nothing is closed by its absence', deferred: 'The site asked the collector to wait (Retry-After) longer than one run allows; skipped until then. Previous roles kept', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
   http_429: 'Rate limited after retries', timeout: 'Timed out after retries', network_error: 'Network failure', parse_error: 'Response not in the expected shape', link_only: 'No public feed; open the careers link',
   not_fetchable: 'Needs ATS discovery (see verification note)', blocked_or_network: 'Browser blocked the request (CORS) or network failed; the collector can still read it', experimental_failed: 'Experimental adapter did not get data', never_run: 'Not collected yet', adapter_error: 'Adapter crashed; see message' };
 function sourceRows() {
@@ -1084,7 +1084,13 @@ function renderSources() {
       const n = held.get(r.s.id) || 0, last = run.last_success_at ? run.last_success_at.slice(0, 10) : null;
       return `<span class="st warn" title="This scan fetched nothing; that is not evidence of zero jobs (${n.toLocaleString()} role${n === 1 ? '' : 's'} held from earlier scans)">Scan blocked · previous results retained</span><div class="msg">Last successful sync: ${last ? esc(last) : 'never'}</div>`;
     }
-    return `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}`;
+    const n0 = `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}`;
+    const full = run.last_complete_scan_at ? run.last_complete_scan_at.slice(0, 10) : null;
+    if (r.result === 'partial' || r.result === 'deferred') {
+      const n = held.get(r.s.id) || 0;
+      return `${r.result === 'deferred' ? '' : n0 + '<br>'}<span class="st warn" title="Not every page or search was read; roles not reached are kept but unverified, and none are closed (${n.toLocaleString()} held)">Incomplete · previous results retained</span><div class="msg">Last full verification: ${full ? esc(full) : 'not yet'}${run.next_eligible_at ? ` · next try after ${esc(run.next_eligible_at.slice(0, 16).replace('T', ' '))} UTC` : ''}</div>`;
+    }
+    return `${n0}${run.inventory && full ? `<div class="msg" title="Most recent scan that read this source's whole list; only such scans close roles">Last full verification: ${esc(full)}</div>` : ''}`;
   };
   $('#srcTable').innerHTML = `<thead><tr><th>Employer</th><th>Sector / vertical</th><th>ATS</th><th>Verification</th><th>Last result</th><th>Jobs</th><th>Fields exposed</th><th>Last checked</th><th>Links</th><th></th></tr></thead><tbody>` +
     vis.map(r => {

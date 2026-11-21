@@ -61,7 +61,7 @@ export class Http {
   rule(host) {
     // per-host overrides, e.g. Workday tenants rate-limit hard, so they get slower pacing and more patient retries
     const r = this.hostRules.find(x => host.endsWith(x.suffix));
-    return { minDelay: r?.minDelayMs ?? this.minDelay, maxDelay: r?.maxDelayMs ?? this.maxDelay, retries: r?.retries ?? this.retries, backoffMs: r?.backoffMs ?? 2000, group: r?.group || null, transport: r?.transport || 'fetch' };
+    return { minDelay: r?.minDelayMs ?? this.minDelay, maxDelay: r?.maxDelayMs ?? this.maxDelay, retries: r?.retries ?? this.retries, backoffMs: r?.backoffMs ?? 2000, maxRetryAfterMs: r?.maxRetryAfterMs ?? 60000, group: r?.group || null, transport: r?.transport || 'fetch' };
   }
   // Requests queue per host. Hosts in a shared group (e.g. every Workday board, which sits on the same Workday
   // servers and is rate-limited as one) share a single queue: one request at a time across the whole group.
@@ -98,7 +98,9 @@ export class Http {
             this.stats.transport[R.transport] = (this.stats.transport[R.transport] || 0) + 1;
             res = await send(url, { method, body, signal: ctrl.signal,
               headers: { 'accept': as === 'json' ? 'application/json' : '*/*', 'user-agent': this.userAgent, ...headers } });
-          } catch (e) { err = e.name === 'AbortError' ? 'timeout' : `network_error: ${e.message}`; }
+          } catch (e) { // fetch reports "fetch failed"; the real reason (DNS, refused, reset, TLS) is in e.cause
+            const c = e.cause; const why = [c?.code, c?.reason || c?.message].filter(Boolean).join(' ');
+            err = e.name === 'AbortError' ? 'timeout' : `network_error: ${e.message}${why ? ` (${why})` : ''}`; }
           finally { clearTimeout(timer); }
           const status = res?.status;
           if (status) this.stats.byStatus[status] = (this.stats.byStatus[status] || 0) + 1;
@@ -109,12 +111,22 @@ export class Http {
             return { ok: false, status, statusText: res.statusText, challenge: true, mitigated, retryAfter: res.headers.get('retry-after'), server: res.headers.get('server'), attempts: attempt + 1 };
           }
           const retryable = err || status === 429 || (status >= 500 && status <= 599);
+          // Retry-After longer than the in-run limit: don't wait it out here and don't retry; report it so the
+          // collector can schedule the source for after that time (next_eligible_at)
+          const raH = res?.headers?.get?.('retry-after');
+          const raMs = raH ? (isFinite(Number(raH)) ? Number(raH) * 1000 : Math.max(0, new Date(raH) - Date.now())) : null;
+          if (status === 429 && raMs != null && raMs > (R.maxRetryAfterMs ?? 60000)) {
+            this.stats.deferred = (this.stats.deferred || 0) + 1;
+            this.log(`429 at ${host} asks for ${Math.round(raMs / 1000)}s; not retrying this run`);
+            return { ok: false, status, statusText: res.statusText, retryAfter: raH, retryAfterMs: raMs, defer: true, server: res.headers?.get?.('server') || null, attempts: attempt + 1 };
+          }
           if (retryable && attempt < R.retries) {
             let wait = Math.min(60000, R.backoffMs * 2 ** attempt + Math.random() * 1000);
-            const ra = res?.headers?.get?.('retry-after');
-            if (ra) { const s = Number(ra); wait = Math.min(60000, isFinite(s) ? s * 1000 : Math.max(0, new Date(ra) - Date.now())); }
+            if (raMs != null) wait = raMs;
             this.stats.retries++; this.log(`retry ${attempt + 1} ${url} (${err || status}) in ${Math.round(wait)}ms`);
-            await sleep(wait); continue;
+            // give up the shared request slot while waiting, so one throttled site can't hold up the others
+            this.release(); try { await sleep(wait); } finally { await this.slot(); }
+            continue;
           }
           if (err) return { ok: false, status: null, error: err.startsWith('timeout') ? 'timeout' : 'network_error', detail: err, attempts: attempt + 1 };
           if (!res.ok) return { ok: false, status, statusText: res.statusText, retryAfter: res.headers?.get?.('retry-after') || null, server: res.headers?.get?.('server') || null, attempts: attempt + 1 };

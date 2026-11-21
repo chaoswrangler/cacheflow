@@ -86,5 +86,8 @@
   "workday_rotate_min_queries": 7,
   "rotation_close_hours": 74,
   "eightfold_scan_pages_per_run": 40,
-  "seed_probe_batch": 40
+  "seed_probe_batch": 40,
+  "unverified_close_days": 30,
+  "detail_max_age_days": 30,
+  "_closure_note": "Roles close only on evidence that covered them (see README, Collection rules). unverified_close_days: a role no scan has confirmed for this long is closed with basis unverified_expired. detail_max_age_days: stored details for relevant roles are re-read after this long, within each source's detail budget."
 }
