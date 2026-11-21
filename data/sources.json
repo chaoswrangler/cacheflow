@@ -11449,12 +11449,42 @@
    "sector": "Consulting & analyst",
    "vertical": "Consulting & professional services",
    "tier": "named",
-   "careers_url": "https://www.accenture.com/us-en/careers",
-   "careers_url_verified": false,
+   "careers_url": "https://www.accenture.com/us-en/careers/jobsearch",
+   "careers_url_verified": true,
    "notes": [
-    "Accenture job pages are on accenture.com (accenture.com/us-en/careers/jobdetails?id=R…), built by JavaScript with no public feed found, so roles aren't collected; open Accenture's job search directly."
+    "Accenture's job pages on accenture.com apply through Workday; roles are collected from that Workday board with keyword searches (Accenture lists far more roles than one full scan can cover)."
    ],
-   "sources": [],
+   "sources": [
+    {
+     "id": "wd:accenture",
+     "ats": "workday",
+     "host": "accenture.wd103.myworkdayjobs.com",
+     "tenant": "accenture",
+     "site": "AccentureCareers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "cyber",
+      "security strategy",
+      "solutions",
+      "account executive",
+      "marketing",
+      "customer success"
+     ],
+     "board_url": "https://accenture.wd103.myworkdayjobs.com/AccentureCareers",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Public Workday job page accenture.wd103.myworkdayjobs.com/en-US/AccentureCareers/job/…_R00361496 (US location filter), supplied by the user 2026-11-21; accenture.com Apply buttons point to the same board. Keyword searches, US only.",
+      "date": "2026-11-21"
+     }
+    }
+   ],
    "id": "accenture",
    "linkedin_jobs_url": "https://www.linkedin.com/jobs/search/?keywords=Accenture",
    "type": "advisory",

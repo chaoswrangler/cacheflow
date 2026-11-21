@@ -652,4 +652,23 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
   const g = await SA.google_careers({ id: 'google:careers', queries: ['x'], max_pages: 1, full_scan: true, scan_pages_per_run: 10 }, emp, mk(hG), { prevStatusById: new Map([['google:careers', { resume_offset: 2 }]]) });
   t('google full sweep: resumes at the saved page and wraps to 1 at the end', () => { assert.ok(calls.some(c => /page=2/.test(c) && !/q=/.test(c))); assert.equal(g.resume_offset, 1); });
 }
+{ // Ashby: on-target earnings entered in the Salary field are not base pay
+  const job = (extra, comp) => ({ id: 'a' + Math.random(), title: 'Sales Manager, Majors - East', jobUrl: 'u', location: 'New York, NY', isListed: true,
+    descriptionPlain: extra, compensation: comp });
+  const sal = { compensationType: 'Salary', currencyCode: 'USD', minValue: 240000, maxValue: 300000, interval: '1 YEAR' };
+  const feed = { ok: true, status: 200, data: { jobs: [
+    job('Great role.', { compensationTierSummary: '$240K – $300K OTE • Offers Equity', summaryComponents: [sal] }),
+    job('Compensation: OTE of $240,000 - $300,000 plus equity.', { compensationTierSummary: '$240K – $300K • Offers Equity', summaryComponents: [sal] }),
+    job('Base salary $150,000 - $170,000; OTE $240,000 - $300,000.', { compensationTierSummary: '$240K – $300K • Offers Equity', summaryComponents: [sal] }),
+    job('Great role.', { compensationTierSummary: '$240K – $300K • Offers Equity', summaryComponents: [sal] }),
+  ] } };
+  const { ADAPTERS: SH, enrichJob } = await import('../../assets/shared/core.mjs');
+  const out = await SH.ashby({ id: 'ashby:serval', slug: 'Serval' }, { employer: 'Serval' }, { json: async () => feed });
+  const pay = out.jobs.map(r => enrichJob({ ...r, employer: 'Serval' }).salary);
+  t('ashby: OTE in the summary line or description is not base; a stated base wins; plain salary stays base', () => {
+    assert.equal(pay[0].kind, 'ote_only'); assert.equal(pay[1].kind, 'ote_only');
+    assert.equal(pay[2].min, 150000); assert.equal(pay[2].max, 170000);
+    assert.equal(pay[3].min, 240000); assert.equal(pay[3].kind, 'base');
+  });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

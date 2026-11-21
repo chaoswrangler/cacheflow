@@ -34,7 +34,7 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 
 | File | Contents |
 |---|---|
-| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 432 employers, 428 sources. |
+| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 432 employers, 429 sources. |
 | `data/discovered.json` | Employers the seed probe found and verified. Read alongside `sources.json`. |
 | `data/seeds.json` | 819 candidate companies (YC directory, VC portfolios). Not collected directly. |
 | `data/jobs.json` | Normalized roles with history: posting, updated and first-seen dates, salary with its source text, closed and stale flags |
@@ -91,7 +91,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-156 offline tests against mocked API responses. The workflow runs them before every collection.
+157 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 

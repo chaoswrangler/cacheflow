@@ -634,14 +634,23 @@ export const ADAPTERS = {
         if (sal?.min) comp = { minValue: sal.min, maxValue: sal.max, interval: sal.period === 'hour' ? '1 HOUR' : '1 YEAR', currencyCode: 'USD', fromText: true };
       }
       const per = comp && /hour/i.test(comp.interval || '') && comp.minValue < 1000 ? 'hour' : 'year';
+      // Sales roles often put on-target earnings in Ashby's "Salary" field and say so only in the summary line,
+      // a tier name or the description ("OTE: $240,000 - $300,000"). Then it isn't base pay.
+      const desc = j.descriptionPlain || htmlToText(j.descriptionHtml || '');
+      const C = j.compensation || {};
+      const labels = [C.compensationTierSummary, C.scrapeableCompensationSalarySummary, comp?.summary, comp?.label,
+        ...(C.compensationTiers || []).map(t => `${t.title || ''} ${t.tierSummary || ''}`)].filter(Boolean).join(' ');
+      const close = (a, b) => a && b && Math.abs(a - b) <= Math.max(1000, 0.01 * b);
+      const oteComp = !!comp && (/\bote\b|on[- ]target|commission|\bvariable\b|total target/i.test(labels) ||
+        parseSalaries(desc).some(r => (r.kind === 'ote' || r.kind === 'total') && close(r.min, comp.minValue) && close(r.max, comp.maxValue || comp.minValue)));
       return {
         source_id: src.id, ats: 'ashby', employer: emp.employer, ext_id: j.id, title: j.title, url: j.jobUrl,
         locations: [j.location, ...(j.secondaryLocations || []).map(s => s.location)].filter(Boolean),
         department: j.department || j.team || null,
         workplace_hint: j.workplaceType ? j.workplaceType.toLowerCase().replace('onsite', 'onsite') : (j.isRemote ? 'remote' : null),
         remote_hint: j.isRemote === true, country: j.address?.postalAddress?.addressCountry || null,
-        posted_at: iso(j.publishedAt), posted_kind: 'published', desc_text: j.descriptionPlain || htmlToText(j.descriptionHtml || ''),
-        salary_struct: comp && comp.minValue ? { min: per === 'hour' ? comp.minValue * 2080 : comp.minValue, max: per === 'hour' ? (comp.maxValue || comp.minValue) * 2080 : (comp.maxValue || comp.minValue), period: per, kind: 'base', src: 'structured', currency: comp.currencyCode || null, snippet: `Ashby compensation: ${j.compensation?.compensationTierSummary || ''}` } : null,
+        posted_at: iso(j.publishedAt), posted_kind: 'published', desc_text: desc,
+        salary_struct: comp && comp.minValue ? { min: per === 'hour' ? comp.minValue * 2080 : comp.minValue, max: per === 'hour' ? (comp.maxValue || comp.minValue) * 2080 : (comp.maxValue || comp.minValue), period: per, kind: oteComp ? 'ote' : 'base', src: 'structured', currency: comp.currencyCode || null, snippet: `Ashby compensation: ${j.compensation?.compensationTierSummary || ''}` } : null,
       };
     });
     return { result: jobs.length ? 'ok' : 'empty', status: r.status, jobs,
