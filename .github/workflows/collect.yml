@@ -2,10 +2,9 @@ name: Collect jobs
 
 on:
   schedule:
-    # Weekdays roughly 7am, 11am, 3pm, 7pm US Eastern (cron is UTC; minute 17 avoids the top-of-hour rush)
-    - cron: '17 11,15,19,23 * * 1-5'
-    # Weekends once a day
-    - cron: '17 15 * * 0,6'
+    # GitHub drops and delays cron runs, so wake hourly (6am-7pm ET in either DST state) and let
+    # collector/gate.mjs collect only when a slot is due: weekdays 6am, 10am, 2pm, 6pm ET; weekends 10am ET.
+    - cron: '17 10-23 * * *'
   workflow_dispatch:
     inputs:
       args:
@@ -33,17 +32,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0 (Node 24)
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0 (Node 24)
         with:
           node-version: '22'
 
+      - name: Is a collection due?
+        id: gate
+        if: ${{ github.event_name == 'schedule' }}
+        run: node collector/gate.mjs
+
       - name: Offline tests
+        if: ${{ steps.gate.outputs.run != 'false' }}
         run: node collector/test/run-tests.mjs
 
       - name: Collect
-        if: ${{ !inputs.digest_only }}
+        if: ${{ steps.gate.outputs.run != 'false' && !inputs.digest_only }}
         env:
           ARGS: ${{ inputs.args }}
           ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
@@ -52,7 +57,7 @@ jobs:
         run: node collector/collect.mjs $ARGS
 
       - name: Email digest
-        if: ${{ github.event_name == 'schedule' || inputs.send_digest }}
+        if: ${{ steps.gate.outputs.run != 'false' && (github.event_name == 'schedule' || inputs.send_digest) }}
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ALERT_FROM: ${{ secrets.ALERT_FROM }}
@@ -64,11 +69,16 @@ jobs:
         run: node collector/digest.mjs
 
       - name: Commit data
+        if: ${{ steps.gate.outputs.run != 'false' }}
         run: |
           git config user.name "cache-flow-bot"
           git config user.email "cache-flow-bot@users.noreply.github.com"
           git add data/
           if git diff --cached --quiet; then echo "No data changes"; exit 0; fi
           git commit -m "data: collection run $(date -u +%Y-%m-%dT%H:%MZ)"
-          git pull --rebase --autostash || true
-          git push
+          # retry if a commit landed on main while collecting (e.g. an upload from github.dev)
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash && git push && exit 0
+            git rebase --abort 2>/dev/null || true; sleep $((i * 15))
+          done
+          echo "push failed after retries"; exit 1
