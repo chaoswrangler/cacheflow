@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121c';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121c';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121c';
+import * as C from './shared/core.mjs?v=20261121d';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121d';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121d';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -389,7 +389,8 @@ function critSummary() {
   const rule = { starts: 'whole range ≥', starts_reaches: 'reaches', plus_unknown: 'reaches (or unstated)', starts_unknown: 'whole range ≥ (or unstated)', any: 'any' }[c.salMode] || '';
   const win = c.window === 'custom' ? (currentWindow()?.label || 'any date').toLowerCase() : ({ week: 'this week', d7: '7 days', d14: '14 days', d30: '30 days', d60: '60 days', d90: '90 days', all: 'any date' }[c.window] || c.window);
   const locs = [...(c.places || []).filter(p => p.on).map(placeLabel), c.lOther && 'anywhere else in the US'].filter(Boolean).join(' + ') || 'no locations';
-  return `${n} categor${n === 1 ? 'y' : 'ies'} · ${[+c.minBase && 'base starts ≥ ' + money(c.minBase), +c.maxBase && 'upper range ≥ ' + money(c.maxBase)].filter(Boolean).join(', ') || 'any pay'}${c.salMode === 'starts_unknown' ? ' (or unstated)' : ''} · ${win} · ${locs}`;
+  const inc = [c.payNoComp && 'unstated', c.payOte && 'OTE-only'].filter(Boolean);
+  return `${n} categor${n === 1 ? 'y' : 'ies'} · ${[+c.targetBase && 'base includes ' + money(c.targetBase), +c.minBase && 'base starts ≥ ' + money(c.minBase), +c.maxBase && 'upper range ≥ ' + money(c.maxBase)].filter(Boolean).join(', ') || 'any pay'}${inc.length && (+c.targetBase || +c.minBase || +c.maxBase) ? ` (+ ${inc.join(', ')})` : ''} · ${win} · ${locs}`;
 }
 function wireCritLayout() {
   const d = $('#critBox'); if (!d) return;
@@ -488,23 +489,26 @@ function wirePlaces() {
     upd(); renderPlaces();
   });
 }
-/* Pay: two optional bars on the stated base range, "starts at" (low end) and "upper range" (high end).
+/* Pay: three optional bars on the stated base range: target (range includes it), "starts at" (low end) and
+   "upper range" (high end), plus two opt-ins for roles without a usable base (none listed / OTE only).
    Older rules are translated so results don't change: "reaches X" is the same as "upper range at least X". */
 function payParts(c) {
   if (['starts_reaches', 'plus_unknown'].includes(c.salMode) && +c.minBase > 0) { c.maxBase = Math.max(+c.maxBase || 0, +c.minBase); c.minBase = 0; }
-  if (['starts_reaches', 'plus_unknown', 'any'].includes(c.salMode)) c.salMode = c.salMode === 'starts_reaches' ? 'starts' : 'starts_unknown';
-  const unknown = c.salMode === 'starts_unknown';
-  if (!(+c.minBase > 0) && !(+c.maxBase > 0)) c.salMode = 'any'; // no pay bars: show everything
-  else c.salMode = unknown || c.payUnknown ? 'starts_unknown' : 'starts';
-  return { unknown: c.salMode !== 'starts' };
+  if (c.payNoComp == null || c.payOte == null) { const inc = C.payInclude(c); c.payNoComp ??= inc.none; c.payOte ??= inc.ote; }
+  delete c.payUnknown;
+  const bars = +c.minBase > 0 || +c.maxBase > 0 || +c.targetBase > 0;
+  c.salMode = !bars ? 'any' : (c.payNoComp || c.payOte) ? 'starts_unknown' : 'starts'; // kept for older readers (digest, prompt)
+  return { bars, none: !!c.payNoComp, ote: !!c.payOte };
 }
+const parseMoney = v => { const m = String(v || '').replace(/[$,\s]/g, '').match(/^(\d+(?:\.\d+)?)(k)?$/i); if (!m) return 0; const n = +m[1] * (m[2] ? 1000 : 1); return n < 1000 ? n * 1000 : n; };
 // One plain sentence describing the pay filter, plus a live count filled in by renderMatches.
 function renderPayEx() {
-  const c = S.crit, min = +c.minBase || 0, top = +c.maxBase || 0, f = payParts(c);
-  $('#payUnkRow').hidden = !min && !top;
-  const parts = [min && `starts at <b>${money(min)} or more</b>`, top && `goes up to <b>${money(top)} or more</b>`].filter(Boolean);
+  const c = S.crit, min = +c.minBase || 0, top = +c.maxBase || 0, tgt = +c.targetBase || 0, f = payParts(c);
+  $('#payUnkRow').hidden = !f.bars;
+  const parts = [tgt && `includes <b>${money(tgt)}</b>`, min && `starts at <b>${money(min)} or more</b>`, top && `goes up to <b>${money(top)} or more</b>`].filter(Boolean);
+  const extra = [f.none && 'roles with no pay listed', f.ote && 'roles listing only OTE or total comp'].filter(Boolean);
   const txt = !parts.length ? 'Showing roles at <b>any pay</b>, including ones that don’t state it'
-    : `Showing roles whose base pay ${parts.join(' and ')}${f.unknown ? ', plus roles that don’t state pay' : ''}`;
+    : `Showing roles whose base pay ${parts.join(' and ')}${extra.length ? ', plus ' + extra.join(' and ') : ''}`;
   $('#payEx').innerHTML = `<p class="paysum">${txt}<span id="payCount"></span></p>`;
   updatePayCount();
 }
@@ -523,7 +527,8 @@ function renderCriteria() {
   $('#cMaxBase').value = String(+c.maxBase || 0);
   $('#cMinBase').value = String(+c.minBase || 0); $('#cWindow').value = c.window;
   $('#winCustom').hidden = c.window !== 'custom'; $('#cWinFrom').value = c.winFrom || ''; $('#cWinTo').value = c.winTo || ''; $('#cWinTo').max = C.nyDate(new Date(), LOCAL_TZ);
-  $('#cPayUnknown').checked = c.salMode === 'starts_unknown' || !!c.payUnknown; renderPayEx();
+  $('#cTargetBase').value = +c.targetBase ? Number(c.targetBase).toLocaleString() : '';
+  $('#cPayNone').checked = !!c.payNoComp; $('#cPayOte').checked = !!c.payOte; renderPayEx();
   $('#cFirstSeen').checked = c.firstSeen; $('#cUpdated').checked = c.updated;
   renderPlaces();
   $('#cSen').innerHTML = `<option value="0" ${!(+c.sen > 0) ? 'selected' : ''}>Any level (no filter)</option>` + Object.entries(C.SENIORITY_LABEL).map(([v, l]) => `<option value="${v}" ${+v === +c.sen ? 'selected' : ''}>${l} and above</option>`).join('');
@@ -555,7 +560,9 @@ function renderCriteria() {
     c.functions = { sug: [...sug], def: [...C.DEFAULT_FUNCTIONS], all: [...FN_KEYS], none: [] }[b.dataset.fnset]; upd(); renderCriteria(); });
   $('#cMinBase').onchange = e => { c.minBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
   $('#cMaxBase').onchange = e => { c.maxBase = Math.max(0, +e.target.value || 0); renderPayEx(); upd(); };
-  $('#cPayUnknown').onchange = e => { c.payUnknown = e.target.checked; c.salMode = e.target.checked ? 'starts_unknown' : 'starts'; renderPayEx(); upd(); };
+  $('#cPayNone').onchange = e => { c.payNoComp = e.target.checked; renderPayEx(); upd(); };
+  $('#cPayOte').onchange = e => { c.payOte = e.target.checked; renderPayEx(); upd(); };
+  $('#cTargetBase').onchange = e => { c.targetBase = parseMoney(e.target.value); e.target.value = c.targetBase ? c.targetBase.toLocaleString() : ''; renderPayEx(); upd(); };
   $('#cWindow').onchange = e => { c.window = e.target.value; $('#winCustom').hidden = c.window !== 'custom'; if (c.window === 'custom' && !c.winFrom && !c.winTo) { c.winFrom = C.addDays(C.nyDate(new Date(), LOCAL_TZ), -13); $('#cWinFrom').value = c.winFrom; } upd(); };
   $('#cWinFrom').onchange = e => { c.winFrom = e.target.value; upd(); };
   $('#cWinTo').onchange = e => { c.winTo = e.target.value; upd(); };
@@ -592,8 +599,10 @@ function funnelRows() {
   const rows = [];
   if (c.window !== 'all') rows.push({ k: 'Posting date', now: WIN[c.window] || c.window, to: c.window === 'week' || c.window === 'd7' ? 'last 30 days' : 'any date', patch: c.window === 'week' || c.window === 'd7' ? { window: 'd30' } : { window: 'all' } });
   if (c.window !== 'all' && (c.window === 'week' || c.window === 'd7')) rows.push({ k: 'Posting date', now: WIN[c.window], to: 'any date', patch: { window: 'all' } });
-  if (+c.minBase || +c.maxBase) rows.push({ k: 'Base pay', now: [+c.minBase && 'starts ≥ ' + money(c.minBase), +c.maxBase && 'upper ≥ ' + money(c.maxBase)].filter(Boolean).join(', '), to: 'any pay', patch: { minBase: 0, maxBase: 0, salMode: 'any' } });
-  if ((+c.minBase || +c.maxBase) && c.salMode === 'starts') rows.push({ k: 'Base pay', now: 'stated pay only', to: 'also roles without stated pay', patch: { salMode: 'starts_unknown', payUnknown: true } });
+  const payBars = [+c.targetBase && 'includes ' + money(c.targetBase), +c.minBase && 'starts ≥ ' + money(c.minBase), +c.maxBase && 'upper ≥ ' + money(c.maxBase)].filter(Boolean);
+  if (payBars.length) rows.push({ k: 'Base pay', now: payBars.join(', '), to: 'any pay', patch: { minBase: 0, maxBase: 0, targetBase: 0, salMode: 'any' } });
+  if (payBars.length && !c.payNoComp) rows.push({ k: 'Base pay', now: 'stated pay only', to: 'also roles with no pay listed', patch: { payNoComp: true } });
+  if (payBars.length && !c.payOte) rows.push({ k: 'Base pay', now: 'no OTE-only roles', to: 'also roles listing only OTE', patch: { payOte: true } });
   if (+c.sen > 0) rows.push({ k: 'Seniority', now: (C.SENIORITY_LABEL[c.sen] || '') + ' and above', to: 'any level', patch: { sen: 0 } });
   if (!c.lOther) rows.push({ k: 'Location', now: 'your locations', to: 'anywhere in the US', patch: { lOther: true, lUnlisted: true, lRemoteUnknown: true } });
   const nAll = Object.keys(C.FUNCTIONS).length;
@@ -833,7 +842,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121c');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121d');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

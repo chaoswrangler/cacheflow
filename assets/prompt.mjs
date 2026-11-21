@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261121c';
+import * as C from './shared/core.mjs?v=20261121d';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', d60: 'posted in the last 60 days', d90: 'posted in the last 90 days', all: 'any posting date (still open)' };
 const SAL_TXT = {
@@ -79,7 +79,7 @@ ${bullets(cats.length ? cats : ['Any category'])}
 
 **Seniority:** ${+c.sen > 0 ? (C.SENIORITY_LABEL[c.sen] + ' and above, judged from the title (Senior, Staff, Principal, Lead, Manager, Director, Head, VP).') : 'any level.'} Skip titles containing: ${c.exclude || 'none'}.
 
-**Base pay:** ${[+c.minBase > 0 && `the stated base range must START at ${min} or more`, +c.maxBase > 0 && `its upper end must be ${money(+c.maxBase)} or more (a $200K-$220K range and a $200K-$420K range are different roles)`].filter(Boolean).join('; and ') || 'no pay bar (report the stated base when there is one)'}.${c.salMode === 'starts_unknown' || c.salMode === 'any' ? ' Also include postings with no stated base, flagged "no base stated".' : (+c.minBase > 0 || +c.maxBase > 0 ? ' Skip postings with no stated base.' : '')}
+**Base pay:** ${[+c.targetBase > 0 && `the stated base range must INCLUDE ${money(+c.targetBase)} (low end at or below it, high end at or above it; a single stated figure must be at least it)`, +c.minBase > 0 && `the stated base range must START at ${min} or more`, +c.maxBase > 0 && `its upper end must be ${money(+c.maxBase)} or more (a $200K-$220K range and a $200K-$420K range are different roles)`].filter(Boolean).join('; and ') || 'no pay bar (report the stated base when there is one)'}.${(() => { const inc = C.payInclude(c), bars = +c.targetBase > 0 || +c.minBase > 0 || +c.maxBase > 0; if (!bars) return ''; return [inc.none ? ' Also include postings with no pay listed, flagged "no pay listed".' : ' Skip postings with no pay listed.', inc.ote ? ' Also include postings that give only OTE or total comp, flagged "OTE only".' : ' Skip postings that give only OTE or total comp.'].join(''); })()}
 - Count base salary only. On-target earnings (OTE), commission, bonus, equity and "total compensation" never count as base. If only OTE is given, say "OTE only".
 - Use the range the posting states (pay-transparency sections, "The base salary range for this role is…"). If several ranges are given by location, use the one for the candidate's location; otherwise the lowest.
 - Only US-dollar ranges count. Ignore ranges in other currencies, and ignore third-party salary estimates.

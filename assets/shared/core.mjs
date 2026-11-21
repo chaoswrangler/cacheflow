@@ -147,6 +147,29 @@ export function chooseSalary(ranges = [], structured = null) {
   return { min: c.min, max: c.max, period: c.period || 'year', kind: c.kind, src: c.src || 'text',
            snippet: c.snippet || null, multi: usable.length > 1, ote: ote[0] || null };
 }
+/* Pay rule. Each bar is optional and every bar that is set must hold:
+     minBase    - the stated base range starts at or above it
+     maxBase    - the top of the stated base range reaches it
+     targetBase - the stated base range includes it (min <= target <= max; a single stated figure must be >= target)
+   Roles without a usable base: payNoComp lets in roles that state no pay (or only a predicted one),
+   payOte lets in roles that state only OTE / total comp. Older criteria used salMode; they still work. */
+export function payInclude(c) {
+  const legacy = ['plus_unknown', 'starts_unknown', 'any'].includes(c.salMode);
+  return { none: c.payNoComp ?? c.payUnknown ?? legacy, ote: c.payOte ?? c.payUnknown ?? legacy };
+}
+export function payCheck(sal, c = {}) {
+  const min = +c.minBase || 0, top = +c.maxBase || 0, tgt = +c.targetBase || 0;
+  if (!min && !top && !tgt) return { ok: true, kind: 'any' };
+  const inc = payInclude(c);
+  const usable = sal && !['ote_only', 'predicted'].includes(sal.kind) && (sal.min != null || sal.max != null);
+  if (!usable) return sal?.kind === 'ote_only' ? { ok: inc.ote, kind: 'ote' } : { ok: inc.none, kind: 'none' };
+  const lo = +(sal.min ?? sal.max), hi = +(sal.max ?? sal.min);
+  const reach = ['starts_reaches', 'plus_unknown'].includes(c.salMode); // old "range reaches the minimum" rule
+  if (min && (reach ? hi : lo) < min) return { ok: false, kind: 'base' };
+  if (top && hi < top) return { ok: false, kind: 'base' };
+  if (tgt && !(lo === hi ? lo >= tgt : lo <= tgt && tgt <= hi)) return { ok: false, kind: 'base' };
+  return { ok: true, kind: 'base', target: !!tgt };
+}
 // Highest base the posting states (null when there's no usable base range).
 export function baseTop(sal) {
   if (!sal || ['ote_only', 'predicted'].includes(sal.kind)) return null;
@@ -642,7 +665,10 @@ export const ADAPTERS = {
         ...(C.compensationTiers || []).map(t => `${t.title || ''} ${t.tierSummary || ''}`)].filter(Boolean).join(' ');
       const close = (a, b) => a && b && Math.abs(a - b) <= Math.max(1000, 0.01 * b);
       const oteComp = !!comp && (/\bote\b|on[- ]target|commission|\bvariable\b|total target/i.test(labels) ||
-        parseSalaries(desc).some(r => (r.kind === 'ote' || r.kind === 'total') && close(r.min, comp.minValue) && close(r.max, comp.maxValue || comp.minValue)));
+        parseSalaries(desc).some(r => (r.kind === 'ote' || r.kind === 'total') && close(r.min, comp.minValue) && close(r.max, comp.maxValue || comp.minValue)) ||
+        // pay section says the range is OTE without restating it, and the description gives no separate base range
+        (/(compensation|salary|pay|range)[^.]{0,160}\b(OTE|on[- ]target (earnings|compensation))\b|\b(OTE|on[- ]target (earnings|compensation))\b[^.]{0,160}(compensation|salary|pay|range)/i.test(desc) &&
+          !parseSalaries(desc).some(r => r.kind === 'base')));
       return {
         source_id: src.id, ats: 'ashby', employer: emp.employer, ext_id: j.id, title: j.title, url: j.jobUrl,
         locations: [j.location, ...(j.secondaryLocations || []).map(s => s.location)].filter(Boolean),
@@ -745,14 +771,8 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
     j = { ...j, salary: null };
   }
   const tier = salaryTier(j.salary, c.minBase || 0);
-  const salOk = { starts: ['starts'], starts_reaches: ['starts', 'reaches'], plus_unknown: ['starts', 'reaches', 'unknown', 'ote_only', 'predicted'], starts_unknown: ['starts', 'unknown', 'ote_only', 'predicted'], any: null }[c.salMode || 'starts_reaches'];
-  if (salOk && !salOk.includes(tier)) if (!force) return null;
-  // Top of the stated base range must reach crit.maxBase (separates a $200-220K role from a $200-420K one).
-  // Roles with no stated base pass only when the salary rule already lets them in.
-  if (+c.maxBase > 0 && !force) {
-    const top = baseTop(j.salary);
-    if (top == null ? !['plus_unknown', 'starts_unknown', 'any'].includes(c.salMode) : top < +c.maxBase) return null;
-  }
+  const pay = payCheck(j.salary, c);
+  if (!pay.ok) if (!force) return null;
   // Remote eligibility is checked against every state the viewer wants remote work in; the best fit wins.
   const rsl = Array.isArray(c.remoteStates) ? c.remoteStates : [c.remoteState || c.state || ''];
   const rank = h => h.in_metro ? 5 : h.tied ? 0 : ({ yes: 4, likely: 3, unknown: 2, no: 1 }[h.eligibility] ?? 2);
@@ -783,7 +803,7 @@ export function evaluateJob(j, { crit: c, emp: e, skillsOn = [], custom = [], wi
   const sFn = fnHit.length ? 30 : 15;
   const sSkill = Math.min(25, skillHits.length * 4 + customHits.length * 4);
   // Score pay against the bars the viewer set: full marks when the range clears both, partial when it only clears one.
-  const scoreTier = +c.minBase > 0 ? tier : salaryTier(j.salary, +c.maxBase || 0);
+  const scoreTier = pay.target ? 'starts' : +c.minBase > 0 ? tier : salaryTier(j.salary, +c.maxBase || 0);
   const sSal = { starts: 20, reaches: 12, unknown: 6, ote_only: 3, predicted: 3 }[scoreTier] || 0;
   const sLoc = locOut ? 0 : 15;
   const sSen = !(+c.sen > 0) || j.seniority > +c.sen ? 10 : 7;

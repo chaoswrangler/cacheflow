@@ -671,4 +671,25 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
     assert.equal(pay[3].min, 240000); assert.equal(pay[3].kind, 'base');
   });
 }
+{
+  const { payCheck } = await import('../../assets/shared/core.mjs');
+  const b = (min, max) => ({ min, max, kind: 'base' }), ote = { kind: 'ote_only', min: null, max: null, ote: { min: 250000, max: 300000 } };
+  t('pay: target base must fall inside the stated base range', () => {
+    const c = { targetBase: 200000 };
+    assert.ok(payCheck(b(180000, 240000), c).ok); assert.ok(!payCheck(b(220000, 260000), c).ok); assert.ok(!payCheck(b(150000, 190000), c).ok);
+    assert.ok(payCheck(b(200000, 200000), c).ok); assert.ok(payCheck(b(210000, 210000), c).ok); assert.ok(!payCheck(b(190000, 190000), c).ok);
+  });
+  t('pay: no-pay and OTE-only roles are separate opt-ins; bars combine', () => {
+    assert.ok(!payCheck(null, { targetBase: 200000 }).ok); assert.ok(payCheck(null, { targetBase: 200000, payNoComp: true }).ok);
+    assert.ok(!payCheck(ote, { targetBase: 200000, payNoComp: true }).ok); assert.ok(payCheck(ote, { targetBase: 200000, payOte: true }).ok);
+    assert.ok(!payCheck(b(180000, 240000), { targetBase: 200000, maxBase: 250000 }).ok);
+    assert.ok(payCheck(b(180000, 260000), { targetBase: 200000, maxBase: 250000 }).ok);
+    assert.ok(payCheck(null, {}).ok); assert.ok(payCheck(ote, {}).ok);
+  });
+  t('pay: older saved rules still behave the same', () => {
+    assert.ok(payCheck(null, { minBase: 150000, salMode: 'starts_unknown' }).ok); assert.ok(payCheck(ote, { minBase: 150000, salMode: 'starts_unknown' }).ok);
+    assert.ok(!payCheck(null, { minBase: 150000, salMode: 'starts' }).ok);
+    assert.ok(payCheck(b(120000, 180000), { minBase: 150000, salMode: 'starts_reaches' }).ok); assert.ok(!payCheck(b(120000, 180000), { minBase: 150000, salMode: 'starts' }).ok);
+  });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
