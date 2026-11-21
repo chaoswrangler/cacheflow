@@ -612,7 +612,9 @@
      },
      "full_scan": true,
      "scan_pages_per_run": 40,
-     "close_after_hours": 96
+     "close_after_hours": 96,
+     "drop_uncategorized": true,
+     "_drop_note": "AWS's US list is very large; roles that fit no job category are not stored for this source (all other sources store them as Other roles)."
     }
    ],
    "id": "amazon-aws",
@@ -4097,35 +4099,14 @@
      "id": "google:careers",
      "ats": "google_careers",
      "queries": [
-      "security sales",
-      "security specialist",
-      "cloud security",
       "Google Threat Intelligence",
       "Mandiant",
-      "Google Security Operations",
-      "threat intelligence",
-      "security researcher",
-      "security product marketing",
-      "product manager security",
-      "customer engineer security",
+      "security specialist",
       "partner manager",
-      "partner development manager",
-      "partner sales",
-      "partner marketing",
-      "alliances",
-      "channel sales",
-      "account executive Google Cloud",
-      "field sales representative",
-      "sales specialist Google Cloud",
       "product marketing manager",
-      "product manager Google Cloud",
-      "go-to-market",
-      "strategy and operations",
-      "chief of staff",
-      "competitive intelligence",
-      "customer engineer"
+      "strategy and operations"
      ],
-     "max_pages": 3,
+     "max_pages": 1,
      "board_url": "https://www.google.com/about/careers/applications/jobs/results",
      "verification": {
       "status": "experimental",
@@ -4133,8 +4114,9 @@
       "date": "2026-11-19"
      },
      "full_scan": true,
-     "scan_pages_per_run": 40,
-     "close_after_hours": 96
+     "scan_pages_per_run": 45,
+     "close_after_hours": 96,
+     "_inventory_note": "The full US list (about 88 pages of 20) is the inventory and is walked from a checkpoint, about two runs per pass. The six searches only top up high-priority roles between passes. Roles close only after a complete, parser-clean pass that started after they were last seen, and after 96 hours unseen."
     }
    ],
    "id": "google",
@@ -5832,10 +5814,11 @@
       "method": "Manual test: /api/pcsx/search?domain=microsoft.com&query=&location=&start=0 and /api/pcsx/position_details?domain=microsoft.com&position_id=<id>&hl=en returned 200; next-page request returned 429. First GitHub run got 403 using location=United States & sort_by; adapter now mirrors the tested request and paces 5-10s. 2026-11-19: collector now scans the full list in 40-page chunks per run (resuming where it stopped), keeps US roles decided locally from all listed locations, and treats refusals as partial (roles not reached are kept).",
       "date": "2026-11-19"
      },
-     "full_scan": true,
-     "close_after_hours": 168,
-     "max_per_query": 10,
-     "scan_pages_per_run": 60
+     "close_after_hours": 336,
+     "location": "United States",
+     "list_budget": 6,
+     "search_budget": 5,
+     "detail_budget": 3
     },
     {
      "id": "gh:microsoftcorporation",
