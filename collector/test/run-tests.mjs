@@ -692,4 +692,142 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
     assert.ok(payCheck(b(120000, 180000), { minBase: 150000, salMode: 'starts_reaches' }).ok); assert.ok(!payCheck(b(120000, 180000), { minBase: 150000, salMode: 'starts' }).ok);
   });
 }
+{ // shared Workday queue: boards on different hosts never overlap
+  const { Http } = await import('../lib/http.mjs');
+  let active = 0, peak = 0, other = 0;
+  const fetchImpl = async u => { const wd = /myworkdayjobs/.test(u); if (wd) { active++; peak = Math.max(peak, active); } else other++;
+    await new Promise(r => setTimeout(r, 15)); if (wd) active--; return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }); };
+  const h = new Http({ fetchImpl, concurrency: 6, minDelay: 1, maxDelay: 2, hostRules: [{ suffix: 'myworkdayjobs.com', group: 'workday', minDelayMs: 1, maxDelayMs: 2 }] });
+  await Promise.all(['a.wd1', 'b.wd5', 'c.wd103', 'a.wd1'].map(x => h.json(`https://${x}.myworkdayjobs.com/x`)).concat([h.json('https://boards-api.greenhouse.io/x')]));
+  t('http: all Workday boards share one queue (one request at a time), other hosts unaffected', () => { assert.equal(peak, 1); assert.equal(other, 1); });
+}
+{ // market archive
+  const { archiveRun } = await import('../archive.mjs');
+  const { gunzipSync } = await import('node:zlib');
+  const { readdir: rd } = await import('node:fs/promises');
+  const dir = await mkdtemp(join(tmpdir(), 'cf-arch-'));
+  const reg = { employers: [{ employer: 'Acme', sector: 'Cybersecurity', type: 'security', sources: [{ id: 'gh:acme' }] }] };
+  const J = (uid, first, extra = {}) => ({ uid, source_id: 'gh:acme', ats: 'greenhouse', employer: 'Acme', title: 'PMM, "Cloud"', locations: ['New York, NY'], functions: ['pmm'],
+    salary: { min: 180000, max: 220000, kind: 'base' }, kw: ['siem', 'xdr'], first_observed: first, status: 'open', url: 'https://x/' + uid,
+    excerpt: 'About Acme\nAcme is a leading security company.\nAbout the role\nYou will own positioning for our cloud detection products, partnering with product and sales.', ...extra });
+  const r1 = await archiveRun({ dataDir: dir, nowIso: '2026-11-21T20:00:00.000Z', registry: reg,
+    jobs: [J('gh:acme:1', '2026-10-30T10:00:00.000Z'), J('gh:acme:2', '2026-11-20T10:00:00.000Z', { status: 'closed', closed_at: '2026-11-21T01:00:00.000Z' })] });
+  const files1 = (await rd(join(dir, 'archive'))).sort();
+  const nov = await readFile(join(dir, 'archive', '2026-11-postings.csv'), 'utf8');
+  const oct = gunzipSync(await readFile(join(dir, 'archive', '2026-10-postings.csv.gz'))).toString();
+  const r2 = await archiveRun({ dataDir: dir, nowIso: '2026-11-22T15:00:00.000Z', registry: reg,
+    jobs: [J('gh:acme:1', '2026-10-30T10:00:00.000Z', { status: 'closed', closed_at: '2026-11-22T15:00:00.000Z' }), J('gh:acme:3', '2026-11-22T15:00:00.000Z', { excerpt: null, _blurb: 'Fresh summary.' })] });
+  const nov2 = await readFile(join(dir, 'archive', '2026-11-postings.csv'), 'utf8');
+  const closed2 = await readFile(join(dir, 'archive', '2026-11-closed.csv'), 'utf8');
+  const r3 = await archiveRun({ dataDir: dir, nowIso: '2026-12-01T11:00:00.000Z', registry: reg, jobs: [] });
+  const files3 = (await rd(join(dir, 'archive'))).sort();
+  t('archive: first run backfills by month (past months compressed), summary skips company boilerplate', () => {
+    assert.equal(r1.backfilled, 3); assert.deepEqual(files1, ['2026-10-postings.csv.gz', '2026-11-closed.csv', '2026-11-postings.csv', 'sources.csv']);
+    assert.match(oct, /gh:acme:1/); assert.match(nov, /gh:acme:2/); assert.match(nov, /"PMM, ""Cloud"""/);
+    assert.match(nov, /You will own positioning for our cloud detection products/); assert.doesNotMatch(nov, /leading security company/);
+    assert.match(nov, /Cybersecurity,security/); assert.match(nov, /siem\|xdr/); assert.match(nov, /,NY,/);
+  });
+  t('archive: later runs append only new and newly closed postings', () => {
+    assert.equal(r2.added, 1); assert.equal(r2.closed, 1);
+    assert.equal(nov2.split('\n').filter(Boolean).length, 3); assert.match(nov2, /gh:acme:3.*Fresh summary\./);
+    assert.match(closed2, /gh:acme:1,2026-11-22T15:00:00.000Z,2026-10-30T10:00:00.000Z,23.2,Acme/);
+  });
+  t('archive: a new month compresses the finished one', () => { assert.equal(r3.rolled, 2); assert.ok(files3.includes('2026-11-postings.csv.gz') && !files3.includes('2026-11-postings.csv')); });
+}
+{ // Greenhouse region fallback
+  const { ADAPTERS: G } = await import('../../assets/shared/core.mjs');
+  const asked = [];
+  const http = { json: async u => { asked.push(new URL(u).host); return u.includes('.eu.') ? { ok: true, status: 200, data: { jobs: [{ id: 1, title: 'Product Marketing Manager', absolute_url: 'u', location: { name: 'Remote, US' }, content: '' }] } } : { ok: false, error: 'network_error' }; } };
+  const out = await G.greenhouse({ id: 'gh:x', slug: 'x' }, { employer: 'X' }, http);
+  const http2 = { json: async u => (asked.push('2:' + new URL(u).host), u.includes('.eu.') ? { ok: false, error: 'network_error' } : { ok: true, status: 200, data: { jobs: [] } }) };
+  const out2 = await G.greenhouse({ id: 'gh:y', slug: 'y', region: 'eu' }, { employer: 'Y' }, http2);
+  t('greenhouse: falls back to the other region when the expected host fails', () => {
+    assert.equal(out.result, 'ok'); assert.deepEqual(asked.slice(0, 2), ['boards-api.greenhouse.io', 'boards-api.eu.greenhouse.io']); assert.match(out.note, /EU region/);
+    assert.equal(out2.result, 'empty'); assert.deepEqual(asked.slice(2), ['2:boards-api.eu.greenhouse.io', '2:boards-api.greenhouse.io']);
+  });
+}
+{ // a source refused (403) 3 runs in a row is paused for a week
+  const dir = await mkdtemp(join(tmpdir(), 'cf-pause-'));
+  await mkdir(join(dir), { recursive: true });
+  const day = 864e5, now = new Date('2026-11-22T15:00:00Z');
+  const prev = { schema: 1, generated_at: '2026-11-22T11:00:00Z', sources: [{ id: 'gh:blocked', employer: 'B', ats: 'greenhouse', result: 'http_403', http_status: 403, consecutive_failures: 3, checked_at: new Date(now - day).toISOString() }] };
+  await writeFile(join(dir, 'status.json'), JSON.stringify(prev)); await writeFile(join(dir, 'jobs.json'), JSON.stringify({ jobs: [] }));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'B', id: 'b', tier: 'core', sources: [{ id: 'gh:blocked', ats: 'greenhouse', slug: 'blocked' }] }] }));
+  let calls = 0;
+  const fetchImpl = async () => { calls++; return new Response('nope', { status: 403 }); };
+  const r = await run({ fetchImpl, env: {}, now, dataDir: dir, argv: {}, cfgOverride: FAST }).catch(e => ({ err: e }));
+  t('collector: a source refused 3 runs in a row is paused (no request) until a week has passed', () => {
+    if (r.err) throw r.err;
+    const st = r.statusOut.sources.find(x => x.id === 'gh:blocked');
+    assert.equal(st.result, 'blocked_paused'); assert.equal(calls, 0);
+  });
+}
+{ // Cloudflare bot check: no retries, rest of that site skipped, other sites unaffected, source labelled
+  const { Http } = await import('../lib/http.mjs');
+  const hits = {};
+  const fetchImpl = async u => { const h = new URL(u).host; hits[h] = (hits[h] || 0) + 1;
+    return h.startsWith('a.') ? new Response('challenge', { status: 429, headers: { 'cf-mitigated': 'challenge' } }) : new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }); };
+  const h = new Http({ fetchImpl, minDelay: 1, maxDelay: 2, retries: 3, hostRules: [{ suffix: 'myworkdayjobs.com', group: 'workday', minDelayMs: 1, maxDelayMs: 2, retries: 5, backoffMs: 1 }] });
+  const r1 = await h.json('https://a.wd5.myworkdayjobs.com/x'), r2 = await h.json('https://a.wd5.myworkdayjobs.com/y'), r3 = await h.json('https://b.wd5.myworkdayjobs.com/x');
+  t('http: a Cloudflare challenge is not retried; that site is skipped for the rest of the run; other boards continue', () => {
+    assert.equal(r1.challenge, true); assert.equal(r1.mitigated, 'challenge'); assert.equal(hits['a.wd5.myworkdayjobs.com'], 1);
+    assert.equal(r2.skipped, true); assert.equal(r3.ok, true); assert.equal(h.stats.challenges, 1);
+  });
+  const dir = await mkdtemp(join(tmpdir(), 'cf-chal-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Co', id: 'co', tier: 'core', sources: [{ id: 'wd:co', ats: 'workday', host: 'co.wd5.myworkdayjobs.com', tenant: 'co', site: 'Ext', queries: [''] }] }] }));
+  await writeFile(join(dir, 'jobs.json'), JSON.stringify({ jobs: [{ uid: 'wd:co:1', source_id: 'wd:co', title: 'PMM', status: 'open', first_observed: '2026-11-01T00:00:00Z', last_seen: '2026-11-20T00:00:00Z', locations: ['NY'] }] }));
+  let n = 0;
+  const r = await run({ fetchImpl: async () => (n++, new Response('x', { status: 429, headers: { 'cf-mitigated': 'challenge' } })), env: {}, now: new Date(), dataDir: dir, argv: {}, cfgOverride: FAST }).catch(e => ({ err: e }));
+  t('collector: a bot-checked source is labelled blocked_challenge, makes one request, keeps its previous roles', () => {
+    if (r.err) throw r.err;
+    const st = r.statusOut.sources.find(x => x.id === 'wd:co');
+    assert.equal(st.result, 'blocked_challenge'); assert.equal(st.bot_check, 'challenge'); assert.match(st.message, /Not evidence of zero jobs/);
+    assert.equal(n, 1); assert.ok(r.jobsOut.jobs.some(j => j.uid === 'wd:co:1' && j.status === 'open'));
+  });
+}
+{ // BambooHR: list + detail for category roles, US places, reuse
+  const { ADAPTERS: SA } = await import('../lib/adapters-server.mjs');
+  const asked = [];
+  const http = { json: async u => { asked.push(u);
+    if (u.endsWith('/careers/list')) return { ok: true, status: 200, data: { meta: { totalCount: 2 }, result: [
+      { id: '846', jobOpeningName: 'Partner Development Manager', departmentLabel: 'Sales', location: { city: 'Austin', state: 'Texas', country: 'United States' }, isRemote: true },
+      { id: '900', jobOpeningName: 'SOC Analyst II', departmentLabel: 'SOC', location: { city: 'Zurich', country: 'Switzerland' }, isRemote: false } ] } };
+    if (u.endsWith('/846/detail')) return { ok: true, status: 200, data: { result: { jobOpening: { description: '<p>Own the Microsoft co-sell motion.</p>', compensation: '$150,000 - $180,000 base', datePosted: '2026-11-18' } } } };
+    return { ok: false, status: 404 }; } };
+  const out = await SA.bamboohr({ id: 'bamboohr:ontinue', slug: 'ontinue' }, { employer: 'Ontinue' }, http, { detailCap: 10 });
+  t('bamboohr: lists postings, reads detail for category roles (pay, date), builds job links', () => {
+    assert.equal(out.result, 'ok'); assert.equal(out.jobs.length, 2);
+    const pdm = out.jobs.find(j => j.ext_id === '846');
+    assert.equal(pdm.url, 'https://ontinue.bamboohr.com/careers/846'); assert.deepEqual(pdm.locations, ['Austin, Texas, United States']); assert.equal(pdm.remote_hint, true);
+    assert.match(pdm.desc_text, /150,000/); assert.equal(pdm.posted_at.slice(0, 10), '2026-11-18');
+    assert.ok(asked.includes('https://ontinue.bamboohr.com/careers/list'));
+  });
+}
+{ // native Node transport (Workday): real local server, gzip JSON, POST body, redirect, challenge header
+  const { Http } = await import('../lib/http.mjs');
+  const { createServer } = await import('node:http');
+  const { gzipSync } = await import('node:zlib');
+  const seen = [];
+  const srv = createServer((req, res) => {
+    let body = ''; req.on('data', c => body += c); req.on('end', () => {
+      seen.push({ url: req.url, method: req.method, ua: req.headers['user-agent'], body });
+      if (req.url === '/old') { res.writeHead(301, { location: '/jobs' }); return res.end(); }
+      if (req.url === '/blocked') { res.writeHead(429, { 'cf-mitigated': 'challenge' }); return res.end('challenge'); }
+      res.writeHead(200, { 'content-type': 'application/json', 'content-encoding': 'gzip' }); res.end(gzipSync(JSON.stringify({ total: 1, jobPostings: [{ title: 'PMM' }] })));
+    });
+  });
+  await new Promise(r => srv.listen(0, '127.0.0.1', r));
+  const base = `http://127.0.0.1:${srv.address().port}`;
+  const h = new Http({ minDelay: 1, maxDelay: 2, retries: 2, userAgent: 'cache-flow-collector/test', hostRules: [{ suffix: '127.0.0.1:' + srv.address().port, transport: 'node', minDelayMs: 1, maxDelayMs: 2 }] });
+  const a = await h.json(`${base}/jobs`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ limit: 20 }) });
+  const b = await h.json(`${base}/old`);
+  const c = await h.json(`${base}/blocked`);
+  srv.close();
+  t('http: native Node transport sends the same honest request (UA, body), decodes gzip, follows redirects, still detects challenges', () => {
+    assert.equal(a.ok, true); assert.equal(a.data.jobPostings[0].title, 'PMM');
+    assert.equal(seen[0].method, 'POST'); assert.equal(seen[0].body, '{"limit":20}'); assert.equal(seen[0].ua, 'cache-flow-collector/test');
+    assert.equal(b.ok, true); assert.deepEqual(seen.slice(1, 3).map(x => x.url), ['/old', '/jobs']);
+    assert.equal(c.challenge, true); assert.equal(h.stats.transport.node, 3);
+  });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);
