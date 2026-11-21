@@ -1,5 +1,5 @@
 {
- "next": 240,
+ "next": 280,
  "checked": {
   "rescale": {
    "at": "2026-11-20T04:21:49.368Z",
@@ -2121,12 +2121,380 @@
     "greenhouse:solosuit=404",
     "lever:solosuit=404"
    ]
+  },
+  "stokespace": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:stokespace=404",
+    "greenhouse:stokespace=404",
+    "lever:stokespace=404",
+    "ashby:stoke-space=404",
+    "greenhouse:stoke-space=404",
+    "lever:stoke-space=404"
+   ]
+  },
+  "tint": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:tint=404",
+    "greenhouse:tint=404",
+    "lever:tint=404"
+   ]
+  },
+  "slash": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:slash-financial",
+   "tried": [
+    "ashby:slash-financial=15 jobs"
+   ]
+  },
+  "botbuilt": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:botbuilt=404",
+    "greenhouse:botbuilt=404",
+    "lever:botbuilt=404"
+   ]
+  },
+  "phoenix": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:phoenix",
+   "tried": [
+    "ashby:phoenix=11 jobs"
+   ]
+  },
+  "biodock": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:biodock=404",
+    "greenhouse:biodock=404",
+    "lever:biodock=404"
+   ]
+  },
+  "venuai": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:venuai=404",
+    "greenhouse:venuai=404",
+    "lever:venuai=404",
+    "ashby:venu-ai=404",
+    "greenhouse:venu-ai=404",
+    "lever:venu-ai=404",
+    "ashby:venu=404",
+    "greenhouse:venu=404"
+   ]
+  },
+  "composeai": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:composeai=404",
+    "greenhouse:composeai=404",
+    "lever:composeai=404",
+    "ashby:compose=404",
+    "greenhouse:compose=404",
+    "lever:compose=404"
+   ]
+  },
+  "lamarhealth": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:lamarhealth=404",
+    "greenhouse:lamarhealth=404",
+    "lever:lamarhealth=404",
+    "ashby:lamar-health=404",
+    "greenhouse:lamar-health=404",
+    "lever:lamar-health=404"
+   ]
+  },
+  "soraban": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:soraban=404",
+    "greenhouse:soraban=404",
+    "lever:soraban=404"
+   ]
+  },
+  "stayflexi": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:stayflexi=404",
+    "greenhouse:stayflexi=404",
+    "lever:stayflexi=404",
+    "ashby:business=404",
+    "greenhouse:business=404",
+    "lever:business=404"
+   ]
+  },
+  "flutterflow": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:FlutterFlow",
+   "tried": [
+    "ashby:FlutterFlow=3 jobs"
+   ]
+  },
+  "svix": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:Svix",
+   "tried": [
+    "ashby:Svix=3 jobs"
+   ]
+  },
+  "gigs": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:gigs",
+   "tried": [
+    "ashby:gigs=40 jobs"
+   ]
+  },
+  "triomics": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:triomics",
+   "tried": [
+    "ashby:triomics=11 jobs"
+   ]
+  },
+  "swiftsku": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "greenhouse:swiftsku=404"
+   ]
+  },
+  "shepherd": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:shepherd",
+   "tried": [
+    "ashby:shepherd=26 jobs"
+   ]
+  },
+  "terraapi": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:terraapi=404",
+    "greenhouse:terraapi=404",
+    "lever:terraapi=404",
+    "ashby:terra-api=404",
+    "greenhouse:terra-api=404",
+    "lever:terra-api=404",
+    "ashby:tryterra=404",
+    "greenhouse:tryterra=404"
+   ]
+  },
+  "slope": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:slope",
+   "tried": [
+    "ashby:slope=1 jobs"
+   ]
+  },
+  "epsilon3": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "lever:epsilon3",
+   "tried": [
+    "lever:epsilon3=4 jobs"
+   ]
+  },
+  "reframe": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:reframe=404",
+    "greenhouse:reframe=404",
+    "lever:reframe=404",
+    "ashby:joinreframeapp=404",
+    "greenhouse:joinreframeapp=404",
+    "lever:joinreframeapp=404"
+   ]
+  },
+  "agap": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:agap=404",
+    "greenhouse:agap=404",
+    "lever:agap=404",
+    "ashby:getdailyagape=404",
+    "greenhouse:getdailyagape=404",
+    "lever:getdailyagape=404"
+   ]
+  },
+  "legionhealth": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:legionhealth",
+   "tried": [
+    "ashby:legionhealth=158 jobs"
+   ]
+  },
+  "odysaviation": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:odys-aviation",
+   "tried": [
+    "ashby:odysaviation=404",
+    "greenhouse:odysaviation=404",
+    "lever:odysaviation=404",
+    "ashby:odys-aviation=20 jobs"
+   ]
+  },
+  "serifhealth": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:serifhealth",
+   "tried": [
+    "ashby:serifhealth=3 jobs"
+   ]
+  },
+  "varos": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:varos=404",
+    "greenhouse:varos=404",
+    "lever:varos=404"
+   ]
+  },
+  "rootly": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:rootly=404",
+    "greenhouse:rootly=404",
+    "lever:rootly=404"
+   ]
+  },
+  "replo": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:replo",
+   "tried": [
+    "ashby:replo=2 jobs"
+   ]
+  },
+  "confido": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:confido",
+   "tried": [
+    "ashby:confido=36 jobs"
+   ]
+  },
+  "parallelbio": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:parallel-bio",
+   "tried": [
+    "ashby:parallelbio=404",
+    "greenhouse:parallelbio=404",
+    "lever:parallelbio=404",
+    "ashby:parallel-bio=6 jobs"
+   ]
+  },
+  "double": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:double",
+   "tried": [
+    "ashby:double=9 jobs"
+   ]
+  },
+  "epinoma": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:epinoma=404",
+    "greenhouse:epinoma=404",
+    "lever:epinoma=404"
+   ]
+  },
+  "lago": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:lago=404",
+    "greenhouse:lago=404",
+    "lever:lago=404",
+    "ashby:getlago=404",
+    "greenhouse:getlago=404",
+    "lever:getlago=404"
+   ]
+  },
+  "forage": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:forage=404",
+    "greenhouse:forage=404",
+    "lever:forage=404",
+    "ashby:joinforage=404",
+    "greenhouse:joinforage=404",
+    "lever:joinforage=404"
+   ]
+  },
+  "tavus": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:tavus",
+   "tried": [
+    "ashby:tavus=19 jobs"
+   ]
+  },
+  "safebeat": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:safebeat=404",
+    "greenhouse:safebeat=404",
+    "lever:safebeat=404"
+   ]
+  },
+  "kodex": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "ashby:kodex",
+   "tried": [
+    "ashby:kodex=6 jobs"
+   ]
+  },
+  "pirouettepharma": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:pirouettepharma=404",
+    "greenhouse:pirouettepharma=404",
+    "lever:pirouettepharma=404",
+    "ashby:pirouette-pharma=404",
+    "greenhouse:pirouette-pharma=404",
+    "lever:pirouette-pharma=404"
+   ]
+  },
+  "aqua": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:aqua=404",
+    "greenhouse:aqua=404",
+    "lever:aqua=404",
+    "ashby:investwithaqua=404",
+    "greenhouse:investwithaqua=404",
+    "lever:investwithaqua=404"
+   ]
+  },
+  "rinse": {
+   "at": "2026-11-21T20:04:02.691Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:rinse=404",
+    "greenhouse:rinse=404",
+    "lever:rinse=404"
+   ]
   }
  },
- "updated_at": "2026-11-21T17:11:32.830Z",
+ "updated_at": "2026-11-21T20:04:02.691Z",
  "progress": {
   "seeds": 792,
-  "checked": 240,
-  "found": 78
+  "checked": 280,
+  "found": 18
  }
 }

@@ -1,5 +1,546 @@
 {
  "schema": 1,
- "updated_at": null,
- "employers": []
+ "updated_at": "2026-11-21T20:04:02.691Z",
+ "employers": [
+  {
+   "employer": "Slash",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 70,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/slash",
+   "careers_url": "https://www.slash.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:slashfinancial",
+     "ats": "ashby",
+     "slug": "slash-financial",
+     "board_url": "https://jobs.ashbyhq.com/slash-financial",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 15 postings; ownership: linked from slash.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Phoenix",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 70,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/phoenix",
+   "careers_url": "https://phoenix.ca",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:phoenix",
+     "ats": "ashby",
+     "slug": "phoenix",
+     "board_url": "https://jobs.ashbyhq.com/phoenix",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 11 postings; ownership: postings mention phoenix.ca.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "FlutterFlow",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 55,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/flutterflow",
+   "careers_url": "https://flutterflow.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:flutterflow",
+     "ats": "ashby",
+     "slug": "FlutterFlow",
+     "board_url": "https://jobs.ashbyhq.com/FlutterFlow",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 3 postings; ownership: linked from flutterflow.io.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Svix",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/svix",
+   "careers_url": "https://www.svix.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:svix",
+     "ats": "ashby",
+     "slug": "Svix",
+     "board_url": "https://jobs.ashbyhq.com/Svix",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 3 postings; ownership: linked from svix.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Gigs",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 150,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/gigs",
+   "careers_url": "https://gigs.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:gigs",
+     "ats": "ashby",
+     "slug": "gigs",
+     "board_url": "https://jobs.ashbyhq.com/gigs",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 40 postings; ownership: linked from gigs.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Triomics",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/triomics",
+   "careers_url": "https://triomics.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:triomics",
+     "ats": "ashby",
+     "slug": "triomics",
+     "board_url": "https://jobs.ashbyhq.com/triomics",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 11 postings; ownership: linked from triomics.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Shepherd",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 60,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/shepherd",
+   "careers_url": "https://shepherdinsurance.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:shepherd",
+     "ats": "ashby",
+     "slug": "shepherd",
+     "board_url": "https://jobs.ashbyhq.com/shepherd",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 26 postings; ownership: linked from shepherdinsurance.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Slope",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 16,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/slope",
+   "careers_url": "http://www.slopepay.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:slope",
+     "ats": "ashby",
+     "slug": "slope",
+     "board_url": "https://jobs.ashbyhq.com/slope",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 1 postings; ownership: linked from slopepay.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Epsilon3",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/epsilon3-inc",
+   "careers_url": "https://www.epsilon3.io/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "lever:epsilon3",
+     "ats": "lever",
+     "slug": "epsilon3",
+     "board_url": "https://jobs.lever.co/epsilon3",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 4 postings; ownership: linked from epsilon3.io.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Legion Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 11,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/legion-health",
+   "careers_url": "https://legionhealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:legionhealth",
+     "ats": "ashby",
+     "slug": "legionhealth",
+     "board_url": "https://jobs.ashbyhq.com/legionhealth",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 158 postings; ownership: linked from legionhealth.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Odys Aviation",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 11,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/odys-aviation",
+   "careers_url": "https://www.odysaviation.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:odysaviation",
+     "ats": "ashby",
+     "slug": "odys-aviation",
+     "board_url": "https://jobs.ashbyhq.com/odys-aviation",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 20 postings; ownership: postings name Odys Aviation.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Serif Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/serif-health",
+   "careers_url": "https://www.serifhealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:serifhealth",
+     "ats": "ashby",
+     "slug": "serifhealth",
+     "board_url": "https://jobs.ashbyhq.com/serifhealth",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 3 postings; ownership: postings name Serif Health.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Replo",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/replo",
+   "careers_url": "https://replo.app/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:replo",
+     "ats": "ashby",
+     "slug": "replo",
+     "board_url": "https://jobs.ashbyhq.com/replo",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 2 postings; ownership: linked from replo.app.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Confido",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 65,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/confido",
+   "careers_url": "https://www.confidotech.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:confido",
+     "ats": "ashby",
+     "slug": "confido",
+     "board_url": "https://jobs.ashbyhq.com/confido",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 36 postings; ownership: linked from confidotech.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Parallel Bio",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/parallel-bio",
+   "careers_url": "http://parallel.bio",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:parallelbio",
+     "ats": "ashby",
+     "slug": "parallel-bio",
+     "board_url": "https://jobs.ashbyhq.com/parallel-bio",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 6 postings; ownership: postings name Parallel Bio.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Double",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 80,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/doublehq",
+   "careers_url": "https://www.doublehq.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:double",
+     "ats": "ashby",
+     "slug": "double",
+     "board_url": "https://jobs.ashbyhq.com/double",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 9 postings; ownership: linked from doublehq.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Tavus",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 75,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/tavus",
+   "careers_url": "https://www.tavus.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:tavus",
+     "ats": "ashby",
+     "slug": "tavus",
+     "board_url": "https://jobs.ashbyhq.com/tavus",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 19 postings; ownership: linked from tavus.io.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Kodex",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/kodex",
+   "careers_url": "https://www.kodexglobal.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:kodex",
+     "ats": "ashby",
+     "slug": "kodex",
+     "board_url": "https://jobs.ashbyhq.com/kodex",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-21: board reachable with 6 postings; ownership: linked from kodexglobal.com.",
+      "date": "2026-11-21"
+     }
+    }
+   ]
+  }
+ ]
 }
