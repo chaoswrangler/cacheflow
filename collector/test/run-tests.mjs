@@ -613,6 +613,23 @@ try {
   t('aws pay: next run reuses the stored pay without reading the page again', () => { assert.equal(pages.length, 1); assert.equal(C6.enrichJob(a2.jobs[0]).salary.min, 169000); });
 }
 
+{ // throttle cooldown: a 429 without Retry-After rests a source that opts in, doubling on repeats
+  const dir = await mkdtemp(join(tmpdir(), 'cf-cool-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'Th', type: 'security', sources: [{ id: 'gh:th', ats: 'greenhouse', slug: 'th', throttle_cooldown_hours: 2 }] }] }));
+  let code = 429; const calls = [];
+  const f = async url => { calls.push(url); return url.includes('boards/th') ? (code === 429 ? new Response('x', { status: 429 }) : new Response(JSON.stringify({ jobs: [] }), { status: 200 })) : new Response('nf', { status: 404 }); };
+  const go = h => run({ fetchImpl: f, env: {}, now: new Date(NOW.getTime() + h * 36e5), dataDir: dir, argv: {}, cfgOverride: { ...FAST, http: { ...FAST.http, retries: 0 } } });
+  const S = r => r.statusOut.sources.find(x => x.id === 'gh:th');
+  const a = await go(0);
+  t('cooldown: first throttled run rests 2h', () => { assert.equal(S(a).next_eligible_at, new Date(NOW.getTime() + 2 * 36e5).toISOString()); assert.match(S(a).message, /resting until/); });
+  const n = calls.length; const b = await go(1);
+  t('cooldown: skipped while resting, message says why', () => { assert.equal(S(b).result, 'deferred'); assert.match(S(b).message, /resting after 1 throttled run/); assert.equal(calls.length, n); });
+  const c = await go(3);
+  t('cooldown: throttled again → rest doubles to 4h', () => assert.equal(S(c).next_eligible_at, new Date(NOW.getTime() + 7 * 36e5).toISOString()));
+  code = 200; const d = await go(8);
+  t('cooldown: a good run clears it', () => { assert.equal(S(d).throttle_runs, 0); assert.equal(S(d).next_eligible_at, null); });
+}
+
 { // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run
   const { sweepCycle } = await import('../lib/adapters-server.mjs');
   const a = sweepCycle({}, { nowIso: 'T1', fromStart: false, wrapped: true, rows: 50 });

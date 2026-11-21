@@ -5821,7 +5821,8 @@
      "location": "United States",
      "list_budget": 6,
      "search_budget": 5,
-     "detail_budget": 3
+     "detail_budget": 3,
+     "throttle_cooldown_hours": 2
     },
     {
      "id": "gh:microsoftcorporation",

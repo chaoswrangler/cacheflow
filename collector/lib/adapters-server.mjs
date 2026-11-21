@@ -1024,7 +1024,7 @@ export const ADAPTERS = {
       ck.last_full_cycle_end ? `last complete US pass finished ${ck.last_full_cycle_end.slice(0, 10)}` : 'no complete US pass yet, so nothing is closed',
       `${jobs.length} kept as US or location-unclear, ${skippedNonUS} outside the US skipped`,
       `${details} detail records read (budget ${detailBudget}), ${reused} reused`,
-      cut ? `REFUSED (${cut}: ${lastFail?.status}); stopped for this run, progress saved, roles not reached are kept` : null,
+      cut ? `REFUSED (${cut}: ${lastFail?.status}) on request ${pagesRun + details + 1} of this run${lastFail?.retryAfter ? `, Retry-After ${lastFail.retryAfter}` : ', no Retry-After given'}; stopped for this run, progress saved, roles not reached are kept` : null,
       detailRefused ? 'detail reads refused; the rest are read next run' : null].filter(Boolean).join('; ');
     return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, note, checkpoint: ck,
       rotated: true, close_before: ck.last_full_cycle_start || null, close_after_hours: src.close_after_hours || 336,

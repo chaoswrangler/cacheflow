@@ -67,6 +67,7 @@ Also written: `YYYY-MM-changes.csv` (pay, title, repost and reopen events for kn
 - **Stored details** are reused while recent; relevant roles are re-read after 30 days (pay or remote terms can change without a title change), within each source's detail budget, new roles first.
 - **Duplicates.** On one board, postings with different requisition IDs are separate openings even with the same title and city. `dup_basis` says whether a group was matched by requisition ID or by title and location.
 - **Microsoft (Eightfold)** runs on a request budget: each run reads up to 6 pages of the US-filtered full list, then 5 keyword-search pages (breadth-first, the least recently scanned search first), then up to 3 detail records for new or changed relevant roles. Progress is saved per list and per search (offset, count, last scan, complete) in `status.json`, and a resumed list re-reads 2 rows so shifted listings aren't skipped. A 403/429 stops Microsoft for the run and keeps the progress; one retry honors a short Retry-After. If the location filter errors or matches nothing, the reader falls back to the unfiltered list (US decided locally) and remembers it. A role is closed only after a complete US pass that started after it was last seen, and after 14 days unseen.
+- **Microsoft throttling.** Requests are 30-45 seconds apart. After a throttled run (429 with no usable Retry-After), Microsoft rests for 2 hours, doubling on each throttled run in a row up to 24 hours (`throttle_cooldown_hours`); a good run resets it. The note records which request was refused and any Retry-After.
 - **Google Careers** treats the full US list (location = United States, about 88 pages) as the inventory, walked from a page checkpoint (45 pages a run, one page of overlap on resume). Six priority searches top up between passes. Each record is schema-checked (numeric id, plain-text title, location strings). A pass closes roles only if it reached the end cleanly: a page that mostly fails the check, or a pass that ends well short of the page's own total or the last pass, is not used for closures.
 - Roles that fit no job category are stored as **Other roles** (off by default in the category picker), not dropped. AWS is the exception (`drop_uncategorized`) because of the size of its US list.
 - Only base pay counts. OTE, bonus, equity and estimates are excluded. Ranges in other currencies, and implausible amounts (over $1.5M), are ignored.
@@ -116,7 +117,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-222 offline tests against mocked API responses. The workflow runs them before every collection.
+226 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 

@@ -102,7 +102,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     // A server that asked (Retry-After) for a longer wait than one run allows is left alone until that time.
     if (!only && pv?.next_eligible_at && now < new Date(pv.next_eligible_at)) {
       statuses.push({ ...pv, ...base, result: 'deferred', checked_at: pv.checked_at, last_attempt_at: lastTry,
-        message: `Deferred: the site asked the collector to wait (Retry-After) until ${pv.next_eligible_at.replace('T', ' ').slice(0, 16)} UTC. Previous roles kept. ${pv.message ? `Last result: ${pv.message}` : ''}`.trim() });
+        message: `Deferred: ${pv.throttle_runs ? `resting after ${pv.throttle_runs} throttled run${pv.throttle_runs === 1 ? '' : 's'} (429)` : 'the site asked the collector to wait (Retry-After)'} until ${pv.next_eligible_at.replace('T', ' ').slice(0, 16)} UTC. Previous roles kept. ${pv.message ? `Last result: ${pv.message}` : ''}`.trim() });
       deferredIds.add(s.id);
       return;
     }
@@ -115,8 +115,14 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     let out;
     try { out = await adapter(s, e, sh, opt); }
     catch (err) { out = { result: 'adapter_error', jobs: [], note: String(err?.message || err) }; }
+    // Throttle cooldown (sources with throttle_cooldown_hours, e.g. Microsoft): a 429 with no usable Retry-After rests the
+    // source for that many hours, doubling on each throttled run in a row (cap 24h), instead of asking again next hour.
+    const throttled = out.status === 429 && !deferMs;
+    const throttleRuns = throttled ? (pv?.throttle_runs || 0) + 1 : 0;
+    if (throttled && s.throttle_cooldown_hours) deferMs = Math.min(24, s.throttle_cooldown_hours * 2 ** (throttleRuns - 1)) * 36e5;
     const nextEligible = deferMs ? new Date(now.getTime() + Math.min(deferMs, 7 * 864e5)).toISOString() : null;
-    if (nextEligible) out.note = `${out.note || ''}${out.note ? '; ' : ''}the site asked for a ${Math.round(deferMs / 60000)}-minute wait (Retry-After): no retries this run; next attempt after ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
+    if (throttled && s.throttle_cooldown_hours) out.note = `${out.note || ''}; throttled ${throttleRuns} run${throttleRuns === 1 ? '' : 's'} in a row: resting until ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
+    if (nextEligible && !(throttled && s.throttle_cooldown_hours)) out.note = `${out.note || ''}${out.note ? '; ' : ''}the site asked for a ${Math.round(deferMs / 60000)}-minute wait (Retry-After): no retries this run; next attempt after ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
     const siteUrl = s.host ? `https://${s.host}/` : (s.list_url || s.seed_url || s.base || s.board_url || null);
     const chal = siteUrl && http.challengeFor(siteUrl);
     if (chal && out.result !== 'ok' && out.result !== 'empty') {
@@ -177,7 +183,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       last_success_at: complete ? base.checked_at : (prev?.last_success_at || null),
       last_data_at: ok ? base.checked_at : (prev?.last_data_at || prev?.last_success_at || null),
       last_complete_scan_at: out.checkpoint?.last_full_cycle_end || (complete && !out.rotated ? base.checked_at : (prev?.last_complete_scan_at || null)),
-      next_eligible_at: nextEligible, drop_hold: dropHold,
+      next_eligible_at: nextEligible, drop_hold: dropHold, throttle_runs: throttleRuns,
       consecutive_failures: complete ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
       bot_check: out.bot_check || null,
       blocked_runs: (out.status === 403 || out.result === 'blocked_challenge') ? (prev?.blocked_runs || (prev?.http_status === 403 || prev?.result === 'blocked_challenge' ? prev?.consecutive_failures || 0 : 0)) + 1 : 0 });

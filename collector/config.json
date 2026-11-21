@@ -50,11 +50,11 @@
     {
       "suffix": "apply.careers.microsoft.com",
       "group": "eightfold",
-      "minDelayMs": 7000,
-      "maxDelayMs": 12000,
+      "minDelayMs": 30000,
+      "maxDelayMs": 45000,
       "retries": 1,
-      "backoffMs": 15000,
-      "_note": "One queue for all Eightfold hosts (add \"group\": \"eightfold\" to any other Eightfold tenant). Microsoft refused (429) after ~15 requests even at 7-12s spacing, so the reader works under a per-run request budget (sources.json: list_budget, search_budget, detail_budget) and stops at a refusal instead of retrying through it; one retry honors a short Retry-After."
+      "backoffMs": 30000,
+      "_note": "One queue for all Eightfold hosts. Microsoft refused (429) after ~15 requests at 7-12s spacing, then after 2 requests on 2026-11-21 (after hours of the older, heavier reader). Now 30-45s between requests, a per-run request budget (sources.json: list_budget, search_budget, detail_budget), a stop at the first refusal, and a rest of throttle_cooldown_hours (doubling) after a throttled run. The source note records which request was refused and any Retry-After, to tune this."
     },
     {
       "suffix": "careers.cisco.com",
