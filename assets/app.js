@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121d';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121d';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121d';
+import * as C from './shared/core.mjs?v=20261121g';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121g';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121g';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -842,7 +842,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121d');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121g');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -1037,8 +1037,8 @@ function downloadCSV(rows, name) {
 
 /* ============================================================ sources */
 const VERIFIED = new Set(['verified_feed', 'verified_pattern', 'documented_public_json']);
-const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots', 'no_links_found'].includes(r) ? 'warn' : 'bad';
-const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", no_links_found: 'Careers page read, but no job links matched. The list may be built by JavaScript; not evidence of zero jobs', partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
+const resultClass = r => !r || r === 'never_run' ? 'idle' : r === 'ok' ? 'ok' : r === 'empty' ? 'empty' : ['link_only', 'not_fetchable', 'skipped_no_key'].includes(r) ? 'idle' : ['timeout', 'experimental_failed', 'blocked_or_network', 'partial', 'blocked_by_robots', 'no_links_found', 'blocked_paused', 'blocked_challenge'].includes(r) ? 'warn' : 'bad';
+const RESULT_HELP = { ok: 'Fetched; jobs returned', blocked_challenge: "Bot check: the site's Cloudflare protection refused the collector as automated traffic. Retries can't fix it, so none were made. Previous roles kept; not evidence of zero jobs", blocked_paused: 'Refused (403) on 3+ runs in a row, so paused and retried weekly. Previous roles kept; not evidence of zero jobs', blocked_by_robots: "The site's robots.txt disallows these pages; not collected", no_links_found: 'Careers page read, but no job links matched. The list may be built by JavaScript; not evidence of zero jobs', partial: 'Refused part-way; roles found so far kept, the rest kept as not refreshed', empty: 'Fetched; board has zero jobs right now', http_403: 'Refused (403). Access failed; not evidence of zero jobs', http_404: 'Not found (404). Identifier or site name likely wrong',
   http_429: 'Rate limited after retries', timeout: 'Timed out after retries', network_error: 'Network failure', parse_error: 'Response not in the expected shape', link_only: 'No public feed; open the careers link',
   not_fetchable: 'Needs ATS discovery (see verification note)', blocked_or_network: 'Browser blocked the request (CORS) or network failed; the collector can still read it', experimental_failed: 'Experimental adapter did not get data', never_run: 'Not collected yet', adapter_error: 'Adapter crashed; see message' };
 function sourceRows() {
@@ -1074,6 +1074,17 @@ function renderSources() {
   // compact visibility chips: green = the source exposes it, grey = it doesn't; hover for the detail
   const FV = [['posted_date', 'Date'], ['salary', 'Pay'], ['location', 'Loc'], ['remote', 'Remote'], ['req_id', 'Req']];
   const fv = f => !f ? '—' : FV.map(([k, l]) => { const v = String(f[k] ?? 'n/a'); const has = !/^(no|n\/a|not |text only)/i.test(v); return `<span class="tag ${has ? 'g' : 'f'}" title="${esc(l + ': ' + v)}">${l}</span>`; }).join('');
+  const held = new Map(); for (const j of S.jobs || []) if (j.status !== 'closed') held.set(j.source_id, (held.get(j.source_id) || 0) + 1);
+  const FAILED = new Set(['blocked_challenge', 'blocked_paused', 'http_403', 'http_429', 'timeout', 'network_error', 'blocked_or_network', 'adapter_error', 'parse_error', 'experimental_failed', 'no_links_found']);
+  // a failed scan fetched nothing this time: show what is still held from earlier scans, never a bare 0
+  const jobsCell = (r, run) => {
+    if (!run) return '—';
+    if (FAILED.has(r.result) || /^http_/.test(r.result || '')) {
+      const n = held.get(r.s.id) || 0, last = run.last_success_at ? run.last_success_at.slice(0, 10) : null;
+      return `<span class="st warn" title="This scan fetched nothing; that is not evidence of zero jobs (${n.toLocaleString()} role${n === 1 ? '' : 's'} held from earlier scans)">Scan blocked · previous results retained</span><div class="msg">Last successful sync: ${last ? esc(last) : 'never'}</div>`;
+    }
+    return `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}`;
+  };
   $('#srcTable').innerHTML = `<thead><tr><th>Employer</th><th>Sector / vertical</th><th>ATS</th><th>Verification</th><th>Last result</th><th>Jobs</th><th>Fields exposed</th><th>Last checked</th><th>Links</th><th></th></tr></thead><tbody>` +
     vis.map(r => {
       const s = r.s, e = r.e, run = r.run;
@@ -1082,7 +1093,7 @@ function renderSources() {
       return `<tr><td class="emp">${esc(e.employer)}${(e.notes || []).length ? ` <span title="${esc(e.notes.join(' '))}" style="color:var(--acid);cursor:help">ⓘ</span>` : ''}<div class="sub" title="${esc(EMP_TYPE[C.companyType({}, e)]?.hint || '')}">${esc(EMP_TYPE[C.companyType({}, e)]?.label || '')}${e.priority ? ' · priority' : ''}${e.discovered ? ' · found via ' + (e.seed_source === 'yc' ? 'YC directory' : esc(e.seed_source || 'seed list')) : ''}${e.size ? ' · ~' + e.size + ' people' : ''}</div></td><td>${esc(e.sector)}<br><span style="color:var(--faint)">${esc(e.vertical || '')}</span></td><td>${esc(s.ats)}${s.slug ? `<br><span style="color:var(--faint)">${esc(s.slug)}</span>` : ''}</td>
         <td title="${esc(s.verification?.method || '')}" style="cursor:help">${esc(s.verification?.status || '—')}</td>
         <td><span class="st ${resultClass(r.result)}" title="${esc(RESULT_HELP[r.result] || r.result)}">${esc(r.result)}</span>${run?.http_status ? ` <span style="color:var(--faint)">${run.http_status}</span>` : ''}${r.live ? ' <span class="tag m">live</span>' : ''}${run?.message ? `<div class="msg" title="${esc(run.message)}">${esc(String(run.message))}</div>` : ''}</td>
-        <td>${run ? `${run.jobs_stored ?? '—'}${run.jobs_total != null && run.jobs_total !== run.jobs_stored ? ` / ${run.jobs_total}` : ''}` : '—'}</td><td>${fv(run?.fields)}</td>
+        <td>${jobsCell(r, run)}</td><td>${fv(run?.fields)}</td>
         <td>${run?.checked_at ? esc(run.checked_at.slice(0, 16).replace('T', ' ')) : '—'}${run?.last_success_at && run.last_success_at !== run.checked_at ? `<br><span style="color:var(--faint)">last ok ${esc(run.last_success_at.slice(0, 10))}</span>` : ''}</td>
         <td>${links}</td><td>${C.BROWSER_ATS.has(s.ats) ? `<button class="btn sec sm" data-live="${esc(s.id)}">Live</button>` : ''}</td></tr>`;
     }).join('') + '</tbody>';
