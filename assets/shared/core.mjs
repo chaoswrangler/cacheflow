@@ -361,13 +361,13 @@ export const FUNCTIONS = {
   pmm:      F('Marketing', 'Product marketing', 'Product Marketing Manager, Solutions Marketing', /product marketing|\bpmm\b|solutions? marketing|portfolio marketing|competitive marketing|industry marketing/i),
   marketing:F('Marketing', 'Marketing, brand & communications', 'Brand, Content, Comms, Events, DevRel', /\bmarketing\b|\bbrand\b|communications|\bpr\b|public relations|content (strateg|market|lead|manager|writer|director)|campaign|\bevents?\b|social media|evangel|developer relations|devrel|analyst relations|community (manager|lead)|copywrit|storytell/i),
   demand:   F('Marketing', 'Demand gen, growth & lifecycle', 'Demand Gen, Growth, ABM, Field Marketing', /demand gen|\bgrowth\b|lifecycle|performance marketing|\babm\b|account[- ]based|marketing operations|field marketing|digital marketing|\bseo\b|paid (media|social|search)/i),
-  sales:    F('Sales & customers', 'Sales & account management', 'Account Executive, Sales Director, BDR', /\baccount (executive|director)|\bsales\b|strategic pursuits?|capture (manager|lead|director)|commercial (lead|director|manager)|business development|\b[bs]dr\b|(security|solutions?|technology|cloud|ai|data|technical) specialist|client (partner|director)|enterprise (seller|executive)|\bterritory\b/i),
+  sales:    F('Sales & customers', 'Sales & account management', 'Account Executive, Sales Director, BDR', /\baccount (executive|director)|\bsales\b|solution area specialist|(security|cloud|data|ai|digital|modern work|business applications?) solutions? specialist|specialist,? (security|cloud|data|ai|digital)( solutions?)?\b|account technology strategist|global black belt|industry (executive|director)\b|digital account (manager|management|executive)|strategic pursuits?|capture (manager|lead|director)|commercial (lead|director|manager)|business development|\b[bs]dr\b|(security|solutions?|technology|cloud|ai|data|technical) specialist|client (partner|director)|enterprise (seller|executive)|\bterritory\b/i),
   se:       F('Sales & customers', 'Solutions & sales engineering', 'Solutions Engineer, Sales Engineer, Field CTO', /(solutions?|sales|pre-?sales|customer|field|partner|forward[- ]deployed|value) (engineer|architect|consultant)|field cto|technical (seller|specialist)|(?:forward[- ]deployed |deployment )strategist|\bpresales\b/i),
   partner:  F('Sales & customers', 'Partnerships, alliances & channel', 'Alliances, Channel, ISV, MSSP partners', /(?<!business |talent |hr |people |finance |hrbp |learning |client |acquisition |compensation |rewards |benefits |care |clinical |research |design |delivery |engagement |success )partner|alliance|channel|ecosystem|(?:cloud|aws|azure|gcp) marketplace|marketplace (?:alliances|partner)|\bisv\b|reseller|\bmssp\b|distribution (?:partner|channel|sales)|distributor|co-?sell/i),
   cs:       F('Sales & customers', 'Customer success & adoption', 'Customer Success, TAM, Adoption, Renewals', /customer success|customer (experience|outcomes|value)|adoption|value (realization|management|engineer|consult|advis)|technical account manager|\btam\b|renewal|client success|implementation (manager|lead)|onboarding/i),
   enable:   F('Sales & customers', 'Enablement & training', 'Sales Enablement, Readiness, Training', /enablement|readiness|training|learning (and|&) development|curriculum|instructional|\bacademy\b/i),
   gtm:      F('Strategy & operations', 'Go-to-market strategy & ops', 'GTM Strategy, Revenue Ops, Sales Strategy', /go[- ]to[- ]market|\bgtm\b|(revenue|sales|field|commercial|partner) (operations|strategy|planning)|rev ?ops|sales ?ops|deal (desk|strategy|op(?:eration)?s)|territory planning/i),
-  strategy: F('Strategy & operations', 'Strategy & business operations', 'Strategy, BizOps, Transformation, Corp Dev', /(?:corporate|business|gtm|go[- ]to[- ]market|growth|revenue|sales|commercial|product|pricing|operations|market|global|deal|solutions|services|channel|partner(?:ship)?s?|platform|ai|security|enterprise|portfolio|ecosystem|company)\s+strateg(?:y|ies)\b|^(?:senior |sr\.? |lead |principal |staff |associate )?strategy\b|[,(|–—-]\s*strategy\b|\b(?:head|director|vp|vice president|chief|manager|lead) of (?:corporate |business |global )?strategy|\bstrategy\s*(?:&|and|\+)\s*(?:operations|ops|planning|analytics|bizops|business operations)|strategic (?:initiatives|projects|programs|planning|operations)|(?:business|corporate|gtm) strategist|business operations|biz ?ops|\boperations (?:lead|manager|director)|transformation|special projects|business planning|corporate development|\bm&a\b|\bpricing\b/i),
+  strategy: F('Strategy & operations', 'Strategy & business operations', 'Strategy, BizOps, Transformation, Corp Dev', /\bindustry advisor\b|\bbusiness architect\b|(?:corporate|business|gtm|go[- ]to[- ]market|growth|revenue|sales|commercial|product|pricing|operations|market|global|deal|solutions|services|channel|partner(?:ship)?s?|platform|ai|security|enterprise|portfolio|ecosystem|company)\s+strateg(?:y|ies)\b|^(?:senior |sr\.? |lead |principal |staff |associate )?strategy\b|[,(|–—-]\s*strategy\b|\b(?:head|director|vp|vice president|chief|manager|lead) of (?:corporate |business |global )?strategy|\bstrategy\s*(?:&|and|\+)\s*(?:operations|ops|planning|analytics|bizops|business operations)|strategic (?:initiatives|projects|programs|planning|operations)|\binitiatives (?:lead|manager|director)\b|\bbusiness planner\b|(?:business|corporate|gtm) strategist|business operations|biz ?ops|\boperations (?:lead|manager|director)|transformation|special projects|business planning|corporate development|\bm&a\b|\bpricing\b/i),
   cos:      F('Strategy & operations', 'Chief of staff & executive office', 'Chief of Staff, Office of the CEO/CISO', /chief of staff|office of the (ceo|cto|ciso|cio|cpo|coo|president)|executive (operations|business partner)|technical advisor to/i),
   ci:       F('Strategy & operations', 'Competitive & market intelligence', 'Competitive Intel, Market Research, Win/Loss', /competitive|market (intelligence|research|insights)|win[- ]loss|industry analyst|analyst relations|research (director|vice president|vp\b)|\b(principal|senior|sr\.?|lead|vp,?) (research )?analyst,?\s*[-–—,]?\s*(security|cyber|risk|ai\b|technology|tech\b|infrastructure|cloud|data|marketing|sales|b2b|enterprise|research)/i),
   threat:   F('Security practice', 'Threat research & intelligence', 'Threat Intel Analyst, Security Researcher, CTI', /threat (intel|research|hunt|analy|insight|landscape|actor)|\bcti\b|(cyber|security|adversary|counter[- ]?threat|threat actor) (intelligence|research)|security researcher|(?<!business |market |competitive |sales |revenue |customer |partner |marketing )intelligence (analyst|researcher|lead|manager|director)|malware (analy|research|reverse)|reverse engineer|vulnerability research|exploit research|adversary emulation|intel(ligence)? (operations|collection|fusion)|\bosint\b/i),
@@ -383,6 +383,8 @@ export const FUNCTIONS = {
   finance:  F('Corporate & services', 'Finance & accounting', 'FP&A, Accounting, Controller, Procurement', /financ|accounting|accountant|controller|\bfp&a\b|treasury|\btax\b|payroll|procurement/i, true),
   people:   F('Corporate & services', 'People, HR & recruiting', 'Recruiter, HRBP, People Ops, Total Rewards', /recruit|talent (acquisition|partner)|\bhr\b|human resources|people (partner|operations|business|team)|\bhrbp\b|total rewards|\bsourcer\b/i, true),
   legal:    F('Corporate & services', 'Legal, policy & government affairs', 'Counsel, Paralegal, Public Policy', /\blegal\b|counsel|attorney|lawyer|paralegal|public policy|government (affairs|relations)|regulatory/i, true),
+  // Roles no other category claims. Stored (not dropped) so nothing in the inventory disappears silently; off by default.
+  other:    F('Corporate & services', 'Other roles', 'Titles no category above recognizes', /(?!)/, true),
 };
 // Criteria saved before the categories were split (no fnKnown): old keys also cover their new children.
 const LEGACY_FN = { strategy: ['cos', 'gtm'], sales: ['gtm', 'se'], ci: ['cs', 'enable'], pmm: ['marketing', 'demand'] };
@@ -416,6 +418,7 @@ export function classifyFunctions(title = '', desc = '') {
   if (builder && (hits.includes('ai') || hits.includes('mleng'))) { const r = hits.filter(k => k !== 'ai' && k !== 'mleng'); hits.length = 0; hits.push(...r, 'mleng'); }
   else { const at = hits.indexOf('mleng'); if (at >= 0) hits.splice(at, 1); }
   const engReview = ENG_REVIEW.test(title) && ENG_GTM.test(title);
+  if (!hits.length && !engReview) hits.push('other');
   return { functions: hits, eng_review: engReview };
 }
 export function seniority(title = '') {
@@ -576,22 +579,28 @@ export function foreignOnly(locations = [], text = '', usdSalary = null) {
    boilerplate, benefits or legal text. Capped at ~280 characters and cut at a word. */
 const ROLE_HEAD = /^(about the (role|position|job|opportunity|team)|the role|role (overview|summary|description)|position (summary|overview)|job (summary|description|overview)|the opportunity|overview|what you('|’)ll do|what you will do|your role|in this role|the position|summary)\s*:?\s*$/i;
 const BOILER = /^(about (us|the company|[A-Z][\w&.\- ]{1,40})$|who we are|our (mission|story|company)|at [A-Z][\w&.\- ]{1,40},|[A-Z][\w&.\- ]{1,40} is (a|an|the) |founded in|we('|’)re (a|an|the|on a mission)|we are (a|an|the|on a mission)|join (us|our)|company overview|life at )/i;
-const LEGAL = /equal opportunity|eeo|accommodation|e-verify|pay transparency|benefits include|we offer|compensation|salary range|privacy (notice|policy)|background check|visa sponsorship|open to hiring|following locations|this (role|position) (is|can be|will be) (based|located)|^locations?\s*:|^(job )?(req(uisition)?|id|location|department|team|type)\s*[:#]/i;
+const LEGAL = /equal opportunity|eeo|accommodation|e-verify|pay transparency|benefits include|we offer|compensation|salary range|privacy (notice|policy)|background check|visa sponsorship|open to hiring|following locations|listed location|other locations will be considered|set of values|core of our actions|this (role|position) (is|can be|will be) (based|located)|^locations?\s*:|^(job )?(req(uisition)?|id|location|department|team|type)\s*[:#]/i;
+// Sentences that describe the role itself, not the company.
+const ROLE_SENT = /\b(you('|’)ll|you will|you would|as (a|an|the|our) [A-Z]?[\w-]+|in this role|this role|the role|this position|the position|we('|’)re (looking|seeking|hiring)|we are (looking|seeking|hiring)|is looking for|are looking for|seeking (a|an)|responsible for|your (role|mission|job)|will (own|lead|drive|build|manage|partner|work|be responsible|report|support|help|join))\b/i;
 export function roleBlurb(text = '', max = 280) {
   const paras = String(text).replace(/\r/g, '').split(/\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean);
   if (!paras.length) return '';
-  let start = paras.findIndex(x => ROLE_HEAD.test(x.replace(/[*#:]+/g, ' ').trim()));
-  let pick = start >= 0 ? paras.slice(start + 1) : paras;
-  if (start < 0) { const i = pick.findIndex(x => x.length > 60 && !BOILER.test(x) && !LEGAL.test(x)); pick = i >= 0 ? pick.slice(i) : pick; }
-  pick = pick.filter(x => x.length > 25 && !LEGAL.test(x) && !ROLE_HEAD.test(x));
+  const head = paras.findIndex(x => ROLE_HEAD.test(x.replace(/[*#:]+/g, ' ').trim()));
+  const usable = x => x.length > 25 && !LEGAL.test(x) && !ROLE_HEAD.test(x);
+  const sentences = list => list.filter(usable).flatMap(p => (p.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [p]).map(x => x.trim()).filter(x => x.length > 20 && !LEGAL.test(x)));
+  // 1) the section under an "About the role" style heading; 2) else the first sentence that talks about the role;
+  // 3) else the first non-boilerplate paragraph
+  let pool = head >= 0 ? sentences(paras.slice(head + 1)) : [];
+  if (!pool.length) {
+    const all = sentences(paras), i = all.findIndex(x => ROLE_SENT.test(x) && !BOILER.test(x));
+    if (i >= 0) pool = all.slice(i);
+    else { const k = paras.findIndex(x => x.length > 60 && !BOILER.test(x) && !LEGAL.test(x)); pool = sentences(k >= 0 ? paras.slice(k) : paras); }
+  }
   let out = '';
-  for (const para of pick) {
-    for (const sent of para.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [para]) {
-      const t = sent.trim(); if (!t) continue;
-      if ((out + ' ' + t).trim().length > max) { if (!out) out = t; break; }
-      out = (out + ' ' + t).trim();
-    }
-    if (out.length > max * 0.5) break;
+  for (const t of pool) {
+    if ((out + ' ' + t).trim().length > max) { if (!out) out = t; break; }
+    out = (out + ' ' + t).trim();
+    if (out.length > max * 0.6) break;
   }
   if (out.length > max) out = out.slice(0, max).replace(/\s+\S*$/, '') + '…';
   return out;

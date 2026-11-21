@@ -1,5 +1,5 @@
 // Resume / LinkedIn-PDF text → profile. Pure function so it can be tested in Node.
-import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261121g';
+import { STATES, extractSkills, classifyFunctions, seniority, SKILLS } from './core.mjs?v=20261121i';
 
 export const CRED_RES = [
   ['MBA', /\bM\.?B\.?A\b/], ['MPH', /\bM\.?P\.?H\b/], ['MS / MSc', /\b(M\.?S\.?c?|Master of Science)\b/], ['MA', /\b(M\.A\.|Master of Arts)\b/], ['PhD', /\bPh\.?D\b/], ['JD', /\bJ\.D\.?(?=\s|,|$)/], ['MD', /\bM\.D\.\b/],
@@ -122,9 +122,9 @@ export function extractResume(text = '', { knownEmployers = [] } = {}) {
 // Job-function categories suggested by a parsed profile: from titles and headline, plus skill clusters.
 export function suggestFunctions(p) {
   const fn = new Set();
-  for (const ti of p.titles || []) classifyFunctions(ti).functions.forEach(f => fn.add(f));
+  for (const ti of p.titles || []) classifyFunctions(ti).functions.forEach(f => f !== 'other' && fn.add(f));
   const groups = (p.skillsOn || []).map(id => SKILLS.find(s => s.id === id)?.group);
-  if (p.headline) classifyFunctions(p.headline).functions.forEach(f => fn.add(f));
+  if (p.headline) classifyFunctions(p.headline).functions.forEach(f => f !== 'other' && fn.add(f));
   const n = g => groups.filter(x => x === g).length, has = id => (p.skillsOn || []).includes(id);
   const nSec = groups.filter(x => x && x.startsWith('Security')).length, any = ids => ids.filter(has).length;
   if (n('Sales') + n('Partnerships & alliances') + n('Marketing') + n('Customer & solutions') >= 4) fn.add('gtm');
