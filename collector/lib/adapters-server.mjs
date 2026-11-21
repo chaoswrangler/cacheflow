@@ -83,6 +83,14 @@ export function googleJobs(data) {
   walk(data, 0);
   return out;
 }
+// Schema check for a parsed Google record: a long numeric id, a plain-text title, and a list of place strings.
+export function googleValid(g) {
+  const why = [];
+  if (!/^\d{10,}$/.test(String(g?.id || ''))) why.push('id');
+  if (typeof g?.title !== 'string' || g.title.length < 4 || g.title.length > 200 || /[<>{}]|https?:/.test(g.title)) why.push('title');
+  if (!Array.isArray(g?.locations) || g.locations.some(l => typeof l !== 'string')) why.push('locations');
+  return { ok: !why.length, why };
+}
 function googleRecord(a) {
   const strings = [], arrays = [], stamps = [];
   const flat = (x, d) => { if (d > 5) return; if (typeof x === 'string') strings.push(x); else if (Array.isArray(x)) { arrays.push(x); if (x.length === 2 && Number.isInteger(x[0]) && x[0] > 1.5e9 && x[0] < 2.2e9) stamps.push(x[0]); x.forEach(y => flat(y, d + 1)); } };
@@ -262,47 +270,110 @@ export const ADAPTERS = {
   // block, 20 per page. Field positions aren't documented, so jobs are found by shape (long numeric id + title)
   // and fields by content. If the page doesn't match, the run reports what it saw instead of guessing.
   async google_careers(src, emp, http, opt) {
-    const seen = new Map(); let pages = 0, lastFail = null, diag = '';
-    for (const q of src.queries || ['']) {
-      for (let page = 1; page <= (src.max_pages || 5); page++) {
-        const url = `https://www.google.com/about/careers/applications/jobs/results?hl=en_US&q=${encodeURIComponent(q)}&location=United%20States&page=${page}`;
-        const r = await http.text(url);
-        if (!r.ok) { lastFail = r; if (r.status === 429 || r.status === 403) break; continue; }
-        const block = afData(r.data, 'ds:1');
-        if (!block) { diag = `page ${page} of "${q}": ${r.data.length} bytes, AF_initDataCallback ${/AF_initDataCallback/.test(r.data) ? 'present but no ds:1 data' : 'absent'}`; break; }
-        pages++;
-        const found = googleJobs(block); let fresh = 0;
-        for (const g of found) if (!seen.has(g.id)) { seen.set(g.id, g); fresh++; }
-        if (found.length < 20 || !fresh) break;
+    // Inventory model: the full US list (location=United States, no keyword) is the primary source and is walked page
+    // by page across runs from a saved checkpoint; a few keyword searches top up high-priority roles between passes.
+    // Every record is schema-checked; a pass only counts as complete (and can close roles) if it reached the end
+    // without refusals or parser failures.
+    const base = 'https://www.google.com/about/careers/applications/jobs/results?hl=en_US&location=United%20States';
+    const refused = r => [403, 429].includes(r?.status);
+    const nowIso = (opt.now || new Date()).toISOString();
+    const prevSt = opt.prevStatusById?.get(src.id) || {};
+    const ck = JSON.parse(JSON.stringify(prevSt.checkpoint?.list ? prevSt.checkpoint : { list: { page: Number(prevSt.resume_offset) > 1 ? Number(prevSt.resume_offset) : 1 } }));
+    const L = ck.list; L.page ||= 1;
+    const PAGE = src.page_size || 20;
+    const seen = new Map(); let pages = 0, lastFail = null, diag = '', cut = null;
+    const chk = { records: 0, invalid: 0, noLoc: 0, noText: 0, badPages: 0 };
+    const read = async url => {
+      const r = await http.text(url);
+      if (!r.ok) return { r };
+      const block = afData(r.data, 'ds:1');
+      if (!block) return { r, bad: `${r.data.length} bytes, AF_initDataCallback ${/AF_initDataCallback/.test(r.data) ? 'present but no ds:1 data' : 'absent'}` };
+      const raw = googleJobs(block), found = [];
+      for (const g of raw) {
+        chk.records++;
+        const v = googleValid(g);
+        if (!v.ok) { chk.invalid++; continue; }
+        if (!g.locations.length) chk.noLoc++;
+        if (!g.text) chk.noText++;
+        found.push(g);
       }
-      if (lastFail && (lastFail.status === 429 || lastFail.status === 403)) break;
+      const total = Array.isArray(block) && Number.isInteger(block[2]) && block[2] >= found.length ? block[2] : null;
+      // a page whose records mostly fail the schema means the page layout changed: don't trust it
+      const pageBad = raw.length > 0 && chk.invalid > 0 && (raw.length - found.length) / raw.length > 0.5;
+      if (pageBad) chk.badPages++;
+      pages++;
+      return { r, found, rawN: raw.length, total, pageBad };
+    };
+    // 1) full US list from the checkpoint (one page of overlap when resuming, so roles shifted by new postings aren't skipped)
+    let listPages = 0, newOnList = 0, shifted = 0, reachedEnd = false, earlyEnd = null;
+    const budget = src.scan_pages_per_run || 45;
+    if (src.full_scan) {
+      let page = L.page > 1 ? L.page - 1 : 1;
+      const overlapPage = L.page > 1 ? page : null; // already counted last run
+      if (page === 1 && L.page === 1) { L.cycle_started = nowIso; L.cycle_bad = false; L.cycle_ids = 0; }
+      let prevIds = null;
+      while (listPages < budget) {
+        const { r, found, rawN, total, pageBad, bad } = await read(`${base}&page=${page}`);
+        if (!r.ok) { lastFail = r; if (refused(r)) cut = `full US list at page ${page}`; break; } // resumes at this page: no gap
+        if (bad) { diag = `full US list page ${page}: ${bad}`; break; }
+        listPages++;
+        if (pageBad) L.cycle_bad = true;
+        if (total) L.total = total;
+        const ids = found.map(g => g.id);
+        // some result pages repeat the last page instead of returning nothing: same ids as the previous page = end
+        if (prevIds && ids.length && ids.every(id => prevIds.has(id))) { reachedEnd = true; break; }
+        let fresh = 0;
+        for (const g of found) { if (!seen.has(g.id)) { seen.set(g.id, g); fresh++; } else shifted++; }
+        newOnList += fresh; if (page !== overlapPage) L.cycle_ids = (L.cycle_ids || 0) + found.length;
+        prevIds = new Set(ids);
+        if (rawN < PAGE) { reachedEnd = true; break; }
+        page++;
+      }
+      if (reachedEnd) {
+        // a pass that ends well short of the page's own total or of the last complete pass is not trusted for closures:
+        // an empty page from a layout change would otherwise look like the end of the list
+        const expected = L.total || ck.last_full_cycle_roles || 0;
+        if (expected && (L.cycle_ids || 0) < 0.8 * expected) { L.cycle_bad = true; earlyEnd = `pass ended early (${L.cycle_ids || 0} rows vs about ${expected} expected), not used for closures`; }
+        if (!L.cycle_bad && L.cycle_started) { ck.last_full_cycle_start = L.cycle_started; ck.last_full_cycle_end = nowIso; ck.last_full_cycle_roles = L.cycle_ids || newOnList; }
+        L.last_pages = page; L.page = 1;
+      } else if (!cut && !diag) L.page = page; // budget used up: resume here next run
+      else L.page = Math.max(1, page);
     }
-    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
-    if (src.full_scan && !(lastFail && [403, 429].includes(lastFail.status)) && !diag) {
-      let page = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 1;
-      while (scanned < (src.scan_pages_per_run || 40)) {
-        const r = await http.text(`https://www.google.com/about/careers/applications/jobs/results?hl=en_US&location=United%20States&page=${page}`);
-        if (!r.ok) { lastFail = r; resume = page; break; }
-        const block = afData(r.data, 'ds:1');
-        if (!block) { resume = page; break; }
-        scanned++; pages++;
-        const found = googleJobs(block);
-        for (const g of found) if (!seen.has(g.id)) seen.set(g.id, g);
-        if (found.length < 20) { resume = 1; wrapped = true; break; }
-        page++; resume = page;
+    // 2) a few high-priority searches (first page or two each), skipped once refused
+    let searchPages = 0, searchNew = 0;
+    if (!cut) search: for (const q of src.queries || []) {
+      for (let page = 1; page <= (src.max_pages || 1); page++) {
+        const { r, found, rawN, bad } = await read(`${base}&q=${encodeURIComponent(q)}&page=${page}`);
+        if (!r.ok) { lastFail = r; if (refused(r)) { cut = `search "${q}"`; break search; } break; }
+        if (bad) { diag ||= `search "${q}" page ${page}: ${bad}`; break; }
+        searchPages++;
+        let fresh = 0; for (const g of found) if (!seen.has(g.id)) { seen.set(g.id, g); fresh++; }
+        searchNew += fresh;
+        if (rawN < PAGE || !fresh) break;
       }
     }
-    const scanNote = src.full_scan ? (scanned ? `; full US list: ${scanned} pages from page ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at page ${resume}`}` : '; full US list not read this run') : '';
+    ck.updated_at = nowIso;
+    const invalidShare = chk.records ? chk.invalid / chk.records : 0;
+    const parserNote = `parser check: ${chk.records} records, ${chk.invalid} failed the schema${chk.records ? ` (${Math.round(invalidShare * 100)}%)` : ''}, ${chk.noLoc} without a location, ${chk.noText} without description text${chk.badPages ? `; ${chk.badPages} page(s) mostly unreadable, so this pass can't close roles` : ''}`;
     if (!seen.size) {
-      if (lastFail && !pages) return fail(lastFail, { note: `Google Careers refused or failed (${lastFail.status || lastFail.error}); previous roles kept.` });
-      return { result: pages ? 'empty' : 'experimental_failed', status: 200, jobs: [], note: pages ? `${pages} pages read; no jobs matched the searches` : `Google Careers page format not recognized: ${diag || 'no data block found'}` };
+      if (lastFail && !pages) return fail(lastFail, { note: `Google Careers refused or failed (${lastFail.status || lastFail.error}); previous roles kept.`, checkpoint: ck });
+      return { result: pages ? 'empty' : 'experimental_failed', status: 200, jobs: [], checkpoint: ck, note: pages ? `${pages} pages read; no valid job records (${parserNote})` : `Google Careers page format not recognized: ${diag || 'no data block found'}` };
     }
     const jobs = [...seen.values()].map(g => ({ source_id: src.id, ats: 'google_careers', employer: emp.employer, ext_id: g.id, title: g.title,
       url: `https://www.google.com/about/careers/applications/jobs/results/${g.id}-${g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
       locations: g.locations, remote_hint: g.locations.some(l => /remote/i.test(l)), department: g.company && g.company !== 'Google' ? g.company : null,
       posted_at: null, posted_kind: g.ts ? 'updated_only' : 'unknown', updated_at: g.ts, desc_text: g.text }));
-    return { result: 'ok', status: 200, jobs, note: `${jobs.length} roles from ${pages} result pages across ${(src.queries || ['']).length} searches${scanNote} (experimental parser)`,
-             resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
+    const listState = !src.full_scan ? null : listPages
+      ? `full US list: ${listPages} page${listPages === 1 ? '' : 's'} read${reachedEnd ? `, reached the end${L.cycle_bad ? ' (pass not clean, not used for closures)' : ' — pass complete'}` : `, next run resumes at page ${L.page} (one page of overlap)`}${L.total ? `; page reports ${L.total} US roles` : ''}`
+      : 'full US list not read this run';
+    const note = [`${jobs.length} roles from ${pages} result pages`, listState, `${searchPages} search pages (${(src.queries || []).length} priority searches) added ${searchNew} roles not on the list pages read`,
+      shifted ? `${shifted} repeated rows across pages (listing shifted or overlap)` : null,
+      ck.last_full_cycle_end ? `last complete US pass ${ck.last_full_cycle_end.slice(0, 10)} (${ck.last_full_cycle_roles} roles)` : 'no complete US pass yet, so nothing is closed',
+      earlyEnd, parserNote, cut ? `REFUSED (${cut}: ${lastFail?.status}); stopped, progress saved` : null, diag || null, '(experimental parser)'].filter(Boolean).join('; ');
+    const warn = invalidShare > 0.2 || chk.badPages > 0 || !!earlyEnd;
+    return { result: cut ? 'partial' : warn ? 'partial' : 'ok', status: cut ? lastFail.status : 200, jobs, note, checkpoint: ck,
+             resume_offset: !src.full_scan ? null : L.page, rotated: src.full_scan, close_before: !src.full_scan ? undefined : (ck.last_full_cycle_start || null),
+             close_after_hours: !src.full_scan ? undefined : (src.close_after_hours || 96),
              fields: { posted_date: 'page timestamp treated as updated date; first-observed used', salary: 'description text (US base range is usually stated)', location: 'yes', remote: 'from location text', req_id: 'Google job id' } };
   },
 
@@ -709,46 +780,83 @@ export const ADAPTERS = {
   // every listed location. Each run: the keyword searches (fresh roles), then, with full_scan, the next chunk of the whole
   // list, resuming where the last run stopped. A refusal (403/429) stops the run and returns 'partial', so roles not
   // reached are kept, never closed. Details are read once per role and reused afterwards.
+  // Eightfold (Microsoft). Microsoft's host starts refusing (429) after roughly 15 requests even at 7-12s spacing, so the
+  // reader works incrementally under a per-run request budget instead of trying to cover everything in one run:
+  //   - searches are filtered to the US on the server (location=), with a fallback if the filter returns nothing
+  //   - breadth-first: one page from each search per round, the searches checked longest ago first
+  //   - each search and the full US list ("*") keep their own checkpoint (offset, count, last scan, complete)
+  //   - discovery and detail reads are budgeted separately; details only for new roles in a job category
+  //   - a refusal stops the source for this run; all checkpoints are kept and work resumes next run
+  //   - roles close only after a complete pass of the US list has finished since they were last seen
   async eightfold(src, emp, http, opt) {
     const host = `https://${src.host}`, D = encodeURIComponent(src.domain);
     const refused = r => [403, 429].includes(r?.status);
-    const seen = new Map(); let anyOk = false, lastFail = null, cut = null, pagesRun = 0, total = null;
+    const nowIso = (opt.now || new Date()).toISOString();
+    const prevSt = opt.prevStatusById?.get(src.id) || {};
+    const ck = JSON.parse(JSON.stringify(prevSt.checkpoint?.units ? prevSt.checkpoint : { units: {} }));
+    let location = src.location ?? 'United States';
+    if (ck.location_ok === false) location = '';
+    const seen = new Map(); let anyOk = false, lastFail = null, cut = null, pagesRun = 0, total = null, locNote = null, filterSeen = 0, filterLeak = 0;
+    const OVERLAP = src.page_overlap ?? 2; // re-read a couple of rows when resuming a saved offset, so roles shifted by new postings aren't skipped
+    const touched = new Set();
+    const searchBudget = src.search_budget ?? 5, listBudget = src.list_budget ?? 6, detailBudget = src.detail_budget ?? 3;
     const page = async (q, start) => {
-      const r = await http.json(`${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=&start=${start}&num=10`);
+      const url = loc => `${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=${encodeURIComponent(loc)}&start=${start}&num=10`;
+      let r = await http.json(url(location));
+      let data = r.ok ? (r.data?.data || {}) : {};
+      // a location filter that errors (not a refusal) or matches nothing on the broad list is treated as a wrong filter,
+      // not as "no US jobs": fall back to unfiltered paging (US still decided locally) and remember it
+      const badFilter = location && q === '' && ((!r.ok && !refused(r)) || (r.ok && Number(data.count) === 0));
+      if (badFilter) {
+        pagesRun++;
+        const r2 = await http.json(url(''));
+        if (r2.ok && Number(r2.data?.data?.count) > 0) {
+          locNote = `location filter "${location}" ${r.ok ? 'matched nothing' : `failed (${r.status || r.error})`}; reading the unfiltered list instead (US decided locally)`;
+          location = ''; ck.location_ok = false; r = r2; data = r2.data.data;
+          Object.assign(unitOf('*'), { offset: 0, count: null, complete: false, cycle_started: nowIso }); start = 0;
+        } else if (!r2.ok) r = r2;
+      }
       if (!r.ok) return { r };
-      const data = r.data?.data || {}, list = data.positions;
+      const list = data.positions;
       if (!Array.isArray(list)) return { r: { ok: false, error: 'parse_error', detail: 'No data.positions in response' } };
-      anyOk = true; pagesRun++; if (data.count != null) total = Number(data.count);
+      anyOk = true; pagesRun++; if (data.count != null && q === '') total = Number(data.count);
       for (const p of list) seen.set(String(p.id), p);
-      return { r, list, count: Number(data.count ?? Infinity) };
+      if (location) for (const p of list) { const ls = [...(p.standardizedLocations || []), ...(p.locations || [])].map(l => typeof l === 'string' ? l : (l?.name || '')).join(' | '); filterSeen++; if (ls && !usText(ls) && !/remote|multiple/i.test(ls)) filterLeak++; }
+      return { r, list, count: Number(data.count ?? Infinity), start };
     };
-    // 1) keyword searches
-    const maxPer = src.max_per_query || opt.eightfoldMaxPerQuery || 30;
-    search: for (const q of src.queries || []) {
-      let start = 0, prevFirst = null;
-      while (start < maxPer) {
-        const { r, list, count } = await page(q, start);
-        if (!r.ok) { lastFail = r; if (refused(r)) { cut = `search "${q}" at ${start}`; break search; } break; }
-        if (!list.length || String(list[0]?.id) === prevFirst) break;
-        prevFirst = String(list[0]?.id); start += list.length;
-        if (start >= count) break;
+    const unitOf = k => (ck.units[k] ||= { offset: 0, count: null, last_scan: null, complete: false });
+    const step = async (k) => { // one page of one unit; returns false when the source must stop
+      const u = unitOf(k), q = k === '*' ? '' : k;
+      if (u.offset === 0 && k === '*') { u.cycle_started = nowIso; u.cycle_bad = false; }
+      const from = !touched.has(k) && u.offset > 0 ? Math.max(0, u.offset - OVERLAP) : u.offset; touched.add(k);
+      const { r, list, count, start: used } = await page(q, from);
+      if (used === 0 && from > 0) { u.offset = 0; if (k === '*') u.cycle_started = nowIso; } // filter fell back: restart this list
+      if (!r.ok) { lastFail = r; if (refused(r)) { cut = `${k === '*' ? 'full US list' : `search "${k}"`} at ${u.offset}`; return false; } u.error = r.error || r.status; return true; }
+      u.last_scan = nowIso; u.count = Number.isFinite(count) ? count : u.count; delete u.error;
+      const next = (used ?? u.offset) + list.length;
+      // an empty page before the reported count is reached ends this pass, but such a pass can't close roles
+      if (!list.length && (used ?? u.offset) < count && Number.isFinite(count)) u.cycle_bad = true;
+      if (!list.length || next >= count) { u.complete = true; u.offset = 0; if (k === '*' && !u.cycle_bad && u.cycle_started) { ck.last_full_cycle_start = u.cycle_started; ck.last_full_cycle_end = nowIso; } }
+      else { u.complete = false; u.offset = next; }
+      return 'page';
+    };
+    // 1) full US list first (it decides closures), then keyword searches breadth-first, oldest first
+    let listPages = 0, searchPages = 0;
+    while (listPages < listBudget && !cut) { const r = await step('*'); if (!r) break; listPages++; if (unitOf('*').offset === 0) break; }
+    const queries = [...(src.queries || [])].sort((x, y) => String(unitOf(x).last_scan || '').localeCompare(String(unitOf(y).last_scan || '')));
+    const done = new Set();
+    while (searchPages < searchBudget && !cut && done.size < queries.length) {
+      for (const q of queries) {
+        if (searchPages >= searchBudget || cut) break;
+        if (done.has(q)) continue;
+        const r = await step(q); if (!r) break;
+        searchPages++;
+        if (unitOf(q).offset === 0) done.add(q); // reached the end of this search for now
       }
-      if (!anyOk && lastFail) break; // first request failed outright: don't keep knocking
+      if (!queries.length) break;
     }
-    // 2) full-list chunk
-    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
-    if (src.full_scan && !cut && (anyOk || !lastFail)) {
-      let start = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
-      const maxPages = src.scan_pages_per_run || opt.eightfoldScanPages || 40;
-      while (scanned < maxPages) {
-        const { r, list, count } = await page('', start);
-        if (!r.ok) { lastFail = r; resume = start; if (refused(r)) cut = `full list at ${start}`; break; }
-        scanned++;
-        if (!list.length || start + list.length >= count) { resume = 0; wrapped = true; break; }
-        start += list.length; resume = start;
-      }
-    }
-    if (!anyOk) return fail(lastFail || {}, { resume_offset: resume ?? opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
+    ck.updated_at = nowIso;
+    if (!anyOk) return fail(lastFail || {}, { checkpoint: ck });
     const ts = v => v ? new Date((v > 1e12 ? v : v * 1000)).toISOString() : null;
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0, detailRefused = false, skippedNonUS = 0;
@@ -768,7 +876,7 @@ export const ADAPTERS = {
       if (!j.posted_at && j.created_at) { j.posted_at = j.created_at; j.posted_kind = 'creation_ts (may predate public posting)'; }
       const pj = prev.get(j.ext_id);
       if (pj && pj.title === j.title && (!relevantTitle(p.name) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
-      if (!detailRefused && relevantTitle(p.name) && details < (src.detail_cap || opt.detailCap)) {
+      if (!detailRefused && !cut && relevantTitle(p.name) && details < detailBudget) {
         details++;
         const d = await http.json(`${host}/api/pcsx/position_details?domain=${D}&position_id=${encodeURIComponent(p.id)}&hl=en`);
         const dd = d.ok ? d.data?.data : null;
@@ -781,15 +889,20 @@ export const ADAPTERS = {
       jobs.push(j);
     }
     const partial = !!cut;
-    const note = [`${seen.size} positions listed (${pagesRun} pages${total != null ? ` of ${total} worldwide` : ''})`,
-      src.full_scan ? (scanned ? `full list: ${scanned} pages from listing ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : 'full list not scanned this run') : null,
+    const U = ck.units['*'] || {};
+    const listState = U.count != null ? `full US list: ${listPages} page${listPages === 1 ? '' : 's'} read, ${U.complete && U.offset === 0 ? `pass complete (${U.count} roles)` : `at ${U.offset} of ${U.count}`}` : `full US list: ${listPages} pages read`;
+    const qDone = (src.queries || []).filter(q => ck.units[q]?.last_scan === nowIso).length;
+    if (location && filterSeen >= 10 && filterLeak / filterSeen > 0.5) locNote = `location filter "${location}" seems ignored (${filterLeak} of ${filterSeen} listed roles outside the US); US decided locally`;
+    else if (location && filterSeen) locNote ||= `server-side location filter "${location}" in use (${filterLeak} of ${filterSeen} listed roles outside the US)`;
+    const note = [`${seen.size} positions listed from ${pagesRun} requests (${listPages} list, ${searchPages} search, budget ${listBudget}+${searchBudget})`, locNote,
+      listState, `${qDone} of ${(src.queries || []).length} searches refreshed this run (oldest first)`,
+      ck.last_full_cycle_end ? `last complete US pass finished ${ck.last_full_cycle_end.slice(0, 10)}` : 'no complete US pass yet, so nothing is closed',
       `${jobs.length} kept as US or location-unclear, ${skippedNonUS} outside the US skipped`,
-      `${details} detail records read, ${reused} reused`,
-      cut ? `REFUSED part-way (${cut}: ${lastFail?.status}); roles not reached are kept` : null,
-      detailRefused ? 'detail reads refused part-way; the rest are read next run' : null].filter(Boolean).join('; ');
-    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, note,
-      resume_offset: src.full_scan ? resume ?? scanFrom : null,
-      rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 168) : undefined,
+      `${details} detail records read (budget ${detailBudget}), ${reused} reused`,
+      cut ? `REFUSED (${cut}: ${lastFail?.status}); stopped for this run, progress saved, roles not reached are kept` : null,
+      detailRefused ? 'detail reads refused; the rest are read next run' : null].filter(Boolean).join('; ');
+    return { result: partial ? 'partial' : jobs.length ? 'ok' : 'empty', status: partial ? lastFail.status : 200, jobs, note, checkpoint: ck,
+      rotated: true, close_before: ck.last_full_cycle_start || null, close_after_hours: src.close_after_hours || 336,
       fields: { posted_date: 'postedTs (creationTs kept separately)', salary: 'position_details jobDescription', location: 'standardizedLocations + locations (US decided locally)', remote: 'efcustomTextWorkSite (detail); listing flag used only for remote/hybrid', req_id: 'displayJobId' } };
   },
 
