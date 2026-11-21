@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Http } from './lib/http.mjs';
 import { ADAPTERS, AGGREGATORS, atsLinks } from './lib/adapters-server.mjs';
-import { enrichJob, weekWindow, relativePosted, norm } from '../assets/shared/core.mjs';
+import { enrichJob, weekWindow, relativePosted, norm, classifyFunctions } from '../assets/shared/core.mjs';
 import { seedProbe } from './lib/seeds.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -99,7 +99,12 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       }
       return e2;
     });
-    const stored = enriched.filter(j => cfg.store_non_us || j.us !== false);
+    // Full-list sweeps (AWS, Google, Microsoft, Oracle) return every posting. Roles whose title fits no job category can
+    // never appear in results (the page re-checks titles), so they aren't stored; the next sweep picks them up if categories grow.
+    const outOfScope = j => out.rotated && !s.keep_uncategorized && !j.eng_review && !classifyFunctions(j.title).functions.length;
+    const skippedScope = enriched.filter(outOfScope).length;
+    const stored = enriched.filter(j => (cfg.store_non_us || j.us !== false) && !outOfScope(j));
+    if (skippedScope) out.note = `${out.note || ''}${out.note ? '; ' : ''}${skippedScope} roles outside every job category not stored`;
     const ok = out.result === 'ok' || out.result === 'empty' || out.result === 'partial';
     if (ok) fresh.set(s.id, stored);
     if (out.result === 'partial') partialIds.add(s.id);

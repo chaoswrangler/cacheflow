@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121a';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121a';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121a';
+import * as C from './shared/core.mjs?v=20261121b';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121b';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121b';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -18,6 +18,7 @@ const PAY_LEVELS = [0, 80000, 100000, 120000, 140000, 150000, 160000, 175000, 18
 const EMP_TYPE = {
   big: { label: 'Big tech & large companies', hint: 'Big tech, cloud giants and large public or late-stage companies (Microsoft, Google, AWS, Salesforce, Stripe, OpenAI, big trading firms…)' },
   security: { label: 'Established security companies', hint: 'Large or long-running security vendors and security services firms (CrowdStrike, Palo Alto Networks, CyberArk, Fortinet, Optiv…)' },
+  advisory: { label: 'Consulting & analyst firms', hint: 'Consultancies, Big Four, government/defense consultancies and research & analyst firms (Accenture, Deloitte, Booz Allen, Gartner, Forrester, IDC, IANS…)' },
   growth: { label: 'Startups & growth-stage', hint: 'Younger, venture-backed companies in security, AI, SaaS, fintech and health, from early stage to pre-IPO' },
   aggregator: { label: 'Found via job aggregators', hint: "Roles from aggregator searches rather than the employer's own job site; check the posting" },
 };
@@ -28,7 +29,7 @@ const OWNER = !!store.get('owner', false);
 const DEFAULT_CRIT = () => ({
   functions: [...C.DEFAULT_FUNCTIONS], fnKnown: [...FN_KEYS], engReview: false, minBase: 0, maxBase: 150000, salMode: 'starts', window: 'week', firstSeen: true, updated: true,
   lMetro: true, lRemoteYes: true, lRemoteUnknown: true, lOther: false, metro: '', state: '', remoteState: '', places: null, sen: 2,
-  include: '', exclude: 'intern, new grad, apprentice', types: { big: true, security: true, growth: true, aggregator: true }, sectors: [], verticals: [], blockEmp: [],
+  include: '', exclude: 'intern, new grad, apprentice', types: { big: true, security: true, advisory: true, growth: true, aggregator: true }, sectors: [], verticals: [], blockEmp: [],
 });
 const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: [], employers: [], titles: [], skillsOn: [], skillsOff: [], custom: [], suggestedFns: [], source: 'empty' });
 const S = {
@@ -832,7 +833,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121a');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121b');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

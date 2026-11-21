@@ -153,7 +153,7 @@ export const ADAPTERS = {
     const queries = src.queries?.length ? src.queries : [''];
     let anyOk = false, lastFail = null;
     for (const q of queries) {
-      for (let offset = 0; offset < opt.maxPerQuery; offset += 100) {
+      for (let offset = 0; offset < (src.max_results || opt.maxPerQuery); offset += 100) {
         const u = `https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(company)}/postings?limit=100&offset=${offset}` + (q ? `&q=${encodeURIComponent(q)}` : '') + (src.country ? `&country=${src.country}` : '');
         const r = await http.json(u);
         if (!r.ok) { lastFail = r; break; }
@@ -243,6 +243,22 @@ export const ADAPTERS = {
       }
       if (lastFail && (lastFail.status === 429 || lastFail.status === 403)) break;
     }
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
+    if (src.full_scan && !(lastFail && [403, 429].includes(lastFail.status)) && !diag) {
+      let page = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 1;
+      while (scanned < (src.scan_pages_per_run || 40)) {
+        const r = await http.text(`https://www.google.com/about/careers/applications/jobs/results?hl=en_US&location=United%20States&page=${page}`);
+        if (!r.ok) { lastFail = r; resume = page; break; }
+        const block = afData(r.data, 'ds:1');
+        if (!block) { resume = page; break; }
+        scanned++; pages++;
+        const found = googleJobs(block);
+        for (const g of found) if (!seen.has(g.id)) seen.set(g.id, g);
+        if (found.length < 20) { resume = 1; wrapped = true; break; }
+        page++; resume = page;
+      }
+    }
+    const scanNote = src.full_scan ? (scanned ? `; full US list: ${scanned} pages from page ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at page ${resume}`}` : '; full US list not read this run') : '';
     if (!seen.size) {
       if (lastFail && !pages) return fail(lastFail, { note: `Google Careers refused or failed (${lastFail.status || lastFail.error}); previous roles kept.` });
       return { result: pages ? 'empty' : 'experimental_failed', status: 200, jobs: [], note: pages ? `${pages} pages read; no jobs matched the searches` : `Google Careers page format not recognized: ${diag || 'no data block found'}` };
@@ -251,7 +267,8 @@ export const ADAPTERS = {
       url: `https://www.google.com/about/careers/applications/jobs/results/${g.id}-${g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
       locations: g.locations, remote_hint: g.locations.some(l => /remote/i.test(l)), department: g.company && g.company !== 'Google' ? g.company : null,
       posted_at: null, posted_kind: g.ts ? 'updated_only' : 'unknown', updated_at: g.ts, desc_text: g.text }));
-    return { result: 'ok', status: 200, jobs, note: `${jobs.length} roles from ${pages} result pages across ${(src.queries || ['']).length} searches (experimental parser)`,
+    return { result: 'ok', status: 200, jobs, note: `${jobs.length} roles from ${pages} result pages across ${(src.queries || ['']).length} searches${scanNote} (experimental parser)`,
+             resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
              fields: { posted_date: 'page timestamp treated as updated date; first-observed used', salary: 'description text (US base range is usually stated)', location: 'yes', remote: 'from location text', req_id: 'Google job id' } };
   },
 
@@ -341,7 +358,7 @@ export const ADAPTERS = {
     const found = new Map(); let pages = 0, lastFail = null, stopped = false;
     const harvest = html => { const before = found.size;
       for (const m of html.matchAll(/<a[^>]+href="([^"]*JobDetail[^"]*?jobId=(\d+)[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2]) || (t && !found.get(m[2]).title)) found.set(m[2], { url: abs(m[1]), title: t || found.get(m[2])?.title || '' }); }
-      for (const m of html.matchAll(/<a[^>]+href="([^"]*\/JobDetail\/[^"]*?\/(\d+))"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2])) found.set(m[2], { url: abs(m[1]), title: t }); }
+      for (const m of html.matchAll(/<a[^>]+href="([^"]*\/(?:JobDetail|FolderDetail)\/[^"]*?\/(\d+))"[^>]*>([\s\S]*?)<\/a>/gi)) { const t = htmlToText(m[3]).split('\n')[0].trim(); if (!found.has(m[2])) found.set(m[2], { url: abs(m[1]), title: t }); }
       return found.size - before; };
     const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*next[^"]*")/i); return m ? abs(m[1]) : null; };
     const crawl = async start => { let url = start, seen = new Set();
@@ -550,14 +567,30 @@ export const ADAPTERS = {
       }
       if (!anyOk && lastFail) break;
     }
-    if (!anyOk) return fail(lastFail || {});
+    // full US list, a chunk per run, resuming where the last run stopped (every posting is covered every few runs)
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false, cut = null;
+    if (src.full_scan && (anyOk || !lastFail)) {
+      let offset = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
+      while (scanned < (src.scan_pages_per_run || 40)) {
+        const r = await http.json(`https://www.amazon.jobs/en/search.json?base_query=&normalized_country_code%5B%5D=${src.country || 'USA'}&result_limit=100&offset=${offset}&sort=recent`);
+        if (!r.ok) { lastFail = r; resume = offset; if ([403, 429].includes(r.status)) cut = offset; break; }
+        anyOk = true; scanned++;
+        const list = r.data?.jobs || [];
+        for (const p of list) seen.set(p.id_icims || p.id, p);
+        if (list.length < 100) { resume = 0; wrapped = true; break; }
+        offset += 100; resume = offset;
+      }
+    }
+    if (!anyOk) return fail(lastFail || {}, { resume_offset: opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
+    const scanNote = src.full_scan ? (scanned ? `; full US list: ${scanned} pages from ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : '; full US list not read this run') + (cut != null ? ` (refused at ${cut}: ${lastFail?.status})` : '') : '';
     const jobs = [...seen.values()].map(p => ({ source_id: src.id, ats: 'amazon', employer: /amazon-web-services/i.test(p.business_category || '') ? 'Amazon / AWS (AWS)' : 'Amazon / AWS',
       ext_id: String(p.id_icims || p.id), req_id: String(p.id_icims || ''), title: p.title, url: `https://www.amazon.jobs${p.job_path || ''}`,
       locations: [p.normalized_location || p.location].filter(Boolean), country: p.country_code === 'USA' ? 'US' : p.country_code,
       department: [p.business_category, p.job_category].filter(Boolean).join(' / ') || null,
       posted_at: iso(p.posted_date), posted_kind: 'posted_date',
       desc_text: htmlToText([p.description, p.basic_qualifications, p.preferred_qualifications].filter(Boolean).join('\n')) }));
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, note: `${jobs.length} US postings via keyword searches`,
+    return { result: cut != null ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut != null ? lastFail.status : 200, jobs, note: `${jobs.length} US postings via keyword searches${scanNote}`,
+             resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
              fields: { posted_date: 'posted_date', salary: 'pay statement in qualification text (geo range)', location: 'yes', remote: 'text only', req_id: 'id_icims' } };
   },
 
@@ -728,21 +761,48 @@ export const ADAPTERS = {
 
   async oracle_hcm(src, emp, http, opt) {
     const seen = new Map(); let anyOk = false, lastFail = null;
-    for (const q of src.queries || ['']) {
-      const finder = `findReqs;siteNumber=${src.site},limit=50,keyword=%22${encodeURIComponent(q)}%22,sortBy=POSTING_DATES_DESC,offset=0`;
+    const refused = r => [403, 429].includes(r?.status);
+    const page = async (q, offset) => {
+      const finder = `findReqs;siteNumber=${src.site},limit=50,${q ? `keyword=%22${encodeURIComponent(q)}%22,` : ''}sortBy=POSTING_DATES_DESC,offset=${offset}`;
       const r = await http.json(`https://${src.host}/hcmRestApi/resources/latest/recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=${finder}`);
-      if (!r.ok) { lastFail = r; if (!anyOk) break; continue; }
+      if (!r.ok) return { r, list: [] };
       anyOk = true;
-      for (const p of r.data?.items?.[0]?.requisitionList || []) seen.set(String(p.Id), p);
+      const it = r.data?.items?.[0] || {}, list = it.requisitionList || [];
+      for (const p of list) seen.set(String(p.Id), p);
+      return { r, list, total: Number(it.TotalJobsCount ?? NaN) };
+    };
+    let cut = null;
+    search: for (const q of src.queries || []) {
+      for (let offset = 0; offset < (src.max_per_query || opt.maxPerQuery); offset += 50) {
+        const { r, list, total } = await page(q, offset);
+        if (!r.ok) { lastFail = r; if (refused(r)) { cut = `search "${q}"`; break search; } if (!anyOk) break search; break; }
+        if (list.length < 50 || offset + 50 >= total) break;
+      }
     }
-    if (!anyOk) return fail(lastFail || {});
-    const jobs = []; let details = 0;
+    let resume = null, scanned = 0, scanFrom = null, wrapped = false;
+    if (src.full_scan && !cut && (anyOk || !lastFail)) {
+      let offset = scanFrom = Number(opt.prevStatusById?.get(src.id)?.resume_offset) || 0;
+      while (scanned < (src.scan_pages_per_run || 30)) {
+        const { r, list, total } = await page('', offset);
+        if (!r.ok) { lastFail = r; resume = offset; if (refused(r)) cut = `full list at ${offset}`; break; }
+        scanned++;
+        if (list.length < 50 || offset + 50 >= total) { resume = 0; wrapped = true; break; }
+        offset += 50; resume = offset;
+      }
+    }
+    if (!anyOk) return fail(lastFail || {}, { resume_offset: opt.prevStatusById?.get(src.id)?.resume_offset ?? null });
+    const jobs = []; let details = 0, reused = 0, skippedNonUS = 0;
+    const prev = opt.prevBySource?.get(src.id) || new Map();
     for (const p of seen.values()) {
+      // the full list is worldwide: keep US and country-unknown postings only
+      if (src.full_scan && p.PrimaryLocationCountry && p.PrimaryLocationCountry !== 'US' && !(p.secondaryLocations || []).some(l => /united states|\bUS\b|USA/i.test(l.Name || ''))) { skippedNonUS++; continue; }
       const j = { source_id: src.id, ats: 'oracle_hcm', employer: emp.employer, ext_id: String(p.Id), req_id: String(p.Id), title: p.Title,
         url: `https://${src.host}/hcmUI/CandidateExperience/en/sites/${src.site}/job/${p.Id}`,
         locations: [p.PrimaryLocation, ...(p.secondaryLocations || []).map(s => s.Name)].filter(Boolean), country: p.PrimaryLocationCountry || null,
         workplace_hint: /remote/i.test(p.WorkplaceType || '') ? 'remote' : /hybrid/i.test(p.WorkplaceType || '') ? 'hybrid' : null,
         posted_at: iso(p.PostedDate), posted_kind: 'posted_date', desc_text: htmlToText(p.ShortDescriptionStr || '') };
+      const pj = prev.get(j.ext_id);
+      if (pj && pj.title === j.title && (!relevantTitle(p.Title) || pj.excerpt)) { j.reuse = pj; reused++; jobs.push(j); continue; } // already known: no detail fetch
       if (relevantTitle(p.Title) && details < opt.detailCap) {
         details++;
         const d = await http.json(`https://${src.host}/hcmRestApi/resources/latest/recruitingCEJobRequisitionDetails?expand=all&onlyData=true&finder=ById;Id=%22${p.Id}%22,siteNumber=${src.site}`);
@@ -751,7 +811,11 @@ export const ADAPTERS = {
       }
       jobs.push(j);
     }
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, fields: { posted_date: 'PostedDate', salary: 'detail text', location: 'yes', remote: 'WorkplaceType', req_id: 'Id' } };
+    const note = [`${seen.size} requisitions listed`, src.full_scan ? (scanned ? `full list: ${scanned} pages from ${scanFrom}${wrapped ? ', reached the end; next run starts over' : `, next run resumes at ${resume}`}` : 'full list not read this run') : null,
+      `${details} detail records read, ${reused} reused`, skippedNonUS ? `${skippedNonUS} outside the US skipped` : null, cut ? `REFUSED part-way (${cut}: ${lastFail?.status}); roles not reached are kept` : null].filter(Boolean).join('; ');
+    return { result: cut ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut ? lastFail.status : 200, jobs, note,
+      resume_offset: src.full_scan ? resume ?? scanFrom : null, rotated: !!src.full_scan, close_after_hours: src.full_scan ? (src.close_after_hours || 96) : undefined,
+      fields: { posted_date: 'PostedDate', salary: 'detail text', location: 'yes', remote: 'WorkplaceType', req_id: 'Id' } };
   },
 };
 

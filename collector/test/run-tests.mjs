@@ -602,4 +602,54 @@ try {
     assert.equal(W.windowFor('d90', now).start, '2026-08-23');
   });
 }
+t('functions: legal-team titles are legal, not partnerships; selling to legal stays sales', () => {
+  const f = x => classifyFunctions(x).functions;
+  assert.deepEqual(f('Legal, Partnerships'), ['legal']); assert.deepEqual(f('Head of Legal'), ['legal']); assert.deepEqual(f('Legal Operations Manager'), ['legal']);
+  assert.ok(f('Account Executive, Legal').includes('sales')); assert.deepEqual(f('Strategic Partnerships Lead'), ['partner']);
+  assert.deepEqual(f('Vice President, Total Rewards'), ['people']);
+});
+t('functions: analyst-firm research roles land in market intelligence; finance analysts do not', () => {
+  const f = x => classifyFunctions(x).functions;
+  assert.ok(f('Senior Analyst, Security & Risk').includes('ci')); assert.ok(f('Research Director, Security').includes('ci'));
+  assert.ok(f('Analyst Relations Manager').includes('ci')); assert.ok(!f('Senior Analyst, Finance').includes('ci'));
+});
+{
+  const D = JSON.parse(await readFile(new URL('../../data/sources.json', import.meta.url), 'utf8'));
+  t('sources: consulting & analyst firms present, every source has an id, ats and verification note', () => {
+    const by = Object.fromEntries(D.employers.map(e => [e.id, e]));
+    for (const id of ['adobe', 'nvidia', 'broadcom', 'atlassian', 'zoom', 'apple', 'meta', 'workday-inc', 'gartner', 'forrester', 'idc', 'ians-research', 'deloitte', 'pwc', 'ey', 'kpmg', 'accenture', 'booz-allen', 'guidehouse', 'protiviti', 'bcg', 'bain', 'mckinsey']) assert.ok(by[id], id);
+    assert.equal(by.sophos.sources[0].ats, 'ashby');
+    const ids = new Set(); for (const e of D.employers) for (const s of e.sources || []) { assert.ok(s.id && s.ats && s.verification?.method, s.id); assert.ok(!ids.has(s.id), 'duplicate ' + s.id); ids.add(s.id); }
+  });
+}
+{ // rotating full sweeps: AWS, Oracle, Google
+  const { ADAPTERS: SA } = await import('../lib/adapters-server.mjs');
+  const emp = { employer: 'X' };
+  const mk = handler => ({ json: async (u, o) => handler(u, o), text: async (u, o) => handler(u, o) });
+  // AWS: 250 US postings, 100 per page
+  const az = Array.from({ length: 250 }, (_, k) => ({ id_icims: String(5000 + k), title: 'Role ' + k, normalized_location: 'Seattle, Washington, USA', country_code: 'USA', job_path: '/en/jobs/' + k }));
+  const hAz = u => { const q = new URL(u).searchParams; const off = +q.get('offset'); const base = q.get('base_query');
+    const pool = base ? az.slice(0, 3) : az; return { ok: true, status: 200, data: { jobs: base && off ? [] : pool.slice(off, off + 100) } }; };
+  const src = { id: 'amazon:jobs', ats: 'amazon', queries: ['pm'], full_scan: true, scan_pages_per_run: 2 };
+  const a1 = await SA.amazon(src, emp, mk(hAz), { maxPerQuery: 200, prevStatusById: new Map() });
+  const a2 = await SA.amazon(src, emp, mk(hAz), { maxPerQuery: 200, prevStatusById: new Map([['amazon:jobs', { resume_offset: a1.resume_offset }]]) });
+  t('aws full sweep: 2 pages then resume at 200; next run reads the rest and wraps to 0', () => {
+    assert.equal(a1.resume_offset, 200); assert.equal(a1.jobs.length, 200); assert.ok(a1.rotated);
+    assert.equal(a2.resume_offset, 0); assert.ok(a2.jobs.some(j => j.ext_id === '5249')); });
+  const a3 = await SA.amazon(src, emp, mk(u => new URL(u).searchParams.get('base_query') ? hAz(u) : { ok: false, status: 429 }), { maxPerQuery: 200, prevStatusById: new Map([['amazon:jobs', { resume_offset: 100 }]]) });
+  t('aws full sweep refused: partial, resume point kept', () => { assert.equal(a3.result, 'partial'); assert.equal(a3.resume_offset, 100); });
+  // Oracle: 120 requisitions worldwide, 50 per page; every third outside the US
+  const reqs = Array.from({ length: 120 }, (_, k) => ({ Id: 9000 + k, Title: 'Req ' + k, PrimaryLocation: k % 3 ? 'Austin, TX, United States' : 'Bangalore, India', PrimaryLocationCountry: k % 3 ? 'US' : 'IN', PostedDate: '2026-11-18' }));
+  const hOr = u => { if (u.includes('recruitingCEJobRequisitionDetails')) return { ok: true, data: { items: [] } };
+    const f = decodeURIComponent(new URL(u).searchParams.get('finder')); const off = +f.match(/offset=(\d+)/)[1]; const kw = /keyword=/.test(f);
+    const pool = kw ? reqs.slice(0, 70) : reqs; return { ok: true, status: 200, data: { items: [{ TotalJobsCount: pool.length, requisitionList: pool.slice(off, off + 50) }] } }; };
+  const o = await SA.oracle_hcm({ id: 'orc:x', host: 'h', site: 'S', queries: ['pm'], full_scan: true, scan_pages_per_run: 5 }, emp, mk(hOr), { maxPerQuery: 200, detailCap: 0, prevStatusById: new Map() });
+  t('oracle: searches page past 50, full list reaches the end, non-US skipped', () => {
+    assert.equal(o.resume_offset, 0); assert.equal(o.jobs.length, 80); assert.ok(o.jobs.every(j => j.country === 'US')); assert.match(o.note, /40 outside the US skipped/); });
+  // Google: full list ends on a short page and wraps to page 1
+  const gPage = n => `<script>AF_initDataCallback({key: 'ds:1', data:[[${Array.from({ length: n }, (_, k) => `["${7000000000 + k}","Job ${k}"]`).join(',')}]]});</script>`;
+  const calls = []; const hG = u => { calls.push(u); const pg = +new URL(u).searchParams.get('page'); return { ok: true, status: 200, data: new URL(u).searchParams.get('q') ? gPage(0) : gPage(pg < 3 ? 20 : 5) }; };
+  const g = await SA.google_careers({ id: 'google:careers', queries: ['x'], max_pages: 1, full_scan: true, scan_pages_per_run: 10 }, emp, mk(hG), { prevStatusById: new Map([['google:careers', { resume_offset: 2 }]]) });
+  t('google full sweep: resumes at the saved page and wraps to 1 at the end', () => { assert.ok(calls.some(c => /page=2/.test(c) && !/q=/.test(c))); assert.equal(g.resume_offset, 1); });
+}
 console.log(`${pass} tests passed${process.exitCode ? ' (with failures)' : ''}`);

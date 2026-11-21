@@ -25,7 +25,7 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | `assets/prompt.mjs` | Browser | "Prompt for your AI": turns the current criteria into a self-contained search brief for any web-browsing LLM (no name or contact details) |
 | `collector/gate.mjs` | Actions | Hourly check that collects only when a New York-time slot is due |
 | `collector/collect.mjs` | Actions | Fetches every source, normalizes, merges with history, writes `data/jobs.json` and `data/status.json` |
-| `collector/lib/adapters-server.mjs` | Actions | Server-only adapters: SmartRecruiters, Workable, Workday CXS, Eightfold, Oracle HCM, Phenom, Cisco RSS, Amazon, Comeet, Google Careers, Radancy, Avature (IBM; search page and fields discovered from a real job link), company HTML pages |
+| `collector/lib/adapters-server.mjs` | Actions | Server-only adapters: SmartRecruiters, Workable, Workday CXS, Eightfold, Oracle HCM, Phenom, Cisco RSS, Amazon, Comeet, Google Careers, Radancy, Avature (IBM, Deloitte, Booz Allen, Bain; search page and fields discovered from a real job link), company HTML pages |
 | `collector/lib/seeds.mjs` | Actions | Finds job boards for seed companies and checks they belong to the company |
 | `collector/lib/http.mjs` | Actions | Per-host pacing, retries, backoff |
 | `collector/digest.mjs` | Actions | Emails subscribers their new matches |
@@ -34,7 +34,7 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 
 | File | Contents |
 |---|---|
-| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 408 employers, 414 sources. |
+| `data/sources.json` | Employer registry: sector, company type, team size where known, and one or more sources with a `verification` block. 432 employers, 428 sources. |
 | `data/discovered.json` | Employers the seed probe found and verified. Read alongside `sources.json`. |
 | `data/seeds.json` | 819 candidate companies (YC directory, VC portfolios). Not collected directly. |
 | `data/jobs.json` | Normalized roles with history: posting, updated and first-seen dates, salary with its source text, closed and stale flags |
@@ -91,7 +91,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-149 offline tests against mocked API responses. The workflow runs them before every collection.
+156 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 
