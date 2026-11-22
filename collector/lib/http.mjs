@@ -43,6 +43,23 @@ export function nodeRequest(url, { method = 'GET', headers = {}, body, signal } 
   });
 }
 
+// What a refusal (403/429) actually said, so the cause can be told apart: an explicit quota (Retry-After, RateLimit-*),
+// a bot-management challenge (HTML challenge page, cf-mitigated, Akamai reference), or a plain denial. The body is
+// untrusted: only its type and a short tag-stripped excerpt are kept, never interpreted.
+const REFUSAL_HEADERS = /^(retry-after|ratelimit|x-ratelimit|x-rate-limit|x-ms-request-id|x-request-id|request-id|x-correlation-id|x-ms-correlation|x-azure-ref|x-cache|cf-ray|cf-mitigated|server|via|content-type|x-amzn-requestid|x-akamai|akamai|x-eightfold|x-envoy|x-frame-options)/i;
+export async function refusalInfo(res) {
+  const headers = {};
+  try { res.headers.forEach((v, k) => { if (REFUSAL_HEADERS.test(k)) headers[k.toLowerCase()] = String(v).slice(0, 160); }); } catch { /* headers not iterable */ }
+  let body = '';
+  try { body = (await res.text()).slice(0, 4000); } catch { /* body unreadable */ }
+  const ct = headers['content-type'] || '';
+  const kind = !body.trim() ? 'empty'
+    : /json/i.test(ct) || /^\s*[{[]/.test(body) ? 'json'
+    : /captcha|challenge|cf-chl|akamai|reference #|access denied|bot|are you a robot|incapsula|perimeterx|_abck/i.test(body) ? 'html_challenge_or_denial'
+    : /<html|<!doctype/i.test(body) ? 'html' : 'text';
+  const excerpt = body.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160);
+  return { headers, body_kind: kind, excerpt };
+}
 export class Http {
   constructor({ minDelay = 700, maxDelay = 1800, concurrency = 6, timeoutMs = 25000, retries = 3, userAgent, fetchImpl, log = () => {}, hostRules = [] } = {}) {
     Object.assign(this, { minDelay, maxDelay, concurrency, timeoutMs, retries, userAgent, log, hostRules });
@@ -108,7 +125,7 @@ export class Http {
           if (mitigated) {
             this.stats.challenges++; this.challenged.set(qkey, { at: new Date().toISOString(), status, mitigated });
             this.log(`bot check (cf-mitigated: ${mitigated}, HTTP ${status}) at ${host}; no retries, skipping the rest of ${host} this run`);
-            return { ok: false, status, statusText: res.statusText, challenge: true, mitigated, retryAfter: res.headers.get('retry-after'), server: res.headers.get('server'), attempts: attempt + 1 };
+            return { ok: false, status, statusText: res.statusText, challenge: true, mitigated, retryAfter: res.headers.get('retry-after'), server: res.headers.get('server'), attempts: attempt + 1, refusal: await refusalInfo(res) };
           }
           const retryable = err || status === 429 || (status >= 500 && status <= 599);
           // Retry-After longer than the in-run limit: don't wait it out here and don't retry; report it so the
@@ -118,7 +135,7 @@ export class Http {
           if (status === 429 && raMs != null && raMs > (R.maxRetryAfterMs ?? 60000)) {
             this.stats.deferred = (this.stats.deferred || 0) + 1;
             this.log(`429 at ${host} asks for ${Math.round(raMs / 1000)}s; not retrying this run`);
-            return { ok: false, status, statusText: res.statusText, retryAfter: raH, retryAfterMs: raMs, defer: true, server: res.headers?.get?.('server') || null, attempts: attempt + 1 };
+            return { ok: false, status, statusText: res.statusText, retryAfter: raH, retryAfterMs: raMs, defer: true, server: res.headers?.get?.('server') || null, attempts: attempt + 1, refusal: await refusalInfo(res) };
           }
           if (retryable && attempt < R.retries) {
             let wait = Math.min(60000, R.backoffMs * 2 ** attempt + Math.random() * 1000);
@@ -129,7 +146,8 @@ export class Http {
             continue;
           }
           if (err) return { ok: false, status: null, error: err.startsWith('timeout') ? 'timeout' : 'network_error', detail: err, attempts: attempt + 1 };
-          if (!res.ok) return { ok: false, status, statusText: res.statusText, retryAfter: res.headers?.get?.('retry-after') || null, server: res.headers?.get?.('server') || null, attempts: attempt + 1 };
+          if (!res.ok) return { ok: false, status, statusText: res.statusText, retryAfter: res.headers?.get?.('retry-after') || null, server: res.headers?.get?.('server') || null, attempts: attempt + 1,
+            refusal: [403, 429].includes(status) ? await refusalInfo(res) : undefined };
           const text = await res.text();
           if (as === 'text') return { ok: true, status, data: text, attempts: attempt + 1 };
           try { return { ok: true, status, data: JSON.parse(text), attempts: attempt + 1 }; }

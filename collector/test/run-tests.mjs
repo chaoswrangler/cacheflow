@@ -630,6 +630,35 @@ try {
   t('cooldown: a good run clears it', () => { assert.equal(S(d).throttle_runs, 0); assert.equal(S(d).next_eligible_at, null); });
 }
 
+{ // Eightfold /api/apply/v2/jobs trial: used when it returns more than 10 per request; switched off otherwise
+  const { ADAPTERS: SA3 } = await import('../lib/adapters-server.mjs');
+  const mk = i => ({ id: 5000 + i, name: 'Senior Product Manager ' + i, locations: ['Redmond, WA, US'], t_create: 1763500000, display_job_id: 'R' + i });
+  const run1 = async mode => { const calls = [];
+    const http = { json: async u => { calls.push(u);
+      if (u.includes('/api/apply/v2/jobs')) { if (mode === '404') return { ok: false, status: 404 }; const q = new URL(u).searchParams, s = +q.get('start'); return { ok: true, status: 200, data: { count: 130, positions: Array.from({ length: 130 }, (_, i) => mk(i)).slice(s, s + 100) } }; }
+      if (u.includes('/api/pcsx/search')) { const s = +new URL(u).searchParams.get('start'); return { ok: true, status: 200, data: { data: { count: 130, positions: Array.from({ length: 130 }, (_, i) => mk(i)).slice(s, s + 10).map(p => ({ ...p, standardizedLocations: p.locations, postedTs: p.t_create })) } } }; }
+      return { ok: true, status: 200, data: { data: { jobDescription: '' } } }; }, text: async () => ({ ok: false, status: 404 }) };
+    const out = await SA3.eightfold({ id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: [], list_budget: 3, detail_budget: 0, try_apply_v2: true }, { employer: 'Microsoft' }, http, { prevStatusById: new Map(), prevBySource: new Map(), now: NOW });
+    return { out, calls }; };
+  const a = await run1('ok');
+  t('eightfold v2: 100 per request → whole 130-role list in 2 requests, pass complete', () => { assert.equal(a.calls.filter(c => c.includes('/api/apply/v2/jobs')).length, 2); assert.equal(a.out.jobs.length, 130); assert.ok(a.out.checkpoint.last_full_cycle_end); assert.match(a.out.note, /apply\/v2\/jobs in use: up to 100 roles per request/); assert.equal(a.out.jobs[0].req_id || a.out.jobs[0].ext_id ? true : false, true); });
+  const b = await run1('404');
+  t('eightfold v2: endpoint missing → switched off, same run continues on pcsx', () => { assert.equal(b.out.checkpoint.v2, false); assert.match(b.out.note, /apply\/v2\/jobs tried: failed \(404\)/); assert.equal(b.out.jobs.length, 30); });
+}
+
+{ // refusal diagnostics: headers, body type, successes before the refusal
+  const dir = await mkdtemp(join(tmpdir(), 'cf-ref-'));
+  await writeFile(join(dir, 'sources.json'), JSON.stringify({ employers: [{ employer: 'R', type: 'security', sources: [{ id: 'sr:r', ats: 'smartrecruiters', company: 'R', queries: ['a', 'b'] }] }] }));
+  let n = 0;
+  const f = async url => { if (!url.includes('api.smartrecruiters.com')) return new Response('nf', { status: 404 });
+    if (++n === 1) return new Response(JSON.stringify({ content: [], totalFound: 0 }), { status: 200 });
+    return new Response('<html><body><script>x()</script><h1>Access Denied</h1> Reference #18.abc</body></html>', { status: 403, headers: { 'content-type': 'text/html', server: 'AkamaiGHost', 'x-ratelimit-remaining': '0' } }); };
+  const r = await run({ fetchImpl: f, env: {}, now: NOW, dataDir: dir, argv: {}, cfgOverride: { ...FAST, http: { ...FAST.http, retries: 0 } } });
+  const s = r.statusOut.sources.find(x => x.id === 'sr:r');
+  t('refusal: status keeps headers, body type and successes before it', () => { assert.equal(s.last_refusal.status, 403); assert.equal(s.last_refusal.ok_before, 1); assert.equal(s.last_refusal.body_kind, 'html_challenge_or_denial'); assert.equal(s.last_refusal.headers.server, 'AkamaiGHost'); assert.match(s.last_refusal.excerpt, /Access Denied Reference/); assert.doesNotMatch(s.last_refusal.excerpt, /x\(\)/); });
+  t('refusal: summary in the source note', () => assert.match(s.message, /refusal detail: HTTP 403 after 1 successful request this run, html_challenge_or_denial body .*x-ratelimit-remaining: 0, server AkamaiGHost/));
+}
+
 { // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run
   const { sweepCycle } = await import('../lib/adapters-server.mjs');
   const a = sweepCycle({}, { nowIso: 'T1', fromStart: false, wrapped: true, rows: 50 });
@@ -962,17 +991,12 @@ t('functions: analyst-firm research roles land in market intelligence; finance a
   });
   t('archive: a new month compresses the finished one', () => { assert.equal(r3.rolled, 2); assert.ok(files3.includes('2026-11-postings.csv.gz') && !files3.includes('2026-11-postings.csv')); });
 }
-{ // Greenhouse region fallback
+{ // Greenhouse: one job-board API address for every region (the EU address doesn't resolve)
   const { ADAPTERS: G } = await import('../../assets/shared/core.mjs');
   const asked = [];
-  const http = { json: async u => { asked.push(new URL(u).host); return u.includes('.eu.') ? { ok: true, status: 200, data: { jobs: [{ id: 1, title: 'Product Marketing Manager', absolute_url: 'u', location: { name: 'Remote, US' }, content: '' }] } } : { ok: false, error: 'network_error' }; } };
-  const out = await G.greenhouse({ id: 'gh:x', slug: 'x' }, { employer: 'X' }, http);
-  const http2 = { json: async u => (asked.push('2:' + new URL(u).host), u.includes('.eu.') ? { ok: false, error: 'network_error' } : { ok: true, status: 200, data: { jobs: [] } }) };
-  const out2 = await G.greenhouse({ id: 'gh:y', slug: 'y', region: 'eu' }, { employer: 'Y' }, http2);
-  t('greenhouse: falls back to the other region when the expected host fails', () => {
-    assert.equal(out.result, 'ok'); assert.deepEqual(asked.slice(0, 2), ['boards-api.greenhouse.io', 'boards-api.eu.greenhouse.io']); assert.match(out.note, /EU region/);
-    assert.equal(out2.result, 'empty'); assert.deepEqual(asked.slice(2), ['2:boards-api.eu.greenhouse.io', '2:boards-api.greenhouse.io']);
-  });
+  const http = { json: async u => { asked.push(new URL(u).host); return { ok: true, status: 200, data: { jobs: [] } }; } };
+  await G.greenhouse({ id: 'gh:y', slug: 'y', region: 'eu' }, { employer: 'Y' }, http);
+  t('greenhouse: EU-region boards are read from boards-api.greenhouse.io only', () => assert.deepEqual(asked, ['boards-api.greenhouse.io']));
 }
 { // a source refused (403) 3 runs in a row is paused for a week
   const dir = await mkdtemp(join(tmpdir(), 'cf-pause-'));

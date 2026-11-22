@@ -11,7 +11,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:var(--sans);font-size:16px;line-height:1.6;color:var(--t1);background:var(--n1);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+body{font-family:var(--sans);font-size:16px;line-height:1.6;color:var(--t1);background:var(--n1);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;min-height:100vh}
 a{color:var(--cy);text-decoration:none}
 a:hover{text-decoration:underline}
 ::selection{background:var(--b2);color:#fff}
@@ -349,7 +349,7 @@ td.emp{color:var(--ice);font-family:var(--sans);font-size:14px;font-weight:600}
   .grain{opacity:.035}
 }
 .grid>*,.g2>*,.g-side>*{min-width:0}
-@media (max-width:720px){ html,body{overflow-x:hidden} .cbox{overflow:hidden!important} #fieldVis{overflow-x:auto} }
+@media (max-width:720px){ html,body{overflow-x:hidden;overflow-x:clip} .cbox{overflow:hidden!important} #fieldVis{overflow-x:auto} }
 
 /* ---------- about the developer ---------- */
 .about-card{position:relative;overflow:hidden;display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:center;padding:56px 60px;border-radius:28px;border:1px solid var(--line2);
@@ -456,6 +456,9 @@ td.emp{color:var(--ice);font-family:var(--sans);font-size:14px;font-weight:600}
 
 .mobile-only{display:none}
 @media (max-width:860px){.mobile-only{display:block}}
+/* phone sort bar: stays at the top while scrolling the results */
+@media (max-width:860px){.msortbar{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--hudh,65px);z-index:20;margin:14px -14px 0;padding:10px 14px;background:linear-gradient(180deg,rgba(5,14,30,.96),rgba(5,14,30,.88));backdrop-filter:blur(8px);border-bottom:1px solid var(--line2)}
+.msortbar::-webkit-scrollbar{display:none}.msortbar .chip{white-space:nowrap;flex:none;padding:8px 12px;font-size:11px}.msb-l{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3,#7f93b5);flex:none}}
 
 @media (max-width:860px){
   .mt,.mt tbody{display:block;width:100%}

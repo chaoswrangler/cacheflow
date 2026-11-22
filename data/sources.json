@@ -4117,9 +4117,9 @@
       "date": "2026-11-19"
      },
      "full_scan": true,
-     "scan_pages_per_run": 45,
+     "scan_pages_per_run": 95,
      "close_after_hours": 96,
-     "_inventory_note": "The full US list (about 88 pages of 20) is the inventory and is walked from a checkpoint, about two runs per pass. The six searches only top up high-priority roles between passes. Roles close only after a complete, parser-clean pass that started after they were last seen, and after 96 hours unseen."
+     "_inventory_note": "The full US list (about 88 pages of 20) is the inventory and is walked from a checkpoint, one run per pass (95 pages a run). The six searches only top up high-priority roles between passes. Roles close only after a complete, parser-clean pass that started after they were last seen, and after 96 hours unseen."
     }
    ],
    "id": "google",
@@ -5819,10 +5819,11 @@
      },
      "close_after_hours": 336,
      "location": "United States",
-     "list_budget": 6,
-     "search_budget": 5,
-     "detail_budget": 3,
-     "throttle_cooldown_hours": 2
+     "list_budget": 10,
+     "search_budget": 2,
+     "detail_budget": 2,
+     "try_apply_v2": true,
+     "v2_num": 100
     },
     {
      "id": "gh:microsoftcorporation",
@@ -11410,22 +11411,45 @@
    "sector": "Consulting & analyst",
    "vertical": "Consulting & professional services",
    "tier": "named",
-   "careers_url": "https://jobs.us.pwc.com/",
+   "careers_url": "https://jobs-us.pwc.com/us/en",
    "careers_url_verified": true,
    "notes": [
-    "Collected from PwC US's Cybersecurity category. PwC's other US roles (strategy, product, alliances) are at jobs.us.pwc.com."
+    "PwC's older job site jobs.us.pwc.com drops connections from GitHub's servers (network error, no response). PwC US roles are also on jobs-us.pwc.com (Phenom), which is the source now; postings carry Workday requisition ids (…WD)."
    ],
    "sources": [
     {
-     "id": "html:pwc",
-     "ats": "company_html",
-     "list_url": "https://jobs.us.pwc.com/category/cybersecurity-jobs/932/8838672/1",
-     "link_pattern": "^/(?:en/)?job/[^/]+/[^/]+/932/\\d+$",
-     "max_pages": 10,
+     "id": "phenom:pwc",
+     "ats": "phenom",
+     "base": "https://jobs-us.pwc.com/us/en",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "cyber",
+      "security strategy",
+      "solutions",
+      "account executive",
+      "marketing",
+      "customer success",
+      "analyst",
+      "research director",
+      "analyst relations",
+      "cybersecurity",
+      "privacy",
+      "alliances",
+      "transformation",
+      "AI"
+     ],
+     "max_per_query": 60,
      "verification": {
-      "status": "unverified_config",
-      "method": "PwC US job site jobs.us.pwc.com; the Cybersecurity category page and job URLs (/job/<city>/<title>/932/<id>) seen in web search on 2026-11-20. Starts from the Cybersecurity category; job pages are read for title, location and pay.",
-      "date": "2026-11-20"
+      "status": "verified_from_posting_url",
+      "method": "PwC US posting at jobs-us.pwc.com/us/en/job/PUVPUIUS727111WDEXTERNALENUS/... supplied by the user on 2026-11-21; the page is served by Phenom. Base URL taken from that link; Phenom's own search-results page is read for listings (first run confirms).",
+      "date": "2026-11-21"
      }
     }
    ],
@@ -12034,18 +12058,38 @@
    "careers_url": "https://www.pax8.com/en-us/careers/",
    "careers_url_verified": true,
    "notes": [
-    "Microsoft cloud marketplace and distributor; large Microsoft security go-to-market practice."
+    "Pax8 moved from Greenhouse (board pax8 now returns 404) to Workday."
    ],
    "sources": [
     {
-     "id": "gh:pax8",
-     "ats": "greenhouse",
-     "slug": "pax8",
-     "board_url": "https://job-boards.greenhouse.io/pax8",
-     "feed_url": "https://boards-api.greenhouse.io/v1/boards/pax8/jobs?content=true",
+     "id": "wd:pax8",
+     "ats": "workday",
+     "host": "pax8inc.wd12.myworkdayjobs.com",
+     "tenant": "pax8inc",
+     "site": "Pax8Careers",
+     "queries": [
+      "product manager",
+      "product marketing",
+      "partner",
+      "alliances",
+      "go-to-market",
+      "strategy",
+      "chief of staff",
+      "threat intelligence",
+      "cyber",
+      "security strategy",
+      "solutions",
+      "account executive",
+      "marketing",
+      "customer success",
+      "analyst",
+      "research director",
+      "analyst relations"
+     ],
+     "board_url": "https://pax8inc.wd12.myworkdayjobs.com/Pax8Careers",
      "verification": {
       "status": "verified_from_posting_url",
-      "method": "Greenhouse board pax8 seen live (boards.greenhouse.io/pax8 and its embedded job board) in web search 2026-11-21.",
+      "method": "Pax8 posting (Principal, Partner Enablement & Adoption, R-102363) at pax8inc.wd12.myworkdayjobs.com/en-US/Pax8Careers/job/..., supplied by the user on 2026-11-21. Host, tenant and site are read from that URL.",
       "date": "2026-11-21"
      }
     }

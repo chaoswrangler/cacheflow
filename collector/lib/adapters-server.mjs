@@ -184,7 +184,7 @@ export const ADAPTERS = {
     let out = await BASE.greenhouse(src, emp, http);
     // EU-hosted boards: if neither job-board API address answers, read the board's own public page
     // (job-boards.eu.greenhouse.io/<token>, the page job seekers browse) and its job pages instead.
-    if (!['ok', 'empty'].includes(out.result) && src.board_url && /^https:\/\/job-boards(\.eu)?\.greenhouse\.io\/[^/]+\/?$/.test(src.board_url) && !/^http_4/.test(out.result)) {
+    if (!['ok', 'empty'].includes(out.result) && src.board_url && /^https:\/\/job-boards(\.eu)?\.greenhouse\.io\/[^/]+\/?$/.test(src.board_url) && !['http_403', 'http_429', 'blocked_challenge'].includes(out.result)) { // refused: don't add load
       const token = src.board_url.replace(/\/$/, '').split('/').pop();
       const page = await ADAPTERS.company_html({ ...src, list_url: src.board_url.replace(/\/$/, ''), link_pattern: `^/${token}/jobs/\\d+$`, max_pages: 10, detail_cap: src.detail_cap }, emp, http, opt);
       if (['ok', 'partial'].includes(page.result)) {
@@ -199,7 +199,7 @@ export const ADAPTERS = {
       if (n >= opt.ghPayCap) break;
       if (!relevantTitle(j.title) || parseSalaries(j.desc_text).length) continue;
       n++;
-      const r = await http.json(`https://${src._ghHost || (src.region === 'eu' ? 'boards-api.eu.greenhouse.io' : 'boards-api.greenhouse.io')}/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
+      const r = await http.json(`https://${src._ghHost || 'boards-api.greenhouse.io'}/v1/boards/${src.slug}/jobs/${j.ext_id}?pay_transparency=true`);
       const pr = r.ok && (r.data?.pay_input_ranges || []).find(p => !p.currency_type || /^usd$/i.test(p.currency_type)); // US-dollar range only
       if (pr && pr.min_cents) j.salary_struct = { min: pr.min_cents / 100, max: pr.max_cents / 100, period: 'year', kind: /base|salary/i.test((pr.title || '') + (pr.blurb || '')) ? 'base' : 'base_likely', src: 'structured', currency: pr.currency_type || null, snippet: `Greenhouse pay range: ${pr.title || ''}` };
     }
@@ -218,7 +218,7 @@ export const ADAPTERS = {
       for (let offset = 0; offset < cap; offset += 100) {
         const u = `https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(company)}/postings?limit=100&offset=${offset}` + (q ? `&q=${encodeURIComponent(q)}` : '') + (src.country ? `&country=${src.country}` : '');
         const r = await http.json(u);
-        if (!r.ok) { lastFail = r; state = `page at ${offset} failed (${r.status || r.error})`; break; }
+        if (!r.ok) { lastFail = r; state = `page at ${offset} failed (${r.status || r.detail || r.error})`; break; }
         anyOk = true;
         const list = r.data?.content || [];
         for (const p of list) { seen.set(p.id, p); U.saw(q || '*', p.id); }
@@ -392,7 +392,8 @@ export const ADAPTERS = {
         // a pass that ends well short of the page's own total or of the last complete pass is not trusted for closures:
         // an empty page from a layout change would otherwise look like the end of the list
         const expected = L.total || ck.last_full_cycle_roles || 0;
-        if (expected && (L.cycle_ids || 0) < 0.8 * expected) { L.cycle_bad = true; earlyEnd = `pass ended early (${L.cycle_ids || 0} rows vs about ${expected} expected), not used for closures`; }
+        if (!L.cycle_started) { L.cycle_bad = true; earlyEnd = 'this pass began before pass tracking, so it is not used for closures; the next pass starts from page 1'; }
+        else if (expected && (L.cycle_ids || 0) < 0.8 * expected) { L.cycle_bad = true; earlyEnd = `pass ended early (${L.cycle_ids || 0} rows vs about ${expected} expected), not used for closures`; }
         if (!L.cycle_bad && L.cycle_started) { ck.last_full_cycle_start = L.cycle_started; ck.last_full_cycle_end = nowIso; ck.last_full_cycle_roles = L.cycle_ids || newOnList; }
         L.last_pages = page; L.page = 1;
       } else if (!cut && !diag) L.page = page; // budget used up: resume here next run
@@ -464,7 +465,7 @@ export const ADAPTERS = {
     if (!found.size && !blocked(`/${lang}/search-jobs`)) {
       via = 'search pages';
       for (let p = 1; p <= (src.max_pages || 100); p++) {
-        const r = await http.text(`${base}/${lang}/search-jobs?p=${p}`); if (!r.ok) { lastFail = r; if (p > 1) listGap = `search page ${p} failed (${r.status || r.error})`; break; }
+        const r = await http.text(`${base}/${lang}/search-jobs?p=${p}`); if (!r.ok) { lastFail = r; if (p > 1) listGap = `search page ${p} failed (${r.status || r.detail || r.error})`; break; }
         const before = found.size;
         for (const m of r.data.matchAll(/<a[^>]+href="([^"]*\/job\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/g)) addUrl(m[1], htmlToText(m[2]).split('\n')[0].trim() || null);
         if (found.size === before) break;
@@ -536,7 +537,7 @@ export const ADAPTERS = {
         if (pages >= (src.max_pages || 40)) { why = 'page limit reached'; break; }
         seen.add(url); if (blocked(url)) { why = 'next page disallowed by robots.txt'; break; }
         const r = url === searchHref ? rs : await http.text(url); pages++;
-        if (!r.ok) { lastFail = r; if (refused(r)) stopped = true; why = `page failed (${r.status || r.error})`; break; }
+        if (!r.ok) { lastFail = r; if (refused(r)) stopped = true; why = `page failed (${r.status || r.detail || r.error})`; break; }
         harvest(r.data); url = nextOf(r.data); }
       if (why) U.incomplete(u0, why); else U.done(u0, startedAt); };
     const queries = kw && src.queries?.length ? src.queries : [null];
@@ -580,7 +581,7 @@ export const ADAPTERS = {
     const rules = rb.ok ? robotsRules(rb.data) : { disallow: [] };
     if (rules.disallow.some(dp => u.pathname.startsWith(dp))) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows ${u.pathname}` };
     const r = await http.text(src.list_url);
-    if (!r.ok) return fail(r, { note: `careers page ${src.list_url}: ${r.status || r.error}` });
+    if (!r.ok) return fail(r, { note: `careers page ${src.list_url}: ${r.status || r.detail || r.error}` });
     // Follow the site's own next-page links (rel=next, aria-label/class "next"), up to max_pages. Never constructed.
     let pages = 1, listGap = null;
     { const nextOf = html => { const m = html.match(/<a[^>]+(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")[^>]*href="([^"]+)"/i) || html.match(/<a[^>]+href="([^"]+)"[^>]*(?:rel="next"|aria-label="[^"]*next[^"]*"|class="[^"]*\bnext\b[^"]*")/i); if (!m) return null; try { const n = new URL(m[1].replace(/&amp;/g, '&'), src.list_url); return n.origin === origin ? n.href : null; } catch { return null; } };
@@ -680,7 +681,7 @@ export const ADAPTERS = {
       scan: for (const [from, to] of ranges) { for (let offset = from; offset < to; offset += 20) {
         const { r, more, restart } = await page('', offset);
         if (restart) { offset = -20; continue; } // filter found on page 1: start over US-only (offsets changed)
-        if (!r.ok) { lastFail = r; why = `failed at ${offset} (${r.status || r.error})`; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
+        if (!r.ok) { lastFail = r; why = `failed at ${offset} (${r.status || r.detail || r.error})`; if (refused(r) && anyOk) { stoppedAt = 0; resumeOffset = offset; } break scan; }
         if (!more) { ended = true; break; }
       } }
       if (!why && ended && !start) U.done('*', nowIso); else U.incomplete('*', why || (start ? 'resumed mid-list' : `stopped at the ${maxPer}-result limit`));
@@ -692,7 +693,7 @@ export const ADAPTERS = {
         for (let offset = from; offset < maxPer; offset += 20) {
           const { r, more, restart } = await page(q, offset);
           if (restart) { offset = -20; continue; }
-          if (!r.ok) { lastFail = r; state = `failed at ${offset} (${r.status || r.error})`;
+          if (!r.ok) { lastFail = r; state = `failed at ${offset} (${r.status || r.detail || r.error})`;
             if (refused(r)) { stoppedAt = qi; pendingOut = { slot, q, offset, started: startedAt }; U.incomplete(q || '*', state); for (const q2 of queries.slice(qi + 1)) U.incomplete(q2 || '*', 'not reached'); break search; }
             break; }
           if (!more) { state = 'done'; break; }
@@ -831,7 +832,7 @@ export const ADAPTERS = {
     const cell = h => htmlToText(h).replace(/\s+/g, ' ').trim();
     for (const q of src.queries || []) {
       const r = await http.text(src.feed_url_template.replace('{q}', encodeURIComponent(q)));
-      if (!r.ok) { lastFail = r; U.incomplete(q, `failed (${r.status || r.error})`); if (!anyOk && r.status === 404) break; continue; }
+      if (!r.ok) { lastFail = r; U.incomplete(q, `failed (${r.status || r.detail || r.error})`); if (!anyOk && r.status === 404) break; continue; }
       const rows = [...r.data.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].map(m => m[1]);
       let got = 0;
       for (const row of rows) {
@@ -874,7 +875,7 @@ export const ADAPTERS = {
       let state = `stopped at the ${capN}-result limit`;
       for (let from = 0; from < capN; from += 10) {
         const r = await http.text(`${src.base}/search-results?keywords=${encodeURIComponent(q)}&from=${from}&s=1`);
-        if (!r.ok) { lastFail = r; state = `page at ${from} failed (${r.status || r.error})`; break; }
+        if (!r.ok) { lastFail = r; state = `page at ${from} failed (${r.status || r.detail || r.error})`; break; }
         const ddo = grab(r.data); const block = ddo?.eagerLoadRefineSearch; const list = block?.data?.jobs;
         if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'Phenom page without eagerLoadRefineSearch.data.jobs' }; state = 'page not readable'; break; }
         anyOk = true; for (const j of list) { const id = String(j.jobSeqNo || j.jobId || j.reqId); seen.set(id, j); U.saw(q || '*', id); }
@@ -924,10 +925,27 @@ export const ADAPTERS = {
     const OVERLAP = src.page_overlap ?? 2; // re-read a couple of rows when resuming a saved offset, so roles shifted by new postings aren't skipped
     const touched = new Set();
     const searchBudget = src.search_budget ?? 5, listBudget = src.list_budget ?? 6, detailBudget = src.detail_budget ?? 3;
+    // Optional trial of Eightfold's other listing endpoint, /api/apply/v2/jobs (suggested by the user's research; not
+    // documented by Microsoft). Tried for the full list only; kept if it answers with more than 10 roles per request,
+    // otherwise switched off (ck.v2 = false) and the reader stays on /api/pcsx/search. A refusal is a refusal either way.
+    const V2N = src.v2_num || 100;
+    let v2Note = null, v2Max = 0;
+    const norm = p => ({ ...p, postedTs: p.postedTs ?? p.t_create ?? p.t_update, displayJobId: p.displayJobId ?? p.display_job_id,
+      workLocationOption: p.workLocationOption ?? p.work_location_option, locations: p.locations?.length ? p.locations : [p.location].filter(Boolean) });
     const page = async (q, start) => {
-      const url = loc => `${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=${encodeURIComponent(loc)}&start=${start}&num=10`;
+      let useV2 = q === '' && !!src.try_apply_v2 && ck.v2 !== false;
+      const url = loc => useV2 ? `${host}/api/apply/v2/jobs?domain=${D}&query=&location=${encodeURIComponent(loc)}&start=${start}&num=${V2N}`
+        : `${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=${encodeURIComponent(loc)}&start=${start}&num=10`;
       let r = await http.json(url(location));
-      let data = r.ok ? (r.data?.data || {}) : {};
+      let data = r.ok ? ((useV2 ? r.data : r.data?.data) || {}) : {};
+      if (useV2 && !refused(r)) {
+        const ok2 = r.ok && Array.isArray(data.positions);
+        if (!ok2 || (data.positions.length <= 10 && Number(data.count) > start + data.positions.length)) {
+          v2Note = `/api/apply/v2/jobs tried: ${!r.ok ? `failed (${r.status || r.detail || r.error})` : !Array.isArray(data.positions) ? 'no positions in the answer' : `only ${data.positions.length} roles per request, no gain`}; staying on /api/pcsx/search`;
+          ck.v2 = false; useV2 = false; pagesRun++;
+          r = await http.json(url(location)); data = r.ok ? (r.data?.data || {}) : {};
+        } else { ck.v2 = { ok: true, per_page: data.positions.length, checked_at: nowIso }; data = { ...data, positions: data.positions.map(norm) }; v2Max = Math.max(v2Max, data.positions.length); v2Note = `/api/apply/v2/jobs in use: up to ${v2Max} roles per request`; }
+      }
       // a location filter that errors (not a refusal) or matches nothing on the broad list is treated as a wrong filter,
       // not as "no US jobs": fall back to unfiltered paging (US still decided locally) and remember it
       const badFilter = location && q === '' && ((!r.ok && !refused(r)) || (r.ok && Number(data.count) === 0));
@@ -935,7 +953,7 @@ export const ADAPTERS = {
         pagesRun++;
         const r2 = await http.json(url(''));
         if (r2.ok && Number(r2.data?.data?.count) > 0) {
-          locNote = `location filter "${location}" ${r.ok ? 'matched nothing' : `failed (${r.status || r.error})`}; reading the unfiltered list instead (US decided locally)`;
+          locNote = `location filter "${location}" ${r.ok ? 'matched nothing' : `failed (${r.status || r.detail || r.error})`}; reading the unfiltered list instead (US decided locally)`;
           location = ''; ck.location_ok = false; r = r2; data = r2.data.data;
           Object.assign(unitOf('*'), { offset: 0, count: null, complete: false, cycle_started: nowIso }); start = 0;
         } else if (!r2.ok) r = r2;
@@ -1019,6 +1037,7 @@ export const ADAPTERS = {
     const qDone = (src.queries || []).filter(q => ck.units[q]?.last_scan === nowIso).length;
     if (location && filterSeen >= 10 && filterLeak / filterSeen > 0.5) locNote = `location filter "${location}" seems ignored (${filterLeak} of ${filterSeen} listed roles outside the US); US decided locally`;
     else if (location && filterSeen) locNote ||= `server-side location filter "${location}" in use (${filterLeak} of ${filterSeen} listed roles outside the US)`;
+    if (v2Note) locNote = [locNote, v2Note].filter(Boolean).join('; ');
     const note = [`${seen.size} positions listed from ${pagesRun} requests (${listPages} list, ${searchPages} search, budget ${listBudget}+${searchBudget})`, locNote,
       listState, `${qDone} of ${(src.queries || []).length} searches refreshed this run (oldest first)`,
       ck.last_full_cycle_end ? `last complete US pass finished ${ck.last_full_cycle_end.slice(0, 10)}` : 'no complete US pass yet, so nothing is closed',

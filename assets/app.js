@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121l';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121l';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121l';
+import * as C from './shared/core.mjs?v=20261121n';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121n';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121n';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -35,7 +35,7 @@ const DEFAULT_PROFILE = () => ({ name: '', headline: '', location: '', creds: []
 const S = {
   registry: { employers: [], unresolved_identifiers: [] }, jobs: [], jobsMeta: null, status: { sources: [] },
   crit: { ...DEFAULT_CRIT(), ...store.get('crit', {}) }, profile: { ...DEFAULT_PROFILE(), ...store.get('profile', {}) },
-  track: store.get('track', null), fnOpen: new Set(store.get('fnOpen', [])), live: new Map(), empByName: new Map(), open: new Set(),
+  track: store.get('track', null), fnOpen: new Set(store.get('fnOpen', [])), sort: store.get('sort', null), live: new Map(), empByName: new Map(), open: new Set(),
 };
 /* Application tracker: one status per role, kept in this browser only (never sent anywhere).
    todo = interested / to do, applied, no = not interested. The old star and hide map onto todo and no. */
@@ -788,6 +788,9 @@ function renderMatches() {
   if (tierSel !== 'all') ms = ms.filter(m => tierSel === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === tierSel);
   const { key, dir } = S.sort || { key: 'score', dir: -1 };
   if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
+  // phones: the table header (tap a column to sort) is hidden, so the main sorts sit right above the results
+  const MSORT = [['score', 'Match'], ['base', 'Base pay'], ['top', 'Top pay'], ['posted', 'Posted']];
+  if ($('#mSortBar')) $('#mSortBar').innerHTML = `<span class="msb-l">Sort</span>` + MSORT.map(([k, l]) => `<button class="chip ${key === k ? 'on' : ''}" data-msort="${k}" aria-pressed="${key === k}" title="${key === k ? (k === 'posted' ? (dir < 0 ? 'Newest first' : 'Oldest first') : (dir < 0 ? 'Highest first' : 'Lowest first')) + '. Tap again to reverse' : ''}">${l}${key === k ? (dir < 0 ? ' ↓' : ' ↑') : ''}</button>`).join('');
   const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, unlisted: 2, other: 1 };
   const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0), top: m => C.baseTop(m.j.salary) ?? -1,
     loc: m => LOCR[m.loc] || 0, posted: m => m.dt.d || '', source: m => (m.j.source_class === 'official' ? '0' : '1') + m.j.ats }[key];
@@ -819,11 +822,13 @@ function wireMatches() {
   $('#applyFilter').innerHTML = '<option value="">Any application type</option>' + Object.entries(APPLY).map(([k, v]) => `<option value="${k}" title="${esc(v.hint)}">${esc(v.label)}</option>`).join('');
   $('#applyFilter').value = store.get('applyFilter', '');
   $('#applyFilter').addEventListener('change', e => { store.set('applyFilter', e.target.value); S.showN = 200; renderMatches(); });
-  $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; renderMatches(); });
+  $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; store.set('sort', S.sort); renderMatches(); });
+  $('#mSortBar')?.addEventListener('click', e => { const b = e.target.closest('[data-msort]'); if (!b) return; const k = b.dataset.msort, cur = S.sort || { key: 'score', dir: -1 };
+    S.sort = { key: k, dir: cur.key === k ? -cur.dir : -1 }; store.set('sort', S.sort); renderMatches(); });
   $('#tierChips').addEventListener('click', e => { if (e.target.closest('[data-clearemp]')) { S.empOnly = null; S.showN = 200; renderMatches(); return; } const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
   $('#jobGroups').addEventListener('click', e => {
     const h = e.target.closest('th[data-sort]');
-    if (h) { const k = h.dataset.sort; const cur = S.sort || { key: 'score', dir: -1 }; S.sort = { key: k, dir: cur.key === k ? -cur.dir : (['role', 'employer', 'source'].includes(k) ? 1 : -1) }; renderMatches(); return; }
+    if (h) { const k = h.dataset.sort; const cur = S.sort || { key: 'score', dir: -1 }; S.sort = { key: k, dir: cur.key === k ? -cur.dir : (['role', 'employer', 'source'].includes(k) ? 1 : -1) }; store.set('sort', S.sort); renderMatches(); return; }
     if (e.target.id === 'moreRows') { S.showN = (S.showN || 200) + 200; renderMatches(); return; }
     const g = e.target.closest('tr.mt-group');
     if (g) { S.collapsed ||= new Set(); const k = g.dataset.emp; S.collapsed.has(k) ? S.collapsed.delete(k) : S.collapsed.add(k); renderMatches(); return; }
@@ -843,7 +848,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121l');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121n');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

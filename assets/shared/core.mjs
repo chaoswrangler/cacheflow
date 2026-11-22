@@ -644,7 +644,9 @@ const fail = (r, extra = {}) => ({ result: r.error === 'timeout' ? 'timeout' : r
 export const ADAPTERS = {
   async greenhouse(src, emp, http, opt = {}) {
     // Greenhouse hosts boards in a US and an EU region and the slug doesn't say which: try the expected one, then the other.
-    const hosts = src.region === 'eu' ? ['boards-api.eu.greenhouse.io', 'boards-api.greenhouse.io'] : ['boards-api.greenhouse.io', 'boards-api.eu.greenhouse.io'];
+    // boards-api.eu.greenhouse.io doesn't exist (DNS: ENOTFOUND, 2026-11-22 run); EU-region boards (Bitdefender, Aidoc)
+    // are served by the main job-board API, so there is one address to ask.
+    const hosts = ['boards-api.greenhouse.io'];
     let r, host;
     const tried = [];
     for (host of hosts) { r = await http.json(`https://${host}/v1/boards/${src.slug}/jobs?content=true`); if (r.ok || (r.status && ![404].includes(r.status))) break; tried.push(`${host}: ${r.status || r.detail || r.error}`); }

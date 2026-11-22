@@ -107,11 +107,16 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       return;
     }
     // per-source view of the shared client: records this source's own long Retry-After answers
-    let deferMs = 0;
-    const track = r => { if (r?.defer && r.retryAfterMs > deferMs) deferMs = r.retryAfterMs; return r; };
+    let deferMs = 0, okBefore = 0, refusal = null;
+    const track = (r, u) => {
+      if (r?.defer && r.retryAfterMs > deferMs) deferMs = r.retryAfterMs;
+      if (r?.ok) { if (!refusal) okBefore++; }
+      else if (r?.refusal && !refusal) { let path = ''; try { const x = new URL(u); path = x.host + x.pathname; } catch { /* keep blank */ }
+        refusal = { at: now.toISOString(), status: r.status, request: path, ok_before: okBefore, attempts: r.attempts, ...r.refusal }; }
+      return r; };
     const sh = Object.create(http);
-    sh.json = (u, o) => http.json(u, o).then(track);
-    sh.text = (u, o) => http.text(u, o).then(track);
+    sh.json = (u, o) => http.json(u, o).then(r => track(r, u));
+    sh.text = (u, o) => http.text(u, o).then(r => track(r, u));
     let out;
     try { out = await adapter(s, e, sh, opt); }
     catch (err) { out = { result: 'adapter_error', jobs: [], note: String(err?.message || err) }; }
@@ -120,6 +125,10 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
     const throttled = out.status === 429 && !deferMs;
     const throttleRuns = throttled ? (pv?.throttle_runs || 0) + 1 : 0;
     if (throttled && s.throttle_cooldown_hours) deferMs = Math.min(24, s.throttle_cooldown_hours * 2 ** (throttleRuns - 1)) * 36e5;
+    if (refusal) {
+      const h = refusal.headers || {}, quota = Object.keys(h).filter(k => /ratelimit|rate-limit/.test(k));
+      out.note = `${out.note || ''}${out.note ? '; ' : ''}refusal detail: HTTP ${refusal.status} after ${refusal.ok_before} successful request${refusal.ok_before === 1 ? '' : 's'} this run, ${refusal.body_kind} body${refusal.excerpt ? ` ("${refusal.excerpt.slice(0, 80)}")` : ''}, ${h['retry-after'] ? `Retry-After ${h['retry-after']}` : 'no Retry-After'}, ${quota.length ? quota.map(k => `${k}: ${h[k]}`).join(', ') : 'no RateLimit headers'}${h.server ? `, server ${h.server}` : ''}${h['cf-mitigated'] ? `, cf-mitigated ${h['cf-mitigated']}` : ''}`;
+    }
     const nextEligible = deferMs ? new Date(now.getTime() + Math.min(deferMs, 7 * 864e5)).toISOString() : null;
     if (throttled && s.throttle_cooldown_hours) out.note = `${out.note || ''}; throttled ${throttleRuns} run${throttleRuns === 1 ? '' : 's'} in a row: resting until ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
     if (nextEligible && !(throttled && s.throttle_cooldown_hours)) out.note = `${out.note || ''}${out.note ? '; ' : ''}the site asked for a ${Math.round(deferMs / 60000)}-minute wait (Retry-After): no retries this run; next attempt after ${nextEligible.replace('T', ' ').slice(0, 16)} UTC`;
@@ -184,6 +193,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
       last_data_at: ok ? base.checked_at : (prev?.last_data_at || prev?.last_success_at || null),
       last_complete_scan_at: out.checkpoint?.last_full_cycle_end || (complete && !out.rotated ? base.checked_at : (prev?.last_complete_scan_at || null)),
       next_eligible_at: nextEligible, drop_hold: dropHold, throttle_runs: throttleRuns,
+      last_refusal: refusal || prev?.last_refusal || null, // what the most recent 403/429 said (headers, body type, excerpt)
       consecutive_failures: complete ? 0 : (prev?.consecutive_failures || 0) + 1, last_attempt_at: base.checked_at,
       bot_check: out.bot_check || null,
       blocked_runs: (out.status === 403 || out.result === 'blocked_challenge') ? (prev?.blocked_runs || (prev?.http_status === 403 || prev?.result === 'blocked_challenge' ? prev?.consecutive_failures || 0 : 0)) + 1 : 0 });
