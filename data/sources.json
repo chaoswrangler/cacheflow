@@ -11375,7 +11375,7 @@
     {
      "id": "avature:deloitte",
      "ats": "avature",
-     "seed_url": "https://apply.deloitte.com/en_US/careers/JobDetail/Cyber-Security-Risk-Strategy-Senior-Consultant/366771",
+     "seed_url": "https://apply.deloitte.com/en_US/careers",
      "queries": [
       "product manager",
       "product marketing",
@@ -11396,8 +11396,8 @@
      "detail_cap": 80,
      "verification": {
       "status": "unverified_config",
-      "method": "Deloitte US job site apply.deloitte.com (Avature); starting job page seen in web search on 2026-11-20. The search page and keyword field are read from Deloitte's own pages at run time. If the starting job closes, replace seed_url with any live Deloitte job link.",
-      "date": "2026-11-20"
+      "method": "Deloitte's careers home apply.deloitte.com/en_US/careers (Avature) links to its SearchJobs page (seen 2026-11-21). The original seed was a job link that went dead once the role was filled, so the stable careers home is the start now. The keyword field is read from Deloitte's own search form at run time.",
+      "date": "2026-11-21"
      }
     }
    ],

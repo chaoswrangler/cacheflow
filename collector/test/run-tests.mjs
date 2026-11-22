@@ -659,6 +659,19 @@ try {
   t('refusal: summary in the source note', () => assert.match(s.message, /refusal detail: HTTP 403 after 1 successful request this run, html_challenge_or_denial body .*x-ratelimit-remaining: 0, server AkamaiGHost/));
 }
 
+{ // Avature: dead seed job link → careers page on the same site; category filter stripped from the search link
+  const { ADAPTERS: SA4 } = await import('../lib/adapters-server.mjs');
+  const asked = [];
+  const http = { text: async u => { asked.push(u);
+    if (u.endsWith('/robots.txt')) return { ok: true, status: 200, data: '' };
+    if (u.includes('/JobDetail/Old/1')) return { ok: false, status: 404 };
+    if (u === 'https://apply.ex.example/en_US/careers') return { ok: true, status: 200, data: '<a href="/en_US/careers/SearchJobs?3_5_3=477&amp;sort=relevancy">Jobs</a>' };
+    if (u.startsWith('https://apply.ex.example/en_US/careers/SearchJobs')) return { ok: true, status: 200, data: '<form action="/en_US/careers/SearchJobs"><input type="text" name="3_kw"></form><a href="/en_US/careers/JobDetail/Product-Manager/2002">Product Manager</a>' };
+    return { ok: true, status: 200, data: '<h1>Product Manager</h1><main>New York, NY</main>' }; } };
+  const out = await SA4.avature({ id: 'avature:ex', ats: 'avature', seed_url: 'https://apply.ex.example/en_US/careers/JobDetail/Old/1', queries: ['product manager'] }, { employer: 'Ex', careers_url: 'https://apply.ex.example/en_US/careers' }, http, { now: NOW, prevBySource: new Map(), detailCap: 5 });
+  t('avature: dead seed → careers page; search link used without its category filter', () => { assert.equal(out.result, 'ok', out.note); assert.match(out.note, /started from the careers page/); assert.ok(asked.some(u => u.startsWith('https://apply.ex.example/en_US/careers/SearchJobs') && !u.includes('3_5_3'))); assert.equal(out.jobs.length, 1); });
+}
+
 { // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run
   const { sweepCycle } = await import('../lib/adapters-server.mjs');
   const a = sweepCycle({}, { nowIso: 'T1', fromStart: false, wrapped: true, rows: 50 });

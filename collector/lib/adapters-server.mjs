@@ -514,9 +514,19 @@ export const ADAPTERS = {
     const rules = rb.ok ? robotsRules(rb.data) : { disallow: [], sitemaps: [] };
     const blocked = u => { const pth = new URL(u).pathname; return rules.disallow.some(d => d && pth.startsWith(d)); };
     if (blocked(seed.href)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows ${seed.pathname}; not collected` };
-    const r0 = await http.text(seed.href);
-    if (!r0.ok) return fail(r0, { note: `Avature ${origin}: the starting job page did not load (${r0.status || r0.error}). Replace seed_url with any live job link.` });
-    const searchHref = [...r0.data.matchAll(/href="([^"]*SearchJobs[^"]*)"/gi)].map(m => abs(m[1])).find(Boolean);
+    // Start from seed_url; a job link goes dead once the role is filled, so if it no longer loads, fall back to the
+    // employer's careers page on the same site (its own link in the registry), which carries the search link too.
+    let r0 = await http.text(seed.href), startNote = '';
+    if (!r0.ok && !refused(r0) && emp.careers_url && emp.careers_url !== seed.href) {
+      let alt = null; try { alt = new URL(emp.careers_url); } catch { /* not a URL */ }
+      if (alt && alt.origin === origin && !blocked(alt.href)) {
+        const r1 = await http.text(alt.href);
+        if (r1.ok) { startNote = `starting page ${seed.pathname} gone (${r0.status || r0.error}); started from the careers page ${alt.pathname} instead`; r0 = r1; }
+      }
+    }
+    if (!r0.ok) return fail(r0, { note: `Avature ${origin}: the starting page did not load (${r0.status || r0.detail || r0.error}). Replace seed_url with any live job link or the careers home page.` });
+    // the search page itself, without any category filter a link may carry (e.g. ?3_5_3=477&sort=relevancy)
+    const searchHref = [...r0.data.matchAll(/href="([^"]*SearchJobs[^"]*)"/gi)].map(m => abs(m[1])).filter(Boolean).map(h => h.split('?')[0])[0];
     if (!searchHref) return { result: 'not_fetchable', status: 200, jobs: [], note: `Avature ${origin}: no link to the job search on the starting page; nothing guessed, not collected` };
     if (blocked(searchHref)) return { result: 'blocked_by_robots', status: 200, jobs: [], note: `robots.txt disallows the job search page; not collected` };
     // keyword field from the search form on the search page itself
@@ -568,7 +578,7 @@ export const ADAPTERS = {
     }
     const partial = stopped || detailRefused;
     return { result: partial ? 'partial' : 'ok', status: partial ? (lastFail?.status || 429) : 200, jobs, units: U.out(),
-      note: `${found.size} postings from ${pages} search pages${kw ? ` (keyword field "${kw}", ${queries.length} searches)` : ' (no keyword field found: browsed all)'}; ${details} job pages read, ${reused} reused` + (partial ? '; refused part-way, the rest are read next run' : ''),
+      note: `${found.size} postings from ${pages} search pages${kw ? ` (keyword field "${kw}", ${queries.length} searches)` : ' (no keyword field found: browsed all)'}; ${details} job pages read, ${reused} reused` + (partial ? '; refused part-way, the rest are read next run' : '') + (startNote ? `; ${startNote}` : ''),
       fields: { posted_date: 'JSON-LD datePosted (job page)', salary: 'JSON-LD baseSalary or description text', location: 'JSON-LD jobLocation', remote: 'jobLocationType TELECOMMUTE', req_id: 'job id in the URL' } };
   },
 

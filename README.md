@@ -119,7 +119,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-230 offline tests against mocked API responses. The workflow runs them before every collection.
+231 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 
