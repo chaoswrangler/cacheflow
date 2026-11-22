@@ -25,8 +25,16 @@ gzip-compressed (`.csv.gz`). Multi-value cells use `|` between values. Times are
 | summary | Up to ~280 characters from the role section (not the full description). Postings backfilled from the first snapshot have one only when their description was stored. |
 
 ## YYYY-MM-closed.csv — one row when a posting disappears
-uid, closed_at, first_seen, days_open, employer, title. A posting is closed only after a complete scan of its board no
-longer lists it; failed or partial scans never close anything.
+uid, closed_at, first_seen, days_open, employer, title, basis. A closure means the collector stopped finding the posting;
+it is not evidence that anyone was hired. Failed or partial scans never close anything. basis says how it was established:
+| basis | Meaning |
+|---|---|
+| complete_scan | The whole board was read in one successful run and no longer lists it. |
+| complete_pass | A full-list pass over several runs (Google, Microsoft, AWS, Oracle) began after it was last seen and finished cleanly without it. |
+| complete_search | A search that had returned it was later read to its end without it (Workday, SmartRecruiters, Phenom, Avature, Cisco). |
+| unseen_window | Older rule for rows saved before searches were tracked: unseen for longer than a full rotation. |
+| unverified_expired | No scan could confirm it for 30 days (source blocked or failing). Treat as unknown, not as closed. |
+For time-to-close analysis use the verified bases only (the first three).
 
 ## YYYY-MM-changes.csv — one row when a known posting changes
 change is one of: `pay` (stated base range changed; was/now as min-max or pay kind), `title`, `reposted` (the
@@ -43,7 +51,7 @@ skipped; a posting with several categories counts under each.
 |---|---|
 | new_postings | Postings first seen that week. |
 | new_same_store | The same, counting only sources already collected before that week began. Use this for trends. |
-| closed, median_days_open | Postings that closed that week, and how long they had been open. |
+| closed, closed_verified, median_days_open | Postings that closed that week; those closed on verified evidence; median days open (verified closures only). |
 | with_base_pay, median_base_min, median_base_max | New postings stating a base range, and the medians of those ranges. |
 | ote_only, remote_us | New postings stating only OTE; new postings open to remote work in the US. |
 | employers_hiring | Distinct employers with a new posting that week. |
