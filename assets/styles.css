@@ -768,3 +768,11 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .tagpop{position:fixed;z-index:200;padding:10px 12px;border-radius:10px;background:rgba(6,16,31,.97);border:1px solid rgba(95,208,255,.4);color:var(--t1);font-size:13px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 @media (max-width:860px){.mt-row td.c-num{padding:10px 2px;text-align:right;font-family:var(--mono);font-size:10.5px;color:var(--t3,#7f93b5)}.mt thead th.c-num{display:none}}
 .cats{margin:4px 0 2px;display:flex;flex-wrap:wrap;gap:4px}.tag.cat{background:rgba(95,208,255,.10);border-color:rgba(95,208,255,.35);color:var(--ice);text-transform:none;letter-spacing:.02em}.tag.cat.off{opacity:.6;border-style:dashed}
+/* Discover: the tables fit the panel (no sideways scrollbar); the link status pill wraps instead of widening the table */
+@media (min-width:861px){
+  #view-discover .tbl-wrap{overflow:visible;max-height:none}
+  #view-discover #xTable,#view-discover #uTable{width:100%}
+  #view-discover #xTable td,#view-discover #uTable td{overflow-wrap:break-word;word-break:normal}
+  #view-discover #xTable td:last-child,#view-discover #uTable td:last-child{min-width:118px}
+  #view-discover #xTable .tag,#view-discover #uTable .tag{white-space:normal;word-break:normal;overflow-wrap:normal;text-align:center;line-height:1.35}
+}

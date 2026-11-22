@@ -5835,7 +5835,7 @@
      "list_budget": 10,
      "search_budget": 2,
      "detail_budget": 2,
-     "try_apply_v2": true,
+     "try_apply_v2": false,
      "v2_num": 100
     },
     {

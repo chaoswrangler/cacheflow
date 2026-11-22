@@ -638,7 +638,7 @@ try {
   const mk = i => ({ id: 5000 + i, name: 'Senior Product Manager ' + i, locations: ['Redmond, WA, US'], t_create: 1763500000, display_job_id: 'R' + i });
   const run1 = async mode => { const calls = [];
     const http = { json: async u => { calls.push(u);
-      if (u.includes('/api/apply/v2/jobs')) { if (mode === '404') return { ok: false, status: 404 }; const q = new URL(u).searchParams, s = +q.get('start'); return { ok: true, status: 200, data: { count: 130, positions: Array.from({ length: 130 }, (_, i) => mk(i)).slice(s, s + 100) } }; }
+      if (u.includes('/api/apply/v2/jobs')) { if (mode === '404') return { ok: false, status: 404 }; if (mode === '403') return { ok: false, status: 403, error: 'http_403', detail: 'Forbidden' }; const q = new URL(u).searchParams, s = +q.get('start'); return { ok: true, status: 200, data: { count: 130, positions: Array.from({ length: 130 }, (_, i) => mk(i)).slice(s, s + 100) } }; }
       if (u.includes('/api/pcsx/search')) { const s = +new URL(u).searchParams.get('start'); return { ok: true, status: 200, data: { data: { count: 130, positions: Array.from({ length: 130 }, (_, i) => mk(i)).slice(s, s + 10).map(p => ({ ...p, standardizedLocations: p.locations, postedTs: p.t_create })) } } }; }
       return { ok: true, status: 200, data: { data: { jobDescription: '' } } }; }, text: async () => ({ ok: false, status: 404 }) };
     const out = await SA3.eightfold({ id: 'ms:eightfold', ats: 'eightfold', host: 'apply.careers.microsoft.com', domain: 'microsoft.com', queries: [], list_budget: 3, detail_budget: 0, try_apply_v2: true }, { employer: 'Microsoft' }, http, { prevStatusById: new Map(), prevBySource: new Map(), now: NOW });
@@ -646,6 +646,8 @@ try {
   const a = await run1('ok');
   t('eightfold v2: 100 per request → whole 130-role list in 2 requests, pass complete', () => { assert.equal(a.calls.filter(c => c.includes('/api/apply/v2/jobs')).length, 2); assert.equal(a.out.jobs.length, 130); assert.ok(a.out.checkpoint.last_full_cycle_end); assert.match(a.out.note, /apply\/v2\/jobs in use: up to 100 roles per request/); assert.equal(a.out.jobs[0].req_id || a.out.jobs[0].ext_id ? true : false, true); });
   const b = await run1('404');
+  const c = await run1('403');
+  t('eightfold v2: 403 → trial ended for good, no further requests this run', () => { assert.equal(c.out.checkpoint.v2, false); assert.equal(c.calls.length, 1); assert.match(c.out.note || c.out.message || JSON.stringify(c.out).slice(0, 2000), /trial ended/); });
   t('eightfold v2: endpoint missing → switched off, same run continues on pcsx', () => { assert.equal(b.out.checkpoint.v2, false); assert.match(b.out.note, /apply\/v2\/jobs tried: failed \(404\)/); assert.equal(b.out.jobs.length, 30); });
 }
 
@@ -701,6 +703,21 @@ try {
   const meta = JSON.parse(await readFile(join(dir, 'jobs.json'), 'utf8')), back = await readJobs(dir);
   t('jobstore: jobs.json holds metadata and the shard list only', () => { assert.equal(meta.jobs.length, 0); assert.equal(meta.shards.length, SHARDS); assert.equal(meta.counts.open, 50); assert.equal(shards[0], 'data/jobs/jobs-0.json'); });
   t('jobstore: every role comes back, each source in one shard', () => { assert.equal(back.jobs.length, 50); assert.deepEqual(new Set(back.jobs.map(j => j.uid)).size, 50); });
+}
+
+{ // watchdog: alert and catch-up only when a slot was missed or a run failed
+  const { decide } = await import('../watchdog.mjs');
+  const at = s => new Date(s);
+  const slot10 = at('2026-11-22T15:00:00Z'); // 10:00 ET
+  t('watchdog: collected after the slot → nothing', () => assert.equal(decide({ now: at('2026-11-22T16:47:00Z'), lastCollected: at('2026-11-22T15:40:00Z') }).action, 'none'));
+  t('watchdog: within the grace period → nothing yet', () => assert.match(decide({ now: at('2026-11-22T15:47:00Z'), lastCollected: at('2026-11-22T03:11:00Z') }).why, /grace/));
+  t('watchdog: no run since the slot → start one and alert', () => { const d = decide({ now: at('2026-11-22T16:47:00Z'), lastCollected: at('2026-11-22T03:11:00Z'), runs: [{ status: 'completed', conclusion: 'success', created_at: '2026-11-22T03:00:00Z', updated_at: '2026-11-22T03:12:00Z', event: 'workflow_dispatch' }] }); assert.equal(d.action, 'alert'); assert.equal(d.dispatch, true); assert.match(d.why, /10:00 ET/); });
+  t('watchdog: a run is in progress → nothing', () => assert.equal(decide({ now: at('2026-11-22T16:47:00Z'), lastCollected: null, runs: [{ status: 'in_progress', created_at: '2026-11-22T16:20:00Z', html_url: 'u' }] }).action, 'none'));
+  t('watchdog: a run failed in the last hour → alert without a new run; reported once', () => {
+    const runs = [{ status: 'completed', conclusion: 'failure', created_at: '2026-11-22T15:20:00Z', updated_at: '2026-11-22T16:10:00Z', html_url: 'u', event: 'schedule' }];
+    const d = decide({ now: at('2026-11-22T16:47:00Z'), lastCollected: at('2026-11-22T03:11:00Z'), runs }); assert.equal(d.action, 'alert'); assert.equal(d.dispatch, false);
+    assert.equal(decide({ now: at('2026-11-22T17:47:00Z'), lastCollected: at('2026-11-22T03:11:00Z'), runs }).action, 'none'); });
+  void slot10;
 }
 
 { // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run

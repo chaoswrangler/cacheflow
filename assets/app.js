@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121v';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121v';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121v';
+import * as C from './shared/core.mjs?v=20261122a';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122a';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122a';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -111,8 +111,8 @@ function labelTables(root = document) {
 new MutationObserver(() => { cancelAnimationFrame(labelTables.f); labelTables.f = requestAnimationFrame(() => labelTables()); }).observe(document.documentElement, { childList: true, subtree: true });
 
 /* ============================================================ boot */
-async function loadJSON(p, fb) {
-  try { const r = await fetch(p, { cache: 'no-store' }); if (!r.ok) throw new Error(r.status); return await r.json(); }
+async function loadJSON(p, fb, cache = 'no-store') {
+  try { const r = await fetch(p, { cache }); if (!r.ok) throw new Error(r.status); return await r.json(); }
   catch (e) { console.warn('load', p, e); return fb; }
 }
 async function boot() {
@@ -127,7 +127,10 @@ async function boot() {
   }
   // jobs.json lists shard files (data/jobs/jobs-<n>.json) once the data outgrew a single file; load them all
   if (Array.isArray(jobs.shards) && jobs.shards.length) {
-    const parts = await Promise.all(jobs.shards.map(f => loadJSON(f, { jobs: [] })));
+    // the shards are most of the download (about 7 MB compressed). Their URL carries the run time, so the browser reuses its
+    // copy until a new collection lands instead of downloading everything on every visit
+    const v = encodeURIComponent(jobs.generated_at || '');
+    const parts = await Promise.all(jobs.shards.map(f => loadJSON(v ? `${f}?g=${v}` : f, { jobs: [] }, v ? 'default' : 'no-store')));
     jobs.jobs = parts.flatMap(p => p.jobs || []);
   }
   S.registry = reg || S.registry; S.jobs = jobs.jobs || []; S.jobsMeta = jobs; S.status = status;
@@ -984,7 +987,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121v');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261122a');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

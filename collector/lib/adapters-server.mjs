@@ -978,6 +978,9 @@ export const ADAPTERS = {
         : `${host}/api/pcsx/search?domain=${D}&query=${encodeURIComponent(q)}&location=${encodeURIComponent(loc)}&start=${start}&num=10`;
       let r = await http.json(url(location));
       let data = r.ok ? ((useV2 ? r.data : r.data?.data) || {}) : {};
+      // a 403 on the trial endpoint ("Not authorized for PCSX") means that endpoint isn't open to the public: end the trial for
+      // good. This run still stops (no more requests to the host after a 403); the next run reads /api/pcsx/search as before.
+      if (useV2 && r.status === 403) { ck.v2 = false; v2Note = `/api/apply/v2/jobs refused (403${r.refusal?.excerpt ? `: ${String(r.refusal.excerpt).slice(0, 60)}` : ''}); trial ended, next run reads /api/pcsx/search`; }
       if (useV2 && !refused(r)) {
         const ok2 = r.ok && Array.isArray(data.positions);
         if (!ok2 || (data.positions.length <= 10 && Number(data.count) > start + data.positions.length)) {
@@ -1038,7 +1041,7 @@ export const ADAPTERS = {
       if (!queries.length) break;
     }
     ck.updated_at = nowIso;
-    if (!anyOk) return fail(lastFail || {}, { checkpoint: ck });
+    if (!anyOk) { const f = fail(lastFail || {}, { checkpoint: ck }); if (v2Note) f.note = [f.note, v2Note].filter(Boolean).join("; "); return f; }
     const ts = v => v ? new Date((v > 1e12 ? v : v * 1000)).toISOString() : null;
     const prev = opt.prevBySource?.get(src.id) || new Map();
     const jobs = []; let details = 0, reused = 0, detailRefused = false, skippedNonUS = 0;

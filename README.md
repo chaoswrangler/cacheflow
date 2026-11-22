@@ -11,9 +11,20 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | Collector runtime | Node.js 22 (built-in `fetch`, `node:fs`, `node:crypto`). No npm dependencies. |
 | Browser libraries | pdf.js 4.10 and mammoth 1.13, vendored in `assets/vendor/` (no CDN), used only to read uploaded résumés |
 | Hosting | GitHub Pages (static files) |
-| Scheduling | GitHub Actions, woken hourly; `collector/gate.mjs` collects when a slot is due (weekdays 6am, 10am, 2pm, 6pm ET; weekends 10am ET) |
+| Scheduling | GitHub Actions, woken hourly; `collector/gate.mjs` collects when a slot is due (6am, 10am, 2pm and 6pm ET, every day) |
 | Storage | JSON files in `data/`, committed by the workflow. `git log data/` is the audit trail. |
 | Email (optional) | Resend HTTP API |
+
+
+### Collector watchdog
+
+`.github/workflows/watchdog.yml` runs at :47 past each hour (6am–7pm ET). It checks that the latest slot (6am, 10am, 2pm, 6pm ET) was collected:
+
+- **Slot missed** (75+ minutes late, nothing running): it starts a catch-up collection (digest included, as a scheduled run would), and the watchdog run is marked failed with the reason.
+- **Collection run failed**: the watchdog run is marked failed once, with a link to the failed run. It doesn't retry a failed run.
+- **On time or still running**: it passes.
+
+A failed watchdog run triggers GitHub's standard failed-workflow notification (GitHub → Settings → Notifications → Actions). No email service or secrets are needed.
 
 ## Architecture
 

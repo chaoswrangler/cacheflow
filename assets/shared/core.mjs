@@ -5,9 +5,14 @@
 export const TZ = 'America/New_York'; // collector default; the app passes the viewer's own time zone
 
 /* ------------------------------------------------------------------ dates */
+// Building an Intl.DateTimeFormat is slow (about 0.05 ms each); with 45,000 roles that cost seconds per page load,
+// so one formatter per time zone is kept and reused
+const YMD_FMT = new Map();
 export function nyDate(d = new Date(), tz = TZ) {
   // YYYY-MM-DD for a Date as seen in the given time zone
-  return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+  let f = YMD_FMT.get(tz || '');
+  if (!f) { f = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }); YMD_FMT.set(tz || '', f); }
+  return f.format(d);
 }
 export function addDays(ymd, n) {
   const [y, m, d] = ymd.split('-').map(Number);
