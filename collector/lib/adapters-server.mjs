@@ -835,7 +835,7 @@ export const ADAPTERS = {
   // Falls back to the older jobs.cisco.com results table if that's what comes back.
   async cisco_rss(src, emp, http, opt) {
     const phenom = await ADAPTERS.phenom({ ...src, base: src.phenom_base || 'https://careers.cisco.com/global/en' }, emp, http, opt);
-    if (phenom.result === 'ok' || phenom.result === 'empty') return phenom;
+    if (['ok', 'empty', 'partial'].includes(phenom.result)) return phenom;
     const seen = new Map(); let anyOk = false, lastFail = null, shapeMiss = 0;
     const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString();
     void phenom;
@@ -881,7 +881,27 @@ export const ADAPTERS = {
     const U = inventoryUnits(), startedAt = (opt.now || new Date()).toISOString();
     const grab = html => { const m = html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*phApp\./) || html.match(/phApp\.ddo\s*=\s*(\{[\s\S]*?\});\s*<\/script>/); if (!m) return null; try { return JSON.parse(m[1]); } catch { return null; } };
     const capN = src.max_per_query || opt.phenomMaxPerQuery || 30;
-    for (const q of src.queries || ['']) {
+    // full_list: page through the whole listing (no keyword) from a saved offset, a budget of pages per run, instead of
+    // keyword searches capped at a few pages each (which left Cisco, Splunk, Adobe and BCG at 30-60 roles).
+    const prevSt = opt.prevStatusById?.get(src.id) || {}, nowIso = startedAt;
+    let resume = null, scanFrom = null, wrapped = false, rows = 0, cyc = null, listPages = 0, totalHits = null, cut = null;
+    if (src.full_list) {
+      scanFrom = Number(prevSt.resume_offset) || 0;
+      let from = scanFrom ? Math.max(0, scanFrom - 10) : 0;
+      while (listPages < (src.pages_per_run || 80)) {
+        const r = await http.text(`${src.base}/search-results?keywords=&from=${from}&s=1`);
+        if (!r.ok) { lastFail = r; resume = Math.max(from, scanFrom); if ([403, 429].includes(r.status)) cut = from; break; }
+        const block = grab(r.data)?.eagerLoadRefineSearch, list = block?.data?.jobs;
+        if (!Array.isArray(list)) { lastFail = { error: 'parse_error', detail: 'Phenom page without eagerLoadRefineSearch.data.jobs' }; resume = Math.max(from, scanFrom); break; }
+        anyOk = true; listPages++; totalHits = block.totalHits ?? totalHits;
+        for (const j of list) { const id = String(j.jobSeqNo || j.jobId || j.reqId); seen.set(id, j); U.saw('*', id); }
+        if (from >= scanFrom) rows += list.length;
+        if (list.length < 10 || from + 10 >= (block.totalHits || 0)) { resume = 0; wrapped = true; break; }
+        from += 10; resume = from;
+      }
+      if (listPages) cyc = sweepCycle(prevSt.checkpoint, { nowIso, fromStart: scanFrom === 0, wrapped, rows });
+    }
+    for (const q of src.full_list ? [] : (src.queries || [''])) {
       let state = `stopped at the ${capN}-result limit`;
       for (let from = 0; from < capN; from += 10) {
         const r = await http.text(`${src.base}/search-results?keywords=${encodeURIComponent(q)}&from=${from}&s=1`);
@@ -894,15 +914,18 @@ export const ADAPTERS = {
       if (state === 'done') U.done(q || '*', startedAt); else U.incomplete(q || '*', state);
       if (!anyOk && lastFail) break;
     }
-    if (!anyOk) return fail(lastFail || {});
-    const jobs = []; let details = 0;
+    if (!anyOk) return fail(lastFail || {}, src.full_list ? { resume_offset: scanFrom } : {});
+    const jobs = []; let details = 0, reused = 0;
+    const prevJ = opt.prevBySource?.get(src.id) || new Map();
     for (const p of seen.values()) {
       const locs = (p.multi_location?.length ? p.multi_location : [p.location || p.cityStateCountry]).filter(Boolean);
       const url = p.applyUrl && !/apply/i.test(p.applyUrl.split('?')[0].split('/').pop() || '') ? p.applyUrl : `${src.base}/job/${p.jobId || p.jobSeqNo}`;
       const j = { source_id: src.id, ats: 'phenom', employer: emp.employer, ext_id: String(p.jobSeqNo || p.jobId || p.reqId), req_id: p.reqId || p.jobId || null, title: p.title, _units: U.of(String(p.jobSeqNo || p.jobId || p.reqId)),
         url, locations: locs, department: p.category || null, workplace_hint: /remote/i.test(p.workSiteFlexibility || p.type || '') ? 'remote' : null,
         posted_at: p.postedDate ? new Date(p.postedDate).toISOString() : null, posted_kind: p.postedDate ? 'posted_date' : 'unknown', desc_text: htmlToText(p.descriptionTeaser || '') };
-      if (relevantTitle(p.title) && (usText(locs.join(' ')) || !locs.length) && details < opt.detailCap) {
+      const pj = prevJ.get(j.ext_id);
+      if (pj && pj.title === p.title && (pj.excerpt || pj.salary) && !detailStale(pj, opt)) { j.reuse = pj; reused++; }
+      else if (relevantTitle(p.title) && (usText(locs.join(' ')) || !locs.length) && details < opt.detailCap) {
         details++;
         const d = await http.text(`${src.base}/job/${p.jobId || p.jobSeqNo}`);
         const dd = d.ok ? grab(d.data)?.jobDetail?.data?.job : null;
@@ -911,7 +934,14 @@ export const ADAPTERS = {
       jobs.push(j);
     }
     const capped = Object.keys(U.out().incomplete).length;
-    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, units: U.out(), note: `${seen.size} postings via Phenom search; ${details} detail pages${capped ? `; ${capped} of ${(src.queries || ['']).length} searches not read to the end (result limit or failed page): their roles are kept, not closed` : ''}`,
+    if (src.full_list) {
+      const ck = cyc?.ck || prevSt.checkpoint || {};
+      return { result: cut != null ? 'partial' : jobs.length ? 'ok' : 'empty', status: cut != null ? lastFail.status : 200, jobs, rotated: true, resume_offset: resume ?? scanFrom, checkpoint: ck,
+        close_before: ck.last_full_cycle_start || null, close_after_hours: src.close_after_hours || 72,
+        note: `${seen.size} postings from the full listing: ${listPages} pages from ${scanFrom}${totalHits != null ? ` of ${totalHits} listed` : ''}${wrapped ? `, reached the end${cyc?.early ? ` (${cyc.early})` : ' — pass complete'}` : `, next run resumes at ${resume}`}${cut != null ? ` (refused at ${cut})` : ''}; ${ck.last_full_cycle_end ? `last complete pass ${ck.last_full_cycle_end.slice(0, 10)}` : 'no complete pass yet, so nothing is closed'}; ${details} detail pages read, ${reused} reused`,
+        fields: { posted_date: 'postedDate', salary: 'detail description', location: 'location / multi_location', remote: 'work-site flags', req_id: 'reqId' } };
+    }
+    return { result: jobs.length ? 'ok' : 'empty', status: 200, jobs, units: U.out(), note: `${seen.size} postings via Phenom search; ${details} detail pages read, ${reused} reused${capped ? `; ${capped} of ${(src.queries || ['']).length} searches not read to the end (result limit or failed page): their roles are kept, not closed` : ''}`,
       fields: { posted_date: 'postedDate', salary: 'detail description', location: 'location / multi_location', remote: 'work-site flags', req_id: 'reqId' } };
   },
 
