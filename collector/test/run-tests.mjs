@@ -672,6 +672,34 @@ try {
   t('avature: dead seed → careers page; search link used without its category filter', () => { assert.equal(out.result, 'ok', out.note); assert.match(out.note, /started from the careers page/); assert.ok(asked.some(u => u.startsWith('https://apply.ex.example/en_US/careers/SearchJobs') && !u.includes('3_5_3'))); assert.equal(out.jobs.length, 1); });
 }
 
+{ // Phenom full listing: pages from a saved offset; pass tracking; exclude words are whole words
+  const { ADAPTERS: SA5 } = await import('../lib/adapters-server.mjs');
+  const job = i => ({ jobSeqNo: 'SEQ' + i, jobId: String(i), title: i % 2 ? 'Senior Product Manager ' + i : 'Software Engineer ' + i, location: 'New York, NY, United States', postedDate: '2026-11-18' });
+  const page = from => `<script>phApp.ddo = ${JSON.stringify({ eagerLoadRefineSearch: { totalHits: 45, data: { jobs: Array.from({ length: 45 }, (_, i) => job(i)).slice(from, from + 10) } } })}; phApp.x=1</script>`;
+  const asked = [];
+  const http = { text: async u => { asked.push(u); if (u.includes('search-results')) return { ok: true, status: 200, data: page(+new URL(u).searchParams.get('from')) }; return { ok: true, status: 200, data: '<script>phApp.ddo = {"jobDetail":{"data":{"job":{"description":"<p>x</p>"}}}}; phApp.y=1</script>' }; } };
+  const src = { id: 'phenom:x', ats: 'phenom', base: 'https://careers.x.example/us/en', full_list: true, pages_per_run: 3, queries: ['ignored'] };
+  const a = await SA5.phenom(src, { employer: 'X' }, http, { now: NOW, detailCap: 2, prevStatusById: new Map(), prevBySource: new Map() });
+  t('phenom full list: 3 pages, resumes at 30, no keyword searches', () => { assert.equal(a.jobs.length, 30); assert.equal(a.resume_offset, 30); assert.ok(!asked.some(u => u.includes('keywords=ignored'))); assert.equal(a.close_before, null); });
+  const b = await SA5.phenom(src, { employer: 'X' }, http, { now: NOW, detailCap: 2, prevStatusById: new Map([['phenom:x', { resume_offset: 30, checkpoint: a.checkpoint }]]), prevBySource: new Map() });
+  t('phenom full list: resumes one page back, reaches the end, pass complete', () => { assert.ok(asked.some(u => u.includes('from=20'))); assert.equal(b.resume_offset, 0); assert.ok(b.close_before); assert.match(b.note, /pass complete/); });
+  const C7 = await import('../../assets/shared/core.mjs');
+  const ex = C7.reFromList(C7.csvList('intern, new grad, apprentice'));
+  t('exclude words: whole words only (Internal Audit, International kept; Interns, Internship excluded)', () => { assert.ok(!ex.test('Head of SOX Internal Audit')); assert.ok(!ex.test('International Tax Manager')); assert.ok(ex.test('MBA Interns 2027')); assert.ok(ex.test('Security Internship')); assert.ok(ex.test('New Graduate Program')); });
+}
+
+{ // jobs data in shards: round trip, and the old single file still reads
+  const { readJobs, writeJobs, SHARDS } = await import('../lib/jobstore.mjs');
+  const dir = await mkdtemp(join(tmpdir(), 'cf-shard-'));
+  await writeFile(join(dir, 'jobs.json'), JSON.stringify({ generated_at: 'x', jobs: [{ uid: 'a:1', source_id: 'a' }] }));
+  t('jobstore: old single-file jobs.json is read', async () => assert.equal((await readJobs(dir)).jobs.length, 1));
+  const jobs = Array.from({ length: 50 }, (_, i) => ({ uid: `s${i % 7}:${i}`, source_id: `s${i % 7}` }));
+  const shards = await writeJobs(dir, { generated_at: 'y', counts: { open: 50 }, jobs });
+  const meta = JSON.parse(await readFile(join(dir, 'jobs.json'), 'utf8')), back = await readJobs(dir);
+  t('jobstore: jobs.json holds metadata and the shard list only', () => { assert.equal(meta.jobs.length, 0); assert.equal(meta.shards.length, SHARDS); assert.equal(meta.counts.open, 50); assert.equal(shards[0], 'data/jobs/jobs-0.json'); });
+  t('jobstore: every role comes back, each source in one shard', () => { assert.equal(back.jobs.length, 50); assert.deepEqual(new Set(back.jobs.map(j => j.uid)).size, 50); });
+}
+
 { // multi-run full-list passes (AWS): closures need a pass that began at the top in a tracked run
   const { sweepCycle } = await import('../lib/adapters-server.mjs');
   const a = sweepCycle({}, { nowIso: 'T1', fromStart: false, wrapped: true, rows: 50 });
