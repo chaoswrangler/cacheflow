@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261121q">
+<link rel="stylesheet" href="assets/styles.css?v=20261121s">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -42,7 +42,7 @@
   <div class="hud-in">
     <a href="#profile" class="mk" aria-label="Cache Flow home">
       <span class="wolfmark" aria-hidden="true"><svg viewBox="0 0 500 520" fill="none" stroke="currentColor" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"><path d="M250 150 L200 140 L118 18 L98 172 L38 160 L74 214 L12 242 L70 272 L24 326 L92 322 L64 392 L142 372 L150 436 L206 448 L250 505 L294 448 L350 436 L358 372 L436 392 L408 322 L476 326 L430 272 L488 242 L426 214 L462 160 L402 172 L382 18 L300 140 L250 150 Z"/><path d="M130 62 L172 150"/><path d="M370 62 L328 150"/><path d="M104 212 L214 248 L250 226"/><path d="M396 212 L286 248 L250 226"/><path d="M214 248 L222 402"/><path d="M286 248 L278 402"/><path d="M140 240 L214 262 L170 272 Z" fill="currentColor"/><path d="M360 240 L286 262 L330 272 Z" fill="currentColor"/><path d="M226 392 L274 392 L250 420 Z" fill="currentColor"/><path d="M214 418 L224 456 L232 424 Z" fill="currentColor"/><path d="M286 418 L276 456 L268 424 Z" fill="currentColor"/></svg></span>
-      <span class="mk-t"><b>Cache Flow</b><small id="who">Job search · HUD</small></span>
+      <span class="mk-t"><b>Cache Flow</b><small id="who">Job search · HUD</small><small class="build" id="buildStamp" aria-label="Site build and data times"></small></span>
     </a>
     <button class="menu" id="menuBtn" aria-expanded="false" aria-controls="nav"><span class="mb"><i></i><i></i><i></i></span>Menu</button>
     <nav class="nav" id="nav" aria-label="Sections">
@@ -390,7 +390,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261121q" defer></script>
+<script src="assets/fx.js?v=20261121s" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -408,6 +408,6 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261121q"></script>
+<script type="module" src="assets/app.js?v=20261121s"></script>
 </body>
 </html>
