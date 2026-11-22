@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121n';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121n';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121n';
+import * as C from './shared/core.mjs?v=20261121q';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121q';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121q';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -118,6 +118,11 @@ async function boot() {
     document.querySelector('main').insertAdjacentHTML('afterbegin', OWNER
       ? `<div class="empty-state"><b>DATA FILES NOT REACHABLE</b>Open this app over http (GitHub Pages, or <code>python3 -m http.server</code> in the repo folder). Browsers block file:// data loads.</div>`
       : `<div class="empty-state"><b>COULDN'T LOAD LISTINGS</b>Please refresh the page in a moment.</div>`);
+  }
+  // jobs.json lists shard files (data/jobs/jobs-<n>.json) once the data outgrew a single file; load them all
+  if (Array.isArray(jobs.shards) && jobs.shards.length) {
+    const parts = await Promise.all(jobs.shards.map(f => loadJSON(f, { jobs: [] })));
+    jobs.jobs = parts.flatMap(p => p.jobs || []);
   }
   S.registry = reg || S.registry; S.jobs = jobs.jobs || []; S.jobsMeta = jobs; S.status = status;
   { const gs = new Map(); S.dupGroup = new Map();
@@ -667,7 +672,7 @@ function jobRow(m) {
   const slText = esc(sl.text) + (sl.more ? ` <span class="more-loc">+${sl.more}</span>` : '');
   const dYmd = m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : null;
   const stTag = st ? `<span class="tag ${STATUS[st].cls}">${esc(STATUS[st].short)}${(st === 'applied' ? tr.applied || tr.t : tr.t) ? ' · ' + esc(shortDay(st === 'applied' ? tr.applied || tr.t : tr.t)) : ''}</span>` : '';
-  const flags = [stTag, j.status === 'closed' && '<span class="tag r">closed</span>', st && !m.inFilters && j.status !== 'closed' && '<span class="tag f">outside filters</span>', j.reposted && '<span class="tag a">repost?</span>', j.stale && `<span class="tag r" title="${esc(STALE_HELP)}">stale</span>`, j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
+  const flags = [stTag, j.status === 'closed' && '<span class="tag r">closed</span>', (st || m.viaFinds) && !m.inFilters && j.status !== 'closed' && '<span class="tag f">outside filters</span>', j.reposted && '<span class="tag a">repost?</span>', j.stale && `<span class="tag r" title="${esc(STALE_HELP)}">stale</span>`, j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
   const li = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(j.title + ' ' + (e?.employer || j.employer))}`;
   const detail = open ? `<tr class="mt-detail" data-uid="${esc(j.uid)}"><td colspan="8"><div class="dgrid">
       <div><b>Location</b>${m.loc === 'metro' && m.hf.metro_loc ? `Matched on <b class="inl">${esc(m.hf.metro_loc)}</b> (commute area). ` : ''}${sl.more ? 'All listed: ' : ''}${esc(sl.all.join(' · ') || '—')} · ${esc(j.workplace)}${m.hf.eligibility !== 'n/a' ? ` · home-state eligibility: ${esc(m.hf.eligibility)}` : ''}</div>
@@ -767,6 +772,23 @@ function renderMatches() {
     : stSel === 'all' ? ms
     : ms.filter(m => stOf(m.j.uid) === stSel);
   if (!$('#showDups').checked) ms = ms.filter(m => !m.j.dup_of);
+  // "Show in list" from High-pay finds: that panel uses its own pay floor and company types, so some of its roles
+  // can fall outside the list's own filters. Show them anyway, marked, and say which filter keeps them out.
+  let findsNote = '';
+  if (S.empOnly && S.empFromFinds && S.findsByEmp?.get(S.empOnly)) {
+    const have = new Set(ms.map(m => m.j.uid));
+    const extra = S.findsByEmp.get(S.empOnly).roles.filter(m => !have.has(m.j.uid)).map(m => ({ ...m, inFilters: false, viaFinds: true }));
+    if (extra.length) {
+      ms = ms.concat(extra);
+      const jobsE = S.jobs.filter(j => j.employer === S.empOnly && !j.dup_of);
+      const nWith = patch => { const c = { ...S.crit, ...patch }; const win = c.window === 'all' ? null : C.windowFor(c.window, new Date(), LOCAL_TZ, c.winFrom, c.winTo), excl = reFromList(csvList(c.exclude));
+        return jobsE.filter(j => C.evaluateJob(j, { crit: c, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win, excl, tz: LOCAL_TZ })).length; };
+      const base0 = nWith({});
+      const cuts = [...funnelRows(), { k: 'Company types', now: 'your company types', to: 'all types', patch: { types: { big: true, security: true, advisory: true, growth: true, aggregator: true } } }]
+        .map(r => ({ ...r, n: nWith(r.patch) - base0 })).filter(r => r.n > 0).sort((a, b) => b.n - a.n);
+      findsNote = `<div class="finds-note"><b>${extra.length} ${esc(S.empOnly)} role${extra.length === 1 ? '' : 's'} from High-pay finds ${extra.length === 1 ? 'is' : 'are'} outside your list filters</b> (marked “outside filters” below). High-pay finds uses its own pay floor (${money(S.findsMin)}+) and company types. ${cuts.length ? `For ${esc(S.empOnly)}, the biggest cut in your list filters is <b>${esc(cuts[0].k)}</b>: ${esc(cuts[0].now)}; loosening it to “${esc(cuts[0].to)}” would add ${cuts[0].n}.` : ''}</div>`;
+    }
+  }
   const count = t => all.filter(m => m.tier === t).length;
   $('#matchTiles').innerHTML = [
     ['c', all.length, 'matches in window'], ['g', count('starts'), `base starts ≥ ${money(S.crit.minBase)}`], ['a', count('reaches'), `base reaches ≥ ${money(S.crit.minBase)}`],
@@ -797,10 +819,10 @@ function renderMatches() {
   ms.sort((x, y) => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; });
   const limit = S.showN || 200;
   const th = (k, l, cls = '') => `<th class="${cls} ${key === k ? 'sorted' : ''}" data-sort="${k}">${l}${key === k ? (dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
-  $('#jobGroups').innerHTML = ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
+  $('#jobGroups').innerHTML = findsNote + (ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
       (S.groupBy ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
     : STATUS[stSel] ? `<div class="empty-state"><b>NOTHING MARKED “${esc(STATUS[stSel].label.toUpperCase())}”</b>Use the ○ button at the left of any row, or the buttons in a row's details, to set Applied, To do or Not interested.</div>`
-    : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`;
+    : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`);
   S.lastMatches = ms;
   updatePayCount();
   renderFunnel();
@@ -825,7 +847,7 @@ function wireMatches() {
   $('#msort').addEventListener('change', e => { const k = e.target.value; S.sort = { key: k, dir: ['employer'].includes(k) ? 1 : -1 }; store.set('sort', S.sort); renderMatches(); });
   $('#mSortBar')?.addEventListener('click', e => { const b = e.target.closest('[data-msort]'); if (!b) return; const k = b.dataset.msort, cur = S.sort || { key: 'score', dir: -1 };
     S.sort = { key: k, dir: cur.key === k ? -cur.dir : -1 }; store.set('sort', S.sort); renderMatches(); });
-  $('#tierChips').addEventListener('click', e => { if (e.target.closest('[data-clearemp]')) { S.empOnly = null; S.showN = 200; renderMatches(); return; } const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
+  $('#tierChips').addEventListener('click', e => { if (e.target.closest('[data-clearemp]')) { S.empOnly = null; S.empFromFinds = false; S.showN = 200; renderMatches(); return; } const c = e.target.closest('[data-tier]'); if (!c) return; S.tierSel = c.dataset.tier; S.showN = 200; renderMatches(); });
   $('#jobGroups').addEventListener('click', e => {
     const h = e.target.closest('th[data-sort]');
     if (h) { const k = h.dataset.sort; const cur = S.sort || { key: 'score', dir: -1 }; S.sort = { key: k, dir: cur.key === k ? -cur.dir : (['role', 'employer', 'source'].includes(k) ? 1 : -1) }; store.set('sort', S.sort); renderMatches(); return; }
@@ -848,7 +870,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121n');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121q');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -1006,6 +1028,7 @@ function renderFinds() {
     const g = byEmp.get(j.employer) || byEmp.set(j.employer, { emp: j.employer, e, ty, roles: [] }).get(j.employer);
     g.roles.push(m);
   }
+  S.findsByEmp = byEmp; S.findsMin = min;
   const groups = [...byEmp.values()].map(g => { g.roles.sort((a, b) => (b.j.salary.min - a.j.salary.min) || b.score - a.score); g.top = g.roles[0]; return g; })
     .sort((a, b) => b.top.j.salary.min - a.top.j.salary.min || b.roles.length - a.roles.length);
   const nRoles = groups.reduce((n, g) => n + g.roles.length, 0);
@@ -1031,7 +1054,7 @@ function wireFinds() {
   $('#findsMin').onchange = e => { store.set('findsMin', +e.target.value); renderFinds(); };
   $('#findsTypes').onchange = e => { store.set('findsTypes', e.target.value); renderFinds(); };
   $('#findsList').addEventListener('click', e => { const b = e.target.closest('[data-findemp]'); if (!b) return;
-    S.empOnly = b.dataset.findemp; $('#typeFilter').value = ''; S.showN = 200; renderMatches(); $('#jobGroups').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    S.empOnly = b.dataset.findemp; S.empFromFinds = true; $('#typeFilter').value = ''; S.showN = 200; renderMatches(); $('#jobGroups').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 }
 function downloadCSV(rows, name) {
   if (!rows.length) return toast('Nothing to export');
