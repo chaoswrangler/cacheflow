@@ -1,7 +1,7 @@
-import * as C from './shared/core.mjs?v=20261122h';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122h';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122h';
-import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122h';
+import * as C from './shared/core.mjs?v=20261122l';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122l';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122l';
+import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122l';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -466,6 +466,13 @@ function critSummary() {
   const locs = [...(c.places || []).filter(p => p.on).map(placeLabel), c.lOther && 'anywhere else in the US'].filter(Boolean).join(' + ') || 'no locations';
   const inc = [c.payNoComp && 'unstated', c.payOte && 'OTE-only'].filter(Boolean);
   return `${n} categor${n === 1 ? 'y' : 'ies'} · ${[+c.targetBase && 'base includes ' + money(c.targetBase), +c.minBase && 'base starts ≥ ' + money(c.minBase), +c.maxBase && 'upper range ≥ ' + money(c.maxBase)].filter(Boolean).join(', ') || 'any pay'}${inc.length && (+c.targetBase || +c.minBase || +c.maxBase) ? ` (+ ${inc.join(', ')})` : ''} · ${win} · ${locs}`;
+}
+// the same summary as separate chips (place labels contain " · ", so the string can't simply be split)
+function critChips() {
+  const c = S.crit, n = (c.functions || []).length;
+  const win = c.window === 'custom' ? (currentWindow()?.label || 'any date') : ({ week: 'This week', d7: 'Last 7 days', d14: 'Last 14 days', d30: 'Last 30 days', d60: 'Last 60 days', d90: 'Last 90 days', all: 'Any date' }[c.window] || c.window);
+  const pay = [+c.targetBase && 'Base includes ' + money(c.targetBase), +c.minBase && 'Base starts ≥ ' + money(c.minBase), +c.maxBase && 'Upper range ≥ ' + money(c.maxBase)].filter(Boolean);
+  return [`${n} job categor${n === 1 ? 'y' : 'ies'}`, ...(pay.length ? pay : ['Any pay']), win, ...(c.places || []).filter(p => p.on).map(placeLabel), c.lOther && 'Anywhere else in the US'].filter(Boolean);
 }
 function wireCritLayout() {
   const d = $('#critBox'); if (!d) return;
@@ -953,7 +960,7 @@ function renderMatches() {
   renderFunnel();
   renderFinds();
   const w2 = currentWindow();
-  updateWidgets({ base: arrBase, all, shown: ms.length, crit: S.crit, profile: S.profile, track: S.track, critSummary: critSummary(), minLabel: money(+S.crit.minBase || +S.crit.maxBase || 0),
+  updateWidgets({ base: arrBase, all, shown: ms.length, crit: S.crit, profile: S.profile, track: S.track, critSummary: critSummary(), critChips: critChips(), minLabel: money(+S.crit.minBase || +S.crit.maxBase || 0),
     windowLabel: !w2 ? 'Any date' : S.crit.window === 'week' ? 'This week' : w2.label, funnelSum: $('#funnelSum')?.textContent, findsSum: $('#findsSum')?.textContent,
     openCount: S.jobs.filter(j => j.status !== 'closed').length, generatedAt: S.jobsMeta?.generated_at });
 }
@@ -1037,7 +1044,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261122h');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261122l');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

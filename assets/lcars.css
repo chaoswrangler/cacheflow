@@ -90,7 +90,6 @@ a{color:#8DB8FF}a:hover{color:var(--t1)}
   .nav button span{color:var(--ink);opacity:.7}
   .nav button.active{background:linear-gradient(90deg,#3AB0E0,#5FD0FF);color:#031018}
   .nav button.active span{color:#031018}
-  .lc-frame{display:none!important}
   .lc-name{font:700 34px/1 var(--disp);letter-spacing:.06em;background:linear-gradient(90deg,#9FC4FF,#5FD0FF);-webkit-background-clip:text;background-clip:text;color:transparent}
   .lc-bars{display:flex;gap:4px;height:10px;margin-top:10px}
   .lc-bars i{background:var(--L4);border-radius:0}.lc-bars .s1{flex:0 0 30px;background:var(--L1);border-radius:5px 0 0 5px}.lc-bars .s2{flex:0 0 22%}.lc-bars .s3{flex:1;font-size:0}.lc-bars .cap{flex:0 0 18px;border-radius:0 5px 5px 0;background:var(--L5)}
@@ -591,6 +590,13 @@ main,.hud-top{z-index:5}
 .bgw .beyes{animation:bgEyes 5s ease-in-out infinite}
 @media (max-width:900px){.bgwolf{width:120vw;right:-46vw;bottom:-4vh}.bgw{opacity:.15}.bgmoon{opacity:.22}}
 @media (prefers-reduced-motion:reduce){.bgrays,.bgw .beyes{animation:none}}
+@keyframes strike{0%{opacity:0}8%{opacity:1}16%{opacity:.12}28%{opacity:1}38%{opacity:.35}52%,100%{opacity:1}}
+.rwm{filter:drop-shadow(0 0 3px rgba(95,208,255,.85)) drop-shadow(0 0 10px rgba(95,208,255,.3))}
+.cfw .rwm{opacity:0}
+.cfw.go .rwm{animation:strike .8s steps(1) 2.1s forwards}
+.cfw.surge .rwm{filter:drop-shadow(0 0 4px #BFEFFF) drop-shadow(0 0 14px rgba(95,208,255,.7))}
+.bgw .rwm-bg{opacity:.75}
+@media (prefers-reduced-motion:reduce){.cfw .rwm{opacity:1;animation:none}}
 .bootov{position:fixed;inset:0;z-index:200;background:radial-gradient(ellipse at 50% 45%,#081634,#02060F 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;animation:bootout .5s ease-in 1.9s forwards;cursor:pointer}
 .bootov .w{width:120px;height:120px}
 .bootov .t1{font:700 34px var(--lc);letter-spacing:.24em;color:var(--tx)}
@@ -630,3 +636,54 @@ main,.hud-top{z-index:5}
 }
 @media (min-width:861px) and (max-width:1180px){.lc-ro{grid-template-columns:repeat(2,auto)}.lc-ro .ro.mode{display:none}}
 .sec-head h2{font-size:clamp(30px,3vw,40px)!important;margin-top:10px!important}.sec-head{margin-bottom:20px}
+/* ================================================= phones: fixed header, opaque menu, sort bar under the header */
+@media (max-width:860px){
+  .hud-top{position:fixed!important;top:0;left:0;right:0;z-index:60!important;background:rgba(2,6,15,.97)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  body{padding-top:var(--hudh,72px)}
+  .hud-in{height:auto!important;min-height:64px;padding:8px 14px!important;gap:12px!important}
+  .mk{gap:10px}
+  .mk-t{flex:1 1 auto;min-width:0;overflow:hidden}
+  .mk-t b{font-size:20px!important;line-height:1.1}
+  .mk-t small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:.12em!important;font-size:9.5px!important}
+  .mk-t .build{letter-spacing:.02em!important;font-size:9px!important}
+  .menu{flex:0 0 auto;min-width:max-content;height:42px;padding:0 16px!important;border-radius:21px!important;gap:8px;font-size:13px!important;letter-spacing:.14em!important}
+  .nav{z-index:61!important;background:#050C19!important;border:1px solid var(--L3)!important;box-shadow:0 24px 60px -10px rgba(0,0,0,.9)!important;padding:10px!important;gap:6px!important;max-height:calc(100vh - var(--hudh,72px) - 20px);overflow-y:auto!important}
+  .nav button{min-height:48px;justify-content:space-between!important;flex-direction:row-reverse;padding:0 18px!important;font-size:16px!important}
+  .msortbar{top:var(--hudh,72px)!important;z-index:30!important;background:#050C19!important;margin:14px -16px 0!important}
+  .mt th{top:var(--hudh,72px)!important}
+  .sec-head h2{font-size:34px!important}
+  .sec-head .crit .chip{font-size:12.5px;padding:5px 10px}
+  .big .n strong{font-size:64px!important}
+  .big .n span{font-size:18px}
+  .lcw .panel{padding:18px 16px 20px}
+  .lcw-results .tools{margin-left:0}
+}
+@media (max-width:860px){.mt-row td{border-bottom:0!important}.mt tbody tr.mt-row{border-bottom:1px solid var(--line)}}
+
+/* phones: the lightning wolf leads the page, with the readouts beside it (the name is already in the fixed header) */
+@media (max-width:860px){
+  .lc-frame{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"brand ro" "bars bars";align-items:center;gap:6px 14px;margin:2px 0 18px;height:auto}
+  .lc-frame::before{display:none}
+  .lc-brand{grid-area:brand;display:flex;padding:0}
+  .lc-brand>div{display:none}
+  .lc-brand .emblem.cfw{width:92px;height:119px;margin:-6px 0 -8px}
+  .lc-ro{grid-area:ro;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;padding:0}
+  .lc-ro .ro{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .lc-ro .ro b{font:500 10.5px var(--disp);letter-spacing:.16em;color:var(--t3)}
+  .lc-ro .ro span{font:500 12px var(--mono);color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lc-ro .ro.clock span,.lc-ro .ro.mode span{color:var(--cy)}
+  .lc-ro .ro.mode{display:none}
+  .lc-bars{grid-area:bars;margin-top:6px}
+}
+/* circuit wiring from the wolf to the title and readouts */
+.lc-frame{position:relative}
+.lc-frame>svg.fbus{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:0}
+.lc-frame>*:not(svg){position:relative;z-index:1}
+.fbus .tr{fill:none;stroke:#1A3770;stroke-width:1.5}
+.fbus .pz{fill:none;stroke:#5FD0FF;stroke-width:2;stroke-linecap:round;stroke-dasharray:.06 .94;animation:trace 4.8s linear infinite}
+.fbus .via{fill:#02060F;stroke:#2B5BB8;stroke-width:1.5}
+.fbus .via.hot{stroke:#5FD0FF;filter:drop-shadow(0 0 4px rgba(95,208,255,.7))}
+.fbus .pad{fill:#0E2147;stroke:#2B4F9E;stroke-width:1}
+/* a bigger wolf: it is the mark of the page */
+@media (min-width:861px){:root{--frameh:150px}.lc-brand .emblem.cfw{width:92px;height:119px;margin:-14px 0 -16px}.lc-ro{padding-top:14px!important}}
+@media (max-width:860px){.lc-frame{padding-top:12px}.lc-ro{padding-top:6px!important}}

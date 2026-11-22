@@ -1,7 +1,7 @@
 // Cache Flow LCARS widgets for the Matches page: intro chips, THIS WEEK summary, Target Array (category bands,
 // fit rings, targets, leader cards, telemetry, key, signal log), Hunt command palette (Ctrl/⌘ K or /) and keyboard
 // tracking (J/K, Enter, T/A/D, Esc). Fed by app.js with live matches; the array's filters also filter the results table.
-import * as C from './shared/core.mjs?v=20261122h';
+import * as C from './shared/core.mjs?v=20261122l';
 
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -165,6 +165,11 @@ export function initWidgets(hooks) {
   if (emb && eb) { ['mouseenter', 'focus'].forEach(ev => eb.addEventListener(ev, () => emb.classList.add('surge'))); ['mouseleave', 'blur'].forEach(ev => eb.addEventListener(ev, () => emb.classList.remove('surge')));
     eb.addEventListener('click', () => wire.openCmd?.(eb)); }
   pinNav();
+  addEventListener('resize', scheduleFrameBus); document.fonts?.ready?.then(scheduleFrameBus); setTimeout(scheduleFrameBus, 400); setTimeout(scheduleFrameBus, 1500);
+  if ('ResizeObserver' in window && $('.lc-frame')) new ResizeObserver(scheduleFrameBus).observe($('.lc-frame'));
+  const hud = $('#hud');
+  if (hud) { const setH = () => document.documentElement.style.setProperty('--hudh', hud.offsetHeight + 'px'); setH();
+    if ('ResizeObserver' in window) new ResizeObserver(setH).observe(hud); addEventListener('resize', setH); }
   // results header: the data tools sit on the RESULTS strip, as in the design
   const rsh = $('.lcw-results .lsh');
   if (rsh) { const tools = document.createElement('div'); tools.className = 'tools';
@@ -195,7 +200,7 @@ export function updateWidgets(ctx) {
   // intro
   const p = ctx.profile || {};
   $('#lcwProf span:last-child').textContent = ['PROFILE', p.name || (p.source === 'empty' ? 'No résumé loaded' : 'Résumé loaded'), p.location, (p.titles || [])[0]].filter(Boolean).join(' · ');
-  $('#lcwChips').innerHTML = String(ctx.critSummary || '').split(' · ').filter(Boolean).map(c => `<span class="chip">${esc(c)}</span>`).join('') +
+  $('#lcwChips').innerHTML = (ctx.critChips || String(ctx.critSummary || '').split(' · ')).filter(Boolean).map(c => `<span class="chip">${esc(c)}</span>`).join('') +
     `<button class="btn" id="openCmd" type="button" aria-haspopup="dialog" aria-controls="cmdk"><span class="kbd">${/Mac|iPhone|iPad/.test(navigator.platform || '') ? '⌘K' : 'Ctrl K'}</span>Hunt command</button>` +
     `<button class="btn lc" id="openCriteria" type="button">SEARCH CRITERIA</button>`;
   // THIS WEEK
@@ -263,12 +268,13 @@ function buildStatic() {
   add(WP, 'line', { x1: w1x, y1: w1y, x2: w2x, y2: w2y, stroke: 'url(#wipeg)', 'stroke-width': 2 });
   add(WP, 'path', { d: arcd(222, A0 + 3, A0 + 15), fill: 'none', stroke: AC, 'stroke-width': 4, 'stroke-linecap': 'round' });
   add(WP, 'path', { d: arcd(176, A0 + 3, A0 + 15), fill: 'none', stroke: AC, 'stroke-width': 2, opacity: .6 });
-  add(HB, 'circle', { cx: CX, cy: CY, r: 40, fill: 'url(#hubg)', stroke: '#2B4F9E', 'stroke-width': 2 });
-  add(HB, 'circle', { cx: CX, cy: CY, r: 48, fill: 'none', stroke: AC, 'stroke-width': 1.5, 'stroke-dasharray': '10 6 2 6', class: 'spin', opacity: .7 });
-  const wg = add(HB, 'g', { transform: `translate(${CX - 32} ${CY - 34}) scale(.128)` });
-  add(wg, 'path', { d: 'M250 150 L200 140 L118 18 L98 172 L38 160 L74 214 L12 242 L70 272 L24 326 L92 322 L64 392 L142 372 L150 436 L206 448 L250 505 L294 448 L350 436 L358 372 L436 392 L408 322 L476 326 L430 272 L488 242 L426 214 L462 160 L402 172 L382 18 L300 140 L250 150 Z', fill: '#13294F', stroke: '#7FA6E8', 'stroke-width': 14, 'stroke-linejoin': 'round' });
-  const eyes = add(wg, 'g', { class: 'eyeflash' });
-  add(eyes, 'path', { d: 'M140 240 L214 262 L170 272 Z', fill: '#BFF0FF' }); add(eyes, 'path', { d: 'M360 240 L286 262 L330 272 Z', fill: '#BFF0FF' });
+  add(HB,'circle',{cx:CX,cy:CY,r:40,fill:'url(#hubg)',stroke:'#2B4F9E','stroke-width':2});
+  add(HB,'circle',{cx:CX,cy:CY,r:48,fill:'none',stroke:'#5FD0FF','stroke-width':1.5,'stroke-dasharray':'10 6 2 6',class:'spin',opacity:.7});
+  const wg=add(HB,'g',{transform:`translate(${CX-32} ${CY-34}) scale(.128)`});
+  add(wg,'path',{d:'M250 92 L200 140 L118 18 L98 172 L38 160 L74 214 L12 242 L70 272 L24 326 L92 322 L64 392 L142 372 L150 436 L206 448 L250 505 L294 448 L350 436 L358 372 L436 392 L408 322 L476 326 L430 272 L488 242 L426 214 L462 160 L402 172 L382 18 L300 140 L250 92 Z',fill:'#13294F',stroke:'#7FA6E8','stroke-width':14,'stroke-linejoin':'round'});
+  ["116.7,16.8 196.8,163.8 220.8,148.2 119.3,15.2", "202.3,164.2 256.4,87.6 249.6,81.6 180.8,145.3", "243.6,87.6 297.7,164.2 319.2,145.3 250.4,81.6", "303.2,163.8 383.3,16.8 380.7,15.2 279.2,148.2", "189.0,144.0 201.0,132.0 213.0,144.0 201.0,156.0", "246.2,88.0 250.0,84.2 253.8,88.0 250.0,91.8", "287.0,144.0 299.0,132.0 311.0,144.0 299.0,156.0", "218.8,110.0 214.2,235.8 233.8,235.8 229.2,110.0", "214.2,216.2 223.2,334.0 224.8,334.0 233.8,216.2", "215.8,226.0 224.0,217.8 232.2,226.0 224.0,234.2", "225.8,115.9 274.8,121.5 275.5,107.2 226.2,108.1", "258.1,112.2 288.0,156.8 300.8,148.0 269.8,104.1", "286.8,135.5 263.2,182.7 274.7,188.8 300.5,142.8", "277.2,172.4 227.2,183.5 228.8,192.5 279.6,185.2", "262.0,114.0 268.0,108.0 274.0,114.0 268.0,120.0", "283.4,146.0 290.0,139.4 296.6,146.0 290.0,152.6", "266.5,180.0 272.0,174.5 277.5,180.0 272.0,185.5", "232.0,191.9 268.2,246.3 278.3,239.8 244.0,184.1", "273.1,230.1 249.2,241.3 253.3,250.8 277.9,241.1", "249.5,240.5 281.3,330.2 282.7,329.8 259.5,237.5", "265.0,238.0 270.0,233.0 275.0,238.0 270.0,243.0", "251.6,244.0 256.0,239.6 260.4,244.0 256.0,248.4"].forEach(pt=>add(wg,'polygon',{points:pt,fill:'#DFF6FF'}));
+  const eyes=add(wg,'g',{class:'eyeflash'});
+  add(eyes,'path',{d:'M140 240 L214 262 L170 272 Z',fill:'#BFF0FF'}); add(eyes,'path',{d:'M360 240 L286 262 L330 272 Z',fill:'#BFF0FF'});
 }
 function setGate(g) { arr.gate = g; A.rerender(); }
 const trunc = (t, n) => t.length > n ? t.slice(0, n - 1) + '…' : t;
@@ -532,6 +538,33 @@ function bootIntro() {
   const done = () => { if (ov.classList.contains('gone')) return; ov.classList.add('gone'); startEmblem(); };
   ov.addEventListener('click', done); setTimeout(done, 2500);
 }
+// circuit wiring from the wolf: a trace into the title and a data bus to every readout, with ring vias and travelling pulses
+function drawFrameBus() {
+  const fr = $('.lc-frame'), em = $('.lc-brand .emblem'); if (!fr || !em || !fr.offsetWidth) return;
+  let bus = fr.querySelector(':scope > svg.fbus');
+  if (!bus) { bus = el('svg', { class: 'fbus', 'aria-hidden': 'true' }); fr.prepend(bus); }
+  bus.textContent = '';
+  const F = fr.getBoundingClientRect(); bus.setAttribute('viewBox', `0 0 ${F.width} ${F.height}`); bus.setAttribute('width', F.width); bus.setAttribute('height', F.height);
+  const rel = r => ({ l: r.left - F.left, t: r.top - F.top, r: r.right - F.left, b: r.bottom - F.top, w: r.width, h: r.height });
+  const E = rel(em.getBoundingClientRect()); if (!E.w) return;
+  const trace = (d, delay, hot) => { add(bus, 'path', { d, class: 'tr' }); const p = add(bus, 'path', { d, class: 'pz', pathLength: 1 }); p.style.animationDelay = delay + 's'; if (hot) p.style.animationDuration = '3.6s'; };
+  const via = (x, y, hot) => add(bus, 'circle', { cx: x, cy: y, r: hot ? 4 : 3.5, class: 'via' + (hot ? ' hot' : '') });
+  // wolf -> title
+  const nm = $('.lc-name');
+  if (nm && nm.offsetWidth) { const N = rel(nm.getBoundingClientRect()), y = E.t + E.h * .5; if (N.l > E.r) { trace(`M${E.r - E.w * .04} ${y} H${N.l - 8}`, -1.2, false); via(N.l - 8, y, true); } }
+  // wolf -> readouts bus, running along the top of the frame
+  const ros = $$('.lc-ro .ro').filter(r => r.offsetWidth);
+  if (ros.length) {
+    const R0 = ros.map(r => rel(r.getBoundingClientRect())), firstT = Math.min(...R0.map(r => r.t)), R = R0.filter(r => r.t - firstT < 6), topY = Math.max(5, Math.min(...R.map(r => r.t)) - 9), cx = E.l + E.w * .5;
+    const xs = R.map(r => r.l + 4), right = Math.max(...xs);
+    trace(`M${cx} ${E.t + E.h * .27} V${topY} H${right}`, 0, true);
+    add(bus, 'rect', { x: E.l - 10, y: E.t + E.h * .5 - 6, width: 8, height: 12, class: 'pad' });
+    const seen = new Set();
+    R.forEach((r, i) => { const x = r.l + 4, k = Math.round(x); if (seen.has(k)) return; seen.add(k); if (r.t - topY > 4) add(bus, 'path', { d: `M${x} ${topY} V${r.t - 1}`, class: 'tr' }); via(x, topY, i === R.length - 1); });
+  }
+}
+let fbRaf = 0;
+const scheduleFrameBus = () => { cancelAnimationFrame(fbRaf); fbRaf = requestAnimationFrame(drawFrameBus); };
 function startEmblem() {
   const em = $('.cfw'); if (!em || em.classList.contains('go')) return;
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
