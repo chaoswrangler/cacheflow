@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-21T23:36:19.243Z",
+ "updated_at": "2026-11-22T02:50:32.012Z",
  "employers": [
   {
    "employer": "Slash",
@@ -1018,7 +1018,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-21: board reachable with 827 postings; ownership: postings name Agency.",
       "date": "2026-11-21"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
@@ -1078,7 +1079,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-21: board reachable with 14 postings; ownership: postings name Attain.",
       "date": "2026-11-21"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
@@ -1408,6 +1410,636 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-21: board reachable with 42 postings; ownership: postings mention juicebox.ai.",
       "date": "2026-11-21"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Thera",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/thera",
+   "careers_url": "https://www.getthera.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:thera",
+     "ats": "ashby",
+     "slug": "thera",
+     "board_url": "https://jobs.ashbyhq.com/thera",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 6 postings; ownership: postings mention getthera.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Aurelian",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 45,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/aurelian",
+   "careers_url": "https://www.aurelian.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:aurelian",
+     "ats": "ashby",
+     "slug": "aurelian",
+     "board_url": "https://jobs.ashbyhq.com/aurelian",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 7 postings; ownership: postings mention aurelian.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Metriport",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 29,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/metriport",
+   "careers_url": "https://metriport.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:metriport",
+     "ats": "ashby",
+     "slug": "metriport",
+     "board_url": "https://jobs.ashbyhq.com/metriport",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 14 postings; ownership: linked from metriport.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Quindar",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 57,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/quindar",
+   "careers_url": "https://www.quindar.space",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:quindar",
+     "ats": "ashby",
+     "slug": "quindar",
+     "board_url": "https://jobs.ashbyhq.com/quindar",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 15 postings; ownership: postings name Quindar.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "AiPrise",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 65,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/aiprise",
+   "careers_url": "https://aiprise.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:aiprise",
+     "ats": "ashby",
+     "slug": "aiprise",
+     "board_url": "https://jobs.ashbyhq.com/aiprise",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 19 postings; ownership: linked from aiprise.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Pump.co",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 75,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/pump-co",
+   "careers_url": "https://www.pump.co/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:pumpcareers",
+     "ats": "greenhouse",
+     "slug": "pumpcareers",
+     "board_url": "https://job-boards.greenhouse.io/pumpcareers",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 19 postings; ownership: linked from pump.co.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Axle",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/axle",
+   "careers_url": "https://axle.insure",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:axleinsure",
+     "ats": "ashby",
+     "slug": "axleinsure",
+     "board_url": "https://jobs.ashbyhq.com/axleinsure",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 8 postings; ownership: linked from axle.insure.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Infisical",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 70,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/infisical",
+   "careers_url": "https://infisical.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:infisical",
+     "ats": "ashby",
+     "slug": "infisical",
+     "board_url": "https://jobs.ashbyhq.com/infisical",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 11 postings; ownership: linked from infisical.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Reflex",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/reflex",
+   "careers_url": "https://reflex.dev",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:reflex",
+     "ats": "greenhouse",
+     "slug": "reflex",
+     "board_url": "https://job-boards.greenhouse.io/reflex",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 2 postings; ownership: postings name Reflex.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Credal.ai",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 14,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/credal-ai",
+   "careers_url": "https://credal.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:credal",
+     "ats": "ashby",
+     "slug": "credal",
+     "board_url": "https://jobs.ashbyhq.com/credal",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 6 postings; ownership: linked from credal.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Magic Patterns",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/magic-patterns",
+   "careers_url": "https://www.magicpatterns.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:magicpatterns",
+     "ats": "ashby",
+     "slug": "magicpatterns",
+     "board_url": "https://jobs.ashbyhq.com/magicpatterns",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 7 postings; ownership: postings mention magicpatterns.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Rollstack",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/rollstack-2",
+   "careers_url": "https://www.rollstack.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:rollstack",
+     "ats": "ashby",
+     "slug": "rollstack",
+     "board_url": "https://jobs.ashbyhq.com/rollstack",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 2 postings; ownership: linked from rollstack.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Concourse",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/concourse",
+   "careers_url": "https://concourse.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:concourse",
+     "ats": "ashby",
+     "slug": "concourse",
+     "board_url": "https://jobs.ashbyhq.com/concourse",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 7 postings; ownership: linked from concourse.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Latent",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 140,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/latent",
+   "careers_url": "https://latenthealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:latent",
+     "ats": "ashby",
+     "slug": "latent",
+     "board_url": "https://jobs.ashbyhq.com/latent",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 23 postings; ownership: linked from latenthealth.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Nango",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 6,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/nango",
+   "careers_url": "https://nango.dev",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:nango",
+     "ats": "ashby",
+     "slug": "Nango",
+     "board_url": "https://jobs.ashbyhq.com/Nango",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 4 postings; ownership: linked from nango.dev.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Numeral",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 130,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/numeral",
+   "careers_url": "https://www.numeral.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:numeral",
+     "ats": "ashby",
+     "slug": "numeral",
+     "board_url": "https://jobs.ashbyhq.com/numeral",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 14 postings; ownership: linked from numeral.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Salient",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 40,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/salient",
+   "careers_url": "https://www.trysalient.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:salient",
+     "ats": "ashby",
+     "slug": "salient",
+     "board_url": "https://jobs.ashbyhq.com/salient",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 12 postings; ownership: linked from trysalient.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Tennr",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 205,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/tennr",
+   "careers_url": "https://www.tennr.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:tennr",
+     "ats": "ashby",
+     "slug": "tennr",
+     "board_url": "https://jobs.ashbyhq.com/tennr",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 22 postings; ownership: linked from tennr.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "GovEagle",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 25,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/goveagle",
+   "careers_url": "https://www.goveagle.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:goveagle",
+     "ats": "ashby",
+     "slug": "GovEagle",
+     "board_url": "https://jobs.ashbyhq.com/GovEagle",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 5 postings; ownership: linked from goveagle.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Coperniq",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 6,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/coperniq",
+   "careers_url": "https://coperniq.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:coperniq",
+     "ats": "ashby",
+     "slug": "Coperniq",
+     "board_url": "https://jobs.ashbyhq.com/Coperniq",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 0 postings; ownership: linked from coperniq.io.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Pirros",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 44,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/pirros",
+   "careers_url": "http://pirros.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:pirros",
+     "ats": "ashby",
+     "slug": "pirros",
+     "board_url": "https://jobs.ashbyhq.com/pirros",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 5 postings; ownership: linked from pirros.com.",
+      "date": "2026-11-22"
      }
     }
    ]
