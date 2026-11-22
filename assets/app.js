@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121s';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121s';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121s';
+import * as C from './shared/core.mjs?v=20261121v';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121v';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121v';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -82,8 +82,14 @@ if ((S.crit.fnKnown || []).join() !== FN_KEYS.join()) {
   if (S.profile.source !== 'empty') S.profile.suggestedFns = sug;
   if (!S.crit.fnKnown) S.crit.functions = sug.length ? sug : [...C.DEFAULT_FUNCTIONS];
   else for (const k of FN_KEYS) if (!known.has(k) && sug.includes(k) && !S.crit.functions.includes(k)) S.crit.functions.push(k);
+  if (S.crit.fnKnown && !S.crit.fnKnown.includes('learning') && S.crit.functions.some(k => ['enable', 'marketing', 'pmm'].includes(k))) S.crit.functions.push('learning');
   S.crit.functions = S.crit.functions.filter(k => FN_KEYS.includes(k));
   if (!S.crit.fnKnown) S.crit.engReview = false;
+  // Category update: Chief of staff is part of Strategy now; Consulting is its own category (consultants used to sit
+  // under Support/Strategy), so people who had either get it switched on.
+  if (S.crit.functions.includes('cos')) S.crit.functions = [...new Set([...S.crit.functions.filter(k => k !== 'cos'), 'strategy'])];
+  if (S.crit.fnKnown && !S.crit.fnKnown.includes('consulting') && S.crit.functions.some(k => ['strategy', 'support'].includes(k))) S.crit.functions.push('consulting');
+  S.crit.functions = S.crit.functions.filter(k => FN_KEYS.includes(k));
   S.crit.fnKnown = [...FN_KEYS];
 }
 { // criteria saved before company types: carry over any tier the user had switched off
@@ -130,8 +136,13 @@ async function boot() {
     for (const g of gs.values()) for (const u of g) S.dupGroup.set(u, g); }
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
   applyOwnerMode(); wireNav(); wireProfile(); wirePlaces(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
-  renderMatches(); renderSources(); renderDiscover(); renderSetup(); stampBuild();
+  renderMatches(); renderSources(); renderDiscover(); renderSetup(); stampBuild(); wireBadgeInfo();
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  addEventListener('pagehide', saveView); document.addEventListener('visibilitychange', () => { if (document.hidden) saveView(); });
+  { let tm; addEventListener('scroll', () => { clearTimeout(tm); tm = setTimeout(saveView, 400); }, { passive: true }); }
+  document.addEventListener('click', e => { if (e.target.closest('a[target="_blank"]')) saveView(); }, true);
   show(location.hash.slice(1) || (S.profile.source === 'empty' ? 'profile' : 'matches'));
+  restoreView(); // after show(), which scrolls to the top of the view
 }
 // Header stamp on every page: when the site's code was last deployed (Last-Modified of the code files GitHub Pages
 // serves, plus the cache version) and when the job data was last collected.
@@ -685,6 +696,11 @@ const LOC_LABEL = { remote_no: ['REMOTE · HOME STATE EXCLUDED', 'r'], metro: ['
 const LOC_SHORT = { remote_no: ['Remote · state excluded', 'r'], metro: ['In search area', 'g'], remote_yes: ['Remote · state OK', 'g'], remote_unknown: ['Remote · state ?', 'a'], unlisted: ['US · location not listed', 'a'], other: ['Other US', 'f'] };
 const DATE_SHORT = { first_published: 'published', published: 'published', created: 'created', posted_date: 'posted', posted_ts: 'posted', start_date: 'start date', released: 'released', feed_pubdate: 'feed',
   relative_approx: '≈ approx.', updated: 'updated only', first_observed: 'first seen', aggregator_created: 'aggregator', none: '—' };
+// Badges: every badge explains itself when tapped or clicked (see wireBadgeInfo)
+const tag = (cls, label, info) => `<span class="tag ${cls}" data-info="${esc(info)}" role="button" tabindex="0">${label}</span>`;
+const LOC_INFO = { metro: 'In or near your search area.', remote_yes: 'Remote, and the posting says your state is eligible.', remote_unknown: "Remote, but the posting doesn't say which states it can hire in. Check before applying.",
+  remote_no: 'Remote, but the posting excludes your state.', unlisted: 'A US role with no city listed.', other: 'Elsewhere in the US, outside your search area.' };
+const NOT_RECHECKED = 'Not rechecked';
 function jobRow(m) {
   const { j, e } = m, s = j.salary, open = S.open.has(j.uid), st = stOf(j.uid), tr = trEntry(j.uid);
   let base = '<span class="sal unknown">not stated</span>';
@@ -695,15 +711,26 @@ function jobRow(m) {
   const sl = C.shownLocation(j, m.hf, m.loc), slTitle = sl.all.join(' · ');
   const slText = esc(sl.text) + (sl.more ? ` <span class="more-loc">+${sl.more}</span>` : '');
   const dYmd = m.dt.d ? C.nyDate(new Date(m.dt.d), LOCAL_TZ) : null;
-  const stTag = st ? `<span class="tag ${STATUS[st].cls}">${esc(STATUS[st].short)}${(st === 'applied' ? tr.applied || tr.t : tr.t) ? ' · ' + esc(shortDay(st === 'applied' ? tr.applied || tr.t : tr.t)) : ''}</span>` : '';
-  const flags = [stTag, j.status === 'closed' && '<span class="tag r">closed</span>', (st || m.viaFinds) && !m.inFilters && j.status !== 'closed' && '<span class="tag f">outside filters</span>', j.reposted && '<span class="tag a">repost?</span>', j.stale && `<span class="tag r" title="${esc(STALE_HELP)}">stale</span>`, j.eng_review && '<span class="tag a">review</span>', j.dup_count > 1 && `<span class="tag f">×${j.dup_count}</span>`].filter(Boolean).join('');
+  const stTag = st ? tag(STATUS[st].cls, esc(STATUS[st].short) + ((st === 'applied' ? tr.applied || tr.t : tr.t) ? ' · ' + esc(shortDay(st === 'applied' ? tr.applied || tr.t : tr.t)) : ''), 'Your status for this role. Saved in this browser only; change it with the circle button at the left of the row.') : '';
+  const flags = [stTag,
+    j.status === 'closed' && tag('r', 'closed', `This posting no longer appears on ${j.employer}'s job site${j.closed_at ? ` (gone since ${j.closed_at.slice(0, 10)})` : ''}.`),
+    (st || m.viaFinds) && !m.inFilters && j.status !== 'closed' && tag('f', 'outside filters', "Matches your search (or a High-pay find), but doesn't pass one of your filters, such as the date window, pay rule, location or job category."),
+    j.reposted && tag('a', 'repost?', 'The same title reappeared with a new posting ID soon after the old one closed. It may be a repost of an older role rather than a new opening.'),
+    j.stale && tag('r', NOT_RECHECKED, STALE_HELP + (j.last_seen ? ' Last confirmed ' + j.last_seen.slice(0, 10) + '.' : '')),
+    j.eng_review && tag('a', 'review', 'An engineering title with customer-facing or go-to-market duties. Shown because "include engineering roles to review" is on.'),
+    j.dup_count > 1 && tag('f', `×${j.dup_count}`, `This role is listed ${j.dup_count} times (for example on the company's own board and a second board). The copies are grouped into this row; turn on "Show duplicates" to see each one.`)].filter(Boolean).join('');
+  // the job categories this role matched (from its title); outside-filter roles show theirs, marked as not picked
+  const allFn = j._fn || C.classifyFunctions(j.title).functions, picked = new Set(m.fnHit || []);
+  const catTags = (m.fnHit?.length ? m.fnHit : allFn).map(k => C.FUNCTIONS[k] ? tag(picked.has(k) ? 'cat' : 'cat off', esc(C.FUNCTIONS[k].label),
+    picked.has(k) ? `Matches your category “${C.FUNCTIONS[k].label}” (${C.FUNCTIONS[k].group}), from the job title.` : `Category “${C.FUNCTIONS[k].label}” (${C.FUNCTIONS[k].group}). It isn't one of the categories you picked.`) : '').join('')
+    + (!m.fnHit?.length && m.j.eng_review ? tag('cat', 'Engineering (review)', 'An engineering title with go-to-market duties, shown because "include engineering roles to review" is on.') : '');
   const li = `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(j.title + ' ' + (e?.employer || j.employer))}`;
-  const detail = open ? `<tr class="mt-detail" data-uid="${esc(j.uid)}"><td colspan="8"><div class="dgrid">
+  const detail = open ? `<tr class="mt-detail" data-uid="${esc(j.uid)}"><td colspan="9"><div class="dgrid">
       <div><b>Location</b>${m.loc === 'metro' && m.hf.metro_loc ? `Matched on <b class="inl">${esc(m.hf.metro_loc)}</b> (commute area). ` : ''}${sl.more ? 'All listed: ' : ''}${esc(sl.all.join(' · ') || '—')} · ${esc(j.workplace)}${m.hf.eligibility !== 'n/a' ? ` · home-state eligibility: ${esc(m.hf.eligibility)}` : ''}</div>
       <div><b>Dates</b>${dYmd ? esc(fmtDay(dYmd)) + ' (' + esc(DATE_LABEL[m.dt.kind] || m.dt.kind) + ')' : '—'} · first seen ${esc((j.first_observed || '').slice(0, 10))} · last seen ${esc((j.last_seen || '').slice(0, 10))}</div>
       <div class="wide"><b>Why this scored ${m.score} of 100</b><div class="sbreak">${scoreParts(m).map(([l, v, mx, txt]) => `<div class="sb"><span class="sbl">${esc(l)}</span><span class="sbv">${v}<i>/${mx}</i></span><i class="sbar"><i style="width:${Math.round(100 * v / mx)}%"></i></i><span class="sbt">${esc(txt)}</span></div>`).join('')}</div></div>
       <div><b>Source</b>${esc(j.source_class === 'aggregator' ? 'aggregator · ' + (j.via || j.ats) : 'official · ' + j.ats)} · req ${esc(j.req_id || '—')}${j.department ? ' · ' + esc(j.department) : ''}</div>
-      ${j.stale ? `<div class="wide"><b>Stale</b>${esc(STALE_HELP)}${j.last_seen ? ' Last confirmed ' + esc(j.last_seen.slice(0, 10)) + '.' : ''}</div>` : ''}
+      ${j.stale ? `<div class="wide"><b>${NOT_RECHECKED}</b>${esc(STALE_HELP)}${j.last_seen ? ' Last confirmed ' + esc(j.last_seen.slice(0, 10)) + '.' : ''}</div>` : ''}
       ${s?.snippet ? `<div class="wide"><b>Pay text</b>${esc(s.snippet)}</div>` : ''}
       ${m.skillHits.length || m.customHits.length ? `<div class="wide"><b>Matched</b>${esc([...m.skillHits, ...m.customHits].join(' · '))}</div>` : ''}
       ${j.excerpt ? `<div class="wide ex2">${esc(j.excerpt)}${j.excerpt.length >= 900 ? '…' : ''}</div>` : ''}
@@ -713,13 +740,14 @@ function jobRow(m) {
       ${st ? `<div class="wide sub2">Status saved in this browser only${tr.applied ? ` · applied ${esc(new Date(tr.applied).toLocaleDateString())}` : ''} · last changed ${esc(new Date(tr.t).toLocaleString())}</div>` : ''}
     </div></td></tr>` : '';
   return `<tr class="mt-row ${m.tier} ${open ? 'open' : ''} ${st ? STATUS[st].cls : ''}" data-uid="${esc(j.uid)}">
+    <td class="c-num">${m._n || ''}</td>
     <td class="c-save"><button class="stbtn ${st ? STATUS[st].cls + ' on' : ''}" data-act="stmenu" title="Status: ${st ? esc(STATUS[st].label) : 'none'}" aria-label="Set status" aria-haspopup="menu">${st ? STATUS[st].icon : '○'}</button></td>
-    <td class="c-score" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
-    <td class="c-role">${S.groupBy === 'employer' ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div><div class="mmeta"><span title="${esc(slTitle)}">${slText}</span> <span class="tag ${lc}">${ll}</span>${applyOf(m) === 'quick' ? ' <span class="tag m" title="' + esc(APPLY.quick.hint) + '">QUICK APPLY</span>' : ''}${dYmd ? ` <span>${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)} ${esc(dYmd.slice(5))}</span>` : ''}</div></td>
+    <td class="c-role">${S.groupBy === 'employer' ? '' : `<div class="co">${esc(j.employer)} <span>· ${esc(m.sector)}${m.vertical && m.sector === 'Cybersecurity' ? ' / ' + esc(m.vertical) : ''}</span></div>`}<a href="${esc(j.url)}" target="_blank" rel="noopener" class="ttl">${esc(j.title)}</a>${catTags ? `<div class="cats">${catTags}</div>` : ''}${flags ? `<div class="sub2">${flags}</div>` : ''}<div class="mbase">${base.replace('<div class="sub2">', '<span class="sub2"> · ').replace('</div>', '</span>')}</div><div class="mmeta"><span title="${esc(slTitle)}">${slText}</span> ${tag(lc, ll, m.hf?.tied ? 'Listed as remote, but tied to a specific area or territory.' : LOC_INFO[m.loc] || '')}${applyOf(m) === 'quick' ? ' ' + tag('m', 'QUICK APPLY', APPLY.quick.hint) : ''}${dYmd ? ` <span>${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)} ${esc(dYmd.slice(5))}</span>` : ''}</div></td>
     <td class="c-base">${base}</td>
-    <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div><span class="tag ${lc}">${ll}</span>${applyOf(m) === 'quick' ? ' <span class="tag m" title="' + esc(APPLY.quick.hint) + '">QUICK APPLY</span>' : ''}</td>
+    <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div>${tag(lc, ll, m.hf?.tied ? 'Listed as remote, but tied to a specific area or territory.' : LOC_INFO[m.loc] || '')}${applyOf(m) === 'quick' ? ' ' + tag('m', 'QUICK APPLY', APPLY.quick.hint) : ''}</td>
     <td class="c-date">${dYmd ? esc(dYmd.slice(5)) : '—'}<div class="sub2">${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)}</div></td>
-    <td class="c-src">${j.source_class === 'aggregator' ? '<span class="tag a">agg</span>' : '<span class="tag">official</span>'}<div class="sub2">${esc(j.ats)}</div></td>
+    <td class="c-src">${j.source_class === 'aggregator' ? tag('a', 'agg', `Found through a job aggregator (${j.via || j.ats}), not the employer's own job site.`) : tag('', 'official', `From ${j.employer}'s own job site (${j.ats}).`)}<div class="sub2">${esc(j.ats)}</div></td>
+    <td class="c-score" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
     <td class="c-act"><button class="more" data-act="open" title="Details">${open ? '−' : '+'}</button></td></tr>${detail}`;
 }
 // group rows by employer, keeping the current sort: groups are ordered by their best-placed role
@@ -755,7 +783,7 @@ function groupedRows(list) {
     const entries = gb.order ? [...groups].sort((a, b) => gb.order.indexOf(a[0]) - gb.order.indexOf(b[0])) : [...groups];
     return entries.map(([k, ms]) => {
       const gk = S.groupBy + ':' + k, closed = S.collapsed.has(gk), emps = new Set(ms.map(m => m.j.employer)).size, starts = ms.filter(m => m.tier === 'starts').length;
-      return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(gk)}"><td colspan="8"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(gb.label(k))}</b>
+      return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(gk)}"><td colspan="9"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(gb.label(k))}</b>
         <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''} · ${emps} employer${emps > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${S.groupBy === 'type' && EMP_TYPE[k] ? ' · ' + esc(EMP_TYPE[k].hint) : ''}${S.groupBy === 'apply' ? ' · ' + esc(APPLY[k].hint) : ''}</span></td></tr>` +
         (closed ? '' : ms.map(jobRow).join(''));
     }).join('');
@@ -766,7 +794,7 @@ function groupedRows(list) {
     const bases = ms.map(m => m.j.salary).filter(x => x && x.min != null && !['ote_only', 'predicted'].includes(x.kind));
     const top = bases.length ? Math.max(...bases.map(x => x.max)) : null;
     const starts = ms.filter(m => m.tier === 'starts').length;
-    return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(emp)}"><td colspan="8"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(emp)}</b>
+    return `<tr class="mt-group ${closed ? 'closed' : ''}" data-emp="${esc(emp)}"><td colspan="9"><span class="caret">${closed ? '▸' : '▾'}</span><b>${esc(emp)}</b>
       <span class="gmeta">${ms.length} role${ms.length > 1 ? 's' : ''}${starts ? ` · ${starts} starting ≥ ${money(S.crit.minBase)}` : ''}${top ? ` · up to ${money(top)}` : ''} · ${esc(m0.sector)}${m0.vertical && m0.sector === 'Cybersecurity' ? ' / ' + esc(m0.vertical) : ''}</span></td></tr>` +
       (closed ? '' : ms.map(jobRow).join(''));
   }).join('');
@@ -865,8 +893,9 @@ function renderMatches() {
   const qRank = m => (qRe && qRe.test(m.j.title + ' ' + m.j.employer) ? 2 : 0) + (m.inFilters ? 1 : 0);
   ms.sort((x, y) => (q ? qRank(y) - qRank(x) : 0) || (() => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; })());
   const limit = S.showN || 200;
+  ms.slice(0, limit).forEach((m, i) => { m._n = i + 1; });
   const th = (k, l, cls = '') => `<th class="${cls} ${key === k ? 'sorted' : ''}" data-sort="${k}">${l}${key === k ? (dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
-  $('#jobGroups').innerHTML = searchNote + findsNote + (ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
+  $('#jobGroups').innerHTML = searchNote + findsNote + (ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-num">#</th><th class="c-save"></th>${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}${th('score', 'Score', 'c-score')}<th class="c-act"></th></tr></thead><tbody>` +
       (S.groupBy ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
     : STATUS[stSel] ? `<div class="empty-state"><b>NOTHING MARKED “${esc(STATUS[stSel].label.toUpperCase())}”</b>Use the ○ button at the left of any row, or the buttons in a row's details, to set Applied, To do or Not interested.</div>`
     : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`);
@@ -874,6 +903,43 @@ function renderMatches() {
   updatePayCount();
   renderFunnel();
   renderFinds();
+}
+// Tap/click a tag for its meaning. Stops the click from opening the row.
+function wireBadgeInfo() {
+  const pop = $('#tagPop'); if (!pop) return;
+  let cur = null;
+  const close = () => { pop.hidden = true; cur = null; };
+  const open = el => {
+    cur = el; pop.textContent = el.dataset.info; pop.hidden = false;
+    const r = el.getBoundingClientRect(), w = Math.min(320, innerWidth - 24);
+    pop.style.width = w + 'px';
+    pop.style.left = Math.max(12, Math.min(innerWidth - w - 12, r.left)) + 'px';
+    const below = r.bottom + 8, h = pop.offsetHeight;
+    pop.style.top = (below + h > innerHeight - 8 ? Math.max(8, r.top - h - 8) : below) + 'px';
+  };
+  document.addEventListener('click', e => {
+    const el = e.target.closest('.tag[data-info]');
+    if (el && el.dataset.info) { e.preventDefault(); e.stopPropagation(); if (cur === el) close(); else open(el); return; }
+    if (!e.target.closest('#tagPop')) close();
+  }, true);
+  document.addEventListener('keydown', e => { const el = e.target.closest?.('.tag[data-info]'); if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(el); } if (e.key === 'Escape') close(); });
+  addEventListener('scroll', close, { passive: true }); addEventListener('resize', close);
+}
+// Keep your place: phones often reload a background tab after you open a posting in a new tab. The view, search,
+// open rows and scroll position are kept for this tab and put back after the reload.
+function saveView() {
+  try { sessionStorage.setItem('cf:view', JSON.stringify({ at: Date.now(), hash: location.hash, y: scrollY, q: $('#q')?.value || '', empOnly: S.empOnly || null, empFromFinds: !!S.empFromFinds,
+    showN: S.showN || 200, tierSel: S.tierSel || 'all', open: [...S.open].slice(-20), searchInOnly: !!S.searchInOnly })); } catch { /* storage off */ }
+}
+function restoreView() {
+  let v; try { v = JSON.parse(sessionStorage.getItem('cf:view') || 'null'); } catch { v = null; }
+  if (!v || Date.now() - v.at > 6 * 36e5 || (v.hash || '') !== (location.hash || '')) return;
+  if ($('#q')) $('#q').value = v.q || '';
+  Object.assign(S, { empOnly: v.empOnly, empFromFinds: v.empFromFinds, showN: v.showN, tierSel: v.tierSel, searchInOnly: v.searchInOnly });
+  for (const u of v.open || []) S.open.add(u);
+  renderMatches();
+  const go = () => scrollTo(0, v.y || 0);
+  requestAnimationFrame(() => { go(); setTimeout(go, 150); setTimeout(go, 600); });
 }
 function wireMatches() {
   $('#jobGroups').addEventListener('click', e => { if (e.target.id === 'searchAllBtn') { S.searchInOnly = !S.searchInOnly; S.showN = 200; renderMatches(); } });
@@ -918,7 +984,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121s');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121v');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -960,7 +1026,7 @@ function scoreParts(m) {
   ];
 }
 const scoreTitle = m => `Match score ${m.score}/100: ` + scoreParts(m).map(([l, v, mx]) => `${l} ${v}/${mx}`).join(' · ');
-const STALE_HELP = "Not refreshed on the latest update: the employer's job site refused or rate-limited part of the last check (or this search wasn't in this run's rotation), so this role is carried over from an earlier check. It is probably still open, but confirm on the posting.";
+const STALE_HELP = "Not rechecked on the latest update: the employer's job site refused or rate-limited part of the last check (or this search wasn't in this run's rotation), so this role is carried over from an earlier check. It is probably still open, but confirm on the posting.";
 const shortDay = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
 /* Re-render the list without moving the reader: pin a row (the one acted on, or the next one if it
    disappears) to the same spot on screen. Safari has no CSS scroll anchoring, so do it explicitly. */
@@ -1056,7 +1122,7 @@ function renderFinds() {
   const NONBROAD = FN_KEYS.filter(k => !C.FUNCTIONS[k].broad);
   const FOCUS = {
     mine: { functions: S.crit.functions, sectors: S.crit.sectors, verticals: S.crit.verticals },
-    secgtm: { functions: ['pmm', 'marketing', 'demand', 'sales', 'se', 'partner', 'cs', 'enable', 'gtm', 'strategy', 'cos', 'ci', 'threat', 'secops', 'seceng', 'grc', 'product'], sectors: ['Cybersecurity'], verticals: [] },
+    secgtm: { functions: ['pmm', 'marketing', 'demand', 'sales', 'se', 'partner', 'cs', 'enable', 'gtm', 'strategy', 'consulting', 'ci', 'threat', 'secops', 'seceng', 'grc', 'product'], sectors: ['Cybersecurity'], verticals: [] },
     product: { functions: ['product', 'tpm', 'pmm'], sectors: [], verticals: [] },
     aicloud: { functions: S.crit.functions, sectors: ['AI', 'Cloud, data & dev tools', 'Hyperscaler & big tech'], verticals: [] },
     all: { functions: NONBROAD, sectors: [], verticals: [] },
@@ -1254,7 +1320,7 @@ async function liveCheck(ids) {
 }
 
 /* ============================================================ discover */
-const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', marketing: 'marketing manager', demand: 'demand generation', sales: 'account executive', se: 'solutions engineer', partner: 'partnerships alliances', cs: 'customer success manager', enable: 'sales enablement', gtm: 'go-to-market strategy', strategy: 'strategy business operations', cos: 'chief of staff', ci: 'competitive intelligence', threat: 'threat intelligence researcher', secops: 'security operations incident response', seceng: 'security engineer', grc: 'governance risk compliance', ai: 'machine learning AI', eng: 'software engineer', data: 'data scientist analytics', design: 'product designer', support: 'professional services consultant', finance: 'finance', people: 'recruiter', legal: 'counsel' };
+const FN_QUERY = { product: 'product manager', tpm: 'technical program manager', pmm: 'product marketing manager', marketing: 'marketing manager', demand: 'demand generation', sales: 'account executive', se: 'solutions engineer', partner: 'partnerships alliances', cs: 'customer success manager', enable: 'sales enablement', gtm: 'go-to-market strategy', strategy: 'strategy business operations', consulting: 'consultant', learning: 'instructional designer content developer', ci: 'competitive intelligence', threat: 'threat intelligence researcher', secops: 'security operations incident response', seceng: 'security engineer', grc: 'governance risk compliance', ai: 'machine learning AI', eng: 'software engineer', data: 'data scientist analytics', design: 'product designer', support: 'support engineer', finance: 'finance', people: 'recruiter', legal: 'counsel' };
 function renderDiscover() {
   const c = S.crit, p0 = (c.places || []).find(p => p.on), home = (p0 ? (p0.kind === 'state' ? p0.label : (p0.terms || '').split('|')[0].replace(/\b\w/g, m => m.toUpperCase())) : '') || S.profile.location || (c.state ? C.STATES[c.state] : '') || 'United States';
   const secWord = c.sectors.length === 1 && c.sectors[0] === 'Cybersecurity' || (c.verticals.length && c.verticals.every(v => (c.vertSectors?.[v] || 'Cybersecurity') === 'Cybersecurity')) ? ' security' : '';

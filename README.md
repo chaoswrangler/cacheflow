@@ -64,6 +64,7 @@ Also written: `YYYY-MM-changes.csv` (pay, title, repost and reopen events for kn
 - **EU-hosted Greenhouse boards.** If neither job-board API address answers, the collector reads the board's public page (job-boards.eu.greenhouse.io/<token>) and its job pages instead. Network failures now name the cause (DNS, refused, reset, TLS) in the source note.
 - **Workday** saves the search and offset where a refusal stopped it; the next run resumes there (one page of overlap) before moving on with the rotation.
 - **Refusal details.** Every 403/429 is recorded in the source's status (`last_refusal`) and summarized in its note: successful requests before it this run, Retry-After and any RateLimit-* headers, server and request-id headers, and the body type (JSON, empty, HTML challenge/denial) with a short tag-stripped excerpt. That tells a quota apart from a bot check or a plain denial. The collector identifies itself honestly and never imitates a browser.
+- **Job categories** follow common industry groupings: Product & program management · Marketing & GTM · Sales & customer success · Strategy & business operations (Chief of Staff is here) · Consulting & advisory (its own practice) · Security practitioners (SOC, detection & IR, threat intel, security engineering, GRC) · AI, engineering & data · Corporate functions. Executive level is a seniority choice (VP & executive), not a category.
 - **Jobs data in shards.** `data/jobs.json` holds the run metadata and a list of shard files; the roles are in `data/jobs/jobs-0.json` … `jobs-7.json`, split by source. The single file had reached 64 MB, and GitHub refuses files over 100 MB, which would stop collection from saving. The app and collector read both layouts.
 - **Full lists instead of keyword searches.** Workday employers (except Accenture, whose US list is beyond Workday's 2,000-result paging limit) read their whole US list. Phenom sites (Cisco, Adobe, BCG, PwC) page through their full listing from a saved offset, 120 pages a run. Bosch reads its full US list. Keyword searches had capped these at 30–60 results per search.
 - **Retry-After.** A 429 asking for up to 60 seconds is waited out and retried. A longer wait is not retried: the source gets `next_eligible_at` and is skipped (`deferred`) until then. While a request waits to retry it gives up its shared slot, so one throttled site can't hold up the others.
@@ -121,7 +122,7 @@ Add repo secrets `RESEND_API_KEY`, `ALERT_FROM`, `DIGEST_SALT`, `SITE_URL` and `
 node collector/test/run-tests.mjs
 ```
 
-237 offline tests against mocked API responses. The workflow runs them before every collection.
+238 offline tests against mocked API responses. The workflow runs them before every collection.
 
 ## Dependencies and security
 

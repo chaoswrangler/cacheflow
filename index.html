@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261121s">
+<link rel="stylesheet" href="assets/styles.css?v=20261121v">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -320,7 +320,7 @@
       </form>
     </dialog>
     <p class="sub2 trk-note">Statuses (To do, Applied, Not interested) are saved in this browser only. Nothing is uploaded. Use <b>Back up statuses</b> to move them to another device.</p>
-    <p class="sub2 trk-note"><b>Tags:</b> <span class="tag r">stale</span> not refreshed on the latest update because the employer's site refused or rate-limited part of the check, so the role is carried over from an earlier check and is probably still open (confirm on the posting) · <span class="tag a">repost?</span> looks like an earlier posting put back up · <span class="tag r">closed</span> no longer on the employer's board · <span class="tag f">outside filters</span> a role you marked that no longer matches your criteria.</p>
+    <p class="sub2 trk-note"><b>Tags:</b> tap or click any tag on a role to see what it means. <span class="tag r">Not rechecked</span> the latest update couldn't recheck this role (the employer's site refused or rate-limited part of the check), so it's carried over and probably still open · <span class="tag a">repost?</span> looks like an earlier posting put back up · <span class="tag r">closed</span> no longer on the employer's board · <span class="tag f">outside filters</span> matches your search but not every filter.</p>
       </div>
     </div>
   </section>
@@ -390,7 +390,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261121s" defer></script>
+<script src="assets/fx.js?v=20261121v" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -408,6 +408,7 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261121s"></script>
+<script type="module" src="assets/app.js?v=20261121v"></script>
+<div id="tagPop" class="tagpop" role="tooltip" hidden></div>
 </body>
 </html>
