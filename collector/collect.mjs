@@ -8,6 +8,7 @@
 //   --seed-probe [--seed-batch=N]  look for job boards of seed companies (data/seeds.json) only
 //   --probe                        try to discover ATS boards for unresolved employers (writes data/probe-results.json, does not edit sources)
 //   --limit=N                      cap number of sources (smoke tests)
+import { readJobs, writeJobs } from './lib/jobstore.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,7 +31,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   const discovered = await readJSON(join(dataDir, 'discovered.json'), { schema: 1, employers: [] });
   { const names = new Set(registry.employers.map(e => norm(e.employer))), ids = new Set(registry.employers.flatMap(e => e.sources.map(x => x.id)));
     for (const e of discovered.employers || []) if (!names.has(norm(e.employer)) && !e.sources.some(x => ids.has(x.id))) registry.employers.push(e); }
-  const prevJobs = await readJSON(join(dataDir, 'jobs.json'), { jobs: [] });
+  const prevJobs = await readJobs(dataDir);
   const prevStatus = await readJSON(join(dataDir, 'status.json'), { sources: [] });
   const http = new Http({ ...cfg.http, minDelay: cfg.http?.minDelayMs, maxDelay: cfg.http?.maxDelayMs, userAgent: cfg.user_agent, fetchImpl, log, hostRules: cfg.host_rules || [] });
   const startedAt = now.toISOString();
@@ -319,7 +320,7 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   try { const a = await archiveRun({ dataDir, jobs: merged, nowIso, registry, sources: allStatus, prevById: new Map(prevJobs.jobs.map(j => [j.uid, j])) }); log(`archive: ${a.added} new, ${a.closed} closed, ${a.changes} changes${a.backfilled ? `, backfilled ${a.backfilled}` : ''}${a.rolled ? `, compressed ${a.rolled}` : ''}; weekly rollup ${a.weeks} week(s)`); }
   catch (err) { log(`archive failed (collection still saved): ${err?.message || err}`); }
   for (const j of merged) delete j._blurb;
-  await writeFile(join(dataDir, 'jobs.json'), JSON.stringify(jobsOut));
+  await writeJobs(dataDir, jobsOut); // data/jobs.json (metadata + shard list) and data/jobs/jobs-<n>.json
   await writeFile(join(dataDir, 'status.json'), JSON.stringify(statusOut, null, 1));
   log(`done: ${jobsOut.counts.open} open jobs, summary ${JSON.stringify(summary)}`);
   // a small batch of seed companies each full run; their boards are collected from the next run

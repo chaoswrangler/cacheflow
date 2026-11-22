@@ -12,6 +12,7 @@
 // Env:     DIGEST_MIN_HOURS  minimum hours between emails per subscriber (default 20 = one email a day;
 //                            unsent matches roll into the next email). DIGEST_FORCE=1 ignores it (manual runs).
 // Flags: --dry  build emails into collector/out/ without sending
+import { readJobs } from './lib/jobstore.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
@@ -29,7 +30,7 @@ export async function runDigest({ env = process.env, fetchImpl = globalThis.fetc
   if (!subs.length) { console.log('digest: no subscribers configured; skipping'); return { sent: 0 }; }
   if (!dry && (!env.RESEND_API_KEY || !env.ALERT_FROM)) { console.log('digest: RESEND_API_KEY / ALERT_FROM not set; skipping'); return { sent: 0 }; }
   const salt = env.DIGEST_SALT || 'set-DIGEST_SALT';
-  const jobs = (await readJSON(join(dataDir, 'jobs.json'), { jobs: [] })).jobs;
+  const jobs = (await readJobs(dataDir)).jobs;
   const reg = await readJSON(join(dataDir, 'sources.json'), { employers: [] });
   const empBy = new Map(reg.employers.map(e => [e.employer, e]));
   const empOf = j => empBy.get(j.employer) || empBy.get(String(j.employer).replace(/ \(AWS\)$/, '')) || null;
