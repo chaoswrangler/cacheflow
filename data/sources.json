@@ -436,7 +436,13 @@
      "host": "alation.wd503.myworkdayjobs.com",
      "tenant": "alation",
      "site": "ExternalSite",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "Found by web search on 2026-11-19: https://alation.wd503.myworkdayjobs.com/en-US/ExternalSite/job/Director--Inside-Sales_R10000728. The next collector run confirms the feed (404 = wrong id, 'empty' = valid board with no jobs).",
+      "date": "2026-11-19"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -448,11 +454,8 @@
       "solutions engineer",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "Found by web search on 2026-11-19: https://alation.wd503.myworkdayjobs.com/en-US/ExternalSite/job/Director--Inside-Sales_R10000728. The next collector run confirms the feed (404 = wrong id, 'empty' = valid board with no jobs).",
-      "date": "2026-11-19"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "alation",
@@ -1529,7 +1532,14 @@
      "ats": "smartrecruiters",
      "slug": "BoschGroup",
      "country": "us",
-     "queries": [
+     "queries": [],
+     "board_url": "https://jobs.smartrecruiters.com/BoschGroup",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Company id BoschGroup read from a live jobs.smartrecruiters.com/BoschGroup posting (Workshop Sales Representative, New York / New Jersey) supplied by the user 2026-11-21. Bosch posts worldwide; US postings only, keyword searches.",
+      "date": "2026-11-21"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -1545,12 +1555,7 @@
       "customer success",
       "sales"
      ],
-     "board_url": "https://jobs.smartrecruiters.com/BoschGroup",
-     "verification": {
-      "status": "verified_from_posting_url",
-      "method": "Company id BoschGroup read from a live jobs.smartrecruiters.com/BoschGroup posting (Workshop Sales Representative, New York / New Jersey) supplied by the user 2026-11-21. Bosch posts worldwide; US postings only, keyword searches.",
-      "date": "2026-11-21"
-     }
+     "max_results": 2000
     }
    ],
    "id": "bosch",
@@ -1977,7 +1982,10 @@
       "method": "jobs.cisco.com now serves a Phenom page (data-ph-id). Collector reads Phenom embedded JSON (phApp.ddo.eagerLoadRefineSearch) from careers.cisco.com search, falling back to the old results table.",
       "date": "2026-11-19"
      },
-     "phenom_base": "https://careers.cisco.com/global/en"
+     "phenom_base": "https://careers.cisco.com/global/en",
+     "full_list": true,
+     "pages_per_run": 120,
+     "_coverage_note": "Full listing paged from a saved offset (120 pages of 10 a run); keyword searches stopped at 30 results each and left only 30-60 roles."
     }
    ],
    "id": "cisco",
@@ -2218,7 +2226,13 @@
      "host": "cohesity.wd5.myworkdayjobs.com",
      "tenant": "cohesity",
      "site": "Cohesity_Careers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -2233,11 +2247,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "cohesity",
@@ -2545,15 +2556,17 @@
      "host": "crowdstrike.wd5.myworkdayjobs.com",
      "tenant": "crowdstrike",
      "site": "crowdstrikecareers",
-     "queries": [
-      ""
-     ],
+     "queries": [],
      "verification": {
       "status": "verified_feed_rate_limited",
       "method": "Workday CXS POST /wday/cxs/crowdstrike/crowdstrikecareers/jobs (blank search, paged by 20) plus detail GET per posting. Rate-limited from GitHub runners: refused runs keep results so far and resume at the same page next run.",
       "date": "2026-11-19"
      },
-     "max_results": 2000
+     "max_results": 2000,
+     "_queries_before_full_list": [
+      ""
+     ],
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "crowdstrike",
@@ -5883,7 +5896,13 @@
      "host": "mimecast.wd5.myworkdayjobs.com",
      "tenant": "mimecast",
      "site": "mimecast-careers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -5898,11 +5917,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "mimecast",
@@ -6714,7 +6730,14 @@
      "host": "optiv.wd5.myworkdayjobs.com",
      "tenant": "optiv",
      "site": "Optiv_Careers",
-     "queries": [
+     "queries": [],
+     "board_url": "https://optiv.wd5.myworkdayjobs.com/Optiv_Careers",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Job page confirmed by the user on 2026-11-19: https://optiv.wd5.myworkdayjobs.com/en-US/Optiv_Careers/job/Account-Manager---Cybersecurity---Dallas--TX_2026-14153 (tenant optiv, site Optiv_Careers). The next collector run confirms the feed.",
+      "date": "2026-11-19"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -6726,12 +6749,8 @@
       "solutions engineer",
       "customer success"
      ],
-     "board_url": "https://optiv.wd5.myworkdayjobs.com/Optiv_Careers",
-     "verification": {
-      "status": "unverified_config",
-      "method": "Job page confirmed by the user on 2026-11-19: https://optiv.wd5.myworkdayjobs.com/en-US/Optiv_Careers/job/Account-Manager---Cybersecurity---Dallas--TX_2026-14153 (tenant optiv, site Optiv_Careers). The next collector run confirms the feed.",
-      "date": "2026-11-19"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "optiv",
@@ -7492,7 +7511,13 @@
      "host": "proofpoint.wd5.myworkdayjobs.com",
      "tenant": "proofpoint",
      "site": "ProofpointCareers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "exists_rate_limited",
+      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
+      "date": "2026-11-19 collector run"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -7511,11 +7536,8 @@
       "threat research",
       "security researcher"
      ],
-     "verification": {
-      "status": "exists_rate_limited",
-      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
-      "date": "2026-11-19 collector run"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "proofpoint",
@@ -7640,7 +7662,13 @@
      "host": "qualys.wd5.myworkdayjobs.com",
      "tenant": "qualys",
      "site": "Careers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -7655,11 +7683,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "qualys",
@@ -7852,7 +7877,13 @@
      "host": "mymoose.wd1.myworkdayjobs.com",
      "tenant": "mymoose",
      "site": "careers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -7867,11 +7898,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "rapid7",
@@ -8335,7 +8363,13 @@
      "host": "sailpoint.wd1.myworkdayjobs.com",
      "tenant": "sailpoint",
      "site": "SailPoint",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -8350,11 +8384,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "sailpoint",
@@ -8377,7 +8408,14 @@
      "host": "salesforce.wd12.myworkdayjobs.com",
      "tenant": "salesforce",
      "site": "External_Career_Site",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "exists_rate_limited",
+      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
+      "date": "2026-11-19 collector run"
+     },
+     "max_results": 2000,
+     "_queries_before_full_list": [
       "",
       "product marketing",
       "partner",
@@ -8385,12 +8423,7 @@
       "strategy",
       "solutions engineer"
      ],
-     "verification": {
-      "status": "exists_rate_limited",
-      "method": "Workday answered 429 (rate limited), not 404, so tenant/site exist. Collector now paces Workday at 2.5-5s with patient retries.",
-      "date": "2026-11-19 collector run"
-     },
-     "max_results": 2000
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "salesforce",
@@ -10239,7 +10272,13 @@
      "host": "trellix.wd1.myworkdayjobs.com",
      "tenant": "trellix",
      "site": "EnterpriseCareers",
-     "queries": [
+     "queries": [],
+     "verification": {
+      "status": "unverified_config",
+      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -10254,11 +10293,8 @@
       "marketing",
       "customer success"
      ],
-     "verification": {
-      "status": "unverified_config",
-      "method": "User-supplied research (2026-11-20), cross-checked by web search; the collector confirms on its first run and reports a 404/422 with a fix hint if the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "trellix",
@@ -11225,7 +11261,14 @@
      "host": "gartner.wd5.myworkdayjobs.com",
      "tenant": "gartner",
      "site": "EXT",
-     "queries": [
+     "queries": [],
+     "board_url": "https://gartner.wd5.myworkdayjobs.com/EXT",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "A Gartner posting (Senior Account Executive, req 116239) at gartner.wd5.myworkdayjobs.com/en-US/EXT/job/Senior-Account-Executive--HTI_116239, supplied by the user on 2026-11-21. Host, tenant and site are read from that URL, not guessed.",
+      "date": "2026-11-21"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -11244,12 +11287,8 @@
       "research director",
       "analyst relations"
      ],
-     "board_url": "https://gartner.wd5.myworkdayjobs.com/EXT",
-     "verification": {
-      "status": "verified_from_posting_url",
-      "method": "A Gartner posting (Senior Account Executive, req 116239) at gartner.wd5.myworkdayjobs.com/en-US/EXT/job/Senior-Account-Executive--HTI_116239, supplied by the user on 2026-11-21. Host, tenant and site are read from that URL, not guessed.",
-      "date": "2026-11-21"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "gartner",
@@ -11272,7 +11311,14 @@
      "host": "forrester.wd501.myworkdayjobs.com",
      "tenant": "forrester",
      "site": "careers",
-     "queries": [
+     "queries": [],
+     "board_url": "https://forrester.wd501.myworkdayjobs.com/careers",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Workday board forrester.wd501.myworkdayjobs.com/careers, named by a third-party hiring guide found by web search on 2026-11-20 (Forrester's SEARCH AND APPLY button). The first run confirms; a 404/422 means the board name is wrong.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -11291,12 +11337,8 @@
       "research director",
       "analyst relations"
      ],
-     "board_url": "https://forrester.wd501.myworkdayjobs.com/careers",
-     "verification": {
-      "status": "unverified_config",
-      "method": "Workday board forrester.wd501.myworkdayjobs.com/careers, named by a third-party hiring guide found by web search on 2026-11-20 (Forrester's SEARCH AND APPLY button). The first run confirms; a 404/422 means the board name is wrong.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "forrester",
@@ -11450,7 +11492,10 @@
       "status": "verified_from_posting_url",
       "method": "PwC US posting at jobs-us.pwc.com/us/en/job/PUVPUIUS727111WDEXTERNALENUS/... supplied by the user on 2026-11-21; the page is served by Phenom. Base URL taken from that link; Phenom's own search-results page is read for listings (first run confirms).",
       "date": "2026-11-21"
-     }
+     },
+     "full_list": true,
+     "pages_per_run": 120,
+     "_coverage_note": "Full listing paged from a saved offset (120 pages of 10 a run); keyword searches stopped at 30 results each and left only 30-60 roles."
     }
    ],
    "id": "pwc",
@@ -11528,7 +11573,9 @@
       "status": "verified_from_posting_url",
       "method": "Public Workday job page accenture.wd103.myworkdayjobs.com/en-US/AccentureCareers/job/…_R00361496 (US location filter), supplied by the user 2026-11-21; accenture.com Apply buttons point to the same board. Keyword searches, US only.",
       "date": "2026-11-21"
-     }
+     },
+     "max_results": 500,
+     "_coverage_note": "Accenture's US list is far larger than Workday's 2,000-result paging limit, so it stays on keyword searches, now read up to 500 results each."
     }
    ],
    "id": "accenture",
@@ -11595,7 +11642,14 @@
      "host": "guidehouse.wd1.myworkdayjobs.com",
      "tenant": "guidehouse",
      "site": "External",
-     "queries": [
+     "queries": [],
+     "board_url": "https://guidehouse.wd1.myworkdayjobs.com/External",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Workday board guidehouse.wd1.myworkdayjobs.com/External, linked in Guidehouse's own company posts (found by web search 2026-11-20). The first run confirms.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -11611,12 +11665,8 @@
       "marketing",
       "customer success"
      ],
-     "board_url": "https://guidehouse.wd1.myworkdayjobs.com/External",
-     "verification": {
-      "status": "unverified_config",
-      "method": "Workday board guidehouse.wd1.myworkdayjobs.com/External, linked in Guidehouse's own company posts (found by web search 2026-11-20). The first run confirms.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "guidehouse",
@@ -11638,7 +11688,14 @@
      "host": "roberthalf.wd1.myworkdayjobs.com",
      "tenant": "roberthalf",
      "site": "ProtivitiNA",
-     "queries": [
+     "queries": [],
+     "board_url": "https://roberthalf.wd1.myworkdayjobs.com/ProtivitiNA",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Protiviti's own careers FAQ (protiviti.com/us-en/experienced-hires, seen 2026-11-20) names its Workday portal roberthalf.wd1.myworkdayjobs.com/ProtivitiNA. The first run confirms.",
+      "date": "2026-11-20"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -11654,12 +11711,8 @@
       "marketing",
       "customer success"
      ],
-     "board_url": "https://roberthalf.wd1.myworkdayjobs.com/ProtivitiNA",
-     "verification": {
-      "status": "unverified_config",
-      "method": "Protiviti's own careers FAQ (protiviti.com/us-en/experienced-hires, seen 2026-11-20) names its Workday portal roberthalf.wd1.myworkdayjobs.com/ProtivitiNA. The first run confirms.",
-      "date": "2026-11-20"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "protiviti",
@@ -11716,7 +11769,10 @@
       "status": "unverified_config",
       "method": "BCG's job site careers.bcg.com (Phenom), search-results pages seen in web search on 2026-11-20. The first run confirms.",
       "date": "2026-11-20"
-     }
+     },
+     "full_list": true,
+     "pages_per_run": 120,
+     "_coverage_note": "Full listing paged from a saved offset (120 pages of 10 a run); keyword searches stopped at 30 results each and left only 30-60 roles."
     }
    ],
    "id": "bcg",
@@ -11818,7 +11874,10 @@
       "status": "unverified_config",
       "method": "Adobe's job site careers.adobe.com (Phenom); job pages careers.adobe.com/us/en/job/R<id>/<title> seen in web search 2026-11-21. The first run confirms.",
       "date": "2026-11-21"
-     }
+     },
+     "full_list": true,
+     "pages_per_run": 120,
+     "_coverage_note": "Full listing paged from a saved offset (120 pages of 10 a run); keyword searches stopped at 30 results each and left only 30-60 roles."
     }
    ],
    "id": "adobe",
@@ -11841,7 +11900,15 @@
      "host": "nvidia.wd5.myworkdayjobs.com",
      "tenant": "nvidia",
      "site": "NVIDIAExternalCareerSite",
-     "queries": [
+     "queries": [],
+     "max_results": 2000,
+     "board_url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite",
+     "verification": {
+      "status": "unverified_config",
+      "method": "Workday board nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite named in NVIDIA job links found by web search 2026-11-21. Full US list plus a few searches; the first run confirms.",
+      "date": "2026-11-21"
+     },
+     "_queries_before_full_list": [
       "",
       "product marketing",
       "partner",
@@ -11849,13 +11916,7 @@
       "strategy",
       "solutions engineer"
      ],
-     "max_results": 2000,
-     "board_url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite",
-     "verification": {
-      "status": "unverified_config",
-      "method": "Workday board nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite named in NVIDIA job links found by web search 2026-11-21. Full US list plus a few searches; the first run confirms.",
-      "date": "2026-11-21"
-     }
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "nvidia",
@@ -11880,7 +11941,15 @@
      "host": "broadcom.wd1.myworkdayjobs.com",
      "tenant": "broadcom",
      "site": "External_Career",
-     "queries": [
+     "queries": [],
+     "max_results": 2000,
+     "board_url": "https://broadcom.wd1.myworkdayjobs.com/External_Career",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Broadcom's own careers page links Search Jobs to broadcom.wd1.myworkdayjobs.com/External_Career, and live postings use it (web search 2026-11-21).",
+      "date": "2026-11-21"
+     },
+     "_queries_before_full_list": [
       "",
       "product marketing",
       "partner",
@@ -11888,13 +11957,7 @@
       "strategy",
       "solutions engineer"
      ],
-     "max_results": 2000,
-     "board_url": "https://broadcom.wd1.myworkdayjobs.com/External_Career",
-     "verification": {
-      "status": "verified_from_posting_url",
-      "method": "Broadcom's own careers page links Search Jobs to broadcom.wd1.myworkdayjobs.com/External_Career, and live postings use it (web search 2026-11-21).",
-      "date": "2026-11-21"
-     }
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "broadcom",
@@ -12067,7 +12130,14 @@
      "host": "pax8inc.wd12.myworkdayjobs.com",
      "tenant": "pax8inc",
      "site": "Pax8Careers",
-     "queries": [
+     "queries": [],
+     "board_url": "https://pax8inc.wd12.myworkdayjobs.com/Pax8Careers",
+     "verification": {
+      "status": "verified_from_posting_url",
+      "method": "Pax8 posting (Principal, Partner Enablement & Adoption, R-102363) at pax8inc.wd12.myworkdayjobs.com/en-US/Pax8Careers/job/..., supplied by the user on 2026-11-21. Host, tenant and site are read from that URL.",
+      "date": "2026-11-21"
+     },
+     "_queries_before_full_list": [
       "product manager",
       "product marketing",
       "partner",
@@ -12086,12 +12156,8 @@
       "research director",
       "analyst relations"
      ],
-     "board_url": "https://pax8inc.wd12.myworkdayjobs.com/Pax8Careers",
-     "verification": {
-      "status": "verified_from_posting_url",
-      "method": "Pax8 posting (Principal, Partner Enablement & Adoption, R-102363) at pax8inc.wd12.myworkdayjobs.com/en-US/Pax8Careers/job/..., supplied by the user on 2026-11-21. Host, tenant and site are read from that URL.",
-      "date": "2026-11-21"
-     }
+     "max_results": 2000,
+     "_coverage_note": "Full US list (the site's own US filter), read in order: every US role, not only those matching keyword searches. Workday pages stop at 2,000 results; the note warns if a list reaches that."
     }
    ],
    "id": "pax8",
