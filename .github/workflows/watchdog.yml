@@ -1,0 +1,36 @@
+name: Collector watchdog
+
+# Checks at :47 past each hour that the last collection slot (6am, 10am, 2pm, 6pm ET) was collected.
+# If not, and no collection is running, it starts one. A missed slot or a failed collection run makes this run fail,
+# which triggers GitHub's own failed-run notification.
+on:
+  schedule:
+    - cron: '47 10-23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: collector-watchdog
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0 (Node 24)
+        with:
+          sparse-checkout: |
+            collector
+            data/jobs.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0 (Node 24)
+        with:
+          node-version: '22'
+      - name: Check the last collection
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node collector/watchdog.mjs
