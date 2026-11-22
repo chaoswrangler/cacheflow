@@ -1,7 +1,7 @@
-import * as C from './shared/core.mjs?v=20261122f';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122f';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122f';
-import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122f';
+import * as C from './shared/core.mjs?v=20261122h';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122h';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122h';
+import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122h';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -208,7 +208,6 @@ function lcarsFrame(open) {
   const ro = $('#lcRo');
   if (ro && !ro.dataset.on) {
     ro.dataset.on = '1';
-    const wolf = $('.wolfmark svg'); if (wolf) $('.lc-wolf')?.append(wolf.cloneNode(true));
     // build + data stamp lives in the rail's bottom elbow on wide screens (it stays in the top bar on phones)
     const be = $('.lc-bot-elbow'), bs = $('#buildStamp'); if (be && bs && matchMedia('(min-width:861px)').matches) { be.textContent = ''; be.append(bs); }
     const pad = n => String(n).padStart(2, '0'), tick = () => { const d = new Date(), c = $('#lcClock'); if (c) c.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
@@ -1038,7 +1037,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261122f');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261122h');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,

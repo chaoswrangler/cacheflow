@@ -1,7 +1,7 @@
 // Cache Flow LCARS widgets for the Matches page: intro chips, THIS WEEK summary, Target Array (category bands,
 // fit rings, targets, leader cards, telemetry, key, signal log), Hunt command palette (Ctrl/⌘ K or /) and keyboard
 // tracking (J/K, Enter, T/A/D, Esc). Fed by app.js with live matches; the array's filters also filter the results table.
-import * as C from './shared/core.mjs?v=20261122f';
+import * as C from './shared/core.mjs?v=20261122h';
 
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -149,7 +149,7 @@ export function initWidgets(hooks) {
   // bottom LCARS bar
   $('main')?.insertAdjacentHTML('beforeend', `<div class="lc-bottom" aria-hidden="true"><i class="s1"></i><i class="s2">STATUSES STAY IN THIS BROWSER · NOTHING IS UPLOADED</i><i class="s3"></i><i class="s4"></i><i class="cap"></i></div>`);
   // background: drifting stars, moon and rays
-  document.body.insertAdjacentHTML('afterbegin', `<div class="stars" aria-hidden="true"><svg id="starsvg" preserveAspectRatio="xMidYMid slice"></svg></div><div class="bgwolf" aria-hidden="true"><div class="bgrays"></div><div class="bgmoon"></div></div>`);
+  document.body.insertAdjacentHTML('afterbegin', `<div class="stars" aria-hidden="true"><svg id="starsvg" preserveAspectRatio="xMidYMid slice"></svg></div>`);
   (() => { const sv = $('#starsvg'), W = 1000; sv.setAttribute('viewBox', `0 0 ${W} 2000`); let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647; let out = '';
     for (let k = 0; k < 2; k++) { for (let i = 0; i < 70; i++) { const x = rnd() * W, y = rnd() * 1000, r = rnd() < .15 ? 1.4 : .7, o = (.25 + rnd() * .6).toFixed(2); out += `<circle cx="${x.toFixed(1)}" cy="${(y + k * 1000).toFixed(1)}" r="${r}" fill="#BFD6FF" opacity="${o}"/>`; } seed = 7; }
     sv.innerHTML = out; })();
@@ -159,6 +159,12 @@ export function initWidgets(hooks) {
   if (ctl) { ['#funnelBox', 'details.howscore', '#mSortBar', '#tierChips', '#jobGroups'].forEach(s => { const d = $(s); if (d) ctl.append(d); }); }
   // the criteria drawer must sit outside main's stacking context to cover the page
   if (side) document.body.append(side);
+  bootIntro();
+  // lightning wolf: hover powers it up, click opens Hunt command
+  const emb = $('.lc-brand .emblem'), eb = $('#embBtn');
+  if (emb && eb) { ['mouseenter', 'focus'].forEach(ev => eb.addEventListener(ev, () => emb.classList.add('surge'))); ['mouseleave', 'blur'].forEach(ev => eb.addEventListener(ev, () => emb.classList.remove('surge')));
+    eb.addEventListener('click', () => wire.openCmd?.(eb)); }
+  pinNav();
   // results header: the data tools sit on the RESULTS strip, as in the design
   const rsh = $('.lcw-results .lsh');
   if (rsh) { const tools = document.createElement('div'); tools.className = 'tools';
@@ -516,6 +522,36 @@ function wire() {
     } else if (k === 'escape') { arr.sel = null; drawTargets(); }
   });
 }
+/* ---------------------------------------------------------------- intro + emblem + pinned nav */
+function bootIntro() {
+  const ov = $('#bootov'); if (!ov) { startEmblem(); return; }
+  let seen = false; try { seen = sessionStorage.getItem('cf-boot') === '1'; sessionStorage.setItem('cf-boot', '1'); } catch {}
+  if (seen || reduced()) { ov.classList.add('gone'); startEmblem(); return; }
+  const msgs = ['LINKING SENSORS', 'CALIBRATING HUNT SCOPE', 'HUNT SYSTEMS ONLINE']; let i = 0; const m = $('#bootmsg'); if (m) m.textContent = msgs[0];
+  const iv = setInterval(() => { i++; if (i < msgs.length) { if (m) m.textContent = msgs[i]; } else clearInterval(iv); }, 550);
+  const done = () => { if (ov.classList.contains('gone')) return; ov.classList.add('gone'); startEmblem(); };
+  ov.addEventListener('click', done); setTimeout(done, 2500);
+}
+function startEmblem() {
+  const em = $('.cfw'); if (!em || em.classList.contains('go')) return;
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  $$('.cfw .sh').forEach(p => { p.style.setProperty('--dx', ((rnd() - .5) * 340).toFixed(0) + 'px'); p.style.setProperty('--dy', ((rnd() - .5) * 300).toFixed(0) + 'px');
+    p.style.setProperty('--rr', ((rnd() - .5) * 240).toFixed(0) + 'deg'); p.style.setProperty('--dl', (rnd() * .9).toFixed(2) + 's'); });
+  requestAnimationFrame(() => requestAnimationFrame(() => em.classList.add('go')));
+  setTimeout(() => em.classList.add('landed'), 1900);
+}
+// the rail scrolls with the page; the nav pins to the top once the block above it has scrolled away
+function pinNav() {
+  const nav = $('#nav'); if (!nav) return;
+  const ph = document.createElement('div'); ph.className = 'nav-ph'; nav.after(ph);
+  const wide = matchMedia('(min-width:861px)');
+  let start = 0;
+  const measure = () => { const was = nav.classList.contains('pinned'); nav.classList.remove('pinned'); start = nav.getBoundingClientRect().top + scrollY - 14; ph.style.height = nav.offsetHeight + 'px'; if (was) onScroll(); };
+  const onScroll = () => { nav.classList.toggle('pinned', wide.matches && scrollY > start); };
+  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', () => { measure(); onScroll(); });
+  setTimeout(() => { measure(); onScroll(); }, 300); document.fonts?.ready?.then(() => { measure(); onScroll(); });
+}
+
 /* ---------------------------------------------------------------- role detail drawer */
 let lastFocus = null, detailUid = null;
 function ringSvg(s, size = 48) {
