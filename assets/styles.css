@@ -762,3 +762,4 @@ details.typehelp>summary::-webkit-details-marker{display:none}
 .daterange{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:8px}.daterange label{display:flex;align-items:center;gap:6px;font-size:12.5px}.daterange input[type=date]{width:auto;padding:4px 6px;color-scheme:dark}
 
 .finds-note{margin:0 0 12px;padding:12px 14px;border:1px solid rgba(255,196,87,.35);border-radius:12px;background:rgba(255,196,87,.07);color:var(--t2);font-size:14px;line-height:1.5}.finds-note b{color:var(--t1)}
+.mk-t small.build{font-size:8.5px;letter-spacing:.12em;color:var(--t3,#7f93b5);margin-top:2px;text-transform:none}

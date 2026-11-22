@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that lets any web-browsing LLM approximate Cache Flow's search for this
 // user's criteria. Runs in the browser; nothing is sent anywhere. Name, headline, location line and contact details are never included.
-import * as C from './shared/core.mjs?v=20261121q';
+import * as C from './shared/core.mjs?v=20261121s';
 
 const WINDOW_TXT = { week: 'posted from Monday of the current week through today', d7: 'posted in the last 7 days', d14: 'posted in the last 14 days', d30: 'posted in the last 30 days', d60: 'posted in the last 60 days', d90: 'posted in the last 90 days', all: 'any posting date (still open)' };
 const SAL_TXT = {

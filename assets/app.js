@@ -1,6 +1,6 @@
-import * as C from './shared/core.mjs?v=20261121q';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121q';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121q';
+import * as C from './shared/core.mjs?v=20261121s';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261121s';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261121s';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -130,8 +130,20 @@ async function boot() {
     for (const g of gs.values()) for (const u of g) S.dupGroup.set(u, g); }
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
   applyOwnerMode(); wireNav(); wireProfile(); wirePlaces(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
-  renderMatches(); renderSources(); renderDiscover(); renderSetup();
+  renderMatches(); renderSources(); renderDiscover(); renderSetup(); stampBuild();
   show(location.hash.slice(1) || (S.profile.source === 'empty' ? 'profile' : 'matches'));
+}
+// Header stamp on every page: when the site's code was last deployed (Last-Modified of the code files GitHub Pages
+// serves, plus the cache version) and when the job data was last collected.
+async function stampBuild() {
+  const el = $('#buildStamp'); if (!el) return;
+  const files = ['index.html', 'assets/app.js', 'assets/shared/core.mjs', 'assets/styles.css'];
+  const times = await Promise.all(files.map(f => fetch(f, { method: 'HEAD', cache: 'no-store' }).then(r => Date.parse(r.headers.get('last-modified')) || 0).catch(() => 0)));
+  const built = Math.max(0, ...times), ver = (document.querySelector('script[src*="app.js"]')?.getAttribute('src') || '').match(/v=([\w-]+)/)?.[1];
+  const fmt = ms => new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: LOCAL_TZ });
+  const data = S.jobsMeta?.generated_at ? Date.parse(S.jobsMeta.generated_at) : 0;
+  el.textContent = `Build ${built ? fmt(built) : '—'} · Data ${data ? fmt(data) : 'pending'}`;
+  el.title = `Site build (code last deployed): ${built ? new Date(built).toLocaleString() : 'unknown'}${ver ? ` · version ${ver}` : ''}\nJob data last collected: ${data ? new Date(data).toLocaleString() : 'not yet'}`;
 }
 const empOf = j => S.empByName.get(j.employer) || S.empByName.get(String(j.employer).replace(/ \(AWS\)$/, '')) || null;
 
@@ -600,6 +612,18 @@ function countWith(patch) {
   for (const j of S.jobs) { if (c.blockEmp?.includes(j.employer) || j.dup_of) continue; if (C.evaluateJob(j, { crit: c, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win, excl, tz: LOCAL_TZ })) n++; }
   return n;
 }
+// For roles outside the filters: which single loosening brings in the most of them
+function outsideReasons(jobs) {
+  const rows = [...funnelRows(), { k: 'Company types', now: 'your company types', to: 'all types', patch: { types: { big: true, security: true, advisory: true, growth: true, aggregator: true } } },
+    { k: 'Excluded words', now: S.crit.exclude || 'none', to: 'no excluded words', patch: { exclude: '' } }];
+  let best = null;
+  for (const r of rows) {
+    const c = { ...S.crit, ...r.patch }; const win = c.window === 'all' ? null : C.windowFor(c.window, new Date(), LOCAL_TZ, c.winFrom, c.winTo), excl = reFromList(csvList(c.exclude));
+    const n = jobs.filter(j => C.evaluateJob(j, { crit: c, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win, excl, tz: LOCAL_TZ })).length;
+    if (n && (!best || n > best.n)) best = { ...r, n };
+  }
+  return best;
+}
 function funnelRows() {
   const c = S.crit, WIN = { week: 'this week (Monday to today)', d7: 'last 7 days', d14: 'last 14 days', d30: 'last 30 days', d60: 'last 60 days', d90: 'last 90 days', all: 'any date', custom: (currentWindow()?.label || 'custom dates') };
   const rows = [];
@@ -756,7 +780,27 @@ function renderMatches() {
     `<span>last updated: <span class="d">${meta.generated_at ? esc(new Date(meta.generated_at).toLocaleString()) : 'pending'}</span>${OWNER && meta.window ? ` · collector window ${esc(meta.window.start)} → ${esc(meta.window.end)} ET` : ''}</span>`;
   let ms = computeMatches();
   const q = $('#q').value.trim().toLowerCase();
-  if (q) ms = ms.filter(m => (m.j.title + ' ' + m.j.employer + ' ' + (m.j.excerpt || '') + ' ' + (m.j.kw || []).join(' ')).toLowerCase().includes(q));
+  const textOf = j => (j.title + ' ' + j.employer + ' ' + (j.excerpt || '') + ' ' + (j.kw || []).join(' ')).toLowerCase();
+  // words match from the start of a word ("anthropic" finds Anthropic, not "philanthropic")
+  const qRe = q ? new RegExp('(?<![a-z0-9])' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+'), 'i') : null;
+  const hitQ = j => qRe.test(textOf(j));
+  let searchNote = '', searchExtra = [];
+  // Search is exhaustive: every open role whose title, employer, description excerpt or keywords contain the words is
+  // shown. Roles inside your filters come first; the rest follow, marked "outside filters", with the filter that cuts
+  // most of them. "Only within my filters" narrows it back.
+  if (q) {
+    ms = ms.filter(m => hitQ(m.j));
+    const have = new Set(ms.map(m => m.j.uid));
+    const outside = S.jobs.filter(j => j.status !== 'closed' && !j.dup_of && !have.has(j.uid) && stOf(j.uid) !== 'no' && hitQ(j));
+    if (outside.length) {
+      const why = outside.length <= 2000 ? outsideReasons(outside) : null; // skip the breakdown for very broad words
+      if (!S.searchInOnly) {
+        const ctx = { win: currentWindow(), excl: reFromList(csvList(S.crit.exclude)) };
+        searchExtra = outside.slice(0, 3000).map(j => C.evaluateJob(j, { crit: S.crit, emp: empOf(j), skillsOn: S.profile.skillsOn, custom: S.profile.custom, win: ctx.win, excl: ctx.excl, tz: LOCAL_TZ, force: true })).filter(Boolean).map(m => ({ ...m, inFilters: false, viaFinds: true }));
+      }
+      searchNote = `<div class="finds-note"><b>“${esc(q)}”: ${ms.length.toLocaleString()} role${ms.length === 1 ? '' : 's'} within your filters, ${outside.length.toLocaleString()} more outside them</b>${S.searchInOnly ? ' (hidden).' : `, listed after them and marked “outside filters”${outside.length > 3000 ? ' (first 3,000)' : ''}.`} ${why ? `Biggest cut: <b>${esc(why.k)}</b> (${esc(why.now)}); loosening it to “${esc(why.to)}” would bring ${why.n.toLocaleString()} of them inside. ` : ''}<button type="button" class="linkbtn" id="searchAllBtn">${S.searchInOnly ? 'Show all matches' : 'Only within my filters'}</button></div>`;
+    }
+  }
   if (S.empOnly) ms = ms.filter(m => m.j.employer === S.empOnly);
   const tf = $('#typeFilter').value;
   if (tf) ms = ms.filter(m => typeOf(m) === tf);
@@ -772,6 +816,7 @@ function renderMatches() {
     : stSel === 'all' ? ms
     : ms.filter(m => stOf(m.j.uid) === stSel);
   if (!$('#showDups').checked) ms = ms.filter(m => !m.j.dup_of);
+  if (searchExtra.length) ms = ms.concat(S.empOnly ? searchExtra.filter(m => m.j.employer === S.empOnly) : searchExtra);
   // "Show in list" from High-pay finds: that panel uses its own pay floor and company types, so some of its roles
   // can fall outside the list's own filters. Show them anyway, marked, and say which filter keeps them out.
   let findsNote = '';
@@ -816,10 +861,12 @@ function renderMatches() {
   const LOCR = { metro: 4, remote_yes: 3, remote_unknown: 2, unlisted: 2, other: 1 };
   const val = { score: m => m.score, role: m => (m.j.employer + ' \u0000 ' + m.j.title).toLowerCase(), employer: m => m.j.employer.toLowerCase(), base: m => (m.j.salary?.min ?? -1) + ({ starts: 3e6, reaches: 2e6 }[m.tier] || 0), top: m => C.baseTop(m.j.salary) ?? -1,
     loc: m => LOCR[m.loc] || 0, posted: m => m.dt.d || '', source: m => (m.j.source_class === 'official' ? '0' : '1') + m.j.ats }[key];
-  ms.sort((x, y) => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; });
+  // searching: the employer's or title's own matches first, then mentions in descriptions; within each, roles inside your filters first
+  const qRank = m => (qRe && qRe.test(m.j.title + ' ' + m.j.employer) ? 2 : 0) + (m.inFilters ? 1 : 0);
+  ms.sort((x, y) => (q ? qRank(y) - qRank(x) : 0) || (() => { const a = val(x), b = val(y); return (a < b ? -1 : a > b ? 1 : 0) * dir || y.score - x.score; })());
   const limit = S.showN || 200;
   const th = (k, l, cls = '') => `<th class="${cls} ${key === k ? 'sorted' : ''}" data-sort="${k}">${l}${key === k ? (dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
-  $('#jobGroups').innerHTML = findsNote + (ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
+  $('#jobGroups').innerHTML = searchNote + findsNote + (ms.length ? `<div class="mt-wrap"><table class="mt"><thead><tr><th class="c-save"></th>${th('score', 'Score', 'c-score')}${th('role', 'Company / Role')}${th('base', 'Base pay', 'c-base')}${th('loc', 'Location', 'c-loc')}${th('posted', 'Posted', 'c-date')}${th('source', 'Source', 'c-src')}<th class="c-act"></th></tr></thead><tbody>` +
       (S.groupBy ? groupedRows(ms.slice(0, limit)) : ms.slice(0, limit).map(jobRow).join('')) + `</tbody></table></div>` + (ms.length > limit ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn sec sm" id="moreRows">Show ${Math.min(200, ms.length - limit)} more of ${ms.length - limit}</button></div>` : '')
     : STATUS[stSel] ? `<div class="empty-state"><b>NOTHING MARKED “${esc(STATUS[stSel].label.toUpperCase())}”</b>Use the ○ button at the left of any row, or the buttons in a row's details, to set Applied, To do or Not interested.</div>`
     : `<div class="empty-state"><b>NO MATCHES IN THIS WINDOW</b>${S.jobs.length} roles in the dataset, none pass every filter. Try widening the posting window, the salary rule or the location options.</div>`);
@@ -829,6 +876,7 @@ function renderMatches() {
   renderFinds();
 }
 function wireMatches() {
+  $('#jobGroups').addEventListener('click', e => { if (e.target.id === 'searchAllBtn') { S.searchInOnly = !S.searchInOnly; S.showN = 200; renderMatches(); } });
   $('#funnelBox')?.addEventListener('toggle', () => { if ($('#funnelBox').open) renderFunnel(); });
   $('#stFilter').value = store.get('stFilter', 'active');
   $('#stFilter').addEventListener('change', e => store.set('stFilter', e.target.value));
@@ -870,7 +918,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261121q');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261121s');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
