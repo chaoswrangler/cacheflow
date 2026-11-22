@@ -408,6 +408,8 @@ export function selectedFunctions(c) {
   const f = c.functions || [];
   return c.fnKnown ? f : [...new Set([...f, ...f.flatMap(k => LEGACY_FN[k] || [])])];
 }
+// file-name form of a category label, shared with the collector's AI feed (data/ai/new/<slug>.txt)
+export const slugCategory = s => String(s).toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 export const FUNCTION_GROUPS = [...new Set(Object.values(FUNCTIONS).map(f => f.group))];
 export const DEFAULT_FUNCTIONS = Object.keys(FUNCTIONS).filter(k => !FUNCTIONS[k].broad);
 const ENG_REVIEW = /\b(engineer|architect)\b/i;

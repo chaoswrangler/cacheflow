@@ -8,6 +8,7 @@
 //   --seed-probe [--seed-batch=N]  look for job boards of seed companies (data/seeds.json) only
 //   --probe                        try to discover ATS boards for unresolved employers (writes data/probe-results.json, does not edit sources)
 //   --limit=N                      cap number of sources (smoke tests)
+import { writeAiFeed } from './lib/aifeed.mjs';
 import { readJobs, writeJobs } from './lib/jobstore.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -321,6 +322,9 @@ export async function run({ fetchImpl, env = process.env, now = new Date(), data
   catch (err) { log(`archive failed (collection still saved): ${err?.message || err}`); }
   for (const j of merged) delete j._blurb;
   await writeJobs(dataDir, jobsOut); // data/jobs.json (metadata + shard list) and data/jobs/jobs-<n>.json
+  // new-roles files for AI assistants (data/ai/); a failure here never blocks saving the collection
+  try { const a = await writeAiFeed(dataDir, merged, finishedAt); log(`ai feed: ${a.roles} new roles in ${a.files} files`); }
+  catch (err) { log(`ai feed failed (collection still saved): ${err?.message || err}`); }
   await writeFile(join(dataDir, 'status.json'), JSON.stringify(statusOut, null, 1));
   log(`done: ${jobsOut.counts.open} open jobs, summary ${JSON.stringify(summary)}`);
   // a small batch of seed companies each full run; their boards are collected from the next run

@@ -776,3 +776,9 @@ details.typehelp>summary::-webkit-details-marker{display:none}
   #view-discover #xTable td:last-child,#view-discover #uTable td:last-child{min-width:118px}
   #view-discover #xTable .tag,#view-discover #uTable .tag{white-space:normal;word-break:normal;overflow-wrap:normal;text-align:center;line-height:1.35}
 }
+
+/* Discover: AI job alerts */
+#aiAlerts .ai-lead{color:var(--t2);font-size:14.5px;max-width:900px;margin-bottom:10px}
+#aiAlerts .ai-steps{margin:0 0 4px 20px;color:var(--t2);font-size:14px;max-width:900px;display:grid;gap:6px}
+#aiAlerts textarea{font-size:12px;line-height:1.55;resize:vertical}
+#aiFiles a{color:var(--cy)}

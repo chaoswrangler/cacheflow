@@ -16,6 +16,16 @@ Résumé-aware job search served from GitHub Pages and refreshed by GitHub Actio
 | Email (optional) | Resend HTTP API |
 
 
+### AI job alerts (new-roles files)
+
+After each collection the collector writes `data/ai/`:
+
+- `index.txt` / `index.json`: today's files and their role counts.
+- `new/<category>.txt`: open roles first found in the last 24 hours, one file per job category (larger categories split into parts of about 150 KB, so an AI assistant can read each part in full). One role per line: title, employer, locations, workplace, pay, categories, level, posting date, date found, requisition, Cache Flow skill tags and the official posting link. No description text: postings are untrusted, and the files must stay small.
+- `new-roles.csv`: the same roles in one CSV (each role once), for spreadsheets. Cells that would start with `=`, `+`, `-` or `@` get a leading `'` so they can't run as formulas.
+
+On the Discover page, **AI job alerts** builds a prompt from the viewer's filters for a recurring task in their own assistant (Claude, ChatGPT, Gemini and so on). The prompt points at `index.txt`, so it keeps working as file parts change. Filters and résumé stay with the viewer.
+
 ### Collector watchdog
 
 `.github/workflows/watchdog.yml` runs at :47 past each hour (6am–7pm ET). It checks that the latest slot (6am, 10am, 2pm, 6pm ET) was collected:

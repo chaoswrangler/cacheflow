@@ -354,6 +354,18 @@
   <section class="view" id="view-discover">
     <div class="sec-head"><div class="sec-idx"><i>04</i>Discover</div><h2>Discovery</h2><span class="rule"></span>
       <div class="sub">Search links built from your criteria, plus cross-employer boards and employer-universe directories. Aggregators cover the gaps; the official posting remains the evidence.</div></div>
+    <div class="panel" id="aiAlerts" style="margin-bottom:18px"><h3>AI job alerts <small>your own assistant, on your own schedule</small></h3>
+      <p class="ai-lead">Have Claude, ChatGPT, Gemini or another AI assistant check Cache Flow for new roles every day and send you the ones that fit. Cache Flow publishes the roles it found in the last 24 hours as plain-text lists, including roles from Workday, Microsoft, Google and other career sites that assistants can't read themselves. Your filters and résumé stay in your own assistant.</p>
+      <ol class="ai-steps">
+        <li><b>Set your filters</b> on the Matches page (categories, locations, pay, level, words to exclude). The prompt below is built from them.</li>
+        <li><b>Copy the prompt</b> and paste it into a <b>scheduled or recurring task</b> in your assistant, set to run daily (after 7am ET is best; the lists update about four times a day). In Claude or ChatGPT, ask it to "run this every morning"; look for Scheduled tasks, Tasks or Scheduled actions in your assistant. Web access in scheduled tasks varies by product and plan.</li>
+        <li><b>Optional:</b> add your résumé or a short summary of your experience where the prompt says so, and the assistant will rank roles by fit.</li>
+        <li><b>Get notified</b> the way your assistant notifies you: its app's notifications or email. Each match comes with the official posting link; check it before applying.</li>
+      </ol>
+      <div class="row" style="gap:10px;margin:12px 0"><button class="btn pri sm" id="btnAiCopy">Copy AI prompt</button><button class="btn sec sm" id="btnAiShow">Show prompt</button><span class="hint" id="aiStat"></span></div>
+      <textarea id="aiPrompt" rows="16" readonly hidden></textarea>
+      <div id="aiFiles" class="hint" style="margin-top:10px"></div>
+    </div>
     <div class="panel" style="margin-bottom:18px"><h3>Generated searches <small>past week · home area + remote</small></h3><div id="genLinks"></div></div>
     <div class="panel" style="margin-bottom:18px"><h3>Cross-employer sources</h3><div class="tbl-wrap" style="max-height:none"><table id="xTable"></table></div></div>
     <div class="panel"><h3>Employer-universe directories <small>expand the roster, not vacancies</small></h3><div class="tbl-wrap" style="max-height:none"><table id="uTable"></table></div></div>
