@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-22T15:57:15.604Z",
+ "updated_at": "2026-11-22T22:02:50.277Z",
  "employers": [
   {
    "employer": "Slash",
@@ -2641,6 +2641,456 @@
      "verification": {
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-22: board reachable with 6 postings; ownership: postings mention withterminal.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Outset",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 120,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/outset",
+   "careers_url": "https://outset.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:outset",
+     "ats": "ashby",
+     "slug": "outset",
+     "board_url": "https://jobs.ashbyhq.com/outset",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 33 postings; ownership: linked from outset.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "FleetWorks",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 20,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/fleetworks",
+   "careers_url": "https://fleetworks.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:fleetworks",
+     "ats": "ashby",
+     "slug": "fleetworks",
+     "board_url": "https://jobs.ashbyhq.com/fleetworks",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 7 postings; ownership: postings name FleetWorks.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Decoda Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 19,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/decoda-health",
+   "careers_url": "https://decodahealth.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:decodahealth",
+     "ats": "ashby",
+     "slug": "decodahealth",
+     "board_url": "https://jobs.ashbyhq.com/decodahealth",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 4 postings; ownership: linked from decodahealth.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Bretton AI",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 34,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/bretton-ai",
+   "careers_url": "https://www.bretton.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:brettonai",
+     "ats": "ashby",
+     "slug": "brettonai",
+     "board_url": "https://jobs.ashbyhq.com/brettonai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 5 postings; ownership: linked from bretton.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Fortuna Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 29,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/fortuna-health",
+   "careers_url": "https://fortunahealth.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:fortunahealth",
+     "ats": "ashby",
+     "slug": "fortuna-health",
+     "board_url": "https://jobs.ashbyhq.com/fortuna-health",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 5 postings; ownership: postings name Fortuna Health.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Sola",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 5,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/sola",
+   "careers_url": "https://www.sola-solutions.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:sola",
+     "ats": "ashby",
+     "slug": "sola",
+     "board_url": "https://jobs.ashbyhq.com/sola",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 7 postings; ownership: linked from sola-solutions.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "SafetyKit",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/safetykit",
+   "careers_url": "https://www.safetykit.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:safetykit",
+     "ats": "ashby",
+     "slug": "safetykit",
+     "board_url": "https://jobs.ashbyhq.com/safetykit",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 9 postings; ownership: linked from safetykit.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Proof of Human",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 5,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/proof-of-human",
+   "careers_url": "https://poh.org",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:proofofhuman",
+     "ats": "ashby",
+     "slug": "proofofhuman",
+     "board_url": "https://jobs.ashbyhq.com/proofofhuman",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 3 postings; ownership: linked from poh.org.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Andromeda Surgical",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/andromeda-surgical",
+   "careers_url": "http://www.andromedasurgical.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:andromedasurgical",
+     "ats": "ashby",
+     "slug": "andromedasurgical",
+     "board_url": "https://jobs.ashbyhq.com/andromedasurgical",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 6 postings; ownership: postings name Andromeda Surgical.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "HappyRobot",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 80,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/happyrobot",
+   "careers_url": "https://happyrobot.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:happyrobotai",
+     "ats": "ashby",
+     "slug": "happyrobot.ai",
+     "board_url": "https://jobs.ashbyhq.com/happyrobot.ai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 34 postings; ownership: linked from happyrobot.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Strada",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 16,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/strada",
+   "careers_url": "https://www.getstrada.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:stradahq",
+     "ats": "ashby",
+     "slug": "stradahq",
+     "board_url": "https://jobs.ashbyhq.com/stradahq",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 6 postings; ownership: linked from getstrada.com.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Cargo",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 5,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/cargo",
+   "careers_url": "https://getcargo.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:chowbus",
+     "ats": "greenhouse",
+     "slug": "chowbus",
+     "board_url": "https://job-boards.greenhouse.io/chowbus",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 95 postings; ownership: linked from getcargo.io.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Giga",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/giga",
+   "careers_url": "https://giga.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:gigaml",
+     "ats": "ashby",
+     "slug": "gigaml",
+     "board_url": "https://jobs.ashbyhq.com/gigaml",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 32 postings; ownership: linked from giga.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Nowadays",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 12,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/nowadays",
+   "careers_url": "http://nowadays.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:nowadays",
+     "ats": "ashby",
+     "slug": "nowadays",
+     "board_url": "https://jobs.ashbyhq.com/nowadays",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 4 postings; ownership: linked from nowadays.ai.",
+      "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Event Horizon Labs",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/event-horizon-labs",
+   "careers_url": "https://www.ehl.markets/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:eventhorizonlabs",
+     "ats": "ashby",
+     "slug": "event-horizon-labs",
+     "board_url": "https://jobs.ashbyhq.com/event-horizon-labs",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-22: board reachable with 1 postings; ownership: postings name Event Horizon Labs.",
       "date": "2026-11-22"
      }
     }

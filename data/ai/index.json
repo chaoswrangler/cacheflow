@@ -1,0 +1,326 @@
+{
+ "generated_at": "2026-11-22T22:32:14.366Z",
+ "window_hours": 24,
+ "files": [
+  {
+   "category": "product",
+   "label": "Product management (Product & program management)",
+   "file": "data/ai/new/product-management.txt",
+   "roles": 147,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "tpm",
+   "label": "Program & project management (Product & program management)",
+   "file": "data/ai/new/program-and-project-management.txt",
+   "roles": 219,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "pmm",
+   "label": "Product marketing (Marketing & GTM)",
+   "file": "data/ai/new/product-marketing.txt",
+   "roles": 15,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "marketing",
+   "label": "Brand, content & communications (Marketing & GTM)",
+   "file": "data/ai/new/brand-content-and-communications.txt",
+   "roles": 136,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "demand",
+   "label": "Demand generation & growth (Marketing & GTM)",
+   "file": "data/ai/new/demand-generation-and-growth.txt",
+   "roles": 74,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "gtm",
+   "label": "GTM strategy & revenue operations (Marketing & GTM)",
+   "file": "data/ai/new/gtm-strategy-and-revenue-operations.txt",
+   "roles": 50,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "ci",
+   "label": "Competitive & market intelligence (Marketing & GTM)",
+   "file": "data/ai/new/competitive-and-market-intelligence.txt",
+   "roles": 2,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "sales",
+   "label": "Sales & account management (Sales & customer success)",
+   "file": "data/ai/new/sales-and-account-management.txt",
+   "roles": 328,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "sales",
+   "label": "Sales & account management (Sales & customer success)",
+   "file": "data/ai/new/sales-and-account-management-2.txt",
+   "roles": 150,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "se",
+   "label": "Sales & solutions engineering (Sales & customer success)",
+   "file": "data/ai/new/sales-and-solutions-engineering.txt",
+   "roles": 231,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "partner",
+   "label": "Partnerships, alliances & channel (Sales & customer success)",
+   "file": "data/ai/new/partnerships-alliances-and-channel.txt",
+   "roles": 133,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "cs",
+   "label": "Customer success (Sales & customer success)",
+   "file": "data/ai/new/customer-success.txt",
+   "roles": 139,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "enable",
+   "label": "Sales enablement & training (Learning & enablement)",
+   "file": "data/ai/new/sales-enablement-and-training.txt",
+   "roles": 40,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "learning",
+   "label": "Instructional design & learning content (Learning & enablement)",
+   "file": "data/ai/new/instructional-design-and-learning-content.txt",
+   "roles": 362,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "learning",
+   "label": "Instructional design & learning content (Learning & enablement)",
+   "file": "data/ai/new/instructional-design-and-learning-content-2.txt",
+   "roles": 52,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "strategy",
+   "label": "Strategy, business operations & chief of staff (Strategy & business operations)",
+   "file": "data/ai/new/strategy-business-operations-and-chief-of-staff.txt",
+   "roles": 310,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "strategy",
+   "label": "Strategy, business operations & chief of staff (Strategy & business operations)",
+   "file": "data/ai/new/strategy-business-operations-and-chief-of-staff-2.txt",
+   "roles": 86,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "consulting",
+   "label": "Consulting & advisory (Consulting & advisory)",
+   "file": "data/ai/new/consulting-and-advisory.txt",
+   "roles": 315,
+   "part": 1,
+   "parts": 3
+  },
+  {
+   "category": "consulting",
+   "label": "Consulting & advisory (Consulting & advisory)",
+   "file": "data/ai/new/consulting-and-advisory-2.txt",
+   "roles": 293,
+   "part": 2,
+   "parts": 3
+  },
+  {
+   "category": "consulting",
+   "label": "Consulting & advisory (Consulting & advisory)",
+   "file": "data/ai/new/consulting-and-advisory-3.txt",
+   "roles": 60,
+   "part": 3,
+   "parts": 3
+  },
+  {
+   "category": "threat",
+   "label": "Threat intelligence & research (Security practitioners)",
+   "file": "data/ai/new/threat-intelligence-and-research.txt",
+   "roles": 8,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "secops",
+   "label": "SOC, detection & incident response (Security practitioners)",
+   "file": "data/ai/new/soc-detection-and-incident-response.txt",
+   "roles": 28,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "seceng",
+   "label": "Security engineering & architecture (Security practitioners)",
+   "file": "data/ai/new/security-engineering-and-architecture.txt",
+   "roles": 69,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "grc",
+   "label": "GRC, risk & privacy (Security practitioners)",
+   "file": "data/ai/new/grc-risk-and-privacy.txt",
+   "roles": 130,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "ai",
+   "label": "AI strategy & solutions (AI, engineering & data)",
+   "file": "data/ai/new/ai-strategy-and-solutions.txt",
+   "roles": 297,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "ai",
+   "label": "AI strategy & solutions (AI, engineering & data)",
+   "file": "data/ai/new/ai-strategy-and-solutions-2.txt",
+   "roles": 20,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "mleng",
+   "label": "ML engineering & research (AI, engineering & data)",
+   "file": "data/ai/new/ml-engineering-and-research.txt",
+   "roles": 258,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "eng",
+   "label": "Software & infrastructure engineering (AI, engineering & data)",
+   "file": "data/ai/new/software-and-infrastructure-engineering.txt",
+   "roles": 361,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "eng",
+   "label": "Software & infrastructure engineering (AI, engineering & data)",
+   "file": "data/ai/new/software-and-infrastructure-engineering-2.txt",
+   "roles": 178,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "data",
+   "label": "Data & analytics (AI, engineering & data)",
+   "file": "data/ai/new/data-and-analytics.txt",
+   "roles": 220,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "design",
+   "label": "Design & UX research (AI, engineering & data)",
+   "file": "data/ai/new/design-and-ux-research.txt",
+   "roles": 41,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "support",
+   "label": "Customer support (Corporate functions)",
+   "file": "data/ai/new/customer-support.txt",
+   "roles": 57,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "finance",
+   "label": "Finance & accounting (Corporate functions)",
+   "file": "data/ai/new/finance-and-accounting.txt",
+   "roles": 354,
+   "part": 1,
+   "parts": 2
+  },
+  {
+   "category": "finance",
+   "label": "Finance & accounting (Corporate functions)",
+   "file": "data/ai/new/finance-and-accounting-2.txt",
+   "roles": 224,
+   "part": 2,
+   "parts": 2
+  },
+  {
+   "category": "people",
+   "label": "People, HR & recruiting (Corporate functions)",
+   "file": "data/ai/new/people-hr-and-recruiting.txt",
+   "roles": 120,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "legal",
+   "label": "Legal, policy & government affairs (Corporate functions)",
+   "file": "data/ai/new/legal-policy-and-government-affairs.txt",
+   "roles": 67,
+   "part": 1,
+   "parts": 1
+  },
+  {
+   "category": "other",
+   "label": "Other roles (Corporate functions)",
+   "file": "data/ai/new/other-roles.txt",
+   "roles": 425,
+   "part": 1,
+   "parts": 4
+  },
+  {
+   "category": "other",
+   "label": "Other roles (Corporate functions)",
+   "file": "data/ai/new/other-roles-2.txt",
+   "roles": 457,
+   "part": 2,
+   "parts": 4
+  },
+  {
+   "category": "other",
+   "label": "Other roles (Corporate functions)",
+   "file": "data/ai/new/other-roles-3.txt",
+   "roles": 504,
+   "part": 3,
+   "parts": 4
+  },
+  {
+   "category": "other",
+   "label": "Other roles (Corporate functions)",
+   "file": "data/ai/new/other-roles-4.txt",
+   "roles": 208,
+   "part": 4,
+   "parts": 4
+  }
+ ]
+}
