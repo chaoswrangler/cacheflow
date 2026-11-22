@@ -1,6 +1,7 @@
-import * as C from './shared/core.mjs?v=20261122a';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122a';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122a';
+import * as C from './shared/core.mjs?v=20261122f';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122f';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122f';
+import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122f';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -139,6 +140,22 @@ async function boot() {
     for (const g of gs.values()) for (const u of g) S.dupGroup.set(u, g); }
   for (const e of S.registry.employers) S.empByName.set(e.employer, e);
   applyOwnerMode(); wireNav(); wireProfile(); wirePlaces(); renderProfile(); renderCriteria(); wireCritLayout(); renderHud();
+  initWidgets({
+    stOf, rerender: () => { S.showN = 200; renderMatches(); },
+    showMatches: () => { if (!$('#view-matches').classList.contains('active')) location.hash = '#matches'; },
+    openCriteria: () => { if (!$('#view-matches').classList.contains('active')) location.hash = '#matches'; setCritOpen(true); setTimeout(() => $('#critBox')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); },
+    setStatus: (uid, st) => { if (stOf(uid) !== st) { setStatus(uid, st); renderMatches(); statusToast(uid, st); } },
+    setStatusRaw: (uid, st) => { if (!st) { if (stOf(uid)) setStatus(uid, stOf(uid)); } else if (stOf(uid) !== st) setStatus(uid, st); renderMatches(); statusToast(uid, st); },
+    scoreParts, money, locShort: LOC_SHORT, closeCriteria: () => setCritOpen(false),
+    getMatch: uid => (S.lastMatches || []).find(m => m.j.uid === uid) || null,
+    showInList: uid => {
+      if (!$('#view-matches').classList.contains('active')) location.hash = '#matches';
+      const i = (S.lastMatches || []).findIndex(m => m.j.uid === uid);
+      if (i >= (S.showN || 200)) S.showN = i + 1;
+      S.open.add(uid); renderMatches();
+      setTimeout(() => document.querySelector(`tr.mt-row[data-uid="${CSS.escape(uid)}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    },
+  });
   renderMatches(); renderSources(); renderDiscover(); renderSetup(); stampBuild(); wireBadgeInfo();
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   addEventListener('pagehide', saveView); document.addEventListener('visibilitychange', () => { if (document.hidden) saveView(); });
@@ -185,6 +202,32 @@ function show(v) {
 }
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
 const fmtDay = ymd => { if (!ymd) return '—'; const [y, m, d] = ymd.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }) + ' ' + ymd; };
+// LCARS frame: the header readouts move into the top frame on wide screens (same elements, so updates still land);
+// rail and bar captions show the dataset size
+function lcarsFrame(open) {
+  const ro = $('#lcRo');
+  if (ro && !ro.dataset.on) {
+    ro.dataset.on = '1';
+    const wolf = $('.wolfmark svg'); if (wolf) $('.lc-wolf')?.append(wolf.cloneNode(true));
+    // build + data stamp lives in the rail's bottom elbow on wide screens (it stays in the top bar on phones)
+    const be = $('.lc-bot-elbow'), bs = $('#buildStamp'); if (be && bs && matchMedia('(min-width:861px)').matches) { be.textContent = ''; be.append(bs); }
+    const pad = n => String(n).padStart(2, '0'), tick = () => { const d = new Date(), c = $('#lcClock'); if (c) c.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
+    setInterval(tick, 1000); setTimeout(tick, 0);
+  }
+  if (ro) {
+    const g = S.jobsMeta?.generated_at, hrs = g ? (Date.now() - new Date(g)) / 36e5 : null, w = currentWindow();
+    const fmtD = d => new Date(d + 'T12:00').toLocaleDateString('en-US', { weekday: 'short', month: '2-digit', day: '2-digit' }).toUpperCase().replace(',', '');
+    const R = (l, v, cls = '') => `<div class="ro ${cls}"><b>${l}</b><span>${v}</span></div>`;
+    ro.innerHTML = R('DATA', g ? `<i class="dot${hrs > 30 ? ' warn' : ''}"></i>${hrs > 30 ? 'STALE' : 'FRESH'}` : 'PENDING') +
+      R('UPDATED', g ? esc(new Date(g).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).toUpperCase() + ' ' + (LOCAL_TZ === 'America/New_York' ? 'ET' : '')) : '—') +
+      R('WINDOW', w ? `${fmtD(w.start)} → ${w.end === C.nyDate(new Date(), LOCAL_TZ) ? 'TODAY' : fmtD(w.end)}` : 'ANY DATE') +
+      R('PROFILE', esc((S.profile.name || (S.profile.source === 'empty' ? 'NO RÉSUMÉ' : 'RÉSUMÉ LOADED')).toUpperCase())) +
+      R('LOCAL', '<span id="lcClock">--:--:--</span>', 'clock') + R('MODE', '◆ HUNT · ACTIVE', 'mode');
+  }
+  const emp = S.registry.employers.length, cats = (S.crit.functions || []).length;
+  if ($('#railStats')) $('#railStats').innerHTML = `OPEN ${open.toLocaleString()}<br>EMPLOYERS ${emp}<br>CATEGORIES ${String(cats).padStart(2, '0')}`;
+  if ($('#lcBarTxt')) $('#lcBarTxt').textContent = `US ROLES · ${open.toLocaleString()} OPEN · LIVE FROM EMPLOYER JOB BOARDS`;
+}
 function renderHud() {
   const g = S.jobsMeta?.generated_at;
   const dot = $('#dataDot');
@@ -198,6 +241,7 @@ function renderHud() {
   $('#winLabel').textContent = w ? `WINDOW ${w.start} → ${w.end}` : 'WINDOW: ANY DATE';
   $('#who').textContent = S.profile.name ? (S.profile.name + (S.profile.location ? ' · ' + S.profile.location : '')) : 'Job search · HUD';
   const open = S.jobs.filter(j => j.status !== 'closed').length;
+  lcarsFrame(open);
   $('#heroEmp').textContent = `${S.registry.employers.length} employers`;
   $('#heroCount').textContent = S.registry.employers.length;
   $('#heroRoles').textContent = S.jobsMeta?.generated_at ? `${open.toLocaleString()} open roles` : 'awaiting first collection';
@@ -750,7 +794,7 @@ function jobRow(m) {
     <td class="c-loc"><div class="one" title="${esc(slTitle)}">${slText}</div>${tag(lc, ll, m.hf?.tied ? 'Listed as remote, but tied to a specific area or territory.' : LOC_INFO[m.loc] || '')}${applyOf(m) === 'quick' ? ' ' + tag('m', 'QUICK APPLY', APPLY.quick.hint) : ''}</td>
     <td class="c-date">${dYmd ? esc(dYmd.slice(5)) : '—'}<div class="sub2">${esc(DATE_SHORT[m.dt.kind] || m.dt.kind)}</div></td>
     <td class="c-src">${j.source_class === 'aggregator' ? tag('a', 'agg', `Found through a job aggregator (${j.via || j.ats}), not the employer's own job site.`) : tag('', 'official', `From ${j.employer}'s own job site (${j.ats}).`)}<div class="sub2">${esc(j.ats)}</div></td>
-    <td class="c-score" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
+    <td class="c-score" style="--s:${m.score}" title="${esc(scoreTitle(m))}"><b>${m.score}</b><i class="mbar"><i style="width:${m.score}%"></i></i></td>
     <td class="c-act"><button class="more" data-act="open" title="Details">${open ? '−' : '+'}</button></td></tr>${detail}`;
 }
 // group rows by employer, keeping the current sort: groups are ordered by their best-placed role
@@ -884,6 +928,9 @@ function renderMatches() {
     .filter(([k, , n]) => k === 'all' || n).map(([k, l, n]) => `<button class="chip ${tierSel === k ? 'on' : ''}" data-tier="${k}">${esc(l)} · ${n}</button>`).join('') +
     (S.empOnly ? `<button class="chip on m" data-clearemp="1" title="Show all employers again">Employer: ${esc(S.empOnly)} ✕</button>` : '');
   if (tierSel !== 'all') ms = ms.filter(m => tierSel === 'none' ? ['unknown', 'ote_only', 'predicted'].includes(m.tier) : m.tier === tierSel);
+  // Target Array filters (category bands, minimum fit, posting age) narrow the table too
+  const arrBase = ms;
+  if (arrayActive()) ms = ms.filter(arrayFilter);
   const { key, dir } = S.sort || { key: 'score', dir: -1 };
   if ($('#msort') && [...$('#msort').options].some(o => o.value === key)) $('#msort').value = key;
   // phones: the table header (tap a column to sort) is hidden, so the main sorts sit right above the results
@@ -906,6 +953,10 @@ function renderMatches() {
   updatePayCount();
   renderFunnel();
   renderFinds();
+  const w2 = currentWindow();
+  updateWidgets({ base: arrBase, all, shown: ms.length, crit: S.crit, profile: S.profile, track: S.track, critSummary: critSummary(), minLabel: money(+S.crit.minBase || +S.crit.maxBase || 0),
+    windowLabel: !w2 ? 'Any date' : S.crit.window === 'week' ? 'This week' : w2.label, funnelSum: $('#funnelSum')?.textContent, findsSum: $('#findsSum')?.textContent,
+    openCount: S.jobs.filter(j => j.status !== 'closed').length, generatedAt: S.jobsMeta?.generated_at });
 }
 // Tap/click a tag for its meaning. Stops the click from opening the row.
 function wireBadgeInfo() {
@@ -987,7 +1038,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261122a');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261122f');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
@@ -1069,6 +1120,7 @@ function applyStatus(uid, st) {
   setStatus(uid, st);
   const now = stOf(uid);
   keepPlace(uid, () => replaceRow(uid) || renderMatches());
+  refreshWidgets(); statusToast(uid, now);
   const msg = now ? `Marked ${STATUS[now].label.toLowerCase()}` : 'Status cleared';
   undoToast(msg + (now === 'no' && ($('#stFilter').value || 'active') === 'active' ? ' · hidden from this list' : ''), () => { S.track[uid] = before ? { ...before, t: new Date().toISOString() } : { s: '', t: new Date().toISOString() }; save(); renderMatches(); });
 }

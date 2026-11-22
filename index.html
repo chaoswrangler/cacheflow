@@ -28,8 +28,9 @@
 <meta name="twitter:image" content="https://chaoswrangler.github.io/cacheflow/assets/og-image.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css?v=20261122a">
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css?v=20261122f">
+<link rel="stylesheet" href="assets/lcars.css?v=20261122f">
 </head>
 <body class="intro">
 <div class="letterbox" aria-hidden="true"><i class="lb-t"></i><i class="lb-b"></i></div>
@@ -45,6 +46,7 @@
       <span class="mk-t"><b>Cache Flow</b><small id="who">Job search · HUD</small><small class="build" id="buildStamp" aria-label="Site build and data times"></small></span>
     </a>
     <button class="menu" id="menuBtn" aria-expanded="false" aria-controls="nav"><span class="mb"><i></i><i></i><i></i></span>Menu</button>
+    <div class="lc-elbow lc-top-elbow" aria-hidden="true"><span>CF · 01</span><b>LCARS · CF</b></div>
     <nav class="nav" id="nav" aria-label="Sections">
       <button data-view="profile"><span>01</span>Profile</button>
       <button data-view="matches"><span>02</span>Matches</button>
@@ -53,12 +55,19 @@
       <button data-view="about"><span>05</span>About</button>
       <button data-view="setup"><span>06</span>Setup</button>
     </nav>
+    <div class="lc-fill" aria-hidden="true"><svg viewBox="0 0 200 600" preserveAspectRatio="none"><g fill="none" stroke="#2B4F9E" stroke-width="1.2"><path d="M40 0V600M150 0V140L120 200V600M170 0V600"/><path class="pulse-slow" pathLength="1" stroke="#5FD0FF" d="M150 0V140L120 200V600"/></g></svg><span id="railStats"></span></div>
+    <div class="lc-elbow lc-bot-elbow" aria-hidden="true"><b>BUILD 2.0</b></div>
     <div class="status"><span><i class="dot" id="dataDot"></i><span id="dataAge">DATA: LOADING</span></span><span id="winLabel"></span><span>LOCAL <b id="clock">--:--</b></span></div>
   </div>
   <span class="hud-prog"></span>
 </header>
 
 <main>
+  <div class="lc-frame" aria-hidden="false">
+    <div class="lc-ro" id="lcRo"></div>
+    <div class="lc-brand"><span class="lc-wolf" aria-hidden="true"></span><div><div class="lc-name">CACHE FLOW</div><div class="lc-tag">RÉSUMÉ-AWARE JOB SEARCH</div></div></div>
+    <div class="lc-bars" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"><span id="lcBarTxt">US ROLES · LIVE FROM EMPLOYER JOB BOARDS</span></i><i class="s4"></i><i class="cap"></i></div>
+  </div>
   <!-- ===================== PROFILE ===================== -->
   <section class="view" id="view-profile">
     <div class="cbox" id="hero"><canvas class="sky" aria-hidden="true"></canvas><div class="bayflash" aria-hidden="true"></div>
@@ -402,7 +411,7 @@
   </section>
 </main>
 <div class="toast" id="toast"></div>
-<script src="assets/fx.js?v=20261122a" defer></script>
+<script src="assets/fx.js?v=20261122f" defer></script>
 <script>
 /* Startup watchdog: if the app fails while loading (before its own error handling runs), say so on the page instead of leaving it blank. */
 (function () {
@@ -420,7 +429,7 @@
   setTimeout(function () { show('the app did not finish loading within 20 seconds (a file may be missing or out of date)'); }, 20000);
 })();
 </script>
-<script type="module" src="assets/app.js?v=20261122a"></script>
+<script type="module" src="assets/app.js?v=20261122f"></script>
 <div id="tagPop" class="tagpop" role="tooltip" hidden></div>
 </body>
 </html>
