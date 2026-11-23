@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-22T23:39:07.041Z",
+ "updated_at": "2026-11-23T13:31:29.972Z",
  "employers": [
   {
    "employer": "Slash",
@@ -3633,6 +3633,306 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-22: board reachable with 9 postings; ownership: postings mention circleback.ai.",
       "date": "2026-11-22"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Retell AI",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/retell-ai",
+   "careers_url": "https://retellai.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:retellai",
+     "ats": "ashby",
+     "slug": "retell-ai",
+     "board_url": "https://jobs.ashbyhq.com/retell-ai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 20 postings; ownership: linked from retellai.com.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "CommodityAI",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 6,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/commodityai",
+   "careers_url": "https://commodityai.io/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:commodityai",
+     "ats": "ashby",
+     "slug": "commodityai",
+     "board_url": "https://jobs.ashbyhq.com/commodityai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 3 postings; ownership: linked from commodityai.io.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Spur",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/spur",
+   "careers_url": "https://www.spurtest.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:pearvc",
+     "ats": "ashby",
+     "slug": "Pear-VC",
+     "board_url": "https://jobs.ashbyhq.com/Pear-VC",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 110 postings; ownership: linked from spurtest.com.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Reform",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 13,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/reform",
+   "careers_url": "https://www.reformhq.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:reform",
+     "ats": "ashby",
+     "slug": "reform",
+     "board_url": "https://jobs.ashbyhq.com/reform",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 2 postings; ownership: postings name Reform.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Domu Technology Inc.",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/domu-technology-inc",
+   "careers_url": "https://www.domu.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:domu",
+     "ats": "ashby",
+     "slug": "domu",
+     "board_url": "https://jobs.ashbyhq.com/domu",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 2 postings; ownership: postings mention domu.ai.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Mem0",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/mem0",
+   "careers_url": "https://mem0.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:mem0",
+     "ats": "ashby",
+     "slug": "mem0",
+     "board_url": "https://jobs.ashbyhq.com/mem0",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 1 postings; ownership: linked from mem0.ai.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Hamming AI",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/hamming-ai",
+   "careers_url": "https://hamming.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:hammingai",
+     "ats": "ashby",
+     "slug": "Hamming AI",
+     "board_url": "https://jobs.ashbyhq.com/Hamming%20AI",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 8 postings; ownership: linked from hamming.ai.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "ClaimSorted",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/claimsorted",
+   "careers_url": "https://claimsorted.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:claimsorted",
+     "ats": "ashby",
+     "slug": "claimsorted",
+     "board_url": "https://jobs.ashbyhq.com/claimsorted",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 20 postings; ownership: linked from claimsorted.com.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Codes Health",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 45,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/codes-health",
+   "careers_url": "https://www.codeshealth.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:codeshealth",
+     "ats": "ashby",
+     "slug": "codes-health",
+     "board_url": "https://jobs.ashbyhq.com/codes-health",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 17 postings; ownership: postings name Codes Health.",
+      "date": "2026-11-23"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "FirstWork",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 9,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/firstwork",
+   "careers_url": "https://firstwork.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:firstwork",
+     "ats": "ashby",
+     "slug": "firstwork",
+     "board_url": "https://jobs.ashbyhq.com/firstwork",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-23: board reachable with 18 postings; ownership: linked from firstwork.com.",
+      "date": "2026-11-23"
      }
     }
    ]

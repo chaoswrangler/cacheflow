@@ -387,3 +387,161 @@ week,sector,category,new_postings,new_same_store,closed,closed_verified,median_d
 2026-11-16,unknown,threat,4,0,0,0,,3,140000,168333,0,4,1
 2026-11-16,unknown,tpm,7,0,0,0,,4,165000,210000,1,2,6
 2026-11-16,unknown,uncategorized,157,0,0,0,,82,133750,185500,3,65,44
+2026-11-23,AI,all,45,8,1,1,0.6,26,150000,220000,8,5,10
+2026-11-23,AI,demand,5,0,0,0,,5,135000,190000,0,0,2
+2026-11-23,AI,eng,6,0,0,0,,3,150000,250000,0,0,2
+2026-11-23,AI,finance,1,1,0,0,,0,,,0,1,1
+2026-11-23,AI,grc,1,1,0,0,,1,190000,230000,0,0,1
+2026-11-23,AI,gtm,3,0,0,0,,1,130000,180000,0,0,2
+2026-11-23,AI,legal,1,0,0,0,,1,200000,275000,0,0,1
+2026-11-23,AI,marketing,4,0,0,0,,3,150000,200000,0,0,4
+2026-11-23,AI,mleng,1,0,0,0,,1,250000,325000,0,0,1
+2026-11-23,AI,other,12,4,0,0,,7,190000,250000,3,1,7
+2026-11-23,AI,partner,2,1,0,0,,1,135000,175000,0,1,2
+2026-11-23,AI,people,1,0,0,0,,1,150000,220000,0,0,1
+2026-11-23,AI,pmm,1,0,0,0,,1,130000,170000,0,0,1
+2026-11-23,AI,product,1,1,0,0,,0,,,0,1,1
+2026-11-23,AI,sales,5,0,1,1,0.6,0,,,5,1,3
+2026-11-23,AI,se,3,0,0,0,,2,120000,180000,0,0,2
+2026-11-23,AI,strategy,3,1,0,0,,3,90000,150000,0,0,2
+2026-11-23,all,ai,10,9,0,0,,8,203500,326800,0,0,5
+2026-11-23,all,all,481,272,81,81,3.4,263,155000,230000,26,15,48
+2026-11-23,all,consulting,4,3,0,0,,2,141000,195000,0,1,4
+2026-11-23,all,cs,11,6,1,1,3.7,9,152300,225000,2,1,7
+2026-11-23,all,data,7,6,3,3,2.8,4,159500,231000,0,0,3
+2026-11-23,all,demand,21,4,0,0,,16,150000,200000,3,0,11
+2026-11-23,all,design,8,3,0,0,,5,159000,230000,0,0,6
+2026-11-23,all,enable,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,all,eng,68,35,15,15,3.4,44,160000,248500,0,2,21
+2026-11-23,all,finance,4,3,3,3,2.8,1,190000,240000,0,1,4
+2026-11-23,all,grc,8,8,3,3,2.5,8,166000,241000,0,1,3
+2026-11-23,all,gtm,6,1,1,1,3.7,3,130000,180000,0,0,5
+2026-11-23,all,legal,1,0,0,0,,1,200000,275000,0,0,1
+2026-11-23,all,marketing,17,5,3,3,1.7,15,150000,200000,0,1,11
+2026-11-23,all,mleng,24,17,1,1,3.4,17,200000,300000,0,0,8
+2026-11-23,all,other,196,130,22,22,3,74,150000,220500,3,2,26
+2026-11-23,all,partner,12,7,4,4,2,7,175000,250000,1,1,7
+2026-11-23,all,people,9,1,2,2,3,8,132500,182500,0,1,7
+2026-11-23,all,pmm,4,3,0,0,,4,135500,187500,0,0,2
+2026-11-23,all,product,21,19,2,2,3,14,193300,290900,0,1,9
+2026-11-23,all,sales,34,7,11,11,2.8,11,100000,160000,17,2,17
+2026-11-23,all,se,24,8,0,0,,17,140000,200000,2,2,14
+2026-11-23,all,seceng,4,3,2,2,3,4,188500,274700,0,0,3
+2026-11-23,all,secops,1,1,1,1,1.6,1,240000,333000,0,0,1
+2026-11-23,all,strategy,13,8,0,0,,10,150000,222500,0,0,8
+2026-11-23,all,support,5,4,6,6,3,4,114000,163000,0,1,4
+2026-11-23,all,threat,2,2,1,1,3.7,1,194000,266000,0,0,2
+2026-11-23,all,tpm,24,24,1,1,3.7,17,163000,236000,0,0,3
+2026-11-23,all,uncategorized,0,0,3,3,3.7,0,,,0,0,0
+2026-11-23,"Cloud, data & dev tools",ai,1,0,0,0,,1,200000,325000,0,0,1
+2026-11-23,"Cloud, data & dev tools",all,91,6,2,2,4,63,150000,225000,14,3,9
+2026-11-23,"Cloud, data & dev tools",cs,5,0,0,0,,3,140000,170000,2,0,3
+2026-11-23,"Cloud, data & dev tools",data,1,0,1,1,3.7,1,180000,325000,0,0,1
+2026-11-23,"Cloud, data & dev tools",demand,10,1,0,0,,7,150000,200000,2,0,4
+2026-11-23,"Cloud, data & dev tools",design,4,0,0,0,,4,155000,260000,0,0,3
+2026-11-23,"Cloud, data & dev tools",eng,7,0,1,1,3.7,5,150000,220000,0,0,3
+2026-11-23,"Cloud, data & dev tools",finance,1,0,0,0,,1,190000,240000,0,0,1
+2026-11-23,"Cloud, data & dev tools",gtm,1,0,0,0,,1,160000,200000,0,0,1
+2026-11-23,"Cloud, data & dev tools",marketing,5,0,0,0,,5,150000,200000,0,0,2
+2026-11-23,"Cloud, data & dev tools",mleng,5,0,0,0,,4,200000,300000,0,0,3
+2026-11-23,"Cloud, data & dev tools",other,17,1,0,0,,14,167500,325000,0,1,5
+2026-11-23,"Cloud, data & dev tools",partner,4,1,0,0,,3,175000,250000,0,0,2
+2026-11-23,"Cloud, data & dev tools",people,4,0,0,0,,3,130000,200000,0,0,3
+2026-11-23,"Cloud, data & dev tools",product,1,0,0,0,,1,250000,350000,0,0,1
+2026-11-23,"Cloud, data & dev tools",sales,20,3,0,0,,6,104000,148500,10,1,7
+2026-11-23,"Cloud, data & dev tools",se,14,4,0,0,,8,140000,210000,2,1,7
+2026-11-23,"Cloud, data & dev tools",strategy,2,0,0,0,,2,150000,212500,0,0,1
+2026-11-23,Consulting & analyst,ai,1,1,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,all,9,9,1,1,1.4,0,,,0,0,2
+2026-11-23,Consulting & analyst,consulting,1,1,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,data,3,3,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,demand,1,1,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,design,2,2,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,eng,1,1,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,finance,1,1,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,other,1,1,1,1,1.4,0,,,0,0,1
+2026-11-23,Consulting & analyst,product,2,2,0,0,,0,,,0,0,1
+2026-11-23,Consulting & analyst,strategy,1,1,0,0,,0,,,0,0,1
+2026-11-23,Cybersecurity,all,17,12,23,23,3.7,8,164800,238400,1,1,7
+2026-11-23,Cybersecurity,consulting,1,1,0,0,,0,,,0,0,1
+2026-11-23,Cybersecurity,cs,3,3,0,0,,3,164600,246800,0,1,2
+2026-11-23,Cybersecurity,data,0,0,1,1,2.8,0,,,0,0,0
+2026-11-23,Cybersecurity,enable,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Cybersecurity,eng,5,4,2,2,4,2,184500,243000,0,0,4
+2026-11-23,Cybersecurity,gtm,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Cybersecurity,other,2,2,3,3,1.7,0,,,0,0,2
+2026-11-23,Cybersecurity,partner,1,0,4,4,2,0,,,1,0,1
+2026-11-23,Cybersecurity,people,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Cybersecurity,sales,2,0,5,5,3.7,2,52500,272500,0,0,1
+2026-11-23,Cybersecurity,seceng,1,0,1,1,3.7,1,165000,230000,0,0,1
+2026-11-23,Cybersecurity,support,1,1,2,2,4,0,,,0,0,1
+2026-11-23,Cybersecurity,threat,2,2,1,1,3.7,1,194000,266000,0,0,2
+2026-11-23,Cybersecurity,uncategorized,0,0,3,3,3.7,0,,,0,0,0
+2026-11-23,Enterprise SaaS,all,119,93,12,12,3,32,150000,237500,1,3,8
+2026-11-23,Enterprise SaaS,consulting,2,1,0,0,,2,141000,195000,0,1,2
+2026-11-23,Enterprise SaaS,cs,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Enterprise SaaS,demand,2,0,0,0,,2,165000,207500,0,0,1
+2026-11-23,Enterprise SaaS,eng,7,2,2,2,3,7,170000,245000,0,1,2
+2026-11-23,Enterprise SaaS,finance,0,0,1,1,1.7,0,,,0,0,0
+2026-11-23,Enterprise SaaS,gtm,1,0,0,0,,1,85000,90000,0,0,1
+2026-11-23,Enterprise SaaS,marketing,2,0,0,0,,2,142500,187500,0,0,1
+2026-11-23,Enterprise SaaS,mleng,1,0,0,0,,1,300000,350000,0,0,1
+2026-11-23,Enterprise SaaS,other,89,79,1,1,2.5,12,160000,245000,0,0,4
+2026-11-23,Enterprise SaaS,people,3,1,0,0,,3,115000,140000,0,0,2
+2026-11-23,Enterprise SaaS,product,2,1,1,1,3.7,2,180000,230000,0,0,2
+2026-11-23,Enterprise SaaS,sales,3,1,2,2,3,0,,,1,0,3
+2026-11-23,Enterprise SaaS,se,1,1,0,0,,1,102000,140000,0,1,1
+2026-11-23,Enterprise SaaS,support,1,1,4,4,3,1,97200,116640,0,1,1
+2026-11-23,Enterprise SaaS,tpm,7,7,0,0,,0,,,0,0,1
+2026-11-23,Fintech & financial services,ai,1,1,0,0,,0,,,0,0,1
+2026-11-23,Fintech & financial services,all,24,24,34,34,3,3,160000,250000,0,1,2
+2026-11-23,Fintech & financial services,data,0,0,1,1,1.7,0,,,0,0,0
+2026-11-23,Fintech & financial services,eng,3,3,10,10,2,2,179000,260000,0,1,2
+2026-11-23,Fintech & financial services,finance,1,1,2,2,3,0,,,0,0,1
+2026-11-23,Fintech & financial services,grc,1,1,3,3,2.5,1,158000,270000,0,1,1
+2026-11-23,Fintech & financial services,gtm,1,1,0,0,,0,,,0,0,1
+2026-11-23,Fintech & financial services,marketing,1,1,2,2,2,0,,,0,0,1
+2026-11-23,Fintech & financial services,mleng,1,1,1,1,3.4,1,200000,250000,0,0,1
+2026-11-23,Fintech & financial services,other,12,12,12,12,3,0,,,0,0,1
+2026-11-23,Fintech & financial services,partner,2,2,0,0,,0,,,0,0,1
+2026-11-23,Fintech & financial services,people,0,0,1,1,2.8,0,,,0,0,0
+2026-11-23,Fintech & financial services,product,5,5,0,0,,1,160000,230000,0,0,2
+2026-11-23,Fintech & financial services,sales,0,0,2,2,3,0,,,0,0,0
+2026-11-23,Fintech & financial services,seceng,0,0,1,1,3,0,,,0,0,0
+2026-11-23,Fintech & financial services,strategy,2,2,0,0,,0,,,0,0,1
+2026-11-23,Fintech & financial services,tpm,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Healthcare & life sciences,all,11,0,1,1,3.7,8,150000,222500,2,0,2
+2026-11-23,Healthcare & life sciences,demand,1,0,0,0,,0,,,1,0,1
+2026-11-23,Healthcare & life sciences,design,1,0,0,0,,0,,,0,0,1
+2026-11-23,Healthcare & life sciences,eng,4,0,0,0,,4,155000,225000,0,0,2
+2026-11-23,Healthcare & life sciences,other,0,0,1,1,3.7,0,,,0,0,0
+2026-11-23,Healthcare & life sciences,sales,1,0,0,0,,0,,,1,0,1
+2026-11-23,Healthcare & life sciences,se,3,0,0,0,,3,140000,200000,0,0,2
+2026-11-23,Healthcare & life sciences,strategy,1,0,0,0,,1,180000,220000,0,0,1
+2026-11-23,Hyperscaler & big tech,ai,7,7,0,0,,7,207000,328600,0,0,2
+2026-11-23,Hyperscaler & big tech,all,118,118,3,3,1.6,81,171600,252000,0,0,5
+2026-11-23,Hyperscaler & big tech,cs,3,3,0,0,,3,152300,236900,0,0,2
+2026-11-23,Hyperscaler & big tech,data,3,3,0,0,,3,156000,226000,0,0,1
+2026-11-23,Hyperscaler & big tech,demand,2,2,0,0,,2,200800,314300,0,0,2
+2026-11-23,Hyperscaler & big tech,design,1,1,0,0,,1,159000,230000,0,0,1
+2026-11-23,Hyperscaler & big tech,eng,25,25,0,0,,13,207000,300000,0,0,3
+2026-11-23,Hyperscaler & big tech,grc,6,6,0,0,,6,160500,231000,0,0,1
+2026-11-23,Hyperscaler & big tech,marketing,4,4,1,1,1.6,4,156000,226000,0,0,2
+2026-11-23,Hyperscaler & big tech,mleng,16,16,0,0,,10,205000,298700,0,0,2
+2026-11-23,Hyperscaler & big tech,other,29,29,0,0,,10,152000,221000,0,0,3
+2026-11-23,Hyperscaler & big tech,partner,3,3,0,0,,3,207000,300000,0,0,1
+2026-11-23,Hyperscaler & big tech,pmm,3,3,0,0,,3,141000,205000,0,0,1
+2026-11-23,Hyperscaler & big tech,product,10,10,1,1,1.6,10,193300,305200,0,0,2
+2026-11-23,Hyperscaler & big tech,sales,3,3,1,1,1.6,3,138000,200000,0,0,2
+2026-11-23,Hyperscaler & big tech,se,3,3,0,0,,3,212200,308300,0,0,2
+2026-11-23,Hyperscaler & big tech,seceng,3,3,0,0,,3,203000,297400,0,0,2
+2026-11-23,Hyperscaler & big tech,secops,1,1,1,1,1.6,1,240000,333000,0,0,1
+2026-11-23,Hyperscaler & big tech,strategy,4,4,0,0,,4,170400,258150,0,0,2
+2026-11-23,Hyperscaler & big tech,support,2,2,0,0,,2,114000,163000,0,0,1
+2026-11-23,Hyperscaler & big tech,tpm,17,17,0,0,,17,163000,236000,0,0,2
+2026-11-23,"Industrial, mobility & govtech",all,47,2,4,4,3,42,150000,190000,0,2,3
+2026-11-23,"Industrial, mobility & govtech",eng,10,0,0,0,,8,150000,225000,0,0,2
+2026-11-23,"Industrial, mobility & govtech",marketing,1,0,0,0,,1,150000,180000,0,1,1
+2026-11-23,"Industrial, mobility & govtech",other,34,2,4,4,3,31,140000,190000,0,0,3
+2026-11-23,"Industrial, mobility & govtech",people,1,0,0,0,,1,180000,230000,0,1,1
+2026-11-23,"Industrial, mobility & govtech",support,1,0,0,0,,1,155000,185000,0,0,1
