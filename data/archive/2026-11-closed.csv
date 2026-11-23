@@ -1599,3 +1599,555 @@ wd:salesforce:JR341133,2026-11-23T13:31:29.972Z,2026-11-21T21:58:58.541Z,1.6,Sal
 gh:adyen:8239661,2026-11-23T13:31:29.972Z,2026-11-19T19:34:22.449Z,3.7,Adyen,Implementation Engineer,complete_scan
 gh:gitlab:8931768002,2026-11-23T13:31:29.972Z,2026-11-19T19:34:22.449Z,3.7,GitLab,"Director, Data Science ",complete_scan
 wd:nvidia:JR2024647-1,2026-11-23T13:31:29.972Z,2026-11-21T21:58:58.541Z,1.6,NVIDIA,Principal Product Manager - Laptop GPU and SoC,complete_search
+workable:hokali:4FC7CE881B,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,HOKALI,Site Coordinador - Eastside Union School District,complete_scan
+gh:healthie:4425790009,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Healthie,Customer Success Manager,complete_scan
+ashby:ramp:e0b64893-0459-4d84-ac4f-7b50966ef024,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,Product Manager | Growth,complete_scan
+ashby:ramp:606475af-b74f-42c4-978a-dde138a86ac7,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,"Associate, Strategic Finance",complete_scan
+ashby:ramp:5cc4e600-1b28-4083-8a70-90f790112f89,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,"Senior Associate, Strategic Finance",complete_scan
+ashby:ramp:dba53e68-4c96-449d-af4d-27dc475b814c,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,Travel Operations Lead,complete_scan
+ashby:ramp:883fbb33-65a9-4ace-97ad-2a1f588020c2,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,"AI Account Executive, Glass",complete_scan
+ashby:ramp:530d1596-c1bf-41aa-9915-548a692ed66e,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,"Manager, Sales Development, Public Sector ",complete_scan
+ashby:ramp:6075e1dc-c833-4e27-a789-61d3a596c66c,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Ramp,"Senior Security Engineer, Identity",complete_scan
+gh:talkspace:6228339004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Talkspace,Client Support Supervisor,complete_scan
+gh:talkspace:6254481004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Talkspace,Community Moderator - Wisdo (1099),complete_scan
+gh:talkspace:6261138004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Talkspace,Intake and Discharge Clinician,complete_scan
+gh:talkspace:6240873004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Talkspace,Senior Client Support Representative,complete_scan
+sr:checkpoint:744000156025670,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Check Point,Security Engineer,complete_search
+sr:checkpoint:744000153580991,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Check Point,"Territory Manager, SF Bay Area",complete_search
+sr:checkpoint:744000153579477,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Check Point,"Territory Manager, SF Bay Area",complete_search
+sr:checkpoint:744000141328269,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Check Point,Security Engineer,complete_search
+wd:guidehouse:46837,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Clinical Denial RN,complete_search
+wd:guidehouse:46780-1,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Guidehouse,"Segment CFO, Health",complete_search
+wd:guidehouse:44441,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Supervisor - Physician PFS - Revenue Cycle,complete_search
+wd:guidehouse:46366-1,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Program Accounting Associate Analyst,complete_search
+wd:guidehouse:46752,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,"Communications Operator, Part-Time, Second & Third Shift",complete_search
+wd:guidehouse:45386,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Federal Financial Consultant,complete_search
+wd:guidehouse:42740,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Data Analyst (Dashboard Developer),complete_search
+wd:guidehouse:41947,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Guidehouse,State and Local Government Director,complete_search
+wd:guidehouse:45777-1,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Guidehouse,Strategy & Change Management Specialist,complete_search
+wd:guidehouse:46016,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Financial Counselor,complete_search
+wd:guidehouse:45776,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Guidehouse,Senior Consultant-Program and Project Management,complete_search
+wd:guidehouse:45711,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,GLD Loss Claims Analyst (Managed Services),complete_search
+wd:guidehouse:44841,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Guidehouse,Data Engineer,complete_search
+wd:guidehouse:44797,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,ServiceNow Help Desk Support,complete_search
+wd:guidehouse:44676,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Guidehouse,Integrated Master Scheduler,complete_search
+wd:guidehouse:43695,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Guidehouse,Technology Project Manager,complete_search
+gh:guidepointsecurity:6126855004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,GuidePoint Security,Marketing Specialist (Chicagoland Area),complete_scan
+gh:guidepointsecurity:6266326004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,GuidePoint Security,"Security Engineer, Operational Technology- Remote (Anywhere in the U.S.)",complete_scan
+gh:justworks:5136582,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Justworks,Customer Success Manager,complete_scan
+gh:justworks:8263097,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Justworks,"Director, Customer Success",complete_scan
+gh:justworks:8375411,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Justworks,Senior Data Scientist - Advanced Analytics,complete_scan
+gh:justworks:8278368,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Justworks,Senior GTM Technology Administrator,complete_scan
+gh:gomotive:8783282002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Motive,Senior Analytics Engineer,complete_scan
+gh:gomotive:8900270002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Motive,Senior Analytics Engineer - GTM,complete_scan
+gh:scaleai:4731928005,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Scale AI,"Contributor Experience Manager, Community",complete_scan
+gh:tailscale:4730717005,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Tailscale,Talent Acquisition Partner (Contract),complete_scan
+ashby:crusoe:a711fde4-371e-4d5e-9c06-5b1c4fc2a6ca,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Crusoe,Senior Digital Marketing Manager,complete_scan
+ashby:crusoe:78c8be37-93e2-40dd-9be6-93ba06ec2613,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Crusoe,Senior Incident Manager,complete_scan
+ashby:crusoe:7013a589-5163-4f40-96f9-e5e172823990,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Crusoe,Staff Kernel Security Engineer,complete_scan
+ashby:crusoe:9cd02ad4-84ff-49d4-aa4d-2c3290dc3636,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Crusoe,"Senior Financial Analyst, Headcount & OpEx Planning",complete_scan
+ashby:deepgram:0b7494b3-a91e-4540-9439-5b10a1e5b391,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Deepgram,"Embedded AI Engineer, On-Device Models",complete_scan
+ashby:deepgram:19954a4c-7f3f-4231-8480-c7ec628e61a4,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Deepgram,"Senior Product Manager, Enterprise",complete_scan
+ashby:headway:9040d21a-0b46-4a21-b778-02a4e9610647,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Headway,Senior Operations Associate,complete_scan
+ashby:headway:2c7faf60-19df-49c9-9e19-f1bbfa839dc2,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Headway,Staff Software Engineer - Insurance,complete_scan
+ashby:headway:8342802b-4ebf-4c36-b878-4d3f2f359b9d,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Headway,"Senior Product Designer, Search Results",complete_scan
+ashby:linear:f272fc4a-91a7-4dcf-9cb5-3600ebaf14e1,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Linear,Analytics Engineer,complete_scan
+gh:dropzoneai:4387701009,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Dropzone AI,AI Research Engineer,complete_scan
+ashby:mistral-ai:043a53ed-c301-4180-8cd0-56252306dad1,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Mistral AI,"IT Specialist, North America",complete_scan
+ashby:modal:17eba4cc-3a50-4f6e-b55b-bf20180091f2,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Modal,People Operations Generalist,complete_scan
+ashby:kivohealth:875fb993-e57b-4ede-b556-25eb0ab216de,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,Kivo Health,Clinical Exercise Physiologist – Pulmonary Rehabilitation (Remote),complete_scan
+gh:corelight:8287269,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Corelight,Associate Escalation Engineer (Overnight Shift),complete_scan
+ashby:greenboard:e44317c0-99ed-4f49-89f0-519765db36c6,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,Greenboard,Enterprise Account Executive ,complete_scan
+gh:andurilindustries:5294020007,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Anduril,"Asset Improvement, Low Voltage Tech",complete_scan
+gh:andurilindustries:5262583007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Aviation Maintenance Engineer - Advanced Effects,complete_scan
+gh:andurilindustries:5261629007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Avionics Maintenance Engineer - Advanced Effects,complete_scan
+gh:andurilindustries:5303412007,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Anduril,Fielded Site Reliability Engineer,complete_scan
+gh:andurilindustries:5290001007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Hardware Reliability Engineer - Battlespace Awareness,complete_scan
+gh:andurilindustries:5279416007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Lead Communications Engineer (SATCOM / RF / Acoustics) - Maritime,complete_scan
+gh:andurilindustries:5266084007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Manager, Deployments Warehouse",complete_scan
+gh:andurilindustries:5223619007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Manufacturing Engineer,complete_scan
+gh:andurilindustries:5075515007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Maritime - Technical Writer,complete_scan
+gh:andurilindustries:5292304007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Product Operations Analyst,complete_scan
+gh:andurilindustries:5286567007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Propulsion Technician,complete_scan
+gh:andurilindustries:5294365007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Realtime Software Engineer,complete_scan
+gh:andurilindustries:5265141007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Construction Manager, Site Selection and Due Diligence",complete_scan
+gh:andurilindustries:5277074007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Finance Manager, FP&A",complete_scan
+gh:andurilindustries:5291746007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Manager, Technical Publications",complete_scan
+gh:andurilindustries:5252217007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Quality Engineer, Applied AI",complete_scan
+gh:andurilindustries:5252216007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Quality Engineer, Applied AI",complete_scan
+gh:andurilindustries:5252222007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Quality Engineer, Applied AI",complete_scan
+gh:andurilindustries:5287496007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Recruiter, Corporate Operations",complete_scan
+gh:andurilindustries:5171141007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Senior Software Engineering Manager, Simulation Platforms ",complete_scan
+gh:andurilindustries:5249396007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Senior Systems Engineer (Warfighter Systems),complete_scan
+gh:andurilindustries:4657745007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Senior Technical Publications Manager,complete_scan
+gh:andurilindustries:5303411007,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Anduril,Site Reliability Engineer,complete_scan
+gh:andurilindustries:5238330007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Staff Electrical Engineer, Advanced Targeting System",complete_scan
+gh:andurilindustries:5274039007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Staff Site Reliability Engineer,complete_scan
+gh:andurilindustries:5262878007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Staff Technical Program Manager, Advanced Targeting Systems",complete_scan
+gh:andurilindustries:5294027007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Technical Writer - Undersea Systems,complete_scan
+gh:andurilindustries:5190503007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Test Technician,complete_scan
+gh:andurilindustries:5074863007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,"Warehouse Manager, Deployments",complete_scan
+gh:andurilindustries:5236577007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Winter 2027 EWIS Harness Engineer Co-op,complete_scan
+gh:andurilindustries:5236601007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Winter 2027 Mechanical Engineer Co-op,complete_scan
+gh:andurilindustries:5236587007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Winter 2027 Propulsion Engineer Co-op,complete_scan
+gh:andurilindustries:5271842007,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Anduril,Winter 2027 Robotics Engineer Co-op,complete_scan
+gh:icapitalnetwork:8566944002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,iCapital,Client Delivery - Assistant Vice President,complete_scan
+gh:icapitalnetwork:8880561002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,iCapital,Service Desk Engineer - Associate,complete_scan
+gh:icapitalnetwork:8945813002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,iCapital,"Vice President, Platform Infrastructure ",complete_scan
+gh:okta:8292623,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Okta,Auth0 Account Executive- New Business ,complete_scan
+gh:okta:8201507,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Okta,"Senior Manager, Provisioning",complete_scan
+gh:stripe:7997555,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive, Enterprise - Grower",complete_scan
+gh:stripe:8107136,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive, Enterprise (Grower) ",complete_scan
+gh:stripe:8178881,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive - Enterprise, Growth",complete_scan
+gh:stripe:7994330,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive, Enterprise - Hunter",complete_scan
+gh:stripe:8238098,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive, Product - Issuing & Treasury (Hunter)",complete_scan
+gh:stripe:8280264,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Account Executive, SMB (Hunter)",complete_scan
+gh:stripe:8397260,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,"Administrative Business Partner, Office of the CEO",complete_scan
+gh:stripe:8346831,2026-11-23T22:05:06.157Z,2026-11-19T23:55:25.225Z,3.9,Stripe,"Data Scientist, FX Quantitative Research",complete_scan
+gh:stripe:8231575,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Stripe,Finance & Strategy Analyst,complete_scan
+ashby:abridge:1bff8d14-d779-4e7b-9e11-01a57e0979c4,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Abridge,Revenue Operations Manager,complete_scan
+ashby:abridge:62a5fc12-55b4-4d66-a4b1-ba491137e011,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Abridge,Revenue & Technical Accounting Manager,complete_scan
+html:apple:software-development-engineer-test,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Apple,Software Development Engineer - Test,complete_scan
+html:apple:camera-module-design-engineer,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,Apple,Camera Module Design Engineer,complete_scan
+html:apple:camera-module-design-lead,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,Apple,Camera Module Design Lead,complete_scan
+html:apple:software-engineer-embedded-software,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Apple,"Software Engineer, Embedded Software",complete_scan
+html:apple:ios-springboard-engineer-wallpapers,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Apple,IOS SPRINGBOARD ENGINEER- WALLPAPERS,complete_scan
+html:apple:software-engineer-photos-qa-tools,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Apple,"Software Engineer, Photos QA Tools",complete_scan
+html:apple:ios-software-engineer-system-experience-widgets-live-activities,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Apple,IOS SOFTWARE ENGINEER - System Experience Widgets & Live Activities,complete_scan
+lever:palantir:4d29249a-d7e8-4c39-880d-3b35d7b2f6f6,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Palantir,"Forward Deployed Software Engineer, Internship - Commercial",complete_scan
+lever:palantir:d5486403-c050-4920-b2e0-91b69b61ebb2,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Palantir,"Forward Deployed Software Engineer, Internship - Commercial",complete_scan
+ashby:cursor:8b795459-4f93-45b2-a570-bed630cb09ee,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Cursor,Recruiting Coordinator,complete_scan
+wd:cohesity:R05067,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Cohesity,"Manager, Sales Development",complete_search
+wd:cohesity:R04744,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Cohesity,"Senior Manager, Sales Compensation",complete_search
+wd:cohesity:R04844,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Cohesity,Principal AI Sales Specialist,complete_search
+ashby:drata:cf5e1a06-8720-4e5c-93c6-5494c39c862c,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Drata,"Senior Product Manager 2, Assurance",complete_scan
+wd:protiviti:JR-261680,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Protiviti,AI People Enablement Manager,complete_search
+wd:protiviti:JR-258890,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Protiviti,Cleveland Internal Audit and Financial Advisory Intern - 2027,complete_search
+wd:protiviti:JR-258899,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Protiviti,St. Louis Business Performance Improvement Intern - 2027,complete_search
+ashby:plaid:eef5286a-654f-41f4-8d6a-9e46201162a4,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Plaid,Social Community Manager,complete_scan
+ashby:rula:a752d1ce-6fc7-4c03-a49d-dc2f5b213fd0,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Rula,Sr. HR Business Partner,complete_scan
+orc:fortinet:24326,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Fortinet,"Major Account Manager, Enterprise",complete_scan
+orc:fortinet:24561,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Fortinet,Professional Services Engineer,complete_scan
+orc:fortinet:24167,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Fortinet,"Regional Account Manager, SLED",complete_scan
+gh:abnormalsecurity:8016956003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Abnormal AI,"Enterprise Account Executive, NYC",complete_scan
+gh:airbnb:8394433,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Airbnb,Enterprise Account Lead,complete_scan
+gh:airbnb:8378929,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Airbnb,"Recruiter, Sales & G&A (12-month contract)",complete_scan
+gh:airbnb:8142636,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Airbnb,"Senior Host Development Lead, Incentives",complete_scan
+gh:airbnb:8325813,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Airbnb,"Senior Software Engineer, UI Tooling (Full Stack iOS)",complete_scan
+gh:airbnb:8407159,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,Airbnb,Senior Staff Data Scientist - Reputation (Inference),complete_scan
+gh:airbnb:8397762,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Airbnb,"Software Engineer, DevAI ",complete_scan
+gh:alphasense:8846082002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,"Manager of Customer Success, FS HG",complete_scan
+gh:alphasense:8394619002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,Principal Software Engineer,complete_scan
+gh:alphasense:8403928002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,Principal Software Engineer,complete_scan
+gh:alphasense:8431630002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,"Principal Software Engineer, Financial Data Platform & GenSearch Agent",complete_scan
+gh:alphasense:8403920002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,Staff Software Engineer,complete_scan
+gh:alphasense:8394374002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,AlphaSense,Staff Software Engineer,complete_scan
+gh:asana:8078142,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Asana,Head of Digital and Scaled Customer Success,complete_scan
+gh:asana:8279133,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Asana,"Manager, Customer Success",complete_scan
+gh:asana:8044815,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Asana,"Senior Product Manager, AI Context",complete_scan
+gh:chainguard:4716103006,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Chainguard,Enterprise Account Executive - Bay Area,complete_scan
+gh:chainguard:4708495006,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Chainguard,Public Sector Account Executive - Civilian,complete_scan
+gh:databricks:8907988002,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,Databricks,Associate Forward Deployed Engineer,complete_scan
+gh:databricks:8487325002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Databricks,Sr. Executive Assistant,complete_scan
+gh:databricks:8716314002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Databricks,"Sr. Manager, Field Engineering - Sports",complete_scan
+gh:datadog:8186363,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Datadog,Customer Success Associate (Portuguese Speaking),complete_scan
+gh:datadog:8231877,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Datadog,"Regional Manager, Sales Engineering - Key Accounts (West)",complete_scan
+gh:datadog:8268065,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Datadog,"Technical Program Manager, Technical Solutions",complete_scan
+gh:mongodb:7793634,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,MongoDB,"Site Reliability Engineer (Senior or Staff), Storage Layer Services (SLS)",complete_scan
+gh:mongodb:7743366,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,MongoDB,"Site Reliability Engineer (Senior or Staff), Storage Layer Services (SLS)",complete_scan
+gh:pinterest:8265119,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Pinterest,"Lead Client Partner, Financial Services",complete_scan
+gh:pinterest:8081452,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Pinterest,"Sr. Client Account Manager, Home Retail",complete_scan
+gh:pinterest:8300884,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Pinterest,"Sr. Lead Counsel, Privacy",complete_scan
+gh:samsara:8359221,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,"Manager, Implementation - Enterprise Select",complete_scan
+gh:samsara:8198243,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Mid-Market Account Executive - Public Sector  (Midwest),complete_scan
+gh:samsara:8223613,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Senior Security Operations Engineer,complete_scan
+gh:samsara:8204369,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Senior Security Operations Engineer,complete_scan
+gh:samsara:8212286,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Senior Security Operations Engineer,complete_scan
+gh:samsara:8021105,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Senior Security Operations Engineer,complete_scan
+gh:samsara:8027084,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Samsara,Senior Security Operations Engineer I,complete_scan
+gh:spacex:8579766002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,EDM Programmer (Starlink),complete_scan
+gh:spacex:8675144002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,Product Growth Strategy & Analytics Lead (Starlink),complete_scan
+gh:spacex:8675183002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,Product Growth Strategy & Analytics Lead (Starlink),complete_scan
+gh:spacex:8675180002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,Product Growth Strategy & Analytics Lead (Starlink),complete_scan
+gh:spacex:8600089002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,Security Officer 3,complete_scan
+gh:spacex:8841324002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,Software Engineer (Starlink Ground Network),complete_scan
+gh:spacex:8786229002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,"Sr. Accountant, SI Operations ",complete_scan
+gh:spacex:8940695002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,"Sr. Accountant, SI Operations ",complete_scan
+gh:spacex:8693664002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,"Sr. Equipment Engineer, Insource Manufacturing",complete_scan
+gh:spacex:8940770002,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,SpaceX,"Sr. Operations Engineer, Blades and Vanes Foundry",complete_scan
+gh:verkada:5089108007,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Verkada,Privacy Counsel,complete_scan
+gh:verkada:5148169007,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Verkada,Privacy Counsel,complete_scan
+gh:zscaler:5198848007,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Zscaler,"Account Executive - Majors, Chicago",complete_scan
+gh:zscaler:5253937007,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Zscaler,"Sr. Staff Software Engineer, Cloud Networking & Datapath",complete_scan
+wd:mimecast:R6843-1,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Mimecast,"Account Executive, Enterprise",complete_search
+wd:mimecast:R6614-1,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Mimecast,Distribution Account Manager,complete_search
+lever:lyrahealth:406d4285-91ae-4ec2-ab1d-9e0fffe99ec1,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Neuropsychologist - Contract (1099) - California,complete_scan
+lever:lyrahealth:23637d35-9099-4760-9fea-bc6a5b35dd8b,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Neuropsychologist - Contract (1099) - Florida,complete_scan
+lever:lyrahealth:d05bc138-8873-47c8-9178-335f2d3ac30a,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Neuropsychologist - Contract (1099) - Washington,complete_scan
+lever:lyrahealth:68d74c24-2b94-4e54-85f4-3b00043b8c77,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Sr. Billing Operations Associate,complete_scan
+lever:lyrahealth:9f42030e-1cc7-401f-95cb-1a07f63bbba3,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Testing Psychologist - Contract (1099) - Florida,complete_scan
+lever:lyrahealth:2e301756-b15c-4f72-aa41-6f985b1349a8,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,Testing Psychologist - Contract (1099) - Washington,complete_scan
+lever:lyrahealth:da230ef7-b91e-49bb-9fea-7cc9c73ac7f3,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Lyra Health,"vIOP Clinical Quality Supervisor (Unrestricted License LCSW, LMFT, LPCC - California)",complete_scan
+lever:spotify:c73be71c-1a63-4906-9925-95f2115d1f1d,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Spotify,Senior Software Engineer - Enterprise AI,complete_scan
+lever:zoox:45594791-0b7b-4310-9a6e-067f53e4a191,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Zoox,Contract Student Worker - Autonomy and Geofence Expansion (20 hrs/wk),complete_scan
+ashby:grow-therapy:bf0088a8-7998-4b26-8c67-6d4b5a08f332,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Grow Therapy,"Growth Manager, Audio",complete_scan
+ashby:grow-therapy:1ed1a956-487d-4424-b296-4b307959a53c,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Grow Therapy,"Specialist I, Customer Support",complete_scan
+ashby:skydio:acadd2d7-d3b1-4ac0-a8f3-d937f9cd9e4a,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Skydio,"Senior Manager, Solutions Engineering - National Security (Defense)",complete_scan
+gh:wing:8389529002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Wing,Senior Data Scientist,complete_scan
+ashby:litellm:27d65520-70ac-49c3-9224-66e2965259c0,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,LiteLLM,"Senior Security Engineer, Product & Platform",complete_scan
+ashby:litellm:732f0a31-5622-4fca-9a2a-356d58fcfa1d,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,LiteLLM,"Staff Engineer, Systems and Reliability",complete_scan
+radancy:panw:96174882320,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,Palo Alto Networks,Staff/Sr. Staff AI Engineer - Enterprise AI Solutions,complete_scan
+radancy:panw:99500790800,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Principal Engineer Software Prisma Airs Backend Runtime Security,complete_scan
+radancy:panw:100771075392,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Technical Services Delivery Manager Public Sector,complete_scan
+radancy:panw:99038557824,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,"Director, CSP/Hyperscaler Partner Marketing",complete_scan
+radancy:panw:98894166960,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Solutions Consultant 2,complete_scan
+radancy:panw:98755665888,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Named Account Manager,complete_scan
+radancy:panw:101274835456,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Senior Identity Account Executive Southwest,complete_scan
+radancy:panw:98370258512,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,Palo Alto Networks,Inside Sales Representative,complete_scan
+gh:mavenclinic:8957323002,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,Maven Clinic,Member Services Senior Associate,complete_scan
+gh:affirm:8004096003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Affirm,"Analytics Lead, Deposit Fraud Risk",complete_scan
+gh:affirm:8043923003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Affirm,Leadership Development Manager,complete_scan
+gh:affirm:8043921003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Affirm,Leadership Development Manager,complete_scan
+gh:cloudflare:8384364,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Cloudflare,Head of Zero Day Engineering,complete_scan
+gh:cloudflare:8059775,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Cloudflare,Senior Customer Engagement Strategy Manager    ,complete_scan
+gh:cloudflare:8016569,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Cloudflare,"Senior Talent Acquisition Partner, G&A",complete_scan
+gh:cloudflare:8142261,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Cloudflare,"Systems Engineer, Network Automation",complete_scan
+gh:doordashusa:8239753,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,DoorDash,Revenue Accounting Manager,complete_scan
+gh:doordashusa:7248556,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,DoorDash,Shift Lead - Underwood Hills,complete_scan
+gh:elastic:8325389,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Elastic,Consulting Architect,complete_scan
+gh:flatironhealth:8210867,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Flatiron Health,Senior Software Engineer,complete_scan
+gh:point72:8575094002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Point72,"Senior Accounting Associate, Foundation and Community",complete_scan
+gh:relativity:8623301002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Relativity,"Quality Specialist II, First Shift",complete_scan
+gh:relativity:8912015002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Relativity,"Senior Avionics Quality Inspector, First Shift",complete_scan
+gh:relativity:8920586002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Relativity,"Talent Development, Facilitator",complete_scan
+gh:salesloft:8318270,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Salesloft,People Operations Coordinator,complete_scan
+gh:veeamsoftware:4997622101,2026-11-23T22:05:06.157Z,2026-11-21T17:51:43.508Z,2.2,Veeam,Executive Assistant (Remote Central or West Coast),complete_scan
+gh:veeamsoftware:5000309101,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Veeam,Middle C++ Developer (NAS Backup) ,complete_scan
+wd:mymoose:R11498,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Rapid7,Sales Development Representative,unseen_window
+comeet:cyera:DD.F60,2026-11-23T22:05:06.157Z,2026-11-19T21:51:17.575Z,4,Cyera,Account Executive - Bay Area (Enterprise),complete_scan
+comeet:cyera:C7.A40,2026-11-23T22:05:06.157Z,2026-11-19T21:51:17.575Z,4,Cyera,Account Executive - Bay Area (Majors),complete_scan
+comeet:cyera:D7.932,2026-11-23T22:05:06.157Z,2026-11-19T21:51:17.575Z,4,Cyera,Sales Engineer - NY Metro (Enterprise),complete_scan
+ashby:cartesia:bd9d6688-5486-470f-a273-20874a44f107,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Cartesia,Inference Engineer,complete_scan
+ashby:clickhouse:66affc05-7eb5-450e-94fd-01969c9318bf,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,ClickHouse,Growth Engineer,complete_scan
+wd:proofpoint:R14962-1,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Proofpoint,"National Channel Account Manager-ePlus,Trace3 and Defy",complete_search
+wd:proofpoint:R14838,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Proofpoint,"Account Manager - Sunnyvale, CA",complete_search
+gh:chime:8952336002,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Chime,Lead Technical Recruiter,complete_scan
+gh:chime:8607191002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Chime,"Staff Engineer, Growth",complete_scan
+ashby:sardine:4ff32b5d-13c6-4024-826c-04ed2881d688,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Sardine,Forward Deployed AI Engineer,complete_scan
+ashby:snowflake:1a5535bb-bc87-45fa-bfa2-678d6430bf56,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Snowflake,Principal Solutions Architect - Data Engineering,complete_scan
+ashby:snowflake:37ad5524-1716-4b54-8c3a-a81429592a91,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Snowflake,"Software Engineer — Engineering Systems, Continuous Integration",complete_scan
+ashby:snowflake:185d165c-09c7-4b57-9281-ff7c2c541907,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Snowflake,Software Engineer Intern (AI / ML) - Summer 2027,complete_scan
+ashby:snowflake:0223923d-4f0f-44e6-9649-0d1a9eda950d,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Snowflake,Software Engineer Intern (Database Engineering) - Summer 2027,complete_scan
+ashby:snowflake:e194759e-3a20-47c9-868d-f47179613897,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Snowflake,"Software Engineer Intern (Core, Infrastructure & Security) — Summer 2027",complete_scan
+ashby:odysaviation:e0603031-2802-44bf-97f3-531a95a11c51,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Odys Aviation,Office Manager,complete_scan
+ashby:axleinsure:7c6208ba-898d-41ab-ac93-3d4c7fe8f2c4,2026-11-23T22:05:06.157Z,2026-11-22T15:57:15.604Z,1.3,Axle,Senior Deployment Strategist,complete_scan
+ashby:axleinsure:4e1b1bf9-4d77-4b11-8bf1-f2d6cb6b955a,2026-11-23T22:05:06.157Z,2026-11-22T15:57:15.604Z,1.3,Axle,Lead Deployment Strategist,complete_scan
+ashby:astromechanica:cf8cc605-ef45-4f6b-b785-7b4e24b137dd,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,Astro Mechanica,PLM Administrator,complete_scan
+sr:boschgroup:744000162756131,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Junior Management Program – Manufacturing – PS,complete_search
+sr:boschgroup:744000162754829,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Junior Management Program – HR – Corporate,complete_search
+sr:boschgroup:744000162589099,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (Part-Time Evenings),complete_search
+sr:boschgroup:744000162588769,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (Part-Time Evenings),complete_search
+sr:boschgroup:744000162588429,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (Part-Time Evenings),complete_search
+sr:boschgroup:744000162588189,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (Part-Time Evenings),complete_search
+sr:boschgroup:744000162588049,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (Part-Time Evenings),complete_search
+sr:boschgroup:744000162076254,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,AI Application Intern (8 months/40 hours per week) ,complete_search
+sr:boschgroup:744000161577845,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Warehouse Associate,complete_search
+sr:boschgroup:744000161375770,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Entry-level Sales and Marketing Representative - Chicago - Diablo Tools - DAT,complete_search
+sr:boschgroup:744000159949039,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Junior Management Program – Manufacturing – VM,complete_search
+sr:boschgroup:744000158395439,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (5:00 am - 1:30 pm),complete_search
+sr:boschgroup:744000156822490,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (5:00 am - 1:30 pm),complete_search
+sr:boschgroup:744000156823061,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Customer Service Representative (5:00 am - 1:30 pm),complete_search
+sr:boschgroup:744000156073979,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Bosch,Maintenance Technician - Pay starting at $32.14 an hour plus shift differential on off-shift,complete_search
+sr:boschgroup:744000155986839,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Bosch,Controls Technician - Pay starting at $35.48 an hour plus shift differential on off-shift ,complete_search
+sr:boschgroup:744000155097535,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Bosch,Purchasing (PUE) Intern - Summer 2027,complete_search
+sr:boschgroup:744000154422144,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Bosch,Sr. Key Account Manager - Lowe's,complete_search
+gh:aircallioinc:4308436009,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Aircall,Forward Deployed Engineer (AI Solutions) - NA East Market,complete_scan
+gh:anthropic:5438311008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Anthropic,Anthropic Research Resident,complete_scan
+gh:anthropic:5469337008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Anthropic,"Gas Supply and Transport Lead, US and Canada",complete_scan
+gh:anthropic:5467893008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Anthropic,"Machine Learning Data Scientist, Forecasting Platform",complete_scan
+gh:anthropic:5209661008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Anthropic,"Manager, Commercial Counsel, GTM",complete_scan
+gh:axon:8207846003,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Axon,Customer Success Manager I,complete_scan
+gh:axon:8207849003,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Axon,Customer Success Manager I,complete_scan
+gh:axon:8207844003,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Axon,Customer Success Manager I,complete_scan
+gh:axon:7980698003,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Axon,Senior Mechanical Design Engineer - Simulations,complete_scan
+gh:axon:7577018003,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Axon,"Senior Product Manager, Analytics, Reporting, & City ",complete_scan
+gh:coalition:4714098005,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Coalition,"Senior Software Engineer, Underwriting",complete_scan
+gh:coalition:4714099005,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Coalition,"Senior Software Engineer, Underwriting",complete_scan
+gh:dragos:5421806008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Dragos,Senior Financial Analyst ,complete_scan
+gh:keepersecurity:4430001009,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Keeper Security,"QA Analyst, Mobile",complete_scan
+gh:mixpanel:8238551,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Mixpanel,"Senior Strategic Finance Associate, G&A",complete_scan
+gh:mixpanel:8222166,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Mixpanel,"Senior Strategic Finance Associate, G&A",complete_scan
+gh:reddit:7957771,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Reddit,"Principal, Consumer Insights ",complete_scan
+gh:reddit:8125836,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Reddit,"Senior Principal Program Manager, GTM Excellence",complete_scan
+gh:reddit:8244067,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Reddit,Strategic Finance Senior Manager ,complete_scan
+gh:sentinellabs:7994364003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,SentinelOne,"Principal Account Executive, Commercial (Southeast)",complete_scan
+gh:sentinellabs:8005646003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,SentinelOne,Senior Delivery Assurance Engineer,complete_scan
+wd:proofpoint:R14851,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Proofpoint,Named Account Manager-MO,unseen_window
+wd:proofpoint:R14603,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Proofpoint,Named Account Manager-Houston,unseen_window
+wd:proofpoint:R14879,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Proofpoint,"Enterprise Account Manager, UKI",unseen_window
+wd:proofpoint:R14967,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Proofpoint,"SME Account Manager, Italy - UK Based",unseen_window
+ashby:cerebras:156913ad-fcce-4551-b422-b5df5a9310fe,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Cerebras,"Director, Intellectual Property Counsel",complete_scan
+ashby:elevenlabs:8c068ebf-c79f-4f12-97ef-b4c9a4f7ae5f,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ElevenLabs,Deployment Strategist - North America,complete_scan
+ashby:harvey:5ce5fe86-8e2f-4003-b88a-77fbbdeaecad,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Harvey,"Senior Product Marketing Manager, Solutions",complete_scan
+ashby:harvey:53645e07-5a0e-4257-ba0d-f8b2fc676c44,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Harvey,"Senior Product Marketing Manager, Solutions",complete_scan
+ashby:hex:0a23df90-2eea-44f6-862b-666e0431077f,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Hex,Founding Commercial Account Manager ,complete_scan
+gh:jumptrading:8250053,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Jump Trading,Human Resources Coordinator,complete_scan
+ashby:deaa6ad2-d184-436b-b69e-17f761da1d94:eda7d2b7-7fb9-460a-8e7b-d61e22d3d26e,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Spring Health,"Senior Product Manager, Data Profiles",complete_scan
+ashby:zapier:04838dc8-0efa-4fe5-b705-c99f6b3f17c6,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Zapier,"Legal Counsel, AI & Legal Engineering",complete_scan
+ashby:cinder:88fef3d6-2289-4d90-9c56-41e2b2805a81,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Cinder,AI Growth Marketer,complete_scan
+ashby:fours:9c0c24a8-50a2-46db-97ff-f037cd781306,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,Fours,Founding Product Marketing Manager,complete_scan
+ashby:fours:ce6b4cc5-60bd-4cd9-8355-44536cc08d87,2026-11-23T22:05:06.157Z,2026-11-22T22:02:50.277Z,1,Fours,Founding Growth Marketing Manager,complete_scan
+wd:broadcom:R025748,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),AI Systems Performance Engineer,complete_search
+wd:broadcom:R027785,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),Account Director,complete_search
+wd:broadcom:R027188,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),Chemical Mechanical Planarization (CMP) Process Engineer,complete_search
+wd:broadcom:R026662,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),R&D Quality & Reliability Engineer,complete_search
+wd:broadcom:R026899,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),FBAR Filter Designer,complete_search
+wd:broadcom:R026437-1,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Broadcom (incl. VMware),NPI Test Development Engineer,complete_search
+gh:backblaze:5400309008,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Backblaze,"Data Center Technician I (On-site in Chandler, AZ)",complete_scan
+gh:duolingo:8784381002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Duolingo,Senior Site Reliability Engineer,complete_scan
+gh:fivetran:8196171003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Fivetran,Resident Solution Architect,complete_scan
+gh:fivetran:7792166003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Fivetran,"Solutions Engineer, Commercial (Austin)",complete_scan
+gh:lyft:8919442002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Lyft,"Operations Associate, Flexdrive",complete_scan
+gh:newrelic:5480591008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,New Relic,Account Manager - Renewals (West),complete_scan
+gh:checkr:8404191,2026-11-23T22:05:06.157Z,2026-11-19T23:55:25.225Z,3.9,Checkr,AV & Event Specialist II,complete_scan
+gh:checkr:8393421,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Checkr,"Senior Product Designer, Verifications",complete_scan
+gh:checkr:8397792,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Checkr,"Senior Product Manager, Verifications",complete_scan
+gh:checkr:8393424,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Checkr,"Senior Software Engineer (Ruby/Rails), MVR",complete_scan
+gh:checkr:8393427,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Checkr,Staff Workday HRIS Technical Analyst,complete_scan
+ashby:fireworks:ed2e0d3d-1788-4b0c-a92b-3c13fa1f3002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Fireworks AI,Immigration Specialist [Contract] ,complete_scan
+ashby:flashpoint.io:5d5b1494-fade-4616-ab4c-87adc6fc15d3,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Flashpoint,Content Marketing Specialist,complete_scan
+ashby:hims-and-hers:99776387-4304-49d1-a4d1-6fc21238c59d,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Hims & Hers,"Operations Manager, Compounding (Swing)",complete_scan
+ashby:hims-and-hers:a5a65d27-5531-40ed-8ba1-7eb577c13631,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Hims & Hers,Compensation Analyst,complete_scan
+ashby:hims-and-hers:1e527d40-44fe-4948-92d4-4a9a91e01ca7,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Hims & Hers,Materials Management Technician,complete_scan
+ashby:horizon3ai:92804015-1fba-4a84-8a8d-788e19a3c5df,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Horizon3.ai,"Manager, Commercial Sales",complete_scan
+ashby:horizon3ai:8717c056-1109-4fbf-8e18-d7efed31d824,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Horizon3.ai,"Deal Desk Manager, US - West Coast",complete_scan
+ashby:openai:d8794980-1d3f-4d82-8b48-811449b6c492,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,Training: ML Framework Engineer,complete_scan
+ashby:openai:5c579ec6-be3a-409b-8ae4-9e3f46af8288,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,Strategic Technology Negotiations Lead,complete_scan
+ashby:openai:32a314f3-17d6-4f94-ba1b-88076d9ac4f4,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,Platform Product Partnerships Lead,complete_scan
+ashby:openai:2b148425-b807-46a5-97e1-fae307aacb80,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,"Associate General Counsel, Commercial – Infrastructure",complete_scan
+ashby:openai:db40bc4f-c7fb-47d5-a7cc-918fb8b1f815,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,Head of Enterprise Risk Management,complete_scan
+ashby:openai:30b0a80b-8421-4847-a670-5bd09920c4ce,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OpenAI,Motion Designer,complete_scan
+ashby:openai:4e9a1479-320a-465c-887d-ebbd9249db8a,2026-11-23T22:05:06.157Z,2026-11-19T21:51:17.575Z,4,OpenAI,"Designer, OpenAI.com",complete_scan
+ashby:perplexity:2cfb391c-eaa4-4a97-83da-18ca275d50a5,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Perplexity,"Enterprise Account Executive, Financial Services",complete_scan
+ashby:temporal:ff1b5637-b576-483c-a621-02b6ebe7f2c4,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Temporal,"Senior Manager, Global Deal Desk",complete_scan
+ashby:temporal:4e305388-425a-4f44-9c33-41af5d5d8d67,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Temporal,Recruiting Coordinator,complete_scan
+ashby:vanta:0fab2072-8863-42ec-b00d-de367b90d937,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Vanta,"Senior Data Analyst, Strategic Finance",complete_scan
+gh:blackduck:5237777008,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Black Duck,Senior DevOps Engineer - Cloud Operations,complete_scan
+gh:braze:8173666,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Braze,"Enterprise Account Executive, Brazil",complete_scan
+gh:catonetworks:4998985101,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,Cato Networks,Support Delivery Manager - NA ,complete_scan
+gh:huntress:8197672003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Huntress,"Manager, Technical Account Management",complete_scan
+gh:huntress:8044660003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Huntress,Technical Account Manager II,complete_scan
+gh:onetrust:8241354,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,OneTrust,Support Analyst,complete_scan
+gh:qualtrics:8240066,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Qualtrics,Graphic Designer,complete_scan
+gh:qualtrics:8267315,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Qualtrics,"Senior Analyst, Demand Generation - Paid Social",complete_scan
+gh:robinhood:7685092,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Robinhood,"Deal Lead, Robinhood Ventures",complete_scan
+gh:robinhood:8367410,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Robinhood,Futures Compliance Senior Specialist,complete_scan
+gh:robinhood:8083818,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Robinhood,"Senior Software Developer, Developer Experience (DevX)",complete_scan
+gh:robinhood:8164943,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Robinhood,"Senior Software Engineer, Developer Experience (DevX)",complete_scan
+gh:robinhood:8289855,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Robinhood,Trading Specialist,complete_scan
+gh:trace3:7674246,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Trace3,Account Manager I,complete_scan
+gh:trace3:7569673,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Trace3,Innovation Researcher,complete_scan
+gh:trace3:8189813,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Trace3,"Sr. Software Engineer, Modeling & Simulation",complete_scan
+wd:optiv:2026-14132,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,Optiv,Company Security Officer,unseen_window
+lever:cofactr:6fb93a96-f267-4cd9-87d2-72a9896ef7ff,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Cofactr,Sr. Onboarding Project Specialist,complete_scan
+gh:flex:4751633005,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Flex,"Director, Account Management",complete_scan
+gh:flex:4681915005,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Flex,"Vice President, Business Development & Strategic Partnerships",complete_scan
+gh:freenome:8919668002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Freenome,Senior Staff Software Engineer,complete_scan
+wd:crowdstrike:R28231,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,CrowdStrike,Engineer III - FinOps Data Analytics (Remote),complete_search
+wd:crowdstrike:R30876,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,CrowdStrike,"Analyst I, Falcon Complete (Remote)",complete_search
+wd:crowdstrike:R30916,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,CrowdStrike,"Security Advisor II, Falcon Complete (Remote)",complete_search
+wd:crowdstrike:R30835,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,CrowdStrike,"Security Advisor II, Falcon Complete (Remote)",complete_search
+wd:crowdstrike:R30910,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,CrowdStrike,Professional Services Technical Operations Engineer- Agentic AI (Remote),complete_search
+wd:crowdstrike:R29936,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,CrowdStrike,"Sr. Governance, Risk, and Compliance Specialist (Remote)",complete_search
+wd:crowdstrike:R30634,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,CrowdStrike,"Detection Engineer, Falcon Complete (Remote)",complete_search
+wd:crowdstrike:R27157,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,CrowdStrike,Sr. Software Engineer - Sensor - Cloud Runtime Protection (Hybrid),complete_search
+wd:crowdstrike:R28302,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,CrowdStrike,EII Cloud Software Engineer - Cloud (Hybrid),complete_search
+wd:crowdstrike:R29629,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,CrowdStrike,"Engineering Manager - Data Ingestion, NG-SIEM (Hybrid)",complete_search
+orc:jpmc:210800890,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Senior AI Product Manager,complete_scan
+orc:jpmc:210810124,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Product Delivery Manager,complete_scan
+orc:jpmc:210809520,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Business Relationship Manager Senior - Vice President,complete_scan
+orc:jpmc:210810644,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Business Relationship Manager Senior - Vice President,complete_scan
+orc:jpmc:210747004,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,Principal Technical Program Manager,complete_scan
+orc:jpmc:210808450,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,Lead Technical Program Manager,complete_scan
+orc:jpmc:210808983,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Investment Associate - Chicago, IL",complete_scan
+orc:jpmc:210811399,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"Data Domain Architect, Senior Associate",complete_scan
+orc:jpmc:210789551,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,JPMorgan Chase,"Executive Director, Agent Platform Lead",complete_scan
+orc:jpmc:210780044,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Global Finance and Business Management - Product Control- Associate,complete_scan
+orc:jpmc:210796515,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,Senior Lead Software Engineer - Java/Python/AWS/AI/LLM,complete_scan
+orc:jpmc:210785439,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,Payments - Receivables & Public Sector Business Manager - Vice President,complete_scan
+orc:jpmc:210743817,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Full Stack Java / React Senior Lead Software Engineer- Highbridge Capital Management,complete_scan
+orc:jpmc:210810535,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor in Licensing - Germantown, WI",complete_scan
+orc:jpmc:210766029,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Lead Software Engineer - Financial Markets,complete_scan
+orc:jpmc:210789609,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Python / Agentic AI Software Engineer III,complete_scan
+orc:jpmc:210790435,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Lead Software Engineer - Java, Corporate Technology",complete_scan
+orc:jpmc:210699821,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Winnetka, IL",complete_scan
+orc:jpmc:210699936,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Capital Downtown Branch, Madison, WI",complete_scan
+orc:jpmc:210769780,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Germantown, WI",complete_scan
+orc:jpmc:210773960,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Mequon, WI",complete_scan
+orc:jpmc:210773987,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor (East Towne Branch), Madison, WI",complete_scan
+orc:jpmc:210774108,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Racine, WI",complete_scan
+orc:jpmc:210778252,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Bristol, WI",complete_scan
+orc:jpmc:210779279,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor (Kenosha South Branch) - Kenosha, WI",complete_scan
+orc:jpmc:210794546,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Mount Pleasant, WI",complete_scan
+orc:jpmc:210794557,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Lake Geneva, WI",complete_scan
+orc:jpmc:210810540,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"J.P. Morgan Wealth Management - Private Client Advisor - Wauwatosa, WI",complete_scan
+orc:jpmc:210811152,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,"J.P. Morgan Wealth Management – Private Client Advisor - Commack, NY",complete_scan
+orc:jpmc:210790766,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Product Controller - Credit Risk Senior Associate, Card Services",complete_scan
+orc:jpmc:210807023,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer- AI Engineer (AI Tool & Framework Development),complete_scan
+orc:jpmc:210803927,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Lead Software Engineer - Python/Java, AWS, Terraform, CI/CD",complete_scan
+orc:jpmc:210801748,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Software Engineer III - AIML,complete_scan
+orc:jpmc:210807022,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer (AWS + Distributed),complete_scan
+orc:jpmc:210781244,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Eastside, WA South Area - Multiple Locations",complete_scan
+orc:jpmc:210781309,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, East Las Vegas Southend Area - Multiple Locations",complete_scan
+orc:jpmc:210782244,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, Northwest Atlanta/Marietta, GA Area - Multiple Locations",complete_scan
+orc:jpmc:210782938,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Fort Worth, TX Area - Multiple Locations",complete_scan
+orc:jpmc:210782945,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,JPMorgan Chase,"Associate Banker, 30 Hours, Garland/Rockwall, TX Area - Multiple Locations",complete_scan
+orc:jpmc:210782954,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, North Dallas/Carrollton, TX Area - Multiple Locations",complete_scan
+orc:jpmc:210801063,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 20 Hours, Chicago, IL - Bridgeport Halsted Branch",complete_scan
+orc:jpmc:210806886,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Chesterfield, MI - Gratiot and 23 Mile Branch",complete_scan
+orc:jpmc:210807371,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Part Time (20 Hours) Associate Banker, Oregon City Branch, Oregon City, OR",complete_scan
+orc:jpmc:210807615,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Part Time (30 Hours) Associate Banker, Fort Hamilton Pkwy and 65th St Branch, Brooklyn, NY Bilingual Mandarin Required",complete_scan
+orc:jpmc:210808296,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, Hendersonville, TN - Hendersonville Branch",complete_scan
+orc:jpmc:210808728,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, Little Rock, AR - Geyer Springs Rd Branch",complete_scan
+orc:jpmc:210808973,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Banker, 30 Hours, Pittsboro, NC - Pittsboro Branch",complete_scan
+orc:jpmc:210809365,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Associate Banker, 30 hours, Moscow, ID",complete_scan
+orc:jpmc:210809386,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Part Time (20 Hours) Associate Banker, James Street Branch, Syracuse, NY",complete_scan
+orc:jpmc:210809753,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Prince Frederick, Maryland - Prince Frederick Branch",complete_scan
+orc:jpmc:210809841,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Part Time (30 Hours) Associate Banker, West Greeley Branch, Greeley, CO",complete_scan
+orc:jpmc:210810019,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Part Time (30 Hours) Associate Banker, Mermaid Ave and W 15th Branch, Brooklyn, NY Bilingual Spanish Required",complete_scan
+orc:jpmc:210810061,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Part Time (30 Hours) Associate Banker, Maize and Central Branch, Wichita, KS",complete_scan
+orc:jpmc:210810077,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 20 Hours, Fond Du Lac, WI - Fond Du Lac Main Branch",complete_scan
+orc:jpmc:210810111,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Full Time (40 Hours) Associate Banker, Washington Thornton Branch, Thornton, CO",complete_scan
+orc:jpmc:210810170,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Part Time (30 Hours) Associate Banker, Papillion Branch, Papillion, NE",complete_scan
+orc:jpmc:210810173,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Full Time (40 Hours) Associate Banker, Peters Pkwy Branch, Papillion, NE",complete_scan
+orc:jpmc:210810195,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 20 Hours, Philadelphia, PA - Rodin Place Branch",complete_scan
+orc:jpmc:210810440,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Madison, WI - East Towne Branch",complete_scan
+orc:jpmc:210810558,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Boston, MA  - Boston Seaport Branch",complete_scan
+orc:jpmc:210810575,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Harrisburg, PA - Colonial Park Branch",complete_scan
+orc:jpmc:210810579,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Harrisburg, PA - Colonial Park Branch",complete_scan
+orc:jpmc:210810606,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Associate Banker, 30 Hours, Athens, OH - Athens Main Branch",complete_scan
+orc:jpmc:210796278,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer - Java/Python/AWS/AI/LLM,complete_scan
+orc:jpmc:210811046,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Home Lending Advisor Assistant- Columbus, OH",complete_scan
+orc:jpmc:210808054,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Part Time (20 hours) Associate Banker, Story Rd Branch, San Jose, CA",complete_scan
+orc:jpmc:210811335,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Equities Electronic Trading – J.P. Morgan NYSE Floor Broker – Vice President,complete_scan
+orc:jpmc:210811375,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Equities Electronic Trading – J.P. Morgan NYSE Floor Broker – Vice President,complete_scan
+orc:jpmc:210798147,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer- Payments Tech Lead –Java,complete_scan
+orc:jpmc:210799641,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer - Consumer Community Banking,complete_scan
+orc:jpmc:210810083,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Branch Operation Lead - Heritage South Market - Chicago, IL",complete_scan
+orc:jpmc:210807872,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Global Cybersecurity Education and Awareness Associate,complete_scan
+orc:jpmc:210799827,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,JPMorgan Chase,Security Engineer II -Python Developer,complete_scan
+orc:jpmc:210809796,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Implementation Manager,complete_scan
+orc:jpmc:210809389,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Branch Operations Lead Trainee, Biscayne and 209th, Aventura, FL",complete_scan
+orc:jpmc:210806760,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Wires and Cross-Border Payments - Product Operations, Strategy and Governance",complete_scan
+orc:jpmc:210772271,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Software Engineer -  AI/ML OPS Engineer,complete_scan
+orc:jpmc:210792140,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Vice President – Screening Efficiency & Analytics Strategy Lead,complete_scan
+orc:jpmc:210798419,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Vice President - Transaction Coordination Manager,complete_scan
+orc:jpmc:210808598,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Client Success Officer,complete_scan
+orc:jpmc:210809631,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Credit Card Fraud Recovery Specialist II,complete_scan
+orc:jpmc:210786651,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,Quantitative Trading & Research - Sales Derivative Quant - Vice President,complete_scan
+orc:jpmc:210810080,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,Private Client Banker - Crossroads Stevens Point- Plover WI,complete_scan
+orc:jpmc:210809921,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Private Client Banker - Northeast Market (Humble, TX Area) -  Houston, TX",complete_scan
+orc:jpmc:210810823,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"Private Client Banker - Spotswood Summerhill Rd. Branch - East Brunswick, NJ",complete_scan
+orc:jpmc:210811018,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Private Client Banker - Columbus Ave and 86th St. - New York, NY",complete_scan
+orc:jpmc:210811258,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,"Vice President, Relationship Manager (High-Net-Worth) - JPMorgan Private Client - Miami",complete_scan
+orc:jpmc:210783922,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,JPMorgan Chase,"Virtual Banker I - Plano, TX",complete_scan
+orc:jpmc:210783928,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Virtual Banker II - Detroit, MI",complete_scan
+orc:jpmc:210801530,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"J.P. Morgan Wealth Management- Senior Associate, Personal Advisors Field Programs & Enablement Lead",complete_scan
+orc:jpmc:210809785,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Business Relationship Manager I- Officer,complete_scan
+orc:jpmc:210809813,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Business Relationship Manager I- Officer,complete_scan
+orc:jpmc:210810904,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,JPMorgan Chase,Business Relationship Manager I,complete_scan
+orc:jpmc:210810976,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Branch Manager - Mount Kisco, NY",complete_scan
+orc:jpmc:210803706,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Relationship Banker-River Oaks Branch-Houston ,TX",complete_scan
+orc:jpmc:210805831,2026-11-23T22:05:06.157Z,2026-11-20T01:50:20.284Z,3.8,JPMorgan Chase,"Relationship Banker - Second Ave and 62nd St. - New York, NY",complete_scan
+orc:jpmc:210806327,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Relationship Banker- Brookline Area, MA",complete_scan
+orc:jpmc:210809219,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Nutley Center Branch - Nutley, NJ",complete_scan
+orc:jpmc:210809538,2026-11-23T22:05:06.157Z,2026-11-20T17:30:27.385Z,3.2,JPMorgan Chase,"Associate Relationship Banker- Camelback and 16th- Phoenix, AZ",complete_scan
+orc:jpmc:210809797,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Associate Relationship Banker  West Greeley - Greeley CO,complete_scan
+orc:jpmc:210810048,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Relationship Banker - Hudson Square - New York, NY",complete_scan
+orc:jpmc:210810161,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Relationship Banker- 360 Mechanicsville, VA",complete_scan
+orc:jpmc:210810260,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - South Cooper Branch - Arlington, TX",complete_scan
+orc:jpmc:210810530,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Foothills Market - Glendora, CA and Surrounding Areas",complete_scan
+orc:jpmc:210810531,2026-11-23T22:05:06.157Z,2026-11-20T14:15:48.136Z,3.3,JPMorgan Chase,"Relationship Banker - Bryant Park - New York, NY",complete_scan
+orc:jpmc:210810591,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - MLK Plaza Branch - St Louis, MO",complete_scan
+orc:jpmc:210810919,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Team Lead Portfolio Manager - Commercial Lending,complete_scan
+orc:jpmc:210810933,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Team Lead Portfolio Manager - Commercial Lending,complete_scan
+orc:jpmc:210810974,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Chicago O'Hare Market - Glen Ellyn, IL",complete_scan
+orc:jpmc:210810975,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Chicago O'Hare Market -Carol Stream, IL",complete_scan
+orc:jpmc:210811002,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Boston Area, Boston, MA",complete_scan
+orc:jpmc:210811037,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Relationship Banker - Dedham, MA",complete_scan
+orc:jpmc:210811039,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Dedham, MA",complete_scan
+orc:jpmc:210811135,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Associate Relationship Banker, Karamu, Cleveland, OH",complete_scan
+orc:jpmc:210811264,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Relationship Banker - Westlake - Westlake, OH",complete_scan
+orc:jpmc:210810185,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Executive Director- Change Management Lead- Consumer & Community Bank,complete_scan
+orc:jpmc:210810192,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Communications Senior Associate,complete_scan
+orc:jpmc:210810200,2026-11-23T22:05:06.157Z,2026-11-19T23:55:25.225Z,3.9,JPMorgan Chase,Associate Brand Media Manager,complete_scan
+orc:jpmc:210805670,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,JPMorgan Chase,Product Director – Personalization & Customer Insights,complete_scan
+orc:jpmc:210804453,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Senior Lead Architect: Identity, Access Management",complete_scan
+orc:jpmc:210806502,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Vice President, Quantitative Analytics Manager – Digital Analytics",complete_scan
+orc:jpmc:210744222,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Senior Home Lending Advisor- Indianapolis, IN",complete_scan
+orc:jpmc:210808024,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Senior Home Lending Advisor - East Windsor, NJ",complete_scan
+orc:jpmc:210808044,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Senior Home Lending Advisor - New York, NY - Audubon Branch",complete_scan
+orc:jpmc:210809080,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Senior Home Lending Advisor - Commack, NY",complete_scan
+orc:jpmc:210776467,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Card Risk Analytics - Consumer & Community Banking - Associate,complete_scan
+orc:jpmc:210788517,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,Lead Technical Program Manager,complete_scan
+orc:jpmc:210800768,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,JPMorgan Chase,"Product Manager, Vice President - Deposits 2.0 AI Enablement",complete_scan
+orc:jpmc:210808726,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,JPMorgan Chase,"Corporate Development, Digital Partnerships – Executive Director",complete_scan
+orc:jpmc:210798588,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,JPMorgan Chase,"Vice President, Consumer Community Banking Data Products - Senior Program Manager",complete_scan
+orc:jpmc:210806944,2026-11-23T22:05:06.157Z,2026-11-20T03:13:07.351Z,3.8,JPMorgan Chase,"J.P. Morgan Wealth Management – Select Growth Advisor - Boca Raton / Miami, FL",complete_scan
+orc:jpmc:210790374,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,JPMorgan Chase,Validation Services Product Manager - Payments - Vice President,complete_scan
+gh:natera:6218376004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Natera,Associate Clinical Oncology Specialist,complete_scan
+gh:natera:6267191004,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,Natera,Assoc Revenue Cycle Analyst,complete_scan
+gh:natera:6267193004,2026-11-23T22:05:06.157Z,2026-11-21T01:22:16.425Z,2.9,Natera,Assoc Revenue Cycle Analyst,complete_scan
+gh:natera:6263355004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Natera,Inside Sales Specialist-Temp,complete_scan
+gh:natera:6260842004,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Natera,Sr Research Associate,complete_scan
+sr:servicenow:744000162793382,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,ServiceNow,Advisory Solution Consultant,complete_search
+sr:servicenow:744000162324999,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ServiceNow,"VP, Global Government Affairs & Public Policy",complete_search
+sr:servicenow:744000156884427,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ServiceNow,"Advisory Solution Consultant – Security, Identity & Exposure Management  (Armis/Veza)",complete_search
+sr:servicenow:744000156884730,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ServiceNow,"Advisory Solution Consultant – Security, Identity & Exposure Management  (Armis/Veza)",complete_search
+sr:servicenow:744000153793876,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ServiceNow,Senior Solution Sales Executive ( Armis / Veza ),complete_search
+sr:servicenow:744000148624764,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ServiceNow,Senior AI Engineering Enablement Lead,complete_search
+wd:salesforce:JR368923,2026-11-23T22:05:06.157Z,2026-11-21T20:30:03.357Z,2.1,Salesforce,Software Engineering PMTS,complete_search
+wd:salesforce:JR368956,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Salesforce,"Senior Project Manager, Recruiting Transformation",complete_search
+wd:salesforce:JR362608,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Salesforce,"Systems Engineer, Marketing Cloud Engagement",complete_search
+wd:salesforce:JR368316,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Salesforce,"Finance Manager, Salesforce Ventures",complete_search
+wd:salesforce:JR355117,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Salesforce,"Senior Director, Product Marketing (Service Strategy, Core, and AI)",complete_search
+wd:salesforce:JR368680,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Salesforce,"Principal Product Designer, Experience Strategy & Studio",complete_search
+wd:salesforce:JR365609,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Salesforce,"VP, Product Management, Emerging Technology",complete_search
+wd:salesforce:JR358294,2026-11-23T22:05:06.157Z,2026-11-19T20:33:44.484Z,4.1,Salesforce,"Director, Executive Talent Experiences",complete_search
+wd:salesforce:JR367256,2026-11-23T22:05:06.157Z,2026-11-20T19:33:40.162Z,3.1,Salesforce,Learning Experience Design Senior Analyst,complete_search
+wd:salesforce:JR367356,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Salesforce,"Principal Researcher, Product Research & Insights -Slack",complete_search
+wd:salesforce:JR363955-1,2026-11-23T22:05:06.157Z,2026-11-20T04:50:02.629Z,3.7,Salesforce,Vulnerability Operations and Response Principal (Information Security),complete_search
+wd:salesforce:JR366532,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Salesforce,Senior Agentic Product Manager - MeshMesh,complete_search
+wd:salesforce:JR364868,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Salesforce,Senior Lead Technical Program Manager (Cleared),complete_search
+wd:salesforce:JR345876,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Salesforce,Technical Architect - Informatica MDM,complete_search
+wd:salesforce:JR360434,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,Salesforce,Accounting Manager,complete_search
+wd:gartner:116148,2026-11-23T22:05:06.157Z,2026-11-22T15:57:15.604Z,1.3,Gartner,Sr Data Analyst,complete_search
+wd:gartner:110315,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Gartner,"Sr Director Analyst, HR Technology/HR Data Governance and Management (REMOTE US)",complete_search
+wd:gartner:113429,2026-11-23T22:05:06.157Z,2026-11-21T23:36:19.243Z,1.9,Gartner,Digital Product Manager,complete_search
+wd:gartner:115225-1,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Client Executive, LE/GE, GTS",complete_search
+wd:gartner:112821,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Business Development Executive, Supply Chain & Procurement, LE",complete_search
+wd:gartner:115268-1,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Sales Manager, LE/GE, GTS - West Coast Region",complete_search
+wd:gartner:115099,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Senior Account Executive, GTS",complete_search
+wd:gartner:112227,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Sales Manager, LE/GE, GTS",complete_search
+wd:gartner:109494,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Business Development Executive, LE, GBS",complete_search
+wd:gartner:112414,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,Account Executive | Large Enterprise | St. Louis,complete_search
+wd:gartner:109706,2026-11-23T22:05:06.157Z,2026-11-22T02:50:32.012Z,1.8,Gartner,"Account Executive | Large Enterprise | Alaska, Remote",complete_search
+gh:axonius:8001615003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Axonius,Principal IT Architect,complete_scan
+gh:gitlab:8932246002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,GitLab,"Business Development Representative, Financial Services ",complete_scan
+gh:gitlab:8932248002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,GitLab,Business Development Representative - West,complete_scan
+gh:gitlab:8923121002,2026-11-23T22:05:06.157Z,2026-11-23T13:31:29.972Z,0.4,GitLab,Incident & Escalation Lead- Enterprise Customers,complete_scan
+gh:klaviyo:8035341003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Klaviyo,"Lead, Global Services Strategy & Operations",complete_scan
+gh:klaviyo:8035337003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Klaviyo,"Lead, Global Services Strategy & Operations",complete_scan
+gh:klaviyo:8035339003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Klaviyo,"Lead, Global Services Strategy & Operations",complete_scan
+gh:klaviyo:8000325003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Klaviyo,Lead Security Compliance Engineer,complete_scan
+gh:klaviyo:7997133003,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,Klaviyo,Lead Security Compliance Engineer,complete_scan
+gh:zoominfo:8765670002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ZoomInfo,"Manager, Account Management (Emerging Enterprise)",complete_scan
+gh:zoominfo:8634904002,2026-11-23T22:05:06.157Z,2026-11-19T19:34:22.449Z,4.1,ZoomInfo,"Principal Product Manager, AI Evaluation and Data Policy",complete_scan
+wd:nvidia:JR2030254,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,"Senior Software Engineer, Distributed Systems",complete_search
+wd:nvidia:JR2028929,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Technical Program Manager - GPU Software,complete_search
+wd:nvidia:JR2023857,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Software QA Test Development Engineer - Diagnostics,complete_search
+wd:nvidia:JR2018983,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Customer Safety Engineer - Automotive,complete_search
+wd:nvidia:JR2018422,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Product Development Engineer - Datacenter Boards,complete_search
+wd:nvidia:JR2018093,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Software Engineer - Simulation,complete_search
+wd:nvidia:JR2016633,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,Senior Cache Coherency Architect,complete_search
+wd:nvidia:JR2015189-1,2026-11-23T22:05:06.157Z,2026-11-21T21:58:58.541Z,2,NVIDIA,ASIC Design Engineer,complete_search
