@@ -687,3 +687,12 @@ main,.hud-top{z-index:5}
 /* a bigger wolf: it is the mark of the page */
 @media (min-width:861px){:root{--frameh:150px}.lc-brand .emblem.cfw{width:92px;height:119px;margin:-14px 0 -16px}.lc-ro{padding-top:14px!important}}
 @media (max-width:860px){.lc-frame{padding-top:12px}.lc-ro{padding-top:6px!important}}
+/* the reference's dark-blue frosted panel gradient (deep navy fading to midnight), and banded result rows */
+.panel,.mt-wrap,.cbox,.about-card,#windowBanner{
+  background:radial-gradient(ellipse 60% 70% at 0% 0%,rgba(43,79,158,.14),transparent 70%),linear-gradient(160deg,rgba(7,19,48,.82) 0%,rgba(4,11,26,.86) 50%,rgba(2,6,15,.9) 100%)!important;
+  -webkit-backdrop-filter:blur(4px)!important;backdrop-filter:blur(4px)!important}
+.lcw .panel.hero{background:radial-gradient(ellipse 50% 80% at 8% 0%,rgba(95,208,255,.08),transparent 70%),radial-gradient(ellipse 55% 80% at 100% 100%,rgba(43,79,158,.16),transparent 70%),linear-gradient(160deg,rgba(8,22,52,.8) 0%,rgba(4,11,26,.86) 55%,rgba(2,6,15,.9) 100%)!important}
+.mt tbody tr.mt-row td{background:rgba(2,6,15,.38)}
+.mt tbody tr.mt-row:nth-child(even of .mt-row) td{background:rgba(30,61,125,.30)}
+.mt tbody tr.mt-row:hover td{background:rgba(95,208,255,.08)!important}
+@media (max-width:860px){.mt tbody tr.mt-row{background:rgba(2,6,15,.38)}.mt tbody tr.mt-row:nth-child(even of .mt-row){background:rgba(30,61,125,.30)}.mt tbody tr.mt-row td,.mt tbody tr.mt-row:nth-child(even of .mt-row) td{background:transparent}}

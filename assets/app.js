@@ -1,7 +1,7 @@
-import * as C from './shared/core.mjs?v=20261122l';
-import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122l';
-import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122l';
-import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122l';
+import * as C from './shared/core.mjs?v=20261122m';
+import { CROSS, UNIVERSE } from './discovery.mjs?v=20261122m';
+import { extractResume, suggestFunctions } from './shared/resume.mjs?v=20261122m';
+import { initWidgets, updateWidgets, refreshWidgets, arrayFilter, arrayActive, arrayLabel, statusToast } from './lcars-widgets.js?v=20261122m';
 
 /* ============================================================ state */
 const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || C.TZ;
@@ -1044,7 +1044,7 @@ function wireMatches() {
   { // prompt for your own AI
     const dlg = $('#promptDlg');
     const build = async () => {
-      const { buildPrompt } = await import('./prompt.mjs?v=20261122l');
+      const { buildPrompt } = await import('./prompt.mjs?v=20261122m');
       const typeLabels = Object.fromEntries(Object.entries(EMP_TYPE).map(([k, v]) => [k, v.label]));
       const pv = $('#pdEmp').value;
       const txt = buildPrompt({ crit: S.crit, profile: S.profile, registry: S.registry, track: Object.fromEntries(Object.keys(S.track).map(u => [u, { s: stOf(u) }])), jobs: S.jobs, typeLabels,
