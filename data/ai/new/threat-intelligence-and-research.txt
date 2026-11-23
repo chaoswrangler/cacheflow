@@ -1,5 +1,5 @@
 # Cache Flow: Threat intelligence & research (Security practitioners)
-# 5 open roles first found 24 hours before 2026-11-23 22:34 (UTC). Updated after each collection, about 4 times a day.
+# 5 open roles first found 24 hours before 2026-11-23 23:10 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Intelligence Analyst, Global Security Intelligence | Amazon / AWS | Seattle, Washington, USA | onsite | base $80,200–$127,500 | category: Threat intelligence & research | level: Mid | posted 2026-11-23 | found 2026-11-23 | req 10611490 | skills: OSINT, Cybersecurity (general), Cyber risk & quantification, Customer success & adoption, 0→1 incubation, AI / ML (general), Financial services, Healthcare | https://www.amazon.jobs/en/jobs/10611490/intelligence-analyst-global-security-intelligence
