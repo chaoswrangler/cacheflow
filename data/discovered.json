@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-23T22:48:25.691Z",
+ "updated_at": "2026-11-24T16:04:32.972Z",
  "employers": [
   {
    "employer": "Slash",
@@ -4653,7 +4653,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-23: board reachable with 8 postings; ownership: postings name Osmosis.",
       "date": "2026-11-23"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
@@ -4773,6 +4774,217 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-23: board reachable with 5 postings; ownership: linked from orbitalops.tech.",
       "date": "2026-11-23"
+     },
+     "_ghHost": "boards-api.greenhouse.io"
+    }
+   ]
+  },
+  {
+   "employer": "AfterQuery",
+   "sector": "Cloud, data & dev tools",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/afterquery",
+   "careers_url": "https://afterquery.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:afterquery",
+     "ats": "ashby",
+     "slug": "AfterQuery",
+     "board_url": "https://jobs.ashbyhq.com/AfterQuery",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 41 postings; ownership: linked from afterquery.com.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Avallon AI",
+   "sector": "Fintech & financial services",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 7,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/avallon-ai",
+   "careers_url": "https://www.avallon.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:avallon",
+     "ats": "ashby",
+     "slug": "avallon",
+     "board_url": "https://jobs.ashbyhq.com/avallon",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 4 postings; ownership: linked from avallon.ai.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Auctor",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 30,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/auctor",
+   "careers_url": "https://getauctor.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:auctor",
+     "ats": "ashby",
+     "slug": "auctor",
+     "board_url": "https://jobs.ashbyhq.com/auctor",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 11 postings; ownership: linked from getauctor.com.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Claim Health",
+   "sector": "Healthcare & life sciences",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 6,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/claim-health",
+   "careers_url": "https://www.claimhealth.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:claimhealth",
+     "ats": "ashby",
+     "slug": "claim-health",
+     "board_url": "https://jobs.ashbyhq.com/claim-health",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 10 postings; ownership: linked from claimhealth.com.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Sim",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/sim",
+   "careers_url": "https://sim.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:sim",
+     "ats": "ashby",
+     "slug": "sim",
+     "board_url": "https://jobs.ashbyhq.com/sim",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 6 postings; ownership: linked from sim.ai.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Eloquent AI",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 5,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/eloquent-ai",
+   "careers_url": "https://www.eloquentai.co/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:eloquentai",
+     "ats": "ashby",
+     "slug": "eloquentai",
+     "board_url": "https://jobs.ashbyhq.com/eloquentai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 13 postings; ownership: linked from eloquentai.co.",
+      "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Lapel",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 14,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/lapel",
+   "careers_url": "https://lapel.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:lapel",
+     "ats": "ashby",
+     "slug": "Lapel",
+     "board_url": "https://jobs.ashbyhq.com/Lapel",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-24: board reachable with 8 postings; ownership: linked from lapel.com.",
+      "date": "2026-11-24"
      }
     }
    ]

@@ -1,5 +1,5 @@
 {
- "next": 642,
+ "next": 682,
  "checked": {
   "rescale": {
    "at": "2026-11-20T04:21:49.368Z",
@@ -5850,12 +5850,432 @@
     "ashby:fuse=44 jobs (rejected: postings don't name the company or its domain)",
     "greenhouse:fuse=404"
    ]
+  },
+  "afterquery": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:AfterQuery",
+   "tried": [
+    "ashby:AfterQuery=41 jobs"
+   ]
+  },
+  "forgeautomation": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:forgeautomation=404",
+    "greenhouse:forgeautomation=404",
+    "lever:forgeautomation=404",
+    "ashby:forge-automation=404",
+    "greenhouse:forge-automation=404",
+    "lever:forge-automation=404"
+   ]
+  },
+  "reditusspace": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:reditusspace=404",
+    "greenhouse:reditusspace=404",
+    "lever:reditusspace=404",
+    "ashby:reditus-space=404",
+    "greenhouse:reditus-space=404",
+    "lever:reditus-space=404",
+    "ashby:reditus=404",
+    "greenhouse:reditus=404"
+   ]
+  },
+  "proceptioninc": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:proceptioninc=404",
+    "greenhouse:proceptioninc=404",
+    "lever:proceptioninc=404",
+    "ashby:proception-inc=404",
+    "greenhouse:proception-inc=404",
+    "lever:proception-inc=404",
+    "ashby:proception=404",
+    "greenhouse:proception=404"
+   ]
+  },
+  "woz": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:woz=404",
+    "greenhouse:woz=404",
+    "lever:woz=404",
+    "ashby:wozcode=404",
+    "greenhouse:wozcode=404",
+    "lever:wozcode=404"
+   ]
+  },
+  "ergo": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:ergo=404",
+    "greenhouse:ergo=404",
+    "lever:ergo=404",
+    "ashby:joinergo=404",
+    "greenhouse:joinergo=404",
+    "lever:joinergo=404"
+   ]
+  },
+  "browseruse": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:browseruse=404",
+    "greenhouse:browseruse=404",
+    "lever:browseruse=404",
+    "ashby:browser-use=404",
+    "greenhouse:browser-use=404",
+    "lever:browser-use=404"
+   ]
+  },
+  "trainloop": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:trainloop=404",
+    "greenhouse:trainloop=404",
+    "lever:trainloop=404"
+   ]
+  },
+  "qfex": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:qfex=404",
+    "greenhouse:qfex=404",
+    "lever:qfex=404"
+   ]
+  },
+  "avallonai": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:avallon",
+   "tried": [
+    "ashby:avallon=4 jobs"
+   ]
+  },
+  "groundcontrol": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:groundcontrol=404",
+    "greenhouse:groundcontrol=404",
+    "lever:groundcontrol=404",
+    "ashby:rungroundcontrol=404",
+    "greenhouse:rungroundcontrol=404",
+    "lever:rungroundcontrol=404"
+   ]
+  },
+  "synthiolabs": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:synthiolabs=404",
+    "greenhouse:synthiolabs=404",
+    "lever:synthiolabs=404",
+    "ashby:synthio-labs=404",
+    "greenhouse:synthio-labs=404",
+    "lever:synthio-labs=404",
+    "ashby:synthio=404",
+    "greenhouse:synthio=404"
+   ]
+  },
+  "auctor": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:auctor",
+   "tried": [
+    "ashby:auctor=11 jobs"
+   ]
+  },
+  "claimhealth": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:claim-health",
+   "tried": [
+    "ashby:claim-health=10 jobs"
+   ]
+  },
+  "almond": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:almond=404",
+    "greenhouse:almond=404",
+    "lever:almond=404"
+   ]
+  },
+  "sim": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:sim",
+   "tried": [
+    "ashby:sim=6 jobs"
+   ]
+  },
+  "mbodiai": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:mbodiai=404",
+    "greenhouse:mbodiai=404",
+    "lever:mbodiai=404",
+    "ashby:mbodi-ai=404",
+    "greenhouse:mbodi-ai=404",
+    "lever:mbodi-ai=404",
+    "ashby:mbodi=404",
+    "greenhouse:mbodi=404"
+   ]
+  },
+  "bluejay": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:bluejay=404",
+    "greenhouse:bluejay=404",
+    "lever:bluejay=404",
+    "ashby:getbluejay=404",
+    "greenhouse:getbluejay=404",
+    "lever:getbluejay=404"
+   ]
+  },
+  "sixtyfour": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:sixtyfour=404",
+    "greenhouse:sixtyfour=404",
+    "lever:sixtyfour=404"
+   ]
+  },
+  "photonium": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:photonium=404",
+    "greenhouse:photonium=404",
+    "lever:photonium=404",
+    "ashby:photoniumoptics=404",
+    "greenhouse:photoniumoptics=404",
+    "lever:photoniumoptics=404"
+   ]
+  },
+  "kaizen": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:kaizen=0 jobs",
+    "greenhouse:kaizen=404",
+    "lever:kaizen=404",
+    "ashby:kaizenautomation=404",
+    "greenhouse:kaizenautomation=404",
+    "lever:kaizenautomation=404"
+   ]
+  },
+  "novoflow": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:novoflow=404",
+    "greenhouse:novoflow=404",
+    "lever:novoflow=404"
+   ]
+  },
+  "nixo": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:nixo=404",
+    "greenhouse:nixo=404",
+    "lever:nixo=404",
+    "ashby:withnixo=404",
+    "greenhouse:withnixo=404",
+    "lever:withnixo=404"
+   ]
+  },
+  "qualgent": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:qualgent=404",
+    "greenhouse:qualgent=404",
+    "lever:qualgent=404"
+   ]
+  },
+  "besimpleai": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:besimpleai=404",
+    "greenhouse:besimpleai=404",
+    "lever:besimpleai=404",
+    "ashby:besimple-ai=404",
+    "greenhouse:besimple-ai=404",
+    "lever:besimple-ai=404",
+    "ashby:besimple=404",
+    "greenhouse:besimple=404"
+   ]
+  },
+  "vesence": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:vesence=404",
+    "greenhouse:vesence=404",
+    "lever:vesence=404"
+   ]
+  },
+  "thirdchair": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:thirdchair=404",
+    "greenhouse:thirdchair=404",
+    "lever:thirdchair=404",
+    "ashby:third-chair=404",
+    "greenhouse:third-chair=404",
+    "lever:third-chair=404",
+    "ashby:usethirdchair=404",
+    "greenhouse:usethirdchair=404"
+   ]
+  },
+  "morphoai": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:morphoai=404",
+    "greenhouse:morphoai=404",
+    "lever:morphoai=404",
+    "ashby:morpho=12 jobs (rejected: postings don't name the company or its domain)",
+    "greenhouse:morpho=404",
+    "lever:morpho=404"
+   ]
+  },
+  "eloquentai": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:eloquentai",
+   "tried": [
+    "ashby:eloquentai=13 jobs"
+   ]
+  },
+  "nave": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:nave=404",
+    "greenhouse:nave=404",
+    "lever:nave=404",
+    "ashby:na-ve=404",
+    "greenhouse:na-ve=404",
+    "lever:na-ve=404",
+    "ashby:usenaive=404",
+    "greenhouse:usenaive=404"
+   ]
+  },
+  "lapel": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "ashby:Lapel",
+   "tried": [
+    "ashby:Lapel=8 jobs"
+   ]
+  },
+  "mindfort": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:mindfort=404",
+    "greenhouse:mindfort=404",
+    "lever:mindfort=404"
+   ]
+  },
+  "adentris": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:adentris=404",
+    "greenhouse:adentris=404",
+    "lever:adentris=404"
+   ]
+  },
+  "cotool": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:cotool=404",
+    "greenhouse:cotool=404",
+    "lever:cotool=404"
+   ]
+  },
+  "lumari": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:lumari=404",
+    "greenhouse:lumari=404",
+    "lever:lumari=404"
+   ]
+  },
+  "airweave": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:Airweave=404"
+   ]
+  },
+  "cascadespace": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:cascadespace=404",
+    "greenhouse:cascadespace=404",
+    "lever:cascadespace=404",
+    "ashby:cascade-space=404",
+    "greenhouse:cascade-space=404",
+    "lever:cascade-space=404"
+   ]
+  },
+  "godela": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:godela=404",
+    "greenhouse:godela=404",
+    "lever:godela=404"
+   ]
+  },
+  "foundationindustries": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:foundationindustries=404",
+    "greenhouse:foundationindustries=404",
+    "lever:foundationindustries=404",
+    "ashby:foundation-industries=404",
+    "greenhouse:foundation-industries=404",
+    "lever:foundation-industries=404"
+   ]
+  },
+  "autonomoustechnologiesgroup": {
+   "at": "2026-11-24T16:04:32.972Z",
+   "result": "not_found",
+   "tried": [
+    "ashby:autonomoustechnologiesgroup=404",
+    "greenhouse:autonomoustechnologiesgroup=404",
+    "lever:autonomoustechnologiesgroup=404",
+    "ashby:autonomous-technologies-group=404",
+    "greenhouse:autonomous-technologies-group=404",
+    "lever:autonomous-technologies-group=404",
+    "ashby:autonomousgroup=404",
+    "greenhouse:autonomousgroup=404"
+   ]
   }
  },
- "updated_at": "2026-11-23T22:48:25.691Z",
+ "updated_at": "2026-11-24T16:04:32.972Z",
  "progress": {
   "seeds": 792,
-  "checked": 640,
-  "found": 159
+  "checked": 680,
+  "found": 166
  }
 }

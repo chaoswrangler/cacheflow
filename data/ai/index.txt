@@ -1,33 +1,33 @@
-# Cache Flow new-roles files, 2026-11-23 23:10 UTC
+# Cache Flow new-roles files, 2026-11-24 16:25 UTC
 # Roles first found in the last 24 hours, one file per job category. Paths are relative to the site address.
-data/ai/new-roles.csv | All categories in one CSV table | 1871 roles
-data/ai/new/product-management.txt | Product management (Product & program management) | 64 roles
-data/ai/new/program-and-project-management.txt | Program & project management (Product & program management) | 80 roles
-data/ai/new/product-marketing.txt | Product marketing (Marketing & GTM) | 11 roles
-data/ai/new/brand-content-and-communications.txt | Brand, content & communications (Marketing & GTM) | 77 roles
-data/ai/new/demand-generation-and-growth.txt | Demand generation & growth (Marketing & GTM) | 45 roles
-data/ai/new/gtm-strategy-and-revenue-operations.txt | GTM strategy & revenue operations (Marketing & GTM) | 35 roles
-data/ai/new/competitive-and-market-intelligence.txt | Competitive & market intelligence (Marketing & GTM) | 1 roles
-data/ai/new/sales-and-account-management.txt | Sales & account management (Sales & customer success) | 250 roles
-data/ai/new/sales-and-solutions-engineering.txt | Sales & solutions engineering (Sales & customer success) | 88 roles
-data/ai/new/partnerships-alliances-and-channel.txt | Partnerships, alliances & channel (Sales & customer success) | 33 roles
-data/ai/new/customer-success.txt | Customer success (Sales & customer success) | 39 roles
-data/ai/new/sales-enablement-and-training.txt | Sales enablement & training (Learning & enablement) | 12 roles
-data/ai/new/instructional-design-and-learning-content.txt | Instructional design & learning content (Learning & enablement) | 7 roles
-data/ai/new/strategy-business-operations-and-chief-of-staff.txt | Strategy, business operations & chief of staff (Strategy & business operations) | 81 roles
-data/ai/new/consulting-and-advisory.txt | Consulting & advisory (Consulting & advisory) | 49 roles
-data/ai/new/threat-intelligence-and-research.txt | Threat intelligence & research (Security practitioners) | 5 roles
+data/ai/new-roles.csv | All categories in one CSV table | 1739 roles
+data/ai/new/product-management.txt | Product management (Product & program management) | 70 roles
+data/ai/new/program-and-project-management.txt | Program & project management (Product & program management) | 85 roles
+data/ai/new/product-marketing.txt | Product marketing (Marketing & GTM) | 4 roles
+data/ai/new/brand-content-and-communications.txt | Brand, content & communications (Marketing & GTM) | 61 roles
+data/ai/new/demand-generation-and-growth.txt | Demand generation & growth (Marketing & GTM) | 28 roles
+data/ai/new/gtm-strategy-and-revenue-operations.txt | GTM strategy & revenue operations (Marketing & GTM) | 36 roles
+data/ai/new/competitive-and-market-intelligence.txt | Competitive & market intelligence (Marketing & GTM) | 0 roles
+data/ai/new/sales-and-account-management.txt | Sales & account management (Sales & customer success) | 173 roles
+data/ai/new/sales-and-solutions-engineering.txt | Sales & solutions engineering (Sales & customer success) | 72 roles
+data/ai/new/partnerships-alliances-and-channel.txt | Partnerships, alliances & channel (Sales & customer success) | 38 roles
+data/ai/new/customer-success.txt | Customer success (Sales & customer success) | 33 roles
+data/ai/new/sales-enablement-and-training.txt | Sales enablement & training (Learning & enablement) | 13 roles
+data/ai/new/instructional-design-and-learning-content.txt | Instructional design & learning content (Learning & enablement) | 5 roles
+data/ai/new/strategy-business-operations-and-chief-of-staff.txt | Strategy, business operations & chief of staff (Strategy & business operations) | 85 roles
+data/ai/new/consulting-and-advisory.txt | Consulting & advisory (Consulting & advisory) | 55 roles
+data/ai/new/threat-intelligence-and-research.txt | Threat intelligence & research (Security practitioners) | 3 roles
 data/ai/new/soc-detection-and-incident-response.txt | SOC, detection & incident response (Security practitioners) | 11 roles
-data/ai/new/security-engineering-and-architecture.txt | Security engineering & architecture (Security practitioners) | 17 roles
-data/ai/new/grc-risk-and-privacy.txt | GRC, risk & privacy (Security practitioners) | 35 roles
-data/ai/new/ai-strategy-and-solutions.txt | AI strategy & solutions (AI, engineering & data) | 50 roles
-data/ai/new/ml-engineering-and-research.txt | ML engineering & research (AI, engineering & data) | 89 roles
-data/ai/new/software-and-infrastructure-engineering.txt | Software & infrastructure engineering (AI, engineering & data) | 267 roles
-data/ai/new/data-and-analytics.txt | Data & analytics (AI, engineering & data) | 38 roles
-data/ai/new/design-and-ux-research.txt | Design & UX research (AI, engineering & data) | 34 roles
-data/ai/new/customer-support.txt | Customer support (Corporate functions) | 23 roles
-data/ai/new/finance-and-accounting.txt | Finance & accounting (Corporate functions) | 65 roles
-data/ai/new/people-hr-and-recruiting.txt | People, HR & recruiting (Corporate functions) | 37 roles
-data/ai/new/legal-policy-and-government-affairs.txt | Legal, policy & government affairs (Corporate functions) | 21 roles
-data/ai/new/other-roles.txt | Other roles (Corporate functions) part 1/2 | 457 roles
-data/ai/new/other-roles-2.txt | Other roles (Corporate functions) part 2/2 | 113 roles
+data/ai/new/security-engineering-and-architecture.txt | Security engineering & architecture (Security practitioners) | 13 roles
+data/ai/new/grc-risk-and-privacy.txt | GRC, risk & privacy (Security practitioners) | 37 roles
+data/ai/new/ai-strategy-and-solutions.txt | AI strategy & solutions (AI, engineering & data) | 54 roles
+data/ai/new/ml-engineering-and-research.txt | ML engineering & research (AI, engineering & data) | 80 roles
+data/ai/new/software-and-infrastructure-engineering.txt | Software & infrastructure engineering (AI, engineering & data) | 233 roles
+data/ai/new/data-and-analytics.txt | Data & analytics (AI, engineering & data) | 41 roles
+data/ai/new/design-and-ux-research.txt | Design & UX research (AI, engineering & data) | 28 roles
+data/ai/new/customer-support.txt | Customer support (Corporate functions) | 24 roles
+data/ai/new/finance-and-accounting.txt | Finance & accounting (Corporate functions) | 71 roles
+data/ai/new/people-hr-and-recruiting.txt | People, HR & recruiting (Corporate functions) | 36 roles
+data/ai/new/legal-policy-and-government-affairs.txt | Legal, policy & government affairs (Corporate functions) | 26 roles
+data/ai/new/other-roles.txt | Other roles (Corporate functions) part 1/2 | 450 roles
+data/ai/new/other-roles-2.txt | Other roles (Corporate functions) part 2/2 | 138 roles
