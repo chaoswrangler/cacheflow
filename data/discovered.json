@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-25T04:15:57.751Z",
+ "updated_at": "2026-11-25T19:14:28.472Z",
  "employers": [
   {
    "employer": "Slash",
@@ -5525,7 +5525,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-25: board reachable with 30 postings; ownership: postings name Icarus.",
       "date": "2026-11-25"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
@@ -5764,6 +5765,126 @@
      "verification": {
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-25: board reachable with 4 postings; ownership: linked from polymathlabs.ai.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Fireblocks",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": null,
+   "size_source": null,
+   "seed_source": "cyberstarts",
+   "seed_url": null,
+   "careers_url": "https://www.fireblocks.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the cyberstarts seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:fireblocks",
+     "ats": "greenhouse",
+     "slug": "fireblocks",
+     "board_url": "https://job-boards.greenhouse.io/fireblocks",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 37 postings; ownership: linked from fireblocks.com.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Zafran",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": null,
+   "size_source": null,
+   "seed_source": "cyberstarts",
+   "seed_url": null,
+   "careers_url": "https://www.zafran.io",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the cyberstarts seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:zafransecurity",
+     "ats": "ashby",
+     "slug": "zafran-security",
+     "board_url": "https://jobs.ashbyhq.com/zafran-security",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 32 postings; ownership: linked from zafran.io.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Surf AI",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": null,
+   "size_source": null,
+   "seed_source": "cyberstarts",
+   "seed_url": null,
+   "careers_url": null,
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the cyberstarts seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:surfai",
+     "ats": "greenhouse",
+     "slug": "surfai",
+     "board_url": "https://job-boards.greenhouse.io/surfai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 4 postings; ownership: postings name Surf AI.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Trustmi",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": null,
+   "size_source": null,
+   "seed_source": "cyberstarts",
+   "seed_url": null,
+   "careers_url": "https://www.trustmi.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the cyberstarts seed list."
+   ],
+   "sources": [
+    {
+     "id": "workable:trustmi",
+     "ats": "workable",
+     "slug": "trustmi",
+     "board_url": "https://apply.workable.com/trustmi/",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 1 postings; ownership: linked from trustmi.ai.",
       "date": "2026-11-25"
      }
     }
