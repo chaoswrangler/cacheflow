@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-24T20:42:14.987Z",
+ "updated_at": "2026-11-25T04:15:57.751Z",
  "employers": [
   {
    "employer": "Slash",
@@ -5495,6 +5495,276 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-24: board reachable with 7 postings; ownership: linked from sf-tensor.com.",
       "date": "2026-11-24"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Icarus",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 50,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/icarus",
+   "careers_url": "https://www.icarus.one/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "gh:icarus",
+     "ats": "greenhouse",
+     "slug": "icarus",
+     "board_url": "https://job-boards.greenhouse.io/icarus",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 30 postings; ownership: postings name Icarus.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "DiligenceSquared",
+   "sector": "AI",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 5,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/diligencesquared-inc",
+   "careers_url": "https://diligencesquared.com/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:diligencesquared",
+     "ats": "ashby",
+     "slug": "DiligenceSquared",
+     "board_url": "https://jobs.ashbyhq.com/DiligenceSquared",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 8 postings; ownership: linked from diligencesquared.com.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Ploy",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 14,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/ploy",
+   "careers_url": "https://ploy.ai",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:ployai",
+     "ats": "ashby",
+     "slug": "ployai",
+     "board_url": "https://jobs.ashbyhq.com/ployai",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 6 postings; ownership: linked from ploy.ai.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Lance",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 10,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/lance",
+   "careers_url": "https://www.lance.live",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:lance",
+     "ats": "ashby",
+     "slug": "Lance",
+     "board_url": "https://jobs.ashbyhq.com/Lance",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 8 postings; ownership: linked from lance.live.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Beyond Reach Labs",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 15,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/beyond-reach-labs",
+   "careers_url": "https://www.beyondreachlabs.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:beyondreachlabs",
+     "ats": "ashby",
+     "slug": "beyondreachlabs",
+     "board_url": "https://jobs.ashbyhq.com/beyondreachlabs",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 9 postings; ownership: postings name Beyond Reach Labs.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Parameter",
+   "sector": "Cybersecurity",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 14,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/parameter",
+   "careers_url": "https://parameter.ai?utm_source=ycombinator&utm_medium=referral&utm_campaign=parameter-profile",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:parameter",
+     "ats": "ashby",
+     "slug": "parameter",
+     "board_url": "https://jobs.ashbyhq.com/parameter",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 5 postings; ownership: postings name Parameter.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "9 Mothers",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 19,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/9-mothers-corporation",
+   "careers_url": "https://9mothers.com",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:9mothers",
+     "ats": "ashby",
+     "slug": "9-mothers",
+     "board_url": "https://jobs.ashbyhq.com/9-mothers",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 10 postings; ownership: linked from 9mothers.com.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Human Archive",
+   "sector": "Industrial, mobility & govtech",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 100,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/human-archive",
+   "careers_url": "https://www.humanarchive.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:humanarchive",
+     "ats": "ashby",
+     "slug": "humanarchive",
+     "board_url": "https://jobs.ashbyhq.com/humanarchive",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 22 postings; ownership: postings name Human Archive.",
+      "date": "2026-11-25"
+     }
+    }
+   ]
+  },
+  {
+   "employer": "Polymath",
+   "sector": "Enterprise SaaS",
+   "vertical": "",
+   "tier": "core",
+   "type": "growth",
+   "discovered": true,
+   "size": 6,
+   "size_source": "YC directory team size",
+   "seed_source": "yc",
+   "seed_url": "https://www.ycombinator.com/companies/polymath",
+   "careers_url": "https://polymathlabs.ai/",
+   "careers_url_verified": false,
+   "notes": [
+    "Found automatically from the Y Combinator directory seed list."
+   ],
+   "sources": [
+    {
+     "id": "ashby:polymath",
+     "ats": "ashby",
+     "slug": "polymath",
+     "board_url": "https://jobs.ashbyhq.com/polymath",
+     "verification": {
+      "status": "auto_discovered",
+      "method": "Seed probe 2026-11-25: board reachable with 4 postings; ownership: linked from polymathlabs.ai.",
+      "date": "2026-11-25"
      }
     }
    ]
