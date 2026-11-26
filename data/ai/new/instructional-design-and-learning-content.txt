@@ -1,5 +1,5 @@
 # Cache Flow: Instructional design & learning content (Learning & enablement)
-# 4 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 4 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Delivery Trainer, RSR | Amazon / AWS | Park Hills, Missouri, USA | onsite | base $48,880/hour | category: Instructional design & learning content | level: Mid | posted 2026-11-25 | found 2026-11-25 | req 10614167 | skills: GRC & compliance, Audit, Training & certification programs | https://www.amazon.jobs/en/jobs/10614167/delivery-trainer-rsr

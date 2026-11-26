@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-11-26T02:59:41.889Z",
+ "generated_at": "2026-11-26T03:55:50.557Z",
  "window_hours": 24,
  "files": [
   {
    "category": "product",
    "label": "Product management (Product & program management)",
    "file": "data/ai/new/product-management.txt",
-   "roles": 48,
+   "roles": 51,
    "part": 1,
    "parts": 1
   },
@@ -14,7 +14,7 @@
    "category": "tpm",
    "label": "Program & project management (Product & program management)",
    "file": "data/ai/new/program-and-project-management.txt",
-   "roles": 59,
+   "roles": 60,
    "part": 1,
    "parts": 1
   },
@@ -30,7 +30,7 @@
    "category": "marketing",
    "label": "Brand, content & communications (Marketing & GTM)",
    "file": "data/ai/new/brand-content-and-communications.txt",
-   "roles": 90,
+   "roles": 91,
    "part": 1,
    "parts": 1
   },
@@ -38,7 +38,7 @@
    "category": "demand",
    "label": "Demand generation & growth (Marketing & GTM)",
    "file": "data/ai/new/demand-generation-and-growth.txt",
-   "roles": 40,
+   "roles": 41,
    "part": 1,
    "parts": 1
   },
@@ -78,7 +78,7 @@
    "category": "partner",
    "label": "Partnerships, alliances & channel (Sales & customer success)",
    "file": "data/ai/new/partnerships-alliances-and-channel.txt",
-   "roles": 32,
+   "roles": 34,
    "part": 1,
    "parts": 1
   },
@@ -94,7 +94,7 @@
    "category": "enable",
    "label": "Sales enablement & training (Learning & enablement)",
    "file": "data/ai/new/sales-enablement-and-training.txt",
-   "roles": 14,
+   "roles": 15,
    "part": 1,
    "parts": 1
   },
@@ -110,7 +110,7 @@
    "category": "strategy",
    "label": "Strategy, business operations & chief of staff (Strategy & business operations)",
    "file": "data/ai/new/strategy-business-operations-and-chief-of-staff.txt",
-   "roles": 61,
+   "roles": 64,
    "part": 1,
    "parts": 1
   },
@@ -118,7 +118,7 @@
    "category": "consulting",
    "label": "Consulting & advisory (Consulting & advisory)",
    "file": "data/ai/new/consulting-and-advisory.txt",
-   "roles": 48,
+   "roles": 50,
    "part": 1,
    "parts": 1
   },
@@ -134,7 +134,7 @@
    "category": "secops",
    "label": "SOC, detection & incident response (Security practitioners)",
    "file": "data/ai/new/soc-detection-and-incident-response.txt",
-   "roles": 23,
+   "roles": 24,
    "part": 1,
    "parts": 1
   },
@@ -142,7 +142,7 @@
    "category": "seceng",
    "label": "Security engineering & architecture (Security practitioners)",
    "file": "data/ai/new/security-engineering-and-architecture.txt",
-   "roles": 24,
+   "roles": 26,
    "part": 1,
    "parts": 1
   },
@@ -150,7 +150,7 @@
    "category": "grc",
    "label": "GRC, risk & privacy (Security practitioners)",
    "file": "data/ai/new/grc-risk-and-privacy.txt",
-   "roles": 33,
+   "roles": 35,
    "part": 1,
    "parts": 1
   },
@@ -166,7 +166,7 @@
    "category": "mleng",
    "label": "ML engineering & research (AI, engineering & data)",
    "file": "data/ai/new/ml-engineering-and-research.txt",
-   "roles": 53,
+   "roles": 56,
    "part": 1,
    "parts": 1
   },
@@ -174,7 +174,7 @@
    "category": "eng",
    "label": "Software & infrastructure engineering (AI, engineering & data)",
    "file": "data/ai/new/software-and-infrastructure-engineering.txt",
-   "roles": 216,
+   "roles": 219,
    "part": 1,
    "parts": 1
   },
@@ -182,7 +182,7 @@
    "category": "data",
    "label": "Data & analytics (AI, engineering & data)",
    "file": "data/ai/new/data-and-analytics.txt",
-   "roles": 35,
+   "roles": 37,
    "part": 1,
    "parts": 1
   },
@@ -198,7 +198,7 @@
    "category": "support",
    "label": "Customer support (Corporate functions)",
    "file": "data/ai/new/customer-support.txt",
-   "roles": 14,
+   "roles": 15,
    "part": 1,
    "parts": 1
   },
@@ -206,7 +206,7 @@
    "category": "finance",
    "label": "Finance & accounting (Corporate functions)",
    "file": "data/ai/new/finance-and-accounting.txt",
-   "roles": 69,
+   "roles": 70,
    "part": 1,
    "parts": 1
   },
@@ -214,7 +214,7 @@
    "category": "people",
    "label": "People, HR & recruiting (Corporate functions)",
    "file": "data/ai/new/people-hr-and-recruiting.txt",
-   "roles": 26,
+   "roles": 30,
    "part": 1,
    "parts": 1
   },
@@ -222,7 +222,7 @@
    "category": "legal",
    "label": "Legal, policy & government affairs (Corporate functions)",
    "file": "data/ai/new/legal-policy-and-government-affairs.txt",
-   "roles": 13,
+   "roles": 14,
    "part": 1,
    "parts": 1
   },
@@ -238,7 +238,7 @@
    "category": "other",
    "label": "Other roles (Corporate functions)",
    "file": "data/ai/new/other-roles-2.txt",
-   "roles": 150,
+   "roles": 161,
    "part": 2,
    "parts": 2
   }

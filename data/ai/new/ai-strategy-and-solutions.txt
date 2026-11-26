@@ -1,5 +1,5 @@
 # Cache Flow: AI strategy & solutions (AI, engineering & data)
-# 46 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 46 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 AI/ML Computational Science Specialist | Accenture | Mountain View, 650 Castro, Corp; Milwaukee, 790 N Milwaukee St, Corp +6 more | hybrid | pay $70,350–$205,800 | category: AI strategy & solutions | level: Mid | Workday start date 2026-11-24 | found 2026-11-25 | req R00322443 | skills: Pipeline & revenue, Technology ecosystem & integrations, Field & event marketing, Professional services & delivery, 0→1 incubation, AI / ML (general), Agents & agentic workflows, Cross-functional leadership | https://accenture.wd103.myworkdayjobs.com/AccentureCareers/job/Mountain-View-650-Castro-Corp/AI-ML-Computational-Science-Specialist_R00322443

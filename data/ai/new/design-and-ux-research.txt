@@ -1,5 +1,5 @@
 # Cache Flow: Design & UX research (AI, engineering & data)
-# 21 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 21 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Product Designer II, Design Systems, People Engagement eXperience | Amazon / AWS | Seattle, Washington, USA | onsite | base $117,800–$160,000 | category: Design & UX research | level: Mid | posted 2026-11-25 | found 2026-11-25 | req 10614078 | skills: Value engineering & ROI, Customer success & adoption, Product management, Product strategy & roadmap, 0→1 incubation, Program management, AI / ML (general), Financial services | https://www.amazon.jobs/en/jobs/10614078/product-designer-ii-design-systems-people-engagement-experience

@@ -1,5 +1,5 @@
 # Cache Flow: Competitive & market intelligence (Marketing & GTM)
-# 4 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 4 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Experience Research Vice President | JPMorgan Chase | Columbus, OH, United States | onsite | pay not stated | category: Competitive & market intelligence | level: VP & executive | posted 2026-11-25 | found 2026-11-25 | req 210811828 | skills: GRC & compliance, Product management, AI / ML (general), Cross-functional leadership, Community & advocacy | https://jpmc.fa.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/210811828

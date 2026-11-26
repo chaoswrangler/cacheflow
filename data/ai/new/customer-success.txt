@@ -1,5 +1,5 @@
 # Cache Flow: Customer success (Sales & customer success)
-# 29 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 29 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Director, Customer Success - Public Sector | Abnormal AI | Remote - USA; Remote - USA | remote | base $210,800–$248,000 | category: Customer success | level: Director/head | first published 2026-11-25 | found 2026-11-26 | req R-101423 | skills: Cybersecurity (general), Email security, GRC & compliance, FedRAMP, CMMC & public sector, Security clearance, SaaS / B2B, Account management & expansion, Renewals | https://abnormal.ai/careers/jobs/8216723003?gh_jid=8216723003

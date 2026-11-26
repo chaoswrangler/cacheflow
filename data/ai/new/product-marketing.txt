@@ -1,5 +1,5 @@
 # Cache Flow: Product marketing (Marketing & GTM)
-# 18 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 18 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Product Marketing Manager | Abacum | Remote US | remote | base $125,000–$140,000 | category: Product marketing, Brand, content & communications | level: Mid | posted 2026-11-24 | found 2026-11-25 | skills: Security metrics & board reporting, SaaS / B2B, Forecasting & deal desk, Sales development (SDR/BDR), Channel & partners, Go-to-market strategy, Product marketing, Positioning & messaging | https://jobs.ashbyhq.com/abacum/8d4f97b9-3eec-4a82-8ea7-63da977ee62f

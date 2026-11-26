@@ -1,5 +1,5 @@
 # Cache Flow: Threat intelligence & research (Security practitioners)
-# 4 open roles first found 24 hours before 2026-11-26 02:59 (UTC). Updated after each collection, about 4 times a day.
+# 4 open roles first found 24 hours before 2026-11-26 03:55 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Social Intelligence Manager, Brand Social | Google | San Francisco, CA, USA; New York, NY, USA +1 more | onsite | base $171,000–$247,000 | category: Brand, content & communications, Threat intelligence & research | level: Mid | post date unknown | found 2026-11-25 | skills: Channel & partners, Demand generation, Brand, Social media, Escalation management, Product strategy & roadmap, AI / ML (general), Automation | https://www.google.com/about/careers/applications/jobs/results/73631577468216006-social-intelligence-manager-brand-social
