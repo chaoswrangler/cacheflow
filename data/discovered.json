@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "updated_at": "2026-11-25T19:14:28.472Z",
+ "updated_at": "2026-11-26T02:35:05.784Z",
  "employers": [
   {
    "employer": "Slash",
@@ -5796,7 +5796,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-25: board reachable with 37 postings; ownership: linked from fireblocks.com.",
       "date": "2026-11-25"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
@@ -5856,7 +5857,8 @@
       "status": "auto_discovered",
       "method": "Seed probe 2026-11-25: board reachable with 4 postings; ownership: postings name Surf AI.",
       "date": "2026-11-25"
-     }
+     },
+     "_ghHost": "boards-api.greenhouse.io"
     }
    ]
   },
