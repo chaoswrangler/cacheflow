@@ -1,5 +1,5 @@
 # Cache Flow: GTM strategy & revenue operations (Marketing & GTM)
-# 3 open roles first found 24 hours before 2026-11-27 03:14 (UTC). Updated after each collection, about 4 times a day.
+# 3 open roles first found 24 hours before 2026-11-27 13:34 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Senior Manager, Go To Market (GTM) Strategy & Planning (15-Month Contract) | 1Password | Remote (United States Canada) | remote | base $159,000–$231,000 | category: GTM strategy & revenue operations, Strategy, business operations & chief of staff | level: Lead/principal | posted 2026-11-26 | found 2026-11-26 | skills: SQL, Cybersecurity (general), Audit, SaaS / B2B, Pipeline & revenue, RevOps & CRM, Territory & account planning, Go-to-market strategy | https://jobs.ashbyhq.com/1password/d8094ce5-97a1-4c81-8ea7-72b681adfd1e

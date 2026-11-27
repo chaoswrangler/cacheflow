@@ -1,5 +1,5 @@
 # Cache Flow: Threat intelligence & research (Security practitioners)
-# 3 open roles first found 24 hours before 2026-11-27 03:14 (UTC). Updated after each collection, about 4 times a day.
+# 3 open roles first found 24 hours before 2026-11-27 13:34 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Global Threat Analyst | Google | Sunnyvale, CA, USA; Reston, VA, USA +2 more | onsite | base $128,000–$187,000 | category: Threat intelligence & research | level: Mid | post date unknown | found 2026-11-26 | skills: Tabletop & crisis exercises, Cyber risk & quantification, Experimentation & metrics, AI / ML (general), Public sector & federal, Cross-functional leadership, Webinars & events | https://www.google.com/about/careers/applications/jobs/results/129242332980486854-global-threat-analyst
