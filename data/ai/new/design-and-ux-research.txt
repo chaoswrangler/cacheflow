@@ -1,7 +1,5 @@
 # Cache Flow: Design & UX research (AI, engineering & data)
-# 3 open roles first found 24 hours before 2026-11-27 13:34 (UTC). Updated after each collection, about 4 times a day.
+# 0 open roles first found 24 hours before 2026-11-27 19:52 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
-Product Design Director, Commerce | Microsoft | Seattle, WA, US; Mountain View, CA, US +2 more | onsite | pay not stated | category: Design & UX research | level: Director/head | posted 2026-09-03 | found 2026-11-26 | req 200053134 | https://apply.careers.microsoft.com/careers/job/1970393556984827
-Senior Product Designer | Microsoft | Mountain View, CA, US; Redmond, WA, US +2 more | onsite | pay not stated | category: Design & UX research | level: Senior | posted 2026-11-16 | found 2026-11-26 | req 200051863 | https://apply.careers.microsoft.com/careers/job/1970393556981955
-Senior Product Designer, Monetization | Microsoft | Redmond, WA, US; Mountain View, CA, US +2 more | onsite | pay not stated | category: Design & UX research | level: Senior | posted 2026-10-29 | found 2026-11-26 | req 200064363 | skills: Pricing & packaging | https://apply.careers.microsoft.com/careers/job/1970393557050000
+

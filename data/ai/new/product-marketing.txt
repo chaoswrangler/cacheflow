@@ -1,6 +1,5 @@
 # Cache Flow: Product marketing (Marketing & GTM)
-# 2 open roles first found 24 hours before 2026-11-27 13:34 (UTC). Updated after each collection, about 4 times a day.
+# 0 open roles first found 24 hours before 2026-11-27 19:52 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
-Product Marketing - Agents | ElevenLabs | United States; Warsaw +1 more | remote | pay not stated | category: Product marketing, Brand, content & communications | level: Mid | posted 2026-11-26 | found 2026-11-26 | skills: Product marketing, Positioning & messaging, Experimentation & metrics, AI / ML (general), Agents & agentic workflows, Thought leadership | https://jobs.ashbyhq.com/ElevenLabs/945abd50-09e6-4adb-b59b-0f0d17b9d507
-Director, Product Marketing Manager | Microsoft | Redmond, WA, US; Mountain View, CA, US +6 more | onsite | pay not stated | category: Product marketing, Brand, content & communications | level: Director/head | posted 2026-11-20 | found 2026-11-26 | req 200066259 | skills: Product marketing | https://apply.careers.microsoft.com/careers/job/1970393557055999
+
