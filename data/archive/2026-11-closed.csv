@@ -5171,3 +5171,253 @@ orc:jpmc:210810496,2026-11-26T19:40:13.680Z,2026-11-19T19:34:22.449Z,7,JPMorgan 
 orc:jpmc:210811856,2026-11-26T19:40:13.680Z,2026-11-24T20:42:14.987Z,2,JPMorgan Chase,Business Relationship Manager I - Officer,complete_scan
 orc:jpmc:210812043,2026-11-26T19:40:13.680Z,2026-11-25T04:15:57.751Z,1.6,JPMorgan Chase,Business Relationship Manager I - Officer,complete_scan
 orc:jpmc:210798301,2026-11-26T19:40:13.680Z,2026-11-24T20:42:14.987Z,2,JPMorgan Chase,"Branch Manager - Framingham, MA (Bilingual Spanish Preferred)",complete_scan
+wd:accenture:R00372030,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Accenture,Public Service – Service Account Lead,complete_search
+gh:brex:8782795002,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Brex,"Engineering Manager, Bill Pay ",complete_scan
+gh:brex:8797769002,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Brex,"Engineering Manager, Bill Pay ",complete_scan
+gh:brex:8797770002,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Brex,"Engineering Manager, Bill Pay ",complete_scan
+gh:brex:8797771002,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Brex,"Engineering Manager, Bill Pay ",complete_scan
+ashby:1password:63059a05-03d1-4a4f-908c-8daa721cce90,2026-11-27T02:54:03.205Z,2026-11-24T20:42:14.987Z,2.3,1Password,Senior Implementation Project Manager,complete_scan
+html:atlassian:27397,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Atlassian,Revenue and Technical Accounting Analyst,complete_scan
+html:atlassian:27195,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Atlassian,"Senior Manager, Customer Success, Strategic - DACH (German Speaking)",complete_scan
+html:atlassian:26034,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Atlassian,"Principal Solutions Engineer, Strategic France (French Speaking)",complete_scan
+html:atlassian:26712,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Atlassian,Senior Incident Response Analyst,complete_scan
+html:apple:retail-facilities-manager,2026-11-27T02:54:03.205Z,2026-11-26T19:40:13.680Z,0.3,Apple,Retail Facilities Manager,complete_scan
+ashby:supabase:2184cfbd-927e-4d3c-b34a-f2301d3e8281,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Supabase,Software Engineer - Postgres Tooling,complete_scan
+gh:zscaler:5290470007,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Zscaler,Sales Account Executive - Enterprise,complete_scan
+gh:zscaler:5239096007,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Zscaler,Software Development Engineer (Salesforce),complete_scan
+cisco:rss:CISCISGLOBAL2027891EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-21T01:22:16.425Z,6.1,Cisco,"Sr Staff Product Manager, Agent Resilience Platform",complete_pass
+cisco:rss:CISCISGLOBAL2030656EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-21T01:22:16.425Z,6.1,Cisco,"Account Executive - Splunk Commercial (Remote, PST)",complete_pass
+cisco:rss:CISCISGLOBAL2030185EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-23T13:31:29.972Z,3.6,Cisco,Renewals Manager,complete_pass
+cisco:rss:CISCISGLOBAL2028430EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,Security Renewals Specialist,complete_pass
+cisco:rss:CISCISGLOBAL2028885EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,Software Engineer,complete_pass
+cisco:rss:CISCISGLOBAL2018240EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,ASIC DFT Technical Leader- MBIST,complete_pass
+cisco:rss:CISCISGLOBAL2026959EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Cisco,Technical Systems Engineer (Hybrid),complete_pass
+cisco:rss:CISCISGLOBAL2032691EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-23T22:05:06.157Z,3.2,Cisco,Data Science Analyst II (Intern) – Untied States,complete_pass
+cisco:rss:CISCISGLOBAL2030994EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-23T22:05:06.157Z,3.2,Cisco,"Real Estate Lead, Americas - San Jose, CA",complete_pass
+cisco:rss:CISCISGLOBAL2028999EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-23T22:48:25.691Z,3.2,Cisco,Sr. Cloud FinOps Engineer (Remote),complete_pass
+cisco:rss:CISCISGLOBAL2029172EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,Renewals Specialist,complete_pass
+cisco:rss:CISCISGLOBAL2026078EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-19T21:51:17.575Z,7.2,Cisco,Design Verification Technical Leader,complete_pass
+cisco:rss:CISCISGLOBAL2031215EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,"Account Executive - Portfolio, Houston Commercial",complete_pass
+cisco:rss:CISCISGLOBAL2024885EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-23T13:31:29.972Z,3.6,Cisco,Software Engineer,complete_pass
+cisco:rss:CISCISGLOBAL2022544EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,"Leader, Customer Support",complete_pass
+cisco:rss:CISCISGLOBAL2024698EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,Technical Consulting Engineer,complete_pass
+cisco:rss:CISCISGLOBAL2024636EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Cisco,Technical Consulting Engineer,complete_pass
+radancy:panw:99865645536,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Palo Alto Networks,Domain Consultant 2,complete_scan
+radancy:panw:101683745216,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Palo Alto Networks,Cortex Cloud Sales Specialist,complete_scan
+phenom:bcg:BCG1US60371EXTERNALENGLOBAL,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Boston Consulting Group,Temp: NAMR Offer Senior Manager - Transactions & Integrations,complete_pass
+ashby:airwallex:a139d336-cea8-4b73-b391-e1078e8c3994,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Airwallex,Implementation Manager – Spend/ERP,complete_scan
+ashby:airwallex:ddc58463-f79f-42ee-a7a9-92bae908d509,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Airwallex,Implementation Manager - Embedded Finance,complete_scan
+ashby:airwallex:ef0f8894-1a69-480a-a080-8e25afabd23a,2026-11-27T02:54:03.205Z,2026-11-24T16:04:32.972Z,2.5,Airwallex,Implementation Manager - Embedded Finance,complete_scan
+ashby:elevenlabs:d2443707-b19e-49c2-b2ec-de0c4c889089,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,ElevenLabs,Workplace Experience - New York,complete_scan
+ashby:elevenlabs:4aaebda4-53be-424c-8246-cde77ff853bb,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,ElevenLabs,Company Operations Lead,complete_scan
+wd:broadcom:R027551-1,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Broadcom (incl. VMware),Supply Chain Analyst,complete_search
+amazon:jobs:10608230,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Amazon / AWS,"Strategy Sr Analyst, Supply Chain Execution Strategy",complete_pass
+amazon:jobs:10593013,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Amazon / AWS,"Customer Success Manager, Amazon Leo",complete_pass
+amazon:jobs:10607825,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Amazon / AWS,"Compliance Analyst, Safety, Risk Response, NAST ",complete_pass
+amazon:jobs:10607675,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Senior Data Engineer, Accounting",complete_pass
+amazon:jobs:10598444,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Procurement & Submittals Mgr., AWS, Power and Cooling",complete_pass
+amazon:jobs:10607189,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Security Engineer II, Investigative Engineering",complete_pass
+amazon:jobs:10598356,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Finance Operation Mergers and Acquisitions Integration & Controllership Manager, FinOps Mergers and Acquisitions",complete_pass
+amazon:jobs:10597415,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Sr Forward Deployed Engineer (FDE), AWS Forward Deployed Engineering, US Government",complete_pass
+amazon:jobs:10602316,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Product Lifecycle Engineer, Low Voltage, Electrical Products and Services, Data Center Engineering",complete_pass
+amazon:jobs:10597279,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Senior Product Designer, GREF – Global Product",complete_pass
+amazon:jobs:10606247,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Senior Applied Scientist, Ad Measurements Science ",complete_pass
+amazon:jobs:10593664,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Applied Scientist, Automated Reasoning Group",complete_pass
+amazon:jobs:10593004,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Partner Operations Manager, Prime Video, Partner Operations Management",complete_pass
+amazon:jobs:10591225,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Finance Analyst, Advertising Finance",complete_pass
+amazon:jobs:10587152,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Sr. Technical Infrastructure Program Manager, Data Center Planning & Delivery",complete_pass
+amazon:jobs:10587699,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,"Operations Manager, AMXL ",complete_pass
+amazon:jobs:10582824,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Amazon / AWS,Associate Account Executive ,complete_pass
+amazon:jobs:10538542,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Amazon / AWS,"Technical Account Manager, National Security, National Security - ES US-ADC",complete_pass
+amazon:jobs:10526963,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Amazon / AWS,"Data Center Cluster Operations Leader (Senior Manager), DCC Communities ",complete_pass
+amazon:jobs:10553644,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Amazon / AWS,Product Manager - Technical,complete_pass
+amazon:jobs:10521200,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Manufacturing Test Engineer, Amazon Leo",complete_pass
+amazon:jobs:10516681,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Senior Delivery Consultant - Migrations, Cloud Platform and Migrations, AWS Professional Services",complete_pass
+amazon:jobs:10523945,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Data Scientist , Amazon Transportation Services (NEST)",complete_pass
+amazon:jobs:10521399,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Finance Manager, IXD+, North American Customer Fulfillment",complete_pass
+amazon:jobs:10515440,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Program Manager, Integrated Planning, GEMS, NA Startup",complete_pass
+amazon:jobs:10512920,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Senior Product Manager, Private Pricing Programs & Experiences (3PX), Private Pricing Product Management ",complete_pass
+amazon:jobs:10520490,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"3PX Initiatives, Private Pricing Programs & Experiences , 3PX",complete_pass
+amazon:jobs:10512866,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Senior Product Manager - Tech, Private Pricing Product Management ",complete_pass
+amazon:jobs:10503902,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Data Center Cluster Operations Leader, AWS Data Centers",complete_pass
+amazon:jobs:10498998,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Applied Scientist, Amazon Leo Satellite Build Systems",complete_pass
+amazon:jobs:10497369,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Embedded Software Engineer II, Autonomy Platform, Data and Tools",complete_pass
+amazon:jobs:10488827,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,Sr. Operations Manager,complete_pass
+amazon:jobs:10500284,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"BIE II - FBA Product Analytics, FBA Analytics",complete_pass
+amazon:jobs:10503995,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Software Development Engineer, AWS Vulnerability Management (AVM)",complete_pass
+amazon:jobs:10491017,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Principal Technical Program Manager, AWS EC2 Accelerator Team",complete_pass
+amazon:jobs:10537865,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Technical Program Manager, Claims Technology Programs, On-Road Incident Management (ORIM)",complete_pass
+amazon:jobs:10485988,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"AWS Account Executive - State of Indiana, SLG/EDU",complete_pass
+amazon:jobs:10481505,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Applied Scientist - Perception (SLAM/VIO), Fauna",complete_pass
+amazon:jobs:10487278,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Software Development Engineer AI/ML, Inference Model Enablement, AWS Neuron",complete_pass
+amazon:jobs:10486633,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Director, NAMER ISV Sales, Security",complete_pass
+amazon:jobs:10484071,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. TPM - Satellite Integration & Test, Amazon Leo Technical Program Management",complete_pass
+amazon:jobs:10482211,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Finance Manager, Amazon Air",complete_pass
+amazon:jobs:10486445,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Finance Manager, Global Prime Finance",complete_pass
+amazon:jobs:10486457,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Finance Manager, eReader",complete_pass
+amazon:jobs:10482901,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Revenue Cycle Manager - Medicare Value Based Care, Healthcare Financial Operations",complete_pass
+amazon:jobs:10481229,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Principal, Worldwide GTM Specialist - Storage, Data & AI GTM ",complete_pass
+amazon:jobs:10489348,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Supply Chain Manager, GPO, XCM, GPCS On Package Marketing and Advertising ",complete_pass
+amazon:jobs:10499126,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"SDE- MES, Amazon Leo, Manufacturing Execution Systems",complete_pass
+amazon:jobs:10490743,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Business Analyst, FBA Analytics",complete_pass
+amazon:jobs:10482846,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Financial Analyst, US Performance Marketing",complete_pass
+amazon:jobs:10481774,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Accounting Manager, AWS & Digital Accounting",complete_pass
+amazon:jobs:10502457,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr SDE - MES, Amazon Leo, Manufacturing Execution Systems",complete_pass
+amazon:jobs:10485984,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Amazon / AWS,"Data Center Technical Trainer (DCEO Trainer-CLT), Data Center Communities (DCC) ",complete_pass
+amazon:jobs:10487113,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr Delivery Consultant, WWPS ProServe Federal Civilian",complete_pass
+amazon:jobs:10486507,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr. Partner Marketing Manager, AI, AI & SUP Partner Marketing",complete_pass
+amazon:jobs:10489820,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Sr Product Manager - Tech, ASP Strategy & Ops",complete_pass
+amazon:jobs:10486666,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Senior Cross-Category Marketing Manager, AWS Cross Category Marketing",complete_pass
+amazon:jobs:10490750,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Business Developer II - Tech, Amazon Freight",complete_pass
+amazon:jobs:10492292,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Applied Scientist, NA Operations",complete_pass
+amazon:jobs:10480640,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Principal Games Industry Business Development Specialist, North America, Media & Entertainment, Games, Advertising and Sports Business Unit",complete_pass
+amazon:jobs:10481608,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,Operations Manager,complete_pass
+amazon:jobs:10501369,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,Senior Product Manager -Tech,complete_pass
+amazon:jobs:10493468,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Business Intelligence Engineer II, Amazon Global Logistics",complete_pass
+amazon:jobs:10480707,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Amazon / AWS,"Data Center Operations Manager (Nights), Data Center Operations",complete_pass
+amazon:jobs:10483792,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Amazon / AWS,"Sr. Solutions Architect , Healthcare & Life Sciences",complete_pass
+amazon:jobs:10484538,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Amazon / AWS,"Senior Finance Analyst, Northeast Region Finance, Sort Centers",complete_pass
+amazon:jobs:10480012,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Amazon / AWS,"Member of Technical Staff - Robotics Mechanical Engineer, Frontier AI & Robotics ",complete_pass
+amazon:jobs:10504260,2026-11-27T02:54:03.205Z,2026-11-22T22:02:50.277Z,4.2,Amazon / AWS,"Applied Scientist -- Foundation Models, SSO",complete_pass
+gh:robinhood:8224805,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Robinhood,"Overnight Customer Experience Representative, Concierge  ",complete_scan
+phenom:pwc:PUVPUIUS737947WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,"Kinaxis Solutions Architect, Manager",complete_pass
+phenom:pwc:PUVPUIUS737939WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Pharma & MedTech End-to-End Supply Chain Senior Manager,complete_pass
+phenom:pwc:PUVPUIUS737946WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Supply Chain Consulting - Relex Director,complete_pass
+phenom:pwc:PUVPUIUS753078WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,"GIS Integration Lead (SAP / OverIT), Manager",complete_pass
+phenom:pwc:PUVPUIUS753086WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,"GIS Integration Support (SAP/OverIT), Senior Associate",complete_pass
+phenom:pwc:PUVPUIUS737937WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Pharma & MedTech End-to-End Supply Chain Manager,complete_pass
+phenom:pwc:PUVPUIUS757478WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Audit - Japanese Business Network (JBN) - Intern - Summer 2028 - Destination CPA,complete_pass
+phenom:pwc:PUVPUIUS757656WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Tax - Japanese Business Network (JBN) - Intern - Summer 2028 - Destination CPA,complete_pass
+phenom:pwc:PUVPUIUS756404WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,Tax - Japanese Business Network (JBN) - Intern - Summer 2027,complete_pass
+phenom:pwc:PUVPUIUS766322WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T15:57:15.604Z,4.5,PwC,Business Application Consulting - Program Risk & Quality Sr Associate,complete_pass
+phenom:pwc:PUVPUIUS752610WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T15:57:15.604Z,4.5,PwC,AI Engineer - Senior Associate - Commercial Technology & Innovation,complete_pass
+phenom:pwc:PUVPUIUS766224WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,AWM - Boston - External Audit - Senior Associate,complete_pass
+phenom:pwc:PUVPUIUS758798WDEXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,PwC,"Pricing, Promotions, and Revenue Management Consulting Director",complete_pass
+wd:crowdstrike:R30947,2026-11-27T02:54:03.205Z,2026-11-25T19:14:28.472Z,1.3,CrowdStrike,Frontend Engineer II (Hybrid),complete_search
+orc:jpmc:210810076,2026-11-27T02:54:03.205Z,2026-11-19T23:55:25.225Z,7.1,JPMorgan Chase,"Branch Operations Lead - (New Build) Hwy 72 and Shields - Huntsville, AL",complete_scan
+orc:jpmc:210811637,2026-11-27T02:54:03.205Z,2026-11-24T20:42:14.987Z,2.3,JPMorgan Chase,Business Relationship Manager I - Officer,complete_scan
+orc:jpmc:210811774,2026-11-27T02:54:03.205Z,2026-11-24T16:04:32.972Z,2.5,JPMorgan Chase,Business Relationship Manager I-Officer,complete_scan
+orc:jpmc:210810056,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,JPMorgan Chase,"Business Banking Deposit - Product, Senior Associate",complete_scan
+gh:sixfold:5387559008,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Sixfold,"VP, Product",complete_scan
+phenom:adobe:ADOBUSR171542EXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Adobe,"Senior Product Manager, Privacy Engineering",complete_pass
+phenom:adobe:ADOBUSR172786EXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-23T22:48:25.691Z,3.2,Adobe,2027 University Graduate - Technical Support Consultant,complete_pass
+phenom:adobe:ADOBUSR173791EXTERNALENUS,2026-11-27T02:54:03.205Z,2026-11-23T22:05:06.157Z,3.2,Adobe,"Workforce Strategy Analyst, People Analytics",complete_pass
+orc:oracle:346795,2026-11-27T02:54:03.205Z,2026-11-20T17:30:27.385Z,6.4,Oracle,Senior Platform Software Engineer,complete_pass
+orc:oracle:339199,2026-11-27T02:54:03.205Z,2026-11-20T17:30:27.385Z,6.4,Oracle,"Senior Core Infrastructure Engineer, Fast Connect",complete_pass
+orc:oracle:347386,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Oracle,Adoption Consultant (IC1),complete_pass
+orc:oracle:350494,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Oracle,"Executive Leadership Recruiter, North America",complete_pass
+orc:oracle:348538,2026-11-27T02:54:03.205Z,2026-11-19T19:34:22.449Z,7.3,Oracle,"Oracle Open Technologies Renewal Account Manager- Government, Defense & Intelligence",complete_pass
+orc:oracle:349227,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Oracle,Lead Principal Technical Program Manager,complete_pass
+orc:oracle:338846,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Oracle,Senior Core Infrastructure Engineer,complete_pass
+orc:oracle:349262,2026-11-27T02:54:03.205Z,2026-11-21T23:36:19.243Z,5.1,Oracle,Clinical Pharmacy Consulting Manager - Drug Interactions (State Board of Pharmacy License Req’d),complete_pass
+orc:oracle:342738,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Oracle,Senior Platform Software Engineer,complete_pass
+orc:oracle:349046,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Oracle,Senior Platform Software Engineer,complete_pass
+google:careers:84408490079986374,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Software Engineer, Discover Feed Recommendations",complete_pass
+google:careers:115172625709179590,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Program Manager III, Supply Chain Planning, Google Data Centers",complete_pass
+google:careers:115997757646217926,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Staff Software Engineer, Technical Lead, Network Connectivity Gateway",complete_pass
+google:careers:134123239042360006,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Technical Program Manager, Data Center Infrastructure Delivery",complete_pass
+google:careers:123995911511515846,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Video Account Manager, Large Customer Sales, Retail",complete_pass
+google:careers:121593203726918342,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Engineering Analyst, Trust and Safety, RAI Testing, Scaled Testing",complete_pass
+google:careers:117592630669255366,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Launch Manager, Google Play Trust and Safety",complete_pass
+google:careers:93594689881416390,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Analytical Lead, YouTube Product Partnerships",complete_pass
+google:careers:73906684350603974,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Google,ASIC Technology Librarian,complete_pass
+google:careers:81960483275317958,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Technical Program Manager II, Network Deployment, Data Centers",complete_pass
+google:careers:87519085784376006,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Software Engineer, Machine Learning, Discover Interest Modeling and Retrieval",complete_pass
+google:careers:128027546577969862,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Google,"State Political Strategy Manager, Public Affairs and Political Strategy",complete_pass
+google:careers:73986206475395782,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Program Manager I, Solutions Enablement, Global Affairs",complete_pass
+google:careers:86827689733694150,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Staff Software Engineer, Infrastructure",complete_pass
+google:careers:140966550021513926,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Product Manager II, Ads Attribution",complete_pass
+google:careers:127349422781539014,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Program Manager, Data Center Construction",complete_pass
+google:careers:109995499242562246,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,Senior Staff Software Engineer,complete_pass
+google:careers:142472929538384582,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Senior Engineering Analyst, Third Party Data Safety",complete_pass
+google:careers:100971067236852422,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Software Engineer, Infrastructure, Search Intelligence",complete_pass
+google:careers:112196680719180486,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Research Scientist, Gemini Safety and Behavior, DeepMind",complete_pass
+google:careers:78205650261156550,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Google,"Network Implementation Engineer, Network Delivery Implementation",complete_pass
+google:careers:124245885855900358,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Google,Data Center Technician III,complete_pass
+google:careers:75665705386549958,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Forward Deployed Engineering Intern, BS/MS, Summer 2027",complete_pass
+google:careers:77141172681614022,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Staff Software Engineer, Ads and Commerce Advisor Platform",complete_pass
+google:careers:86496792568308422,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Software Engineer III, AI/ML, App Ads Quality",complete_pass
+google:careers:135354141504348870,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Business Data Scientist, YouTube Ads, Finance Revenue Analytics and Forecasting",complete_pass
+google:careers:120916455125328582,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Government Affairs and Public Policy Manager, Wiz",complete_pass
+google:careers:140330257059062470,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Community Development Manager, Strategic Partnership Office",complete_pass
+google:careers:94827792171967174,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Fab Equipment Manufacturing and Operations Engineering Manager, Raxium",complete_pass
+google:careers:92986509627400902,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Field Sales Representative II, Cloud Startups Growth",complete_pass
+google:careers:134433437955039942,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Software Engineer, AI/ML Ops, Geo",complete_pass
+google:careers:91969830738895558,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Senior Staff Software Engineer, GCE Fleet Maintenance",complete_pass
+google:careers:105732748496249542,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Administrative Business Partner, YouTube Strategy and Operations",complete_pass
+google:careers:109616688227328710,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Senior Software Engineer, Embedded, Pixel Graphics",complete_pass
+google:careers:136070749013058246,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Senior Controller, GRAS Business Controllership",complete_pass
+google:careers:75136823919026886,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Technical Program Manager III, Data Center Infrastructure, Technical Infrastructure",complete_pass
+google:careers:88094357998969542,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Account Executive, Food Beverage Restaurants, Large Customer Sales",complete_pass
+google:careers:82764362908869318,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Hardware Engineering Manager, Laptops and Tablets Platform Enablement",complete_pass
+google:careers:74095070206141126,2026-11-27T02:54:03.205Z,2026-11-22T02:50:32.012Z,5,Google,"Senior Robotics Automation Engineer, Platforms Infrastructure",complete_pass
+google:careers:115345680678953670,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Staff Software Engineer, Server and Full Stack, Growth and Discovery, DeepMind",complete_pass
+google:careers:136076177851720390,2026-11-27T02:54:03.205Z,2026-11-21T20:30:03.357Z,5.3,Google,"Principal Technical Program Manager, Network Delivery Engineering",complete_pass
+google:careers:98964842915734214,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Technical Program Manager, ML Systems Software",complete_pass
+google:careers:82017197513155270,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Strategic Sourcing Engineer, DeepMind",complete_pass
+google:careers:142983915487797958,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Senior Program Manager I, Supply Chain Planning, Technical Infrastructure",complete_pass
+google:careers:93707047031186118,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"AI Outcome Customer Engineer II, Forward Deployed Engineering",complete_pass
+google:careers:93836037783986886,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Policy Escalation Specialist, YouTube Trust and Safety",complete_pass
+google:careers:109745416987124422,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Data Center Facilities Technician,complete_pass
+google:careers:122282150840935110,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Software Engineer Manager II, Google Global Networks (Infrastructure)",complete_pass
+google:careers:101082089188664006,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Technical Solutions Engineer, Google Home, Health and Home Partner Engineering",complete_pass
+google:careers:81723231429370566,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Senior Account Manager, Apps",complete_pass
+google:careers:97030113962402502,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Principal Account Executive, Financial Services, Large Customer Sales",complete_pass
+google:careers:127352927474852550,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Strategy and Operations Principal Lead, GBO Chief of Staff Team",complete_pass
+google:careers:130979185542734534,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Research Data Scientist, Core Metrics",complete_pass
+google:careers:124620434921398982,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Group Product Manager, Managed Service for Apache Spark",complete_pass
+google:careers:109179030254559942,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"AI Sales Specialist, Google Cloud",complete_pass
+google:careers:121402765682320070,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Technical Program Manager III, NPI Programs, Technical Infrastructure",complete_pass
+google:careers:122379491979731654,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Public Affairs Manager, Regional Data Centers",complete_pass
+google:careers:98648595078488774,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Senior Solutions Architect, Pixel Devices",complete_pass
+google:careers:89878478018486982,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Product Manager, Geo Auto Data Platform",complete_pass
+google:careers:100455504999785158,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Strategic Financial Analyst, Pixel Product Finance",complete_pass
+google:careers:108079729885487814,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Community Development Manager, Strategic Partnerships Office",complete_pass
+google:careers:92431131701322438,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Operations Program Manager, Pixel Watches",complete_pass
+google:careers:132810696231396038,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Network Implementation, Engineer III",complete_pass
+google:careers:124026698642399942,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Community Development Manager, Strategic Partnerships Office",complete_pass
+google:careers:137338391430603462,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Administrative Business Partner, Core Privacy, Security and Safety Program Management Office",complete_pass
+google:careers:87789406731018950,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Web Solutions Engineer, Technology and Insights, Consumer and Creator GTM Engineering",complete_pass
+google:careers:95717544844763846,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Senior Staff Software Engineer, Tech Lead, Drive Intelligence Features",complete_pass
+google:careers:130574573853647558,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Product Strategy and Operations Lead, Artificial Intelligence and Infrastructure",complete_pass
+google:careers:73160889854763718,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Financial Analyst, Cloud Central Financial Planning and Analysis",complete_pass
+google:careers:98141995095990982,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Financial Analyst, Search Product Finance, Machines",complete_pass
+google:careers:105568324263256774,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Software Engineer, AI/ML, Search Ads",complete_pass
+google:careers:94892663358005958,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Federal Security Sales Specialist, Public Sector",complete_pass
+google:careers:100068752590021318,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Global Strategy and Operations Senior Associate, YouTube Shopping",complete_pass
+google:careers:129847384350827206,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Senior Software Engineer, Persistent Disk – IPU, Storage Offloads",complete_pass
+google:careers:123324550946398918,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,YouTube Product Content Manager,complete_pass
+google:careers:103219888490717894,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Senior Staff Tech Lead Manager, Ads Serving Infrastructure",complete_pass
+google:careers:83521813409080006,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Data Engineer, YouTube",complete_pass
+google:careers:123940798491173574,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff SRE Software Engineer, Google Home",complete_pass
+google:careers:130731176951194310,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Product Manager I, YouTube Premium Member Experience",complete_pass
+google:careers:140715222762431174,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Senior Product Manager, XR Hardware",complete_pass
+google:careers:125585805325279942,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Engineering Analyst, Trust and Safety RAI Testing, Scaled Testing",complete_pass
+google:careers:81687803586323142,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Hardware Engineer, Electrical Engineering Design, Google Cloud",complete_pass
+google:careers:120101276774998726,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Financial Analyst, Global Hardware Sales Finance",complete_pass
+google:careers:127068978596979398,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Data Center Facilities Technician,complete_pass
+google:careers:98151792721699526,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Software Engineer, Infra, Ads Quality Infrastructure, Dynamo, Google Ads",complete_pass
+google:careers:132482396179047110,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Senior ASIC Physical Design Engineer,complete_pass
+google:careers:83868556856304326,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff UX Designer, Google Labs",complete_pass
+google:careers:117487902186709702,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Network Implementation Engineer,complete_pass
+google:careers:101696716188590790,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Search Ads Research Data Scientist,complete_pass
+google:careers:130299811105514182,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,CPU Power Modeling Engineer,complete_pass
+google:careers:138907214134813382,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Lead Analyst, Frontier Safety",complete_pass
+google:careers:107518356185064134,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Policy Specialist, Child Safety",complete_pass
+google:careers:87774699957691078,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Software Engineer III, Performance",complete_pass
+google:careers:135227547343299270,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,Firestore Software Engineering Manager,complete_pass
+google:careers:99020866469143238,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Senior Software Engineer, Generative AI",complete_pass
+google:careers:99554498975802054,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,Search Traffic Integrity Engineering Analyst,complete_pass
+google:careers:91986104369980102,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"AI Tooling Technical Solutions Consultant, GSRS Security Systems and Technology",complete_pass
+google:careers:80306257293910726,2026-11-27T02:54:03.205Z,2026-11-20T17:30:27.385Z,6.4,Google,"Product Manager II, Data Commons Enterprise Platform",complete_pass
+google:careers:120683810973983430,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Research Scientist/Engineer, Consumer Agents Post Training, DeepMind",complete_pass
+google:careers:79051037263962822,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Staff Semiconductor Thin Films Process Engineer, Raxium",complete_pass
+google:careers:134918873144009414,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Financial Analyst II, Cloud Financial Planning and Analysis, Compute Business",complete_pass
+google:careers:81296377446834886,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,"Network Implementation Engineer, Network Delivery Implementation",complete_pass
+google:careers:72579311822873286,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Google,Data Center Facilities Technician,complete_pass
+google:careers:104317385778832070,2026-11-27T02:54:03.205Z,2026-11-20T04:50:02.629Z,6.9,Google,"Analytical Lead, Government and Advocacy, Large Customer Sales",complete_pass
+google:careers:78767406213669574,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Staff AI/ML Engineer, Cloud AI Research",complete_pass
+google:careers:77211967432860358,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"AI Sales Specialist, AI Natives, Google Cloud",complete_pass
+google:careers:80862580112794310,2026-11-27T02:54:03.205Z,2026-11-20T03:13:07.351Z,7,Google,"Program Manager II, Operations, Cloud Supply Chain",complete_pass
+orc:oracle:345569,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Oracle,Principal Program Manager - Cluster Health,complete_pass
+orc:oracle:333287,2026-11-27T02:54:03.205Z,2026-11-21T21:58:58.541Z,5.2,Oracle,Data Center Construction QA/QC Manager,complete_pass
