@@ -1,5 +1,5 @@
 # Cache Flow: Partnerships, alliances & channel (Sales & customer success)
-# 1 open roles first found 24 hours before 2026-11-28 02:26 (UTC). Updated after each collection, about 4 times a day.
+# 1 open roles first found 24 hours before 2026-11-28 15:04 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Director, Channel Operations | 1Password | Remote (United States Canada) | remote | base $187,000–$281,000 | category: Partnerships, alliances & channel | level: Director/head | posted 2026-11-27 | found 2026-11-27 | skills: Cybersecurity (general), Audit, SaaS / B2B, Pipeline & revenue, Renewals, Forecasting & deal desk, RevOps & CRM, Cloud marketplace & private offers | https://jobs.ashbyhq.com/1password/706c56db-a8a8-4c92-9954-36c2beeba7c5
