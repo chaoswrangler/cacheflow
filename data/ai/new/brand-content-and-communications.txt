@@ -1,5 +1,5 @@
 # Cache Flow: Brand, content & communications (Marketing & GTM)
-# 9 open roles first found 24 hours before 2026-11-27 19:52 (UTC). Updated after each collection, about 4 times a day.
+# 9 open roles first found 24 hours before 2026-11-28 02:26 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 Change and Communications Senior Specialist | Boston Consulting Group | Atlanta, Georgia, United States of America; Boston, Massachusetts, United States of Ameri | onsite | base $89,000–$124,330 | category: Brand, content & communications | level: Senior | posted 2026-11-26 | found 2026-11-27 | req 59452 | skills: Go-to-market strategy, Sales enablement, Customer success & adoption, Product strategy & roadmap, Program management, Agile delivery, Experimentation & metrics, Financial services | https://experiencedtalent.bcg.com/careerhub/explore/jobs/790318484689?post_onboarding_pid=790318484689&amp;show_apply=1&amp;profile_type=candidate&amp;customredirect=1&utm_source=Phenom

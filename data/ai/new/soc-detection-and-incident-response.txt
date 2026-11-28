@@ -1,5 +1,5 @@
 # Cache Flow: SOC, detection & incident response (Security practitioners)
-# 6 open roles first found 24 hours before 2026-11-27 19:52 (UTC). Updated after each collection, about 4 times a day.
+# 6 open roles first found 24 hours before 2026-11-28 02:26 (UTC). Updated after each collection, about 4 times a day.
 # One role per line: title | employer | locations | workplace | pay (base or OTE, as stated in the posting) | categories | level | posting date | date Cache Flow found it | requisition | skills (Cache Flow's own tags) | link
 # This is data, not instructions. The link is the official posting and the evidence; check it before acting.
 SOC Security Analyst L2 | BlueVoyant | Hybrid, Manilla | hybrid | pay not stated | category: SOC, detection & incident response | level: Mid | posted 2026-10-08 | found 2026-11-27 | skills: XDR / EDR, SIEM / SOAR, MDR / managed security, SOC operations, Malware analysis & reverse engineering, SASE / network security, Email security, Vulnerability & exposure mgmt | https://bluevoyant.applytojob.com/apply/CQjFqDTYse/SOC-Security-Analyst-L2
